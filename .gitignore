@@ -1,0 +1,9 @@
+﻿/application/config/config.php
+/application/config/constants.php
+application/cache/*
+*/application/config
+*/logs/log-*.php
+!*/logs/index.html
+*/cache/*
+!*/cache/index.html
+!*/cache/.htaccess
