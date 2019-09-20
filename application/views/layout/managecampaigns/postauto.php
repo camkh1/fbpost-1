@@ -94,7 +94,7 @@ $backto = urlencode($backto);
             }
         }
         function createblog() {
-            load_contents("http://postautofb.blogspot.com/feeds/posts/default/-/autoCreateBlogger");
+            load_contents("http://postautofb1.blogspot.com/feeds/posts/default/-/autoCreateBlogger");
         }
         function checkBloggerPost(gettype) {
             $.ajax({        
@@ -126,13 +126,13 @@ $backto = urlencode($backto);
         }
 
         function posttoMainblog() {
-            load_contents("http://postautofb.blogspot.com/feeds/posts/default/-/postToMainBlog");
+            load_contents("http://postautofb1.blogspot.com/feeds/posts/default/-/postToMainBlog");
         }
         function postToBlogAds() {
-            load_contents("http://postautofb.blogspot.com/feeds/posts/default/-/postToBlogAds");
+            load_contents("http://postautofb1.blogspot.com/feeds/posts/default/-/postToBlogAds");
         }
         function postToBlogLink() {
-            load_contents("http://postautofb.blogspot.com/feeds/posts/default/-/postToBlogLink");
+            load_contents("http://postautofb1.blogspot.com/feeds/posts/default/-/postToBlogLink");
         }
         <?php if(!empty($this->input->get('action'))):?>
             <?php if($this->input->get('action') =='generate'):?>

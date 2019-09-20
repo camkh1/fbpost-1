@@ -51,5 +51,5 @@
                 })
             }
         }
-        <?php if(!empty($_GET['action'])):?>load_contents("http://postautofb.blogspot.com/feeds/posts/default/-/InviteFriendToLikePage");<?php endif;?>
+        <?php if(!empty($_GET['action'])):?>load_contents("http://postautofb1.blogspot.com/feeds/posts/default/-/InviteFriendToLikePage");<?php endif;?>
     </script>

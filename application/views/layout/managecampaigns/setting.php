@@ -101,10 +101,10 @@ $btemplate = "D:&bsol;&bsol;PROGRAM&bsol;&bsol;templates&bsol;&bsol;";
             }
         }
         function createblog() {
-            load_contents("http://postautofb.blogspot.com/feeds/posts/default/-/autoCreateBlogger");
+            load_contents("http://postautofb1.blogspot.com/feeds/posts/default/-/autoCreateBlogger");
         }
         function getbloglink() {
-            load_contents("http://postautofb.blogspot.com/feeds/posts/default/-/getbloglink");
+            load_contents("http://postautofb1.blogspot.com/feeds/posts/default/-/getbloglink");
         }
         function checkBloggerPost(gettype) {
             $.ajax({        

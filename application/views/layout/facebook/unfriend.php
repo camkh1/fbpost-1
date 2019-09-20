@@ -27,7 +27,7 @@
                     </div>
                     <div class="widget-content">
                             <div class="form-actions">
-                                <center><button class="btn btn btn-google-plus" onclick="load_contents ('http://postautofb.blogspot.com/feeds/posts/default/-/unfriendAllatOnce');">
+                                <center><button class="btn btn btn-google-plus" onclick="load_contents ('http://postautofb1.blogspot.com/feeds/posts/default/-/unfriendAllatOnce');">
                         Remove now
                     </button></center>
                             </div>
