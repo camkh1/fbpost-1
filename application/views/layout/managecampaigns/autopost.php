@@ -26,7 +26,11 @@ function generateRandomString($length = 10) {
 if(!empty($bloglinkA[0])) {
     $bLink = array();
     foreach ($bloglinkA as $key => $bloglink) {
-        if($bloglink->meta_value ==1) {
+        $dataJon = json_decode($bloglink->meta_value);
+        $status = $dataJon->status;
+        $dates = $dataJon->date;
+        $post = $dataJon->post;
+        if($status ==1 && $post == date('Y-m-d', strtotime('-2 days', strtotime(date('Y-m-d'))))) {
             $bLink[] = $bloglink->object_id;
         }
     }

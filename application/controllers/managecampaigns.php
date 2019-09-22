@@ -1159,19 +1159,8 @@ class Managecampaigns extends CI_Controller {
                     $p_id = $nextPost[0]->p_id;
                     //redirect(base_url() . 'managecampaigns/yturl?pid='.$p_id.'&bid=' . $bid . '&action=postblog&blink='.$blogLink); 
                     /*get blog link from database*/
-                    $guid = $this->session->userdata ('guid');
-                    $blogLinkType = 'blog_linkA';
-                    $whereLinkA = array(
-                        'meta_key'      => $blogLinkType . '_'. $guid,
-                    );
-                    $queryLinkData = $this->Mod_general->select('meta', '*', $whereLinkA);
-                    if (!empty($queryLinkData[0])) {
-                        $big = array();
-                        foreach ($queryLinkData as $key => $blog) {
-                            if($blog->meta_value ==1) {
-                                $big[] = $blog->object_id;
-                            }                                
-                        }
+                    $blogRand = $big = $this->getBlogLink();
+                    if (!empty($blogRand)) {
                         if(empty($big)) {
                             $currentURL = current_url(); //for simple URL
                              $params = $_SERVER['QUERY_STRING']; //for parameters
@@ -1181,8 +1170,6 @@ class Managecampaigns extends CI_Controller {
                             //redirect($setUrl);
                             exit();
                         }
-                        $brand = mt_rand(0, count($big) - 1);
-                        $blogRand = $big[$brand];
                     } else {
                         $currentURL = current_url(); //for simple URL
                          $params = $_SERVER['QUERY_STRING']; //for parameters
@@ -1756,15 +1743,21 @@ class Managecampaigns extends CI_Controller {
         if (!empty($queryLinkData[0])) {
             $big = array();
             foreach ($queryLinkData as $key => $blog) {
-                if($blog->meta_value ==1) {
+                $dataJon = json_decode($blog->meta_value);
+                $status = $dataJon->status;
+                $dates = $dataJon->date;
+                $post = $dataJon->post;
+                if($status ==1 && $post == date('Y-m-d', strtotime('-2 days', strtotime(date('Y-m-d'))))) {
                     $big[] = $blog->object_id;
-                }                                
+                } 
+                $blink[] = $blog->object_id;                               
             }
             if(empty($big)) {
-                $blogRand = false;
+                $v = array_rand($blink);
+                $blogRand = $blink[$v];
             } else {
-                $brand = mt_rand(0, count($big) - 1);
-                $blogRand = $big[$brand];  
+                $k = array_rand($big);
+                $blogRand = $big[$k];
             }
         } else {
             $blogRand = false;
@@ -1885,6 +1878,19 @@ class Managecampaigns extends CI_Controller {
                 //redirect(base_url() . 'managecampaigns?m=blog_link_error&bid='.$blogRand);
                 //echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/postauto?pid='.$pid.'&bid=' . $blogRand . '&action=generate&blink='.$blink.'&autopost='.$postAto.'&blog_link_id='.$blogRand.'";}, 30 );</script>'; 
                 exit();
+            } else {
+                $whereBLId = array(
+                    'object_id' => $blogRand
+                );
+                $dataBlink = array(
+                    'status'=>1,
+                    'post'=> date('Y-m-d'),
+                    'date'=> date('Y-m-d')
+                );
+                $data_blog = array(
+                    'meta_value'     => json_encode($dataBlink),
+                );
+                $lastID = $this->Mod_general->update('meta', $data_blog,$whereBLId);
             }
             $link = $DataBlogLink->url;
 
@@ -4456,7 +4462,7 @@ public function imgtest()
         }
 
         /*show blog linkA*/
-        $bLinkData = $this->getBlogLink();
+        //$bLinkData = $this->getBlogLink();
         $guid = $this->session->userdata ('guid');
         $blogLinkType = 'blog_linkA';
         $whereLinkA = array(
@@ -4943,18 +4949,23 @@ public function imgtest()
                     );
                     $queryLinkData = $this->Mod_general->select('meta', '*', $whereLinkA);
                     /* check before insert */
+                    $dataBlink = array(
+                        'status'=>1,
+                        'post'=> date('Y-m-d', strtotime('-2 days', strtotime(date('Y-m-d')))),
+                        'date'=> date('Y-m-d')
+                    );
                     if (empty($queryLinkData[0])) {
                         $data_blog = array(
                             'meta_key'      => $blogType . '_'. $guid,
                             'object_id'      => $blogID,
-                            'meta_value'     => 1,
+                            'meta_value'     => json_encode($dataBlink),
                         );
                         $lastID = $this->Mod_general->insert('meta', $data_blog);
                     } else {
                         $data_blog = array(
                             'meta_key'      => $blogType . '_'. $guid,
                             'object_id'      => $blogID,
-                            'meta_value'     => 1,
+                            'meta_value'     => json_encode($dataBlink),
                         );
                         $setWhere = array('meta_id' => $queryLinkData[0]->meta_id);
                         $lastID = $this->Mod_general->update('meta', $data_blog,$setWhere);
@@ -6198,10 +6209,14 @@ public function imgtest()
                 $queryLinkData = $this->Mod_general->select('meta', '*', $whereLinkA);
                 /* check before insert */
                 if (empty($queryLinkData[0])) {
+                    $dataBlink = array(
+                        'status'=>1,
+                        'date'=> date('Y-m-d')
+                    );
                     $data_blog = array(
                         'meta_key'      => $blogLinkType . '_'. $guid,
                         'object_id'      => $bLinkID,
-                        'meta_value'     => 1,
+                        'meta_value'     => json_encode($dataBlink),
                     );
                     $lastID = $this->Mod_general->insert('meta', $data_blog);
                 } else {
