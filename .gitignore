@@ -2,6 +2,7 @@
 /application/config/constants.php
 application/cache/*
 */application/config
+*/uploads
 */logs/log-*.php
 !*/logs/index.html
 */cache/*

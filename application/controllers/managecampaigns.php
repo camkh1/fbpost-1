@@ -6223,8 +6223,15 @@ public function imgtest()
                     $whereBLId = array(
                         'meta_id' => $queryLinkData[0]->meta_id
                     );
+                    $dataBlink = array(
+                        'status'=>1,
+                        'post'=> date('Y-m-d'),
+                        'date'=> date('Y-m-d')
+                    );
                     $data_blog = array(
-                        'meta_value'     => $status,
+                        'meta_key'      => $blogLinkType . '_'. $guid,
+                        'object_id'      => $bLinkID,
+                        'meta_value'     => json_encode($dataBlink),
                     );
                     $lastID = $this->Mod_general->update('meta', $data_blog,$whereBLId); 
                     // $whereBlink = array(
