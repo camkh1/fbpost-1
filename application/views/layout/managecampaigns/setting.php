@@ -279,7 +279,18 @@ $btemplate = "D:&bsol;&bsol;PROGRAM&bsol;&bsol;templates&bsol;&bsol;";
                                             <td><?php echo $key;?></td>
                                             <td><a class="blog-link" data-id="<?php echo $linkA->object_id;?>" href="https://www.blogger.com/blogger.g?blogID=<?php echo $linkA->object_id;?>#basicsettings" target="_blank"><?php echo $linkA->object_id;?></a></td>
                                             <td style="width: 50%"><a href="https://www.blogger.com/blogger.g?blogID=<?php echo $linkA->object_id;?>#allposts/src=sidebar" target="_blank"><?php echo $linkA->object_id;?></a></td>
-                                            <td><span class="label label-success"><?php echo $linkA->meta_value;?></span></td>
+                                            <td>
+                                                <?php
+                                                $dataJon = json_decode($linkA->meta_value);
+                                                $status = $dataJon->status;
+                                                $dates = $dataJon->date;
+                                                $post = $dataJon->post;
+                                                if($status ==1 && $post == date('Y-m-d', strtotime('-2 days', strtotime(date('Y-m-d'))))):?>
+                                                    <span class="label label-success"><?php echo $dates;?> <?php echo $post;?></span>
+                                                <?php else:?>
+                                                <span class="label label-warning"><?php echo $dates;?> <?php echo $post;?></span>
+                                                <?php endif;?>
+                                            </td>
                                             <td>
                                                 <ul class="table-controls">
                                                     <li><a href="<?php echo base_url();?>managecampaigns/setting?blog_link_a=1&bid=<?php echo $linkA->object_id;?>&title=&status=1" class="bs-tooltip" title="" data-original-title="Edit"><i class="icon-pencil"></i></a> </li>
