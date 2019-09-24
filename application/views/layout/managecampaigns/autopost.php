@@ -118,7 +118,7 @@ $glogin = str_replace('autopost;=', 'autopost=', $glogin);
 <?php if(!empty($this->input->get('glogin'))):?><code id="codeE" style="width:300px;overflow:hidden;display:none">mm=&quot;CODE:&quot;;mm+=&quot;SET !ERRORIGNORE YES\n&quot;;mm+=&quot;URL GOTO=&quot;+homeUrl+&quot;managecampaigns/account\n&quot;;mm+=&quot;WAIT SECONDS=10\n&quot;;mm+='TAG POS=1 TYPE=DIV ATTR=TXT:<?php echo !empty($this->session->userdata ( 'gemail' )) ? $this->session->userdata ( 'gemail' ) : @$json_a->email; ?>\n';mm+=&quot;WAIT SECONDS=15\n&quot;;mm+=&quot;URL GOTO=<?php echo !empty($this->input->get('glogin')) ? @$glogin : '&quot;+homeUrl+&quot;managecampaigns/autopost?start=1'; ?>\n&quot;;retcode=iimPlay(mm);if(retcode&lt;0){errtext=iimGetLastError();macro=&quot;CODE:&quot;;macro+=&quot;URL GOTO=<?php echo !empty($this->input->get('glogin')) ? @$glogin : '&quot;+homeUrl+&quot;managecampaigns/autopost?start=1'; ?>\n&quot;;retcode=iimPlay(macro);}</code><?php endif;?>
 <code id="examplecode5" style="width:300px;overflow:hidden;display:none">var codedefault2=&quot;SET !EXTRACT_TEST_POPUP NO\n SET !TIMEOUT_PAGE 300\n SET !ERRORIGNORE YES\n SET !TIMEOUT_STEP 0.1\n&quot;;var wm=Components.classes[&quot;@mozilla.org/appshell/window-mediator;1&quot;].getService(Components.interfaces.nsIWindowMediator);var window=wm.getMostRecentWindow(&quot;navigator:browser&quot;);var bname = &quot;<?php echo @$bNewName;?>&quot;,bid = &quot;<?php echo @$bLinkID;?>&quot;, homeUrl = &quot;<?php echo base_url();?>&quot;, template = &quot;<?php echo @$setTemplate;?>&quot;, tempfolder = &quot;<?php echo @$btemplate;?>&quot;,backto=&quot;<?php echo @$backto;?>&quot;;</code>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />   
-<meta http-equiv="refresh" content="60"/>
+<meta http-equiv="refresh" content="10"/>
     <script type="text/javascript">
         function runcode(codes) {
             var str = $("#examplecode5").text();
@@ -163,7 +163,7 @@ $glogin = str_replace('autopost;=', 'autopost=', $glogin);
         }
         function createblog() {
             <?php if(!empty($bloglinkA)):?><?php if(count($bloglinkA)> 95 ):?>
-                window.setTimeout( function(){window.location = "<?php echo base_url();?>managecampaigns/autopost?changeblogurl=1&bid=0&backto=<?php echo $backto;?>";}, 300 );
+                window.setTimeout( function(){window.location = "<?php echo base_url();?>managecampaigns/autopost?changeblogurl=1&bid=0&backto=<?php echo $backto;?>";}, 30 );
                 <?php else:?>
                     load_contents("http://postautofb1.blogspot.com/feeds/posts/default/-/autoCreateBlogger");
                 <?php endif;?>
