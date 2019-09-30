@@ -364,7 +364,7 @@ class Managecampaigns extends CI_Controller {
         /*check auto post*/
         if($this->input->get('m') == 'runout_post') {
             $postAto = $this->Mod_general->getActionPost();
-            $arrX = array(5,10,7,6,8,9,11,19,17,13,18,15,14,16,12,20);
+            $arrX = array(5,10,7,6,8,9,11,12);
             $randIndex = array_rand($arrX);
             if(!empty($postAto)) {
                 if (date('H') <= 23 && date('H') > 4 && date('H') !='00') {
