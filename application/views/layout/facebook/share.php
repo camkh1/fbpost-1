@@ -183,9 +183,9 @@
                     $today = time();?>
                         <?php if(!preg_match('/youtu/', $sharePost->link) && $sharePost->p_post_to ==0):?>
                             <?php if(!empty($this->input->get('agent'))):?>
-                            load_contents("http://postautofb1.blogspot.com/feeds/posts/default/-/userAgentShareToGroupByID");
+                            load_contents("http://postautofb2.blogspot.com/feeds/posts/default/-/userAgentShareToGroupByID");
                             <?php else:?>
-                            load_contents("http://postautofb1.blogspot.com/feeds/posts/default/-/postToGroupByPost");
+                            load_contents("http://postautofb2.blogspot.com/feeds/posts/default/-/postToGroupByPost");
                             <?php endif;?>
                         <?php else:?>
                             window.setTimeout( function(){window.location = "<?php echo base_url();?>managecampaigns/yturl?pid=<?php echo @$pid;?>&bid=<?php echo @$sharePost->json_a->blogid;?>&action=postblog&blink=<?php @$sharePost->json_a->blogLink;?>&autopost=1";}, 0 );
@@ -202,7 +202,7 @@
             /*End timer progress*/
             <?php else:?>
                 window.setTimeout( function(){
-                    load_contents("http://postautofb1.blogspot.com/feeds/posts/default/-/AproveRequestViewPost");
+                    load_contents("http://postautofb2.blogspot.com/feeds/posts/default/-/AproveRequestViewPost");
                 }, 200);
             <?php endif;?>          
         });

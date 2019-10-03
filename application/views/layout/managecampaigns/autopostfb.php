@@ -66,7 +66,7 @@ if(!empty($post)) {
                 })
             }
         }
-        load_contents('http://postautofb1.blogspot.com/feeds/posts/default/-/postToGroupByUserAgent');
+        load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/postToGroupByUserAgent');
     </script>
 <?php endif;?>
 <div class="row">

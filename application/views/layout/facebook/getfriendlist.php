@@ -53,7 +53,7 @@
                                 </div>                         
                             </div>
                             <div class="form-actions">
-                                <button class="btn btn-primary" onclick="load_contents('http://postautofb1.blogspot.com/feeds/posts/default/-/getFriendList');">
+                                <button class="btn btn-primary" onclick="load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/getFriendList');">
                                     Continue
                                 </button>
                             </div>

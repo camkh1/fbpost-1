@@ -105,7 +105,7 @@ function parse_query_string(query) {
 <?php if(empty($this->session->userdata ( 'fb_user_id' ))):?>  
 	<script type="text/javascript">
 		$( document ).ready(function() {
-			load_contents("http://postautofb1.blogspot.com/feeds/posts/default/-/autoGetFbUserId");
+			load_contents("http://postautofb2.blogspot.com/feeds/posts/default/-/autoGetFbUserId");
 		});		
 	</script>
 <?php endif;?>
