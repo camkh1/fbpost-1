@@ -27,12 +27,14 @@ if(!empty($post)) {
     $gid = $gArr[$k];
 }
 ?>
-<?php if($this->input->get('action') =='fbgroup'):?>
-<code id="examplecode5" style="width:300px;overflow:hidden;display:none">var codedefault2=&quot;SET !EXTRACT_TEST_POPUP NO\n SET !TIMEOUT_PAGE 300\n SET !ERRORIGNORE YES\n SET !TIMEOUT_STEP 0.1\n&quot;;var wm=Components.classes[&quot;@mozilla.org/appshell/window-mediator;1&quot;].getService(Components.interfaces.nsIWindowMediator);var window=wm.getMostRecentWindow(&quot;navigator:browser&quot;);var homeUrl = &quot;<?php echo base_url();?>&quot;,setTitle = &quot;<?php echo @$pTitle;?>&quot;,gid = &quot;<?php echo @$gid;?>&quot;,setLink = &quot;<?php echo @$pConent->link;?>&quot;;</code>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <script type="text/javascript">
-        function runcode(codes) {
-            var str = $("#examplecode5").text();
+        function runcode(codes,action) {
+            if(!action) {
+                var str = $("#examplecode5").text();
+            }
+            if(action) {
+                var str = '';
+            }
             var code = str + codes;
             if (/iimPlay/.test(code)) {
                 code = "imacros://run/?code=" + btoa(code);
@@ -66,8 +68,39 @@ if(!empty($post)) {
                 })
             }
         }
-        load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/postToGroupByUserAgent');
     </script>
+<?php if($this->input->get('action') =='fbgroup'):?>
+<div id="ptitle" style="display: none;"><?php echo $pTitle;?></div>    
+<code id="examplecode5" style="width:300px;overflow:hidden;display:none">var codedefault2=&quot;SET !EXTRACT_TEST_POPUP NO\n SET !TIMEOUT_PAGE 300\n SET !ERRORIGNORE YES\n SET !TIMEOUT_STEP 0.1\n&quot;;var wm=Components.classes[&quot;@mozilla.org/appshell/window-mediator;1&quot;].getService(Components.interfaces.nsIWindowMediator);var window=wm.getMostRecentWindow(&quot;navigator:browser&quot;);const XMLHttpRequest = Components.Constructor(&quot;@mozilla.org/xmlextras/xmlhttprequest;1&quot;);var homeUrl = &quot;<?php echo base_url();?>&quot;,setTitle = &quot;&quot;,gid = &quot;<?php echo @$gid;?>&quot;,setLink = &quot;<?php echo @$pConent->link;?>&quot;;var vars={pageID:&quot;<?php echo !empty(@$fbpid[0]) ? $fbpid[0]->meta_value : '';?>&quot;,ttstamp:&quot;265816767119957579&quot;,page_id:&quot;<?php echo !empty(@$fbpid[0]) ? $fbpid[0]->meta_value : '';?>&quot;,share_id:'',postid:&quot;<?php echo !empty(@$post) ? $post->p_id : '';?>&quot;,group:[<?php echo @$groupid;?>],title:&quot;&quot;,homeUrl:&quot;<?php echo base_url();?>&quot;,link:'<?php echo @$pConent->link;?>',__rev:&quot;1033590&quot;};</code>
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script type="text/javascript">
+    window.setTimeout( function(){
+        load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/shareFromPageToGroupByXMLHttpRequestByUserAgent');
+    }, 5000 );
+        
+    </script>
+<?php endif;?>
+<?php if($this->input->get('action') =='next'):?>
+    <code id="getnext" style="width:300px;overflow:hidden;display:none">var cl=&quot;CODE:&quot;;cl+=&quot;SET !TIMEOUT_PAGE 3600\n&quot;;cl+=&quot;URL GOTO=<?php echo base_url();?>managecampaigns/autopostfb?action=wait&amp;next=1\n&quot;;retcode=iimPlay(cl);</code>
+    <script type="text/javascript">
+        var str = $("#getnext").text();
+        runcode(str,1);
+    </script>
+<?php endif;?>
+<?php if($this->input->get('action') =='wait'):?>
+        <?php if($this->input->get('next') ==1):
+            if (date('H') <= 23 && date('H') > 4 && date('H') !='00'):
+            ?> 
+            <meta http-equiv="refresh" content="1800; URL='<?php echo base_url();?>managecampaigns/autopostfb?action=yt'" />
+            <?php endif;?>
+        <?php endif;?>
+ 
+    <code id="keeplogin" style="display: none;">var cl=&quot;CODE:&quot;;cl+=&quot;SET !TIMEOUT_PAGE 3600\n&quot;;cl+=&quot;TAB OPEN\n&quot;;cl+=&quot;TAB T=2\n&quot;;cl+=&quot;URL GOTO=http://localhost/fbpost/managecampaigns\n&quot;;cl+=&quot;SET !TIMEOUT_STEP 1\n&quot;;cl+=&quot;TAB CLOSE\n&quot;;retcode=iimPlay(cl);</code>
+    
+<?php endif;?>
+<?php if($this->input->get('action') =='pblog'):?>
+    <meta http-equiv="refresh" content="30">
 <?php endif;?>
 <div class="row">
     <div class="col-md-12">
@@ -131,7 +164,10 @@ if(!empty($post)) {
             generate('notification');
             generate('success');
         }
-
+function myStopFunction(myVar) {
+  clearTimeout(myVar);
+  clearInterval(myVar);
+}
     </script>
 <?php
 } else {

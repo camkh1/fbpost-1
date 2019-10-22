@@ -16,6 +16,197 @@ class Getcontent extends CI_Controller
         $data['title'] = 'Autopost';
         $this->load->view('layout/splogr/index', $data);
     }
+    public function getLinkFromSite($url='')
+    {
+        $log_id = $this->session->userdata ( 'user_id' );
+        $this->load->library ( 'html_dom' );
+        $html = file_get_html ( $url );
+        $obj = new stdClass();
+        $parse = parse_url($url);
+        //echo $parse['host'];
+
+        /*clean link is not today*/
+        $whIsnot = array(
+            'meta_name'     => $log_id . 'sitelink',
+            'meta_key != '      => date('Y-m-d'),
+        );
+        $queryLinkIs = $this->Mod_general->select('meta', 'meta_id', $whIsnot);
+        if(!empty($queryLinkIs[0])) {
+            foreach ($queryLinkIs as $key => $lid) {
+                $this->mod_general->delete(
+                    'meta', 
+                    array(
+                        'meta_id'=>$lid->meta_id
+                    )
+                );
+            }
+        }
+        /*clean link is not today*/
+        switch ($parse['host']) {
+            case 'www.siamnews.com':
+                $sectionA = $html->find('#main .news-lay-3',0);
+                foreach($sectionA->find('article') as $index => $slink) {
+                    $link = $slink->find('a',0)->href;
+                    /*check duplicate link*/
+                    $whereDupA = array(
+                        'object_id'      => $link,
+                        'meta_name'     => $log_id . 'sitelink',
+                        'meta_key'      => date('Y-m-d'),
+                    );
+                    $queryCheckDup = $this->Mod_general->select('meta', '*', $whereDupA);
+                    if(empty($queryCheckDup[0])) {
+                        $data_blog = array(
+                            'meta_key'      => date('Y-m-d'),
+                            'object_id'      => $link,
+                            'meta_value'     => 0,
+                            'meta_name'     => $log_id . 'sitelink',
+                        );
+                        $lastID = $this->Mod_general->insert('meta', $data_blog);
+                    }
+                    /*End check duplicate link*/
+                }
+                $sectionC = $html->find('#main .news-lay-3',2);
+                foreach($sectionC->find('article') as $index => $clink) {
+                    $linkc = $clink->find('a',0)->href;
+                    /*check duplicate link*/
+                    $whereDupA = array(
+                        'object_id'      => $linkc,
+                        'meta_name'     => $log_id . 'sitelink',
+                        'meta_key'      => date('Y-m-d'),
+                    );
+                    $queryCheckDup = $this->Mod_general->select('meta', '*', $whereDupA);
+                    if(empty($queryCheckDup[0])) {
+                        $data_blogC = array(
+                            'meta_key'      => date('Y-m-d'),
+                            'object_id'      => $linkc,
+                            'meta_value'     => 0,
+                            'meta_name'     => $log_id . 'sitelink',
+                        );
+                        $lastID = $this->Mod_general->insert('meta', $data_blogC);
+                    }
+                    /*End check duplicate link*/
+                }
+                break;
+            case 'www.viralsfeedpro.com':
+                $sectionA = $html->find('#main .news-lay-3',0);
+                foreach($sectionA->find('article') as $index => $slink) {
+                    $link = $slink->find('a',0)->href;
+                    /*check duplicate link*/
+                    $whereDupA = array(
+                        'object_id'      => $link,
+                        'meta_name'     => $log_id . 'sitelink',
+                        'meta_key'      => date('Y-m-d'),
+                    );
+                    $queryCheckDup = $this->Mod_general->select('meta', '*', $whereDupA);
+                    if(empty($queryCheckDup[0])) {
+                        $data_blog = array(
+                            'meta_key'      => date('Y-m-d'),
+                            'object_id'      => $link,
+                            'meta_value'     => 0,
+                            'meta_name'     => $log_id . 'sitelink',
+                        );
+                        $lastID = $this->Mod_general->insert('meta', $data_blog);
+                    }
+                    /*End check duplicate link*/
+                }
+                $sectionC = $html->find('#main .news-lay-3',2);
+                foreach($sectionC->find('article') as $index => $clink) {
+                    $linkc = $clink->find('a',0)->href;
+                    /*check duplicate link*/
+                    $whereDupA = array(
+                        'object_id'      => $linkc,
+                        'meta_name'     => $log_id . 'sitelink',
+                        'meta_key'      => date('Y-m-d'),
+                    );
+                    $queryCheckDup = $this->Mod_general->select('meta', '*', $whereDupA);
+                    if(empty($queryCheckDup[0])) {
+                        $data_blogC = array(
+                            'meta_key'      => date('Y-m-d'),
+                            'object_id'      => $linkc,
+                            'meta_value'     => 0,
+                            'meta_name'     => $log_id . 'sitelink',
+                        );
+                        $lastID = $this->Mod_general->insert('meta', $data_blogC);
+                    }
+                    /*End check duplicate link*/
+                }
+                break;
+            case 'www.mumkhao.com':
+                $sectionA = $html->find('#main .news-lay-3',0);
+                foreach($sectionA->find('article') as $index => $slink) {
+                    $link = $slink->find('a',0)->href;
+                    /*check duplicate link*/
+                    $whereDupA = array(
+                        'object_id'      => $link,
+                        'meta_name'     => $log_id . 'sitelink',
+                        'meta_key'      => date('Y-m-d'),
+                    );
+                    $queryCheckDup = $this->Mod_general->select('meta', '*', $whereDupA);
+                    if(empty($queryCheckDup[0])) {
+                        $data_blog = array(
+                            'meta_key'      => date('Y-m-d'),
+                            'object_id'      => $link,
+                            'meta_value'     => 0,
+                            'meta_name'     => $log_id . 'sitelink',
+                        );
+                        $lastID = $this->Mod_general->insert('meta', $data_blog);
+                    }
+                    /*End check duplicate link*/
+                }
+                $sectionC = $html->find('#main .news-lay-3',2);
+                foreach($sectionC->find('article') as $index => $clink) {
+                    $linkc = $clink->find('a',0)->href;
+                    /*check duplicate link*/
+                    $whereDupA = array(
+                        'object_id'      => $linkc,
+                        'meta_name'     => $log_id . 'sitelink',
+                        'meta_key'      => date('Y-m-d'),
+                    );
+                    $queryCheckDup = $this->Mod_general->select('meta', '*', $whereDupA);
+                    if(empty($queryCheckDup[0])) {
+                        $data_blogC = array(
+                            'meta_key'      => date('Y-m-d'),
+                            'object_id'      => $linkc,
+                            'meta_value'     => 0,
+                            'meta_name'     => $log_id . 'sitelink',
+                        );
+                        $lastID = $this->Mod_general->insert('meta', $data_blogC);
+                    }
+                    /*End check duplicate link*/
+                }
+                break;
+            case 'www.xn--42c2dgos8bxc2dtcg.com':
+                $sectionA = $html->find('.bdaia-blocks-container article .block-article-img-container a');
+                foreach($sectionA as $index => $clink) {
+                    $linkc = $clink->href;
+                    /*check duplicate link*/
+                    $whereDupA = array(
+                        'object_id'      => $linkc,
+                        'meta_name'     => $log_id . 'sitelink',
+                        'meta_key'      => date('Y-m-d'),
+                    );
+                    $queryCheckDup = $this->Mod_general->select('meta', '*', $whereDupA);
+                    if(empty($queryCheckDup[0])) {
+                        $data_blogC = array(
+                            'meta_key'      => date('Y-m-d'),
+                            'object_id'      => $linkc,
+                            'meta_value'     => 0,
+                            'meta_name'     => $log_id . 'sitelink',
+                        );
+                        $lastID = $this->Mod_general->insert('meta', $data_blogC);
+                    }
+                    /*End check duplicate link*/
+                }
+                break;
+            case 'www.tnews.co.th':
+                $sectionA = $html->find('.bdaia-blocks-container article .block-article-img-container a');
+                break;
+            default:
+                # code...
+                break;
+        }
+    }
+
     function getConentFromSite($url,$oldurl='')
     {
         $log_id = $this->session->userdata ( 'user_id' );

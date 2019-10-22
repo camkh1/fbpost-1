@@ -370,10 +370,23 @@ class Managecampaigns extends CI_Controller {
                 if (date('H') <= 23 && date('H') > 4 && date('H') !='00') {
                    //echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopost?start=1";}, 600000 );</script>';
                     
-                     
+                     /*get page id*/
+                    $wFbconfig = array(
+                        'meta_name'      => 'fbconfig',
+                        'object_id'     => $log_id,
+                        'meta_key'     => $sid,
+                    );
+                    $fbpid = $this->Mod_general->select('meta', '*', $wFbconfig);
+                    if(!empty($fbpid[0])) {
+                        $setTime = $arrX[$randIndex] * (1000 * 60);
+                    echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=yt";}, '.$setTime.' );</script>';
+                    } else {
+                        $setTime = $arrX[$randIndex] * (1000 * 60);
+                        echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/postprogress";}, '.$setTime.' );</script>';
+                    }
+                    /*End get page id*/
                     // output the value for the random index
-                    $setTime = $arrX[$randIndex] * (1000 * 60);
-                    echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/postprogress";}, '.$setTime.' );</script>';
+                    
                    //echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopost?start=1";}, 600000 );</script>';
                     //autogetpost
                 } else {
@@ -907,8 +920,9 @@ class Managecampaigns extends CI_Controller {
             $saddtxt = @$this->input->post ( 'saddtxt' );
             $label = @$this->input->post ( 'label' );
 
-
-            
+            if(!empty($post_all)) {
+                $this->session->set_userdata('post_all', $post_all);
+            }
             // for ($i = 0; $i < count($link); $i++) {
             //     $PostInput = 'smpoststyle'.($i+1);
             //     $smpoststyle = @$this->input->post ( $PostInput );
@@ -1197,6 +1211,7 @@ class Managecampaigns extends CI_Controller {
         $post_by_manaul = false;
         if(!empty($this->input->get('action'))) {
             if($this->input->get('action') == 'postblog' && !empty($this->input->get('bid'))) {
+                echo '<meta http-equiv="refresh" content="30">';
                 if(!empty($this->session->userdata('access_token'))) {
                     $this->load->library('google_api');
                     $client = new Google_Client();                  
@@ -1927,6 +1942,50 @@ class Managecampaigns extends CI_Controller {
                 $updates = $this->Mod_general->update( 'youtube',$ytInstert, $whereYtup);
             }
             /*End update youtube if autopost*/
+
+            /*Post all post*/
+            $post_all = $this->session->userdata ( 'post_all' );
+                if($post_all) {
+                $fbUserId = $this->session->userdata ( 'sid' );
+                $whereNext = array (
+                    'user_id' => $log_id,
+                    'u_id' => $fbUserId,
+                    'p_post_to' => 1,
+                );
+                $nextPost = $this->Mod_general->select ( Tbl_posts::tblName, '*', $whereNext );
+                if(!empty($nextPost[0])) {
+                    $p_id = $nextPost[0]->p_id;
+                    $pConent = json_decode($nextPost[0]->p_conent);
+                    $pOption = json_decode($nextPost[0]->p_schedule);
+                    $bid = $pOption->blogid;
+                    //redirect(base_url() . 'managecampaigns/yturl?pid='.$p_id.'&bid=' . $bid . '&action=postblog&blink='.$blogLink); 
+                    /*get blog link from database*/
+                    $blogRand = $big = $this->getBlogLink();
+                    if (!empty($blogRand)) {
+                        if(empty($big)) {
+                            $currentURL = current_url(); //for simple URL
+                             $params = $_SERVER['QUERY_STRING']; //for parameters
+                             $fullURL = $currentURL . '?' . $params;
+                             echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopost?createblog=1&backto='.urlencode($fullURL).'";}, 3000 );</script>';
+                            //$setUrl = base_url() . 'managecampaigns/autopost?createblog=1&backto='. urlencode($fullURL);
+                            //redirect($setUrl);
+                            exit();
+                        }
+                    } else {
+                        $currentURL = current_url(); //for simple URL
+                         $params = $_SERVER['QUERY_STRING']; //for parameters
+                         $fullURL = $currentURL . '?' . $params;
+                         echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopost?createblog=1&backto='.urlencode($fullURL).'";}, 3000 );</script>';
+                        exit();
+                    }
+                    echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/yturl?pid='.$p_id.'&bid='.$bid.'&action=postblog&blink=1&autopost=1";}, 300 );</script>';
+                    exit();
+                } else {
+                    $this->session->unset_userdata('post_all');
+                } 
+            }
+            /*Post all post*/
+
             if(!empty($backto)) {
                 $runpost  = '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.$backto.'";}, 30 );</script>';
                 echo $runpost;
@@ -5042,82 +5101,166 @@ public function imgtest()
 
         $action = $this->input->get('action');
         switch ($action) {
-            case 'yt':
-                $checkYtExist = $this->mod_general->select ( 
-                    'youtube', 
-                    'yid', 
-                    array (
-                        'y_uid' => $log_id,
-                        'y_status' => 0,
-                    )
+            case 'next':
+                $whereSpam = array (
+                    'user_id' => $log_id,
+                    'p_id' => $this->input->get('postid')
                 );
-                if(!empty($checkYtExist[0]) && count($checkYtExist)> 1) {
-                    echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=pblog";}, 30 );</script>';
-                } else {
-                    /*update youtube video*/
-                    $where_yt = array(
-                        'c_name'      => 'youtubeChannel',
-                        'c_key'     => $log_id,
-                    );
-                    $query_yt = $this->Mod_general->select('au_config', '*', $where_yt);
-                    if (!empty($query_yt[0])) {
-                        $data = json_decode($query_yt[0]->c_value);
-                        $ytid = array();
-                        $chID = array();
-                        $chStatus = array();
-                        $inputYt = array();
-                        foreach ($data as $key => $config) {
-                            $inputYt[] = array(
-                                'ytid'=> $config->ytid,
-                                'ytname' => $config->ytname,
-                                'date' => strtotime("now"),
-                                'status' => 0,
-                            );
-                            $chID[] = $config->ytid;
-                            if($config->status == 1) {
-                                $chStatus[] = $config->status;
-                            }
-                            if($config->status == 0) {
-                                $ytid[] = $config->ytid;
-                            }
-                        }                                
+                @$this->Mod_general->delete('post', $whereSpam);
+                break;
+            case 'site':
+                /*get link from DB*/
+                $whIsnot = array(
+                    'meta_name'     => $log_id . 'sitelink',
+                    'meta_key'      => date('Y-m-d'),
+                    'meta_value'     => 0,
+                );
+                $queryLinkIs = $this->Mod_general->select('meta', '*', $whIsnot);
+                if(!empty($queryLinkIs[0])) {
+                    $getContent = $this->get_from_url($queryLinkIs[0]->object_id);
 
-                        /*check channel update*/
-                        if(count($chID) == count($chStatus)) {
-                            $data_yt = array(
-                                'c_value'      => json_encode($inputYt)
-                            );
-                            $whereYT = array(
-                                'c_key'     => $log_id,
-                                'c_name'      => 'youtubeChannel'
-                            );
-                            $this->Mod_general->update('au_config', $data_yt,$whereYT);
-                        }
-                        $brand = mt_rand(0, count($ytid) - 1);
-                        $ytRandID = $ytid[$brand];                                
-                        /*End check channel update*/
-                        $ytID = $ytRandID; 
-                        $currentURL = current_url(); //for simple URL
-                         $params = $_SERVER['QUERY_STRING']; //for parameters
-                         $fullURL = $currentURL . '?' . $params; //full URL with parameter
-                        $setUrl = base_url() . 'managecampaigns/autopost?glogin='. urlencode($fullURL);
-                        $this->getYoutubeVideos($ytID,20,$setUrl);
-                        redirect(base_url() . 'managecampaigns/autopostfb?action=yt');
+
+                    /*preparepost*/
+                    $fbUserId = $this->session->userdata('fb_user_id');
+                    $tmp_path = './uploads/'.$log_id.'/'. $fbUserId . '_tmp_action.json';
+                    $string = file_get_contents($tmp_path);
+                    $json_a = json_decode($string);
+                    $schedule = array (                    
+                        'start_date' => $json_a->start_date,
+                        'start_time' => $json_a->start_time,
+                        'end_date' => $json_a->end_date,
+                        'end_time' => $json_a->end_time,
+                        'loop' => $json_a->loop,
+                        'loop_every' => $json_a->loop_every,
+                        'loop_on' => $json_a->loop_on,
+                        'wait_group' => $json_a->wait_group,
+                        'wait_post' => $json_a->wait_post,
+                        'randomGroup' => $json_a->randomGroup,
+                        'prefix_title' => $json_a->prefix_title,
+                        'suffix_title' => $json_a->suffix_title,
+                        'short_link' => $json_a->short_link,
+                        'check_image' => $json_a->check_image,
+                        'imgcolor' => $json_a->imgcolor,
+                        'btnplayer' => $json_a->btnplayer,
+                        'playerstyle' => $json_a->playerstyle,
+                        'random_link' => $json_a->random_link,
+                        'share_type' => $json_a->share_type,
+                        'share_schedule' => $json_a->share_schedule,
+                        'account_group_type' => $json_a->account_group_type,
+                        'txtadd' => $json_a->txtadd,
+                        'blogid' => $json_a->blogid,
+                        'blogLink' => $json_a->blogLink,
+                        'main_post_style' => 'tnews',
+                        'userAgent' => $json_a->userAgent,
+                        'checkImage' => $json_a->checkImage,
+                        'ptype' => $json_a->ptype,
+                        'img_rotate' => $json_a->img_rotate,
+                        'filter_contrast' => $json_a->filter_contrast,
+                        'filter_brightness' => $json_a->filter_brightness,
+                        'post_by_manaul' => $json_a->post_by_manaul,
+                        'foldlink' => $json_a->foldlink,
+                        'gemail' => $json_a->gemail,
+                    );
+
+                    $content = array (
+                            'name' => @htmlentities(htmlspecialchars(str_replace(' - YouTube', '', $getContent['name']))),
+                            'message' => @htmlentities(htmlspecialchars(addslashes($getContent['content']))),
+                            'caption' => $getContent['caption'],
+                            'link' => @$getContent['link'],
+                            'mainlink' => '',
+                            'picture' => @$getContent['picture'],                            
+                            'vid' => '',                          
+                    );
+                    /*End preparepost*/
+                    $dataPostInstert = array (
+                        Tbl_posts::name => $getContent['name'],
+                        Tbl_posts::conent => json_encode($content),
+                        Tbl_posts::p_date => date('Y-m-d H:i:s'),
+                        Tbl_posts::schedule => json_encode($schedule),
+                        Tbl_posts::user => $sid,
+                        'user_id' => $log_id,
+                        Tbl_posts::post_to => 0,
+                        'p_status' => 1,
+                        'p_progress' => 0,
+                        Tbl_posts::type => 'Facebook' 
+                    );
+                    $AddToPost = $this->Mod_general->insert ( Tbl_posts::tblName, $dataPostInstert );
+                    if($AddToPost) {
+                        /*update link status*/
+                        $data_LinkUp = array(
+                            'meta_value'     => 1,
+                        );
+                        $setSWhere = array('meta_id' => $queryLinkIs[0]->meta_id);
+                        $this->Mod_general->update('meta', $data_LinkUp,$setSWhere);
+                        /*End update link status*/
+                        echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=post&pid='.$AddToPost.'";}, 30 );</script>';
+                        exit();
                     }
+                } else {
+                    require_once(APPPATH.'controllers/Getcontent.php');
+                    $aObj = new Getcontent();
+                    $siteUrl = array(
+                        'https://www.siamnews.com/',
+                        'https://www.viralsfeedpro.com/',
+                        'https://www.mumkhao.com/',
+                        'https://www.xn--42c2dgos8bxc2dtcg.com/',
+                    );
+                    $k = array_rand($siteUrl);
+                    $getSiteUrl = $siteUrl[$k];
+                    $content = $aObj->getLinkFromSite($getSiteUrl);
+                    echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=site";}, 3000 );</script>';
+                }
+                /*End get link from DB*/
+                break;
+            case 'yt':
+                /*get post that not share ixist*/
+                $where_Pshare = array (
+                    'u_id' => $sid,
+                    'p_status' => 1,
+                );
+                $dataPost = $this->Mod_general->select ('post','*', $where_Pshare);
+                if(!empty($dataPost[0])) {
+                    $pid = $dataPost[0]->p_id;
+                    $pConent = json_decode($dataPost[0]->p_conent);
+                    $pOption = json_decode($dataPost[0]->p_schedule);
+                    $imgUrl = @$pConent->picture;
+                    echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=post&pid='.$pid.'";}, 30 );</script>';
+                    exit();
+                }
+                /*End get post that not share*/
+
+                $RanChoose = array(
+                    'site',
+                    'yt',
+                );
+                $l = array_rand($RanChoose);
+                $getChoose = $RanChoose[$l];
+                switch ($getChoose) {
+                    case 'yt':
+                        $this->getYtToPost();
+                        break;
+                    case 'site':
+                        echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=site";}, 1000 );</script>';
+                        break;
+                    default:
+                        # code...
+                        break;
                 }
                 break;
             case 'pblog':
                 $pid = $this->autoposttoblog();
+                echo '<meta http-equiv="refresh" content="30">';
                 if(!empty($pid)) {
                     echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=post&pid='.$pid.'";}, 30 );</script>';
                 } else {
-                    echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=yt";}, 30 );</script>';
+                    echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=yt";}, 3000 );</script>';
                 }
                 break;
             case 'post':
+                echo '<meta http-equiv="refresh" content="30">';
                 $pid = @$this->input->get('pid');
                 if(empty($pid)) {
-                    echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=yt";}, 30 );</script>';
+                    echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=yt";}, 3000 );</script>';
                 }
                 $this->postbloggerByAuto($pid);
                 break;
@@ -5128,13 +5271,23 @@ public function imgtest()
                     'u_id' => $sid,
                 );
                 $getPost = $this->Mod_general->select ( Tbl_posts::tblName, '*', $wPost, 0, 0, 1 );
-                if(!empty($getPost[0])) {
-                    $data['post'] = $getPost[0];
-                    /*Show data Prefix*/
-                    $pConent = json_decode($data['post']->p_conent);                
-                    $pSchedule = json_decode($data['post']->p_schedule);
+                if(empty($getPost[0])) {
+                    $wPost = array (
+                        'user_id' => $log_id,
+                        'u_id' => $sid,
+                    );
+                    $getPost = $this->Mod_general->select ( Tbl_posts::tblName, '*', $wPost, 0, 0, 1 );
+                }
+                $data['post'] = $getPost[0];
 
-                    /*Show data Prefix*/
+                /*Show data Prefix*/
+                $pConent = json_decode($data['post']->p_conent);                
+                $pSchedule = json_decode($data['post']->p_schedule);
+
+                $sh_type = $pSchedule->ptype;
+                $account_group_type = $pSchedule->account_group_type;
+                /*Show data Prefix*/
+                if($pSchedule->main_post_style !='tnews') {
                     if(!empty($pSchedule->prefix_title)) {
                         $prefixArr = explode('|', $pSchedule->prefix_title);
                         $preRand = $prefixArr[mt_rand(0, count($prefixArr) - 1)];
@@ -5150,9 +5303,10 @@ public function imgtest()
                             $preRand = $prefixArr[mt_rand(0, count($prefixArr) - 1)];
                         }
                     }
-                    /*End Show data Prefix*/
+                }
+                /*End Show data Prefix*/
 
-
+                if($pSchedule->main_post_style !='tnews') {
                     if(!empty($pSchedule->suffix_title)) {
                         $subFixArr = explode('|', $pSchedule->suffix_title);
                         $subRand = $subFixArr[mt_rand(0, count($subFixArr) - 1)];
@@ -5168,14 +5322,55 @@ public function imgtest()
                             $subRand = $subFixArr[mt_rand(0, count($subFixArr) - 1)];
                         }
                     }
-                    /*End Show data Prefix*/
+                }
+                /*End Show data Prefix*/
+                if($pSchedule->main_post_style !='tnews') {
                     if(!empty($pSchedule->prefix_title)) {
                         $title = $preRand . '<br/>' . $data['post']->p_name . '<br/>' . $subRand;
                     } else {
                         $title = $data['post']->p_name . '<br/>' . $subRand;
                     }
-                    $data['pTitle'] = @$title;
+                } else {
+                    $title = $data['post']->p_name;
                 }
+                $data['pTitle'] = @$title;
+
+                /*get page id*/
+                $wFbconfig = array(
+                    'meta_name'      => 'fbconfig',
+                    'object_id'     => $log_id,
+                    'meta_key'     => $sid,
+                );
+                $data['fbpid'] = $this->Mod_general->select('meta', '*', $wFbconfig);
+                /*End get page id*/
+
+                /*Get groups id*/
+                $userAction = $this->Mod_general->userrole('uid');
+                if($userAction) {
+                    /*get group*/
+                   $wGroupType = array (
+                        'gu_grouplist_id' => $account_group_type,
+                        'gu_user_id' => $log_id,
+                        'gu_status' => 1
+                    );
+                    $tablejoin = array('socail_network_group'=>'socail_network_group.sg_id=group_user.gu_idgroups');
+                    $itemGroups = $this->Mod_general->join('group_user', $tablejoin, $fields = '*', $wGroupType);
+                }
+                /* add data to group of post */
+                $dataGoupInstert = array();
+                if(!empty($itemGroups)) {                
+                    foreach($itemGroups as $key => $groups) { 
+                        if(!empty($groups)) {      
+                            $dataGoupInstert[] = $groups->sg_page_id;
+                        }
+                    } 
+                }
+                if($dataGoupInstert) {
+                    $data['groupid'] = implode(',', $dataGoupInstert);
+                }
+                /* end add data to group of post */
+                /*End Get groups id*/
+                
                 break;
             case 'wait':
                 $whereShowAuto = array(
@@ -5187,8 +5382,13 @@ public function imgtest()
                     $autopost = json_decode($autoData[0]->c_value);
                     if($autopost->autopost == 1) {
                         if (date('H') <= 23 && date('H') > 4 && date('H') !='00') {
-                           echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=yt";}, ‭30000‬ );</script>';
-                        } 
+                                $next = $this->input->get('next');
+                                if(!empty($next)) {
+                                   
+                                } else {
+                                    echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=yt";}, 3000 );</script>';
+                                }
+                        }
                         //localhost/autopost/managecampaigns/autopost?start=1
                     }
                 }
@@ -5198,6 +5398,111 @@ public function imgtest()
                 break;
         }
         $this->load->view ( 'managecampaigns/autopostfb', $data );
+    }
+
+    public function getYtToPost()
+    {
+
+        $log_id = $this->session->userdata ( 'user_id' );
+        $user = $this->session->userdata ( 'email' );
+        $provider_uid = $this->session->userdata ( 'provider_uid' );
+        $provider = $this->session->userdata ( 'provider' );
+        $gemail = $this->session->userdata ('gemail');
+        $fbUserId = $this->session->userdata('fb_user_id');
+        $sid = $this->session->userdata ( 'sid' );
+        $checkYtExist = $this->mod_general->select ( 
+            'youtube', 
+            '*', 
+            array (
+                'y_uid' => $log_id,
+                'y_status' => 0,
+            )
+        );
+        if(!empty($checkYtExist[0]) && count($checkYtExist)> 1) {
+            //var_dump($checkYtExist[0]->y_date);
+            echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=pblog";}, 30 );</script>';
+                die;
+            // $dates = date('Y-m-d', strtotime($checkYtExist[0]->y_date));
+            // if($dates == date('Y-m-d')) {
+            //     echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=pblog";}, 30 );</script>';
+            //     die;
+            // } else {
+            //     $whereYT = array(
+            //         'y_id'     => $checkYtExist[0]->y_date,
+            //     );
+            //     $this->Mod_general->delete('youtube', $whereYT);
+            //     //echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=yt";}, 30 );</script>';
+            // }
+            //echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=pblog";}, 30 );</script>';
+        } 
+        /*update youtube video*/
+        $where_yt = array(
+            'c_name'      => 'youtubeChannel',
+            'c_key'     => $log_id,
+        );
+        $query_yt = $this->Mod_general->select('au_config', '*', $where_yt);
+        if (!empty($query_yt[0])) {
+            $data = json_decode($query_yt[0]->c_value);
+            $ytid = array();
+            $chID = array();
+            $chStatus = array();
+            $inputYt = array();
+            foreach ($data as $key => $config) {
+                $inputYt[] = array(
+                    'ytid'=> $config->ytid,
+                    'ytname' => $config->ytname,
+                    'date' => strtotime("now"),
+                    'status' => 0,
+                );
+                $chID[] = $config->ytid;
+                if($config->status == 1) {
+                    $chStatus[] = $config->status;
+                }
+                if($config->status == 0) {
+                    $ytid[] = $config->ytid;
+                }
+            }                                
+
+            /*check channel update*/
+            if(count($chID) == count($chStatus)) {
+                $data_yt = array(
+                    'c_value'      => json_encode($inputYt)
+                );
+                $whereYT = array(
+                    'c_key'     => $log_id,
+                    'c_name'      => 'youtubeChannel'
+                );
+                $this->Mod_general->update('au_config', $data_yt,$whereYT);
+            }
+            $brand = mt_rand(0, count($ytid) - 1);
+            $ytRandID = $ytid[$brand];                                
+            /*End check channel update*/
+            $ytID = $ytRandID; 
+            $currentURL = current_url(); //for simple URL
+             $params = $_SERVER['QUERY_STRING']; //for parameters
+             $fullURL = $currentURL . '?' . $params; //full URL with parameter
+            $setUrl = base_url() . 'managecampaigns/autopost?glogin='. urlencode($fullURL);
+            $this->getYoutubeVideos($ytID,5,$setUrl);
+            /*clean up for 3 days ago*/
+            $twoDaysAgo = date('Y-m-d h:m:s', strtotime('-2 days', strtotime(date('Y-m-d'))));
+            $checkYtExist = $this->mod_general->select ( 
+                'youtube', 
+                '*', 
+                array (
+                    'y_uid' => $log_id,
+                    'y_date <= ' => $twoDaysAgo,
+                )
+            );
+            foreach ($checkYtExist as $key => $ytdel) {
+                $whereYT = array(
+                    'y_id'     => $ytdel->y_id,
+                );
+                $this->Mod_general->delete('youtube', $whereYT);
+            }
+            /*End clean up for 3 days ago*/
+            redirect(base_url() . 'managecampaigns/autopostfb?action=yt');
+        }
+        echo '<meta http-equiv="refresh" content="30">';
     }
 
     function postbloggerByAuto($pid)
@@ -5213,13 +5518,13 @@ public function imgtest()
                 exit();
             }
         }
+
         if(empty($this->session->userdata('access_token'))) {
             $fullURL = base_url().'managecampaigns/autopostfb?action=post&pid='.$pid;
             $setUrl = base_url() . 'managecampaigns/autopost?glogin='. urlencode($fullURL);
-            redirect($backto);
+            redirect($setUrl);
             exit();
         }
-
         $log_id = $this->session->userdata ( 'user_id' );
         $user = $this->session->userdata ( 'email' );
         $provider_uid = $this->session->userdata ( 'provider_uid' );
@@ -5254,9 +5559,28 @@ public function imgtest()
                 $this->Mod_general->delete('post', array('p_id'=>$getPost[0]->p_id));
             }
             
-            
+
             if(!empty($vid))  {
                 $imgUrl = $picture;
+                if(empty($picture)) {
+                    $imgUrl = 'https://i.ytimg.com/vi/'.$vid.'/hqdefault.jpg';
+                }
+                if (preg_match('/uploads/', $imgUrl)) {
+                    $fileName = FCPATH .$picture;
+                } else {
+                    $structure = FCPATH . 'uploads/image/';
+                    if (!file_exists($structure)) {
+                        mkdir($structure, 0777, true);
+                    }
+                    //$imgUrl = @str_replace('maxresdefault', 'hqdefault', $imgUrl);
+
+                    $file_title = basename($imgUrl);
+
+                    $fileName = FCPATH . 'uploads/image/'.$pid.$file_title;
+                    if (!preg_match('/ytimg.com/', $imgUrl)) {
+                        $imgUrl = $picture;
+                    } 
+                }
                 if (preg_match("/http/", $imgUrl) && preg_match('/ytimg.com/', $imgUrl)) {
                     @copy($imgUrl, $fileName);      
                     $param = array(
@@ -5283,6 +5607,7 @@ public function imgtest()
                     $image = $picture;
                 }
             }
+
             if(!empty($image)) {
                 /*update post*/
                 $whereUp = array('p_id' => $pid);
@@ -5340,6 +5665,13 @@ public function imgtest()
                 $json_a = json_decode($string);
                 $blink = $json_a->blogLink;
                 if(!empty($link)) {
+                    /*update youtube that get posted*/
+                    if(!empty($ytData->yid)) {
+                        $sid = $this->session->userdata ( 'sid' );
+                        $this->Mod_general->update('youtube', array('y_status'=>1), array('yid'=>$ytData->yid,'y_fid'=>$sid));
+                    }
+                    /*End update youtube that get posted*/
+
                     if(!empty($blink) && $blink == 1) {
                         $bLinkData = $this->getBlogLink();
                         if(empty($bLinkData)) {
@@ -5347,10 +5679,10 @@ public function imgtest()
                             echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopost?createblog=1&backto='.urlencode($fullURL).'";}, 3000 );</script>';
                         }
                         //http://localhost/autopost/facebook/shareation?post=getpost
-                        $backtoMain = base_url().'facebook/shareation?post=getpost';
+                        $backtoMain = base_url().'managecampaigns/autopostfb?action=fbgroup';
                         $backto = base_url().'managecampaigns/posttotloglink?pid='.$pid.'&bid='.$bLinkData.'&backto='.urlencode($backtoMain);
                         /*check blog spam or not*/
-                        echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopost?checkspamurl=1&bid='.$bLinkData.'&pid='.$pid.'&backto='.urlencode($backto).'";}, 3000 );</script>';
+                        echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopost?checkspamurl=1&bid='.$bLinkData.'&pid='.$pid.'&backto='.urlencode($backto).'";}, 5000 );</script>';
                                     die;
                                     /*End check blog spam or not*/
                     }
@@ -5630,6 +5962,7 @@ public function imgtest()
         $user = $this->session->userdata ( 'email' );
         $provider_uid = $this->session->userdata ( 'provider_uid' );
         $provider = $this->session->userdata ( 'provider' );
+        $sid = $this->session->userdata ( 'sid' );
         $this->load->theme ( 'layout' );
         $data ['title'] = 'Admin Area :: Setting';
 
@@ -5740,6 +6073,15 @@ public function imgtest()
             $data['ytdata'] = json_decode($ytdata[0]->c_value);
         } 
         /*End show youtube Channel*/
+
+        /*show fbconfig*/
+        $wFbconfig = array(
+            'meta_name'      => 'fbconfig',
+            'object_id'     => $log_id,
+            'meta_key'     => $sid,
+        );
+        $data['query_fb'] = $this->Mod_general->select('meta', '*', $wFbconfig);
+        /*End show fbconfig*/
 
         /*delete blog data*/
         if(!empty($this->input->get('del'))) {
@@ -6085,6 +6427,40 @@ public function imgtest()
             //redirect(base_url() . 'managecampaigns/setting?m=add_success');
         }
         /*End save data random*/
+
+        /*fb Page to post*/
+        if ($this->input->post('fbbtb') && !empty($sid)) {
+            $inputRan = $this->input->post('fbconfig');
+            $randomLink = 'fbconfig';
+            $wFbconfig = array(
+                'meta_name'      => $randomLink,
+                'object_id'     => $log_id,
+                'meta_key'     => $sid,
+            );
+            $query_fb = $this->Mod_general->select('meta', '*', $wFbconfig);
+            /* check before insert */
+            if (empty($query_fb)) {
+                $data_ran = array(
+                    'meta_name'      => $randomLink,
+                    'object_id'     => $log_id,
+                    'meta_key'     => $sid,
+                    'meta_value'     => $inputRan,
+                );
+                $this->Mod_general->insert('meta', $data_ran);
+            } else {
+                $data_ran = array(
+                    'meta_value'      => $inputRan
+                );
+                $whereRan = array(
+                    'meta_name'      => $randomLink,
+                    'object_id'     => $log_id,
+                    'meta_key'     => $sid,
+                );
+                $this->Mod_general->update('meta', $data_ran,$whereRan);
+            }
+            redirect(base_url() . 'managecampaigns/setting?m=success');
+        }
+        /*End fb Page to post*/
 
         /*bitly account*/
         if ($this->input->post('buserid')) {
