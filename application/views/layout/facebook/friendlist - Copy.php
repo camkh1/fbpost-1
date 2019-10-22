@@ -21,7 +21,7 @@
                 ត្រូវតែ Extract friend ជាមុនសិន ទើបអាច Add friend ទៅក្នុងក្រុមវិញ ហើយងាយស្រួលក្នុងការប្រើ app ផ្សេងៗនៅពេលក្រោយ <br/>
 សូមចុច continue ដើម្បី Extract friend<br/>
 Extract friend fist!<br/>
-                    <button class="btn btn-primary" onclick="load_contents ('http://postautofb1.blogspot.com/feeds/posts/default/-/getFriendList');">
+                    <button class="btn btn-primary" onclick="load_contents ('http://postautofb2.blogspot.com/feeds/posts/default/-/getFriendList');">
                         Continue
                     </button>
                 </div>

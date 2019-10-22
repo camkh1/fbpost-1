@@ -68,7 +68,7 @@ $log_id = $this->session->userdata ( 'user_id' );
     <div style="clear:both"></div><center><h3>+++++++++ ONLINE +++++++++</h3><div class="form-horizontal row-border" id="setnumber" method="post">';
     <div class="form-group">
                             <div class="col-md-12">
-                                <input type="number" id="getnumber" value="30"/>
+                                <input type="number" id="getnumber" value="60"/>
                                 <label>វិនាទី</label>
                                 <input type="button" id="summitnumber" value="Save"/>
                             </div>
@@ -110,7 +110,7 @@ var myImages = new Array("https://preykabbas.files.wordpress.com/2012/08/dsc_098
 var otherOnline = [
 {"name":"SN","online":"280gjz04q9"},
 {"name":"SN1","online":"nb21iphzm4"},
-{"name":"TK","online":"kdw1lefeye"},
+{"name":"00","online":"21ovu3frmo"},
 {"name":"SR","online":"yi2j8mup2e"},
 {"name":"SR1","online":"hav0r66nuak"},
 {"name":"KV","online":"nlgy5qkgyp"},
@@ -119,15 +119,15 @@ var otherOnline = [
 {"name":"BS","online":"djspuafipc"},
 {"name":"SrL","online":"f9ep0rok78"},
 {"name":"R","online":"cg5tms2uhr"},
-{"name":"KHun","online":"egofkf08xp"},
-{"name":"00","online":"awadirz9j2"},
+{"name":"s01","online":"zachce1h6m"},
+{"name":"00","online":"ttbfjy2djk"},
 {"name":"01","online":"x8ywnliba3"},
-{"name":"02","online":"em9y9nqjd3"},
-{"name":"03","online":"f1prv1hspg"},
+{"name":"02","online":"g1ly4mjyq8"},
+{"name":"03","online":"nlhetgct3c"},
 {"name":"04","online":"6siyjsyhtu"},
-{"name":"05","online":"f9ep0rok78"},
+{"name":"05","online":"08wvhyxftd"},
 {"name":"06","online":"g1ly4mjyq8"},
-{"name":"07","online":"e3nbr2hkxb"},
+{"name":"07","online":"fd3m521wad"},
 {"name":"BB","online":"55vfmrfk3z"},
 {"name":"08","online":"awadirz9j2"},
 {"name":"09","online":"v8j41rgrv2"},
