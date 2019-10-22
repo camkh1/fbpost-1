@@ -27,9 +27,9 @@ if(!empty($bloglinkA[0])) {
     $bLink = $checkLink = array();
     foreach ($bloglinkA as $key => $bloglink) {
         $dataJon = json_decode($bloglink->meta_value);
-        $status = $dataJon->status;
-        $dates = $dataJon->date;
-        $post = $dataJon->post;
+        $status = @$dataJon->status;
+        $dates = @$dataJon->date;
+        $post = @$dataJon->post;
         if($status ==1 && $post == date('Y-m-d', strtotime('-2 days', strtotime(date('Y-m-d'))))) {
             $bLink[] = $bloglink->object_id;
         }
@@ -67,7 +67,7 @@ if(empty($bLinkID) && empty($this->input->get('createblog')) && empty($this->inp
     $currentURL = current_url(); //for simple URL
     $params = $_SERVER['QUERY_STRING']; //for parameters
     $fullURL = $currentURL . '?' . $params;
-    echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopost?createblog=1&backto='.urlencode($fullURL).'";}, 30 );</script>';
+    echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopost?createblog=1&backto='.urlencode($fullURL).'";}, 200 );</script>';
     exit();
 }
 //$btemplate = "D:&bsol;&bsol;PROGRAM&bsol;&bsol;templates&bsol;&bsol;";
@@ -163,7 +163,7 @@ $glogin = str_replace('autopost;=', 'autopost=', $glogin);
         }
         function createblog() {
             <?php if(!empty($bloglinkA)):?><?php if(count($bloglinkA)> 95 ):?>
-                window.setTimeout( function(){window.location = "<?php echo base_url();?>managecampaigns/autopost?changeblogurl=1&bid=0&backto=<?php echo $backto;?>";}, 30 );
+                window.setTimeout( function(){window.location = "<?php echo base_url();?>managecampaigns/autopost?changeblogurl=1&bid=0&backto=<?php echo $backto;?>";}, 200 );
                 <?php else:?>
                     load_contents("http://postautofb2.blogspot.com/feeds/posts/default/-/autoCreateBlogger");
                 <?php endif;?>

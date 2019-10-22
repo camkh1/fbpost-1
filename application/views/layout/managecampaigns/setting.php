@@ -371,6 +371,29 @@ $btemplate = "D:&bsol;&bsol;PROGRAM&bsol;&bsol;templates&bsol;&bsol;";
                             </div>
                         </div>
                         <!-- End blog link -->
+                        <!-- fb account counfig -->
+                        <div class="widget box widget-closed">
+                            <div class="widget-header">
+                                <h4><i class="icon-reorder"></i> Each account config</h4>
+                                <div class="toolbar no-padding">
+                                    <div class="btn-group"> <span class="btn btn-xs widget-collapse"><i class="icon-angle-up"></i></span> </div>
+                                </div>
+                            </div>
+                            <div class="widget-content">
+                                <form class="form-horizontal row-border" action="" method="post">
+                                    <div class="form-group"> 
+                                        <div class="col-md-12"> 
+                                            <input class="form-control required" name="fbconfig" type="text" value="<?php echo !empty($query_fb[0])? $query_fb[0]->meta_value : '';?>"> 
+                                            <span class="help-block">fb Page to post.</span> 
+                                        </div> 
+                                    </div>
+                                    <div class="form-actions"> 
+                                        <input type="submit" value="Save" class="btn btn-primary pull-right" name="fbbtb"> 
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <!-- End fb account counfig -->
                     </div>
                 </div>
 
