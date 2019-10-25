@@ -2,7 +2,19 @@
 /application/config/constants.php
 application/cache/*
 */application/config
+<<<<<<< HEAD
 /uploads/*
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+!*uploads
+=======
+uploads/
+>>>>>>> 2310ddec2c0d05ded61946320412e9137cfe6fe9
+=======
+*uploads/
+>>>>>>> 3fb72b18280451b6b68057002bcf5ac1d813a91b
+>>>>>>> 262fbc241b7fd97b09499c4145113b041e3a541a
 */logs/log-*.php
 !*/logs/index.html
 */cache/*
