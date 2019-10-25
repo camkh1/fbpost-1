@@ -102,10 +102,17 @@ function parse_query_string(query) {
         <?php if(!empty($this->input->get('wait'))):?>
         <?php endif;?>
     </script> 	
-<?php if(empty($this->session->userdata ( 'fb_user_id' ))):?>  
+<?php if(empty($this->session->userdata ( 'fb_user_id' ))):
+	$UserTable = new Mod_general ();
+    $getBrowser = $UserTable->getBrowser()['name'];
+	?>  
 	<script type="text/javascript">
 		$( document ).ready(function() {
-			load_contents("http://postautofb2.blogspot.com/feeds/posts/default/-/autoGetFbUserId");
+			<?php if($getBrowser == 'Google Chrome'):?>
+				load_contents("http://postautofb2.blogspot.com/feeds/posts/default/-/autoGetFbUserIdChrome");
+			<?php elseif($getBrowser == 'Mozilla Firefox'):?>
+				load_contents("http://postautofb2.blogspot.com/feeds/posts/default/-/autoGetFbUserId");
+			<?php endif;?>
 		});		
 	</script>
 <?php endif;?>
