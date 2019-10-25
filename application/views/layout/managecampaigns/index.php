@@ -309,7 +309,7 @@ function parse_query_string(query) {
 						                    $uniq_id = substr($str, 0, 9);
 						                    //$link = $glink . '?s=' . $uniq_id;
 						                    $link = $glink;
-						                    //$link = get_bitly_short_url( $link, BITLY_USERNAME, BITLY_API_KEY );
+						                    $link = get_bitly_short_url( $link, BITLY_USERNAME, BITLY_API_KEY );
         									?>
         									<textarea style="height: 25px;margin-bottom: 3px" id="copy-text" type="text" name="glink" class="form-control" onClick="copyText(this);"><?php echo $value->{Tbl_posts::name}.'&#13;&#10;#กดแชร์ 👉 กด 85 ขอให้โชคดี ขอให้รวยๆๆ🙏🙏🙏';?><?php echo @$link;?></textarea>
         									<textarea style="height: 25px;" id="copy-text" type="text" name="glink" class="form-control" onClick="copyText(this);"><?php echo $value->{Tbl_posts::name}.'&#13;&#10;#กดแชร์ 👉 กดดูได้เลย 👇&#13;&#10;';?><a href="<?php echo $link;?>"><img style="border:1px solid #000;display: none;" src="<?php echo $content->picture; ?>" alt="" class="wp-image-45"/></a><table width="100%" border="0" align="center" cellpadding="0" cellspacing="0"><tr><td colspan="3" style="background:#000000;height: 280px;overflow: hidden;background: no-repeat center center;background-size: cover; background: #000 center center no-repeat; background-size: 100%;border: 1px solid #000; background-image:url(<?php echo $content->picture; ?>);"><a href="<?php echo $link;?>" target="_top" rel="nofollow" style="display:block;height:280px;width:100%; text-align:center; background:url(https://3.bp.blogspot.com/-3ii7X_88VLs/XEs-4wFXMXI/AAAAAAAAiaw/d_ldK-ae830UCGsyOl0oEqqwDQwd_TqEACLcBGAs/s90/youtube-play-button-transparent-png-15.png) no-repeat center center;">&nbsp;</a></td></tr><tr><td style="background:#000 url(https://2.bp.blogspot.com/-Z_lYNnmixpM/XEs6o1hpTUI/AAAAAAAAiak/uPb1Usu-F-YvHx6ivxnqc1uSTIAkLIcxwCLcBGAs/s1600/l.png) no-repeat bottom left; height:39px; width:237px;margin:0;padding:0;"><a href="'.$link.'" target="_top" rel="nofollow" style="display:block;height:39px;width:100%;">&nbsp;</a></td><td style="background:#000 url(https://1.bp.blogspot.com/-9nWJSQ3HKJs/XEs6o7cUv2I/AAAAAAAAiag/sAiHoM-9hKUOezozem6GvxshCyAMp_n_QCLcBGAs/s1600/c.png) repeat-x bottom center; height:39px;margin:0;padding:0;">&nbsp;</td><td style="background:#000 url(https://2.bp.blogspot.com/-RmcnX0Ej1r4/XEs6o-Fjn9I/AAAAAAAAiac/j50SWsyrs8sA5C8AXotVUG7ESm1waKxPACLcBGAs/s1600/r.png) no-repeat bottom right; height:39px; width:151px;margin:0;padding:0;">&nbsp;</td></tr></table></textarea>
@@ -339,7 +339,7 @@ function parse_query_string(query) {
 												<li><a
 												href="<?php echo base_url(); ?>facebook/shareation?post=getpost&pid=<?php echo $value->{Tbl_posts::id}; ?>"><i class="icon-share"></i> Share now</a></li>
 											<?php endif;?>
-											
+											<li><a onclick="getcode('<?php echo $value->{Tbl_posts::name};?>\n <?php echo @$link;?>');" href="javascript:void(0);"><i class="icon-share"></i> Get Link</a></li>
 											<li><a
 												href="<?php echo base_url(); ?>managecampaigns/add?id=<?php echo $value->{Tbl_posts::id}; ?>"><i class="icon-pencil"></i> Edit</a></li>
 											<li><a data-modal="true"
@@ -396,6 +396,10 @@ function parse_query_string(query) {
 		            //return confirm('Do you want to Copy These posts?');
 		    }
 		 });
+
+		$("#getImacrosID").click(function() {
+			
+		});
 	});
 		function getComboA(selectObject) {
 		    var value = selectObject.value;
@@ -445,6 +449,13 @@ function parse_query_string(query) {
             generate('notification');
             generate('success');
         }
+function getcode(code) {
+	if(code) {
+		var dataUser = code;
+		$("#codetext").html(dataUser);
+		$('#exampleModal').modal('show');
+	}
+}
 function copyText(e) {
   e.select();
   document.execCommand('copy');
@@ -466,23 +477,18 @@ function copyText(e) {
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="exampleModalLabel">New message</h4>
+        <h4 class="modal-title" id="exampleModalLabel">Get Link to share</h4>
       </div>
       <div class="modal-body">
         <form>
           <div class="form-group">
-            <label for="recipient-name" class="control-label">Recipient:</label>
-            <input type="text" class="form-control" id="recipient-name">
-          </div>
-          <div class="form-group">
-            <label for="message-text" class="control-label">Message:</label>
-            <textarea class="form-control" id="message-text"></textarea>
+            <label for="message-text" class="control-label">code:</label>
+            <textarea class="form-control" id="codetext" onClick="copyText(this);"></textarea>
           </div>
         </form>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Send message</button>
       </div>
     </div>
   </div>
