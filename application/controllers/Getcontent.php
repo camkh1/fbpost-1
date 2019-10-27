@@ -2899,6 +2899,32 @@ class Getcontent extends CI_Controller
                 $obj->site = 'site';
                 return $obj;
                 break;
+            case 'www.postsod.com':
+                $obj->title = @$html->find ( '.post .entry-title', 0 )->plaintext;
+                //$obj->thumb = @$html->find ( '.entry .entry-thumb img', 0 )->src;
+                $content = @$html->find ( '.post .td-post-content', 0 )->innertext;
+                $content = preg_replace('/<center\b[^>]*>(.*?)<\/center>/is', "", $content);
+                $content = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $content);
+                $content = preg_replace('/<ins\b[^>]*>(.*?)<\/ins>/is', '<div class="setAds"></div>', $content);
+                $content = preg_replace("/<a(.*?)>/", "<a$1 target=\"_blank\">", $content);
+                $content = preg_replace( '/(<[^>]+) srcset=".*?"/i', "$1", $content );
+                $content = preg_replace( '/(<[^>]+) data-lazy-srcset=".*?"/i', "$1", $content );
+                $content = preg_replace( '/(<[^>]+) data-lazy-sizes=".*?"/i', "$1", $content );
+                $content = preg_replace( '/(<[^>]+) data-lazy-src=".*?"/i', "$1", $content );
+                $content = preg_replace( '/(<[^>]+) data-recalc-dims=".*?"/i', "$1", $content );
+                $content = preg_replace( '/(<[^>]+) data-large-file=".*?"/i', "$1", $content );
+                $content = preg_replace( '/(<[^>]+) data-medium-file=".*?"/i', "$1", $content );
+                $content = preg_replace( '/(<[^>]+) data-image-meta=".*?"/i', "$1", $content );
+                $content = preg_replace( '/(<[^>]+) data-image-description class=".*?"/i', "$1", $content );
+                $content = preg_replace( '/(<[^>]+) data-orig-file=".*?"/i', "$1", $content );
+                $content = preg_replace( '/(<[^>]+) data-permalink=".*?"/i', "$1", $content );
+                $content = str_replace('--Advertisement--', '', $content);
+                $obj->vid = '';
+                $obj->conent = $content;
+                $obj->fromsite = $parse['host'];
+                $obj->site = 'site';
+                return $obj;
+                break;
             case 'news.ch3thailand.com':
                 //$obj->title = @$html->find ( '.post .entry-title', 0 )->plaintext;
                 $obj->thumb = @$html->find ( '.content-img-all .img-hi-news img', 0 )->src;

@@ -92,7 +92,7 @@ if(!empty($post)) {
         <?php if($this->input->get('next') ==1):
             if (date('H') <= 23 && date('H') > 4 && date('H') !='00'):
             ?> 
-            <meta http-equiv="refresh" content="1800; URL='<?php echo base_url();?>managecampaigns/autopostfb?action=yt'" />
+            <meta http-equiv="refresh" content="3500; URL='<?php echo base_url();?>managecampaigns/autopostfb?action=yt'" />
             <?php endif;?>
         <?php endif;?>
  
