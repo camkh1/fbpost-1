@@ -1551,8 +1551,8 @@ public function get_video_id($param, $videotype = '')
                 //     return false;
                 // }
                 /*End upload to picasa*/
-
-                if(empty($image)) {
+                
+                if(empty($image) && empty($param['no_need_upload'])) {
                     /*upload to imgur.com*/
                     return $this->uploadtoImgur($imgName);
                     // $image = file_get_contents($imgName);
@@ -1684,7 +1684,17 @@ public function get_video_id($param, $videotype = '')
         $connectURL = 'http://api.bit.ly/v3/shorten?login=' . $login . '&apiKey=' . $appkey . '&uri=' . urlencode ( $url ) . '&format=' . $format;
         return $this->curl_get_result ( $connectURL );
     }
-
+    /* returns a result form url */
+    function curl_get_result($url) {
+        $ch = curl_init ();
+        $timeout = 5;
+        curl_setopt ( $ch, CURLOPT_URL, $url );
+        curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, 1 );
+        curl_setopt ( $ch, CURLOPT_CONNECTTIMEOUT, $timeout );
+        $data = curl_exec ( $ch );
+        curl_close ( $ch );
+        return $data;
+    }
     function getActionPost()
     {
         $log_id = $this->session->userdata ( 'user_id' );

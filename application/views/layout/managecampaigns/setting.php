@@ -543,6 +543,29 @@ $btemplate = "D:&bsol;&bsol;PROGRAM&bsol;&bsol;templates&bsol;&bsol;";
                             <div style="clear: both"></div>
                         </div>
                         <!-- Endbitly -->
+
+                        <!-- upload to blog -->
+                        <div class="widget box widget-closed">
+                            <div class="widget-header"><h4> Blog ID to upload img</h4>
+                                <div class="toolbar no-padding">
+                                    <div class="btn-group"> <span class="btn btn-xs widget-collapse"><i class="icon-angle-up"></i></span> </div>
+                                </div>
+                            </div>
+                            <div class="widget-content">
+                                <form class="form-horizontal row-border" id="bitly" method="post">
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <input type="text" name="uploadb" class="form-control" style="width: 100%" placeholder="Blog ID for upload image" value="<?php echo @$blogupload;?>" required />
+                                    </div>
+                                </div>
+                                <div class="form-actions">
+                                    <input name="imgupload" type="submit" value="Save" class="btn btn-primary pull-right" />
+                                </div> 
+                                </form>  
+                            </div>
+                            <div style="clear: both"></div>
+                        </div>
+                        <!-- End upload to blog -->
                     </div>
 
                     <div class="col-md-9">

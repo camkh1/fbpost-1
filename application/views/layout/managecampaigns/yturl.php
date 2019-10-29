@@ -914,9 +914,7 @@
                             <div class="col-md-1">
                                 <span id="addfield1" class="addfield btn btn-success bs-tooltip <?php echo ($post_id) ? 'disabled':'';?>" data-original-title="Add more..."><i class="icon-plus"></i></span>
                             </div>
-                            <div class="col-md-5">
-                            </div>
-                            <div class="col-md-4">
+                            <div class="col-md-9">
                                 <label class="radio-inline">
                                     <input value="1" name="post_by_manaul" type="checkbox">
                                     <i class="subtopmenu hangmeas khmer">Post and get code / ប៉ុស្តិ៍យកកូដផុសដៃ?</i>
@@ -924,6 +922,10 @@
                                 <label class="radio-inline">
                                     <input value="1" name="post_all" type="checkbox">
                                     <i class="subtopmenu hangmeas khmer">Publish all Post / ប៉ុស្តិ៍ទាំងអស់?</i>
+                                </label>
+                                <label class="radio-inline">
+                                    <input value="featurePosts" name="featurePosts" type="checkbox">
+                                    <i class="subtopmenu hangmeas khmer">Feature Post</i>
                                 </label>
                             </div>
                             <div class="col-md-2">

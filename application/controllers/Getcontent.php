@@ -198,6 +198,30 @@ class Getcontent extends CI_Controller
                     /*End check duplicate link*/
                 }
                 break;
+            case 'board.postjung.com':
+                $sectionA = $html->find('#listbox a');
+                foreach($sectionA as $index => $clink) {
+                    $linkc = 'https://board.postjung.com/'.$clink->href;
+                    /*check duplicate link*/
+                    $whereDupA = array(
+                        'object_id'      => $linkc,
+                        'meta_name'     => $log_id . 'sitelink',
+                        'meta_key'      => date('Y-m-d'),
+                    );
+                    $queryCheckDup = $this->Mod_general->select('meta', '*', $whereDupA);
+                    if(empty($queryCheckDup[0])) {
+                        $data_blogC = array(
+                            'meta_key'      => date('Y-m-d'),
+                            'object_id'      => $linkc,
+                            'meta_value'     => 0,
+                            'meta_name'     => $log_id . 'sitelink',
+                        );
+                        $lastID = $this->Mod_general->insert('meta', $data_blogC);
+                    }
+                    /*End check duplicate link*/
+                }
+                die;
+                break;
             case 'www.tnews.co.th':
                 $sectionA = $html->find('.bdaia-blocks-container article .block-article-img-container a');
                 break;

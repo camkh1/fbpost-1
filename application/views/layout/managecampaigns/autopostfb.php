@@ -69,9 +69,28 @@ if(!empty($post)) {
             }
         }
     </script>
-<?php if($this->input->get('action') =='fbgroup'):?>
+<?php if($this->input->get('action') =='fbgroup'):
+function get_bitly_short_url($url, $login, $appkey, $format = 'txt') {
+    $connectURL = 'http://api.bit.ly/v3/shorten?login=' . $login . '&apiKey=' . $appkey . '&uri=' . urlencode ( $url ) . '&format=' . $format;
+    return curl_get_result ( $connectURL );
+}
+/* returns a result form url */
+function curl_get_result($url) {
+    $ch = curl_init ();
+    $timeout = 5;
+    curl_setopt ( $ch, CURLOPT_URL, $url );
+    curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, 1 );
+    curl_setopt ( $ch, CURLOPT_CONNECTTIMEOUT, $timeout );
+    $data = curl_exec ( $ch );
+    curl_close ( $ch );
+    return $data;
+}
+// $slink = $pConent->link;
+// $slink = get_bitly_short_url( $slink, BITLY_USERNAME, BITLY_API_KEY );
+$slink = trim($setLink);
+    ?>
 <div id="ptitle" style="display: none;"><?php echo $pTitle;?></div>    
-<code id="examplecode5" style="width:300px;overflow:hidden;display:none">var codedefault2=&quot;SET !EXTRACT_TEST_POPUP NO\n SET !TIMEOUT_PAGE 300\n SET !ERRORIGNORE YES\n SET !TIMEOUT_STEP 0.1\n&quot;;var wm=Components.classes[&quot;@mozilla.org/appshell/window-mediator;1&quot;].getService(Components.interfaces.nsIWindowMediator);var window=wm.getMostRecentWindow(&quot;navigator:browser&quot;);const XMLHttpRequest = Components.Constructor(&quot;@mozilla.org/xmlextras/xmlhttprequest;1&quot;);var homeUrl = &quot;<?php echo base_url();?>&quot;,setTitle = &quot;&quot;,gid = &quot;<?php echo @$gid;?>&quot;,setLink = &quot;<?php echo @$pConent->link;?>&quot;;var vars={pageID:&quot;<?php echo !empty(@$fbpid[0]) ? $fbpid[0]->meta_value : '';?>&quot;,ttstamp:&quot;265816767119957579&quot;,page_id:&quot;<?php echo !empty(@$fbpid[0]) ? $fbpid[0]->meta_value : '';?>&quot;,share_id:'',postid:&quot;<?php echo !empty(@$post) ? $post->p_id : '';?>&quot;,group:[<?php echo @$groupid;?>],title:&quot;&quot;,homeUrl:&quot;<?php echo base_url();?>&quot;,link:'<?php echo @$pConent->link;?>',__rev:&quot;1033590&quot;};</code>
+<code id="examplecode5" style="width:300px;overflow:hidden;display:none">var codedefault2=&quot;SET !EXTRACT_TEST_POPUP NO\n SET !TIMEOUT_PAGE 300\n SET !ERRORIGNORE YES\n SET !TIMEOUT_STEP 0.1\n&quot;;var wm=Components.classes[&quot;@mozilla.org/appshell/window-mediator;1&quot;].getService(Components.interfaces.nsIWindowMediator);var window=wm.getMostRecentWindow(&quot;navigator:browser&quot;);const XMLHttpRequest = Components.Constructor(&quot;@mozilla.org/xmlextras/xmlhttprequest;1&quot;);var homeUrl = &quot;<?php echo base_url();?>&quot;,setTitle = &quot;&quot;,gid = &quot;<?php echo @$gid;?>&quot;,setLink = &quot;<?php echo @$slink;?>&quot;;var vars={pageID:&quot;<?php echo !empty(@$fbpid[0]) ? $fbpid[0]->meta_value : '';?>&quot;,ttstamp:&quot;265816767119957579&quot;,page_id:&quot;<?php echo !empty(@$fbpid[0]) ? $fbpid[0]->meta_value : '';?>&quot;,share_id:'',postid:&quot;<?php echo !empty(@$post) ? $post->p_id : '';?>&quot;,group:[<?php echo @$groupid;?>],title:&quot;&quot;,homeUrl:&quot;<?php echo base_url();?>&quot;,link:'<?php echo @$slink;?>',__rev:&quot;1033590&quot;};</code>
 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <script type="text/javascript">
@@ -89,10 +108,11 @@ if(!empty($post)) {
     </script>
 <?php endif;?>
 <?php if($this->input->get('action') =='wait'):?>
+        <!-- 3500 -->
         <?php if($this->input->get('next') ==1):
             if (date('H') <= 23 && date('H') > 4 && date('H') !='00'):
             ?> 
-            <meta http-equiv="refresh" content="3500; URL='<?php echo base_url();?>managecampaigns/autopostfb?action=yt'" />
+            <meta http-equiv="refresh" content="1800; URL='<?php echo base_url();?>managecampaigns/autopostfb?action=yt'" />
             <?php endif;?>
         <?php endif;?>
  

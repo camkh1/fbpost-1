@@ -912,6 +912,7 @@ class Managecampaigns extends CI_Controller {
             $img_rotate = @$this->input->post ( 'img_rotate' );
             $post_by_manaul = @$this->input->post ( 'post_by_manaul' );
             $post_all = @$this->input->post ( 'post_all' );
+            $featurePosts = @$this->input->post ( 'featurePosts' );
             $foldlink = @$this->input->post ( 'foldlink' );
             $youtube_link = @$this->input->post ( 'vid' );
 
@@ -1025,6 +1026,7 @@ class Managecampaigns extends CI_Controller {
                         'filter_brightness' => $filter_brightness,
                         'post_by_manaul' => $post_by_manaul,
                         'foldlink' => @$from_old_link,
+                        'featurePosts' => @$featurePosts,
                         'gemail' => $this->session->userdata ( 'gemail' ),
                         'label' => $labels,
                     );
@@ -1210,7 +1212,7 @@ class Managecampaigns extends CI_Controller {
         /*Post to blogger*/
         $post_by_manaul = false;
         if(!empty($this->input->get('action'))) {
-            if($this->input->get('action') == 'postblog' && !empty($this->input->get('bid'))) {
+            if($this->input->get('action') == 'postblog') {
                 echo '<meta http-equiv="refresh" content="30">';
                 if(!empty($this->session->userdata('access_token'))) {
                     $this->load->library('google_api');
@@ -1232,7 +1234,6 @@ class Managecampaigns extends CI_Controller {
                     redirect($setUrl);
                     exit();
                 }
-                $bid = $this->input->get('bid');
                 $pid = $this->input->get('pid');
                 $fbid = $this->session->userdata ( 'sid' );
                 $autopost = @$this->input->get('autopost');
@@ -1240,34 +1241,34 @@ class Managecampaigns extends CI_Controller {
                 $blog_link_id = @$this->input->get('blog_link_id');
 
                 /*check for loop post time*/
-                $postsLoop[] = array(
-                    'pid'=> $pid, 
-                    'uid'=> $log_id,
-                );
+                // $postsLoop[] = array(
+                //     'pid'=> $pid, 
+                //     'uid'=> $log_id,
+                // );
 
-                $tmp_path = './uploads/'.$log_id.'/';
-                if (!file_exists($tmp_path)) {
-                    mkdir($tmp_path, 0700, true);
-                }
-                $tmp_path_sid = './uploads/'.$log_id.'/'.$fbid.'/';
-                if (!file_exists($tmp_path_sid)) {
-                    mkdir($tmp_path_sid, 0700, true);
-                }
-                $file_name = $tmp_path_sid . $pid .'-post.json';
-                if (file_exists($file_name)) {
-                    $LoopId = file_get_contents($file_name);
-                    $LoopIdArr = json_decode($LoopId);
-                    foreach ($LoopIdArr as $lId) {
-                        $postsLoop[] = array(
-                            'pid'=> $lId->pid, 
-                            'uid'=> $lId->uid,
-                        );
-                    }
-                }
+                // $tmp_path = './uploads/'.$log_id.'/';
+                // if (!file_exists($tmp_path)) {
+                //     mkdir($tmp_path, 0700, true);
+                // }
+                // $tmp_path_sid = './uploads/'.$log_id.'/'.$fbid.'/';
+                // if (!file_exists($tmp_path_sid)) {
+                //     mkdir($tmp_path_sid, 0700, true);
+                // }
+                // $file_name = $tmp_path_sid . $pid .'-post.json';
+                // if (file_exists($file_name)) {
+                //     $LoopId = file_get_contents($file_name);
+                //     $LoopIdArr = json_decode($LoopId);
+                //     foreach ($LoopIdArr as $lId) {
+                //         $postsLoop[] = array(
+                //             'pid'=> $lId->pid, 
+                //             'uid'=> $lId->uid,
+                //         );
+                //     }
+                // }
 
-                $f = fopen($file_name, 'w');
-                fwrite($f, json_encode($postsLoop));
-                fclose($f);
+                // $f = fopen($file_name, 'w');
+                // fwrite($f, json_encode($postsLoop));
+                // fclose($f);
                 /*End check for loop post time*/
                 /*get post from post id*/
                 $wPost = array (
@@ -1279,7 +1280,9 @@ class Managecampaigns extends CI_Controller {
                 if(!empty($getPost[0])) {
                     $pConent = json_decode($getPost[0]->p_conent);
                     $pOption = json_decode($getPost[0]->p_schedule);
+                    $bid = @$pOption->blogid;
                     $main_post_style = @$pOption->main_post_style;
+                    $featurePosts = @$pOption->featurePosts;
                     if ((!preg_match('/youtu/', @$pConent->link) && @$pOption->foldlink !=1) && empty(@$pConent->vid)) {
                         if($main_post_style != 'tnews') {
                             redirect(base_url().'facebook/shareation?post=getpost');
@@ -1306,7 +1309,8 @@ class Managecampaigns extends CI_Controller {
                     /*Post to Blogger first*/
                     $vid = $this->Mod_general->get_video_id($links);
                     $vid = $vid['vid'];
-                    $blink = $this->input->get('blink');
+                    $blink = @$pOption->blogLink;
+                    //$this->input->get('blink');
 
                     // if false video
 
@@ -1358,7 +1362,22 @@ class Managecampaigns extends CI_Controller {
                         }
 
                         if (preg_match("/http/", $imgUrl) && preg_match('/ytimg.com/', $imgUrl)) {
-                            @copy($imgUrl, $fileName);      
+                            @copy($imgUrl, $fileName);
+
+                            /*upload image to blog*/
+                            $whereBup = array(
+                                'c_name'      => 'blogupload',
+                                'c_key'     => $log_id,
+                            );
+                            $bUp = $this->Mod_general->select('au_config', '*', $whereBup);
+                            if(!empty($bUp[0])) {
+                                //$data['blogupload'] = json_decode($bUp[0]->c_value);
+                                $no_need_upload = true;
+                            }  else {
+                                $no_need_upload = false;
+                            }
+                            /*End upload image to blog*/   
+
                             $param = array(
                                 'btnplayer'=>$pOption->btnplayer,
                                 'playerstyle'=>$pOption->playerstyle,
@@ -1367,6 +1386,7 @@ class Managecampaigns extends CI_Controller {
                                 'filter_brightness'=>$pOption->filter_brightness,
                                 'filter_contrast'=>$pOption->filter_contrast,
                                 'img_rotate'=>$pOption->img_rotate,
+                                'no_need_upload'=> $no_need_upload,
                             );
                             if(!empty($pOption->foldlink) && !empty($pConent->picture)) {
                                 $image = $pConent->picture;
@@ -1387,6 +1407,10 @@ class Managecampaigns extends CI_Controller {
                                             exit();
                                 }
                                 $images = $this->mod_general->uploadMedia($fileName,$param);
+                                if($no_need_upload) {
+                                    redirect(base_url().'managecampaigns/add?id='.$getPost[0]->p_id.'&upload='.$fileName);
+                                }
+                                exit();
                                 if(!$images) {
                                     $apiKey = '76e9b194c1bdc616d4f8bb6cf295ce51';
                                     $image = $this->Mod_general->uploadToImgbb($fileName, $apiKey);
@@ -1430,7 +1454,13 @@ class Managecampaigns extends CI_Controller {
                                         $link = @$pConent->mainlink;
                                     } else {
                                         if(empty($pConent->mainlink)) {
-                                            $blogData = $this->postToBlogger($bid, $vid, $title,$image,$message,$main_post_style,@$pOption->label);
+                                            $slink = '';
+                                            if(!empty($featurePosts)) {
+                                                $main_post_style = $featurePosts;
+                                                $slink = $pConent->link;
+                                                $title = $getPost[0]->p_name;
+                                            }
+                                            $blogData = $this->postToBlogger($bid, $vid, $title,$image,$message,$main_post_style,@$pOption->label,$slink);
                                             //$blogData['error'] = true;
                                             if(!empty($blogData['error'])) {
                                                 //redirect(base_url() . 'managecampaigns?m=blog_main_error&bid='.$bid);
@@ -1817,8 +1847,8 @@ class Managecampaigns extends CI_Controller {
 
         $pid = $this->input->get('pid');
         $blogRand = $this->input->get('bid');
-        $backto = @$this->input->get('backto');
-        //$blogRand = $this->getBlogLink();
+        $backto = @!empty($this->input->get('backto')) ? $this->input->get('backto') : $this->session->userdata ( 'backto' );
+        //$blogRand = $this->getBlogLink(); backto
 
         $wPost = array (
             'user_id' => $log_id,
@@ -1865,7 +1895,7 @@ class Managecampaigns extends CI_Controller {
             }
             $getAdscode = '<script>function mbtlist(json){for(var i=0;i<json.feed.entry.length;i++){ListConten=json.feed.entry[i].content.$t;document.write(ListConten);}}</script>';
             $showAds = '<center><script type="text/javascript" src="https://10clblogh.blogspot.com/feeds/posts/default/-/getad?max-results=1&amp;alt=json-in-script&amp;callback=mbtlist"></script></center>'; 
-            $bodytext = $getAdscode. $showAds.'<meta content="'.$image.'" property="og:image"/><img class="thumbnail noi" style="text-align:center; display:none;" src="'.$image.'"/><h2>'.$thai_title.'</h2><table width="100%" border="0" align="center" cellpadding="0" cellspacing="0"><tr><td colspan="3" style="background:#000000;height: 280px;overflow: hidden;background: no-repeat center center;background-size: cover; background: #000 center center no-repeat; background-size: 100%;border: 1px solid #000; background-image:url('.$image.');"><a href="'.$mainlink.'" target="_top" rel="nofollow" style="display:block;height:280px;width:100%; text-align:center; background:url(https://3.bp.blogspot.com/-3ii7X_88VLs/XEs-4wFXMXI/AAAAAAAAiaw/d_ldK-ae830UCGsyOl0oEqqwDQwd_TqEACLcBGAs/s90/youtube-play-button-transparent-png-15.png) no-repeat center center;">&nbsp;</a></td></tr><tr><td style="background:#000 url(https://2.bp.blogspot.com/-Z_lYNnmixpM/XEs6o1hpTUI/AAAAAAAAiak/uPb1Usu-F-YvHx6ivxnqc1uSTIAkLIcxwCLcBGAs/s1600/l.png) no-repeat bottom left; height:39px; width:237px;margin:0;padding:0;"><a href="'.$mainlink.'" target="_top" rel="nofollow" style="display:block;height:39px;width:100%;">&nbsp;</a></td><td style="background:#000 url(https://1.bp.blogspot.com/-9nWJSQ3HKJs/XEs6o7cUv2I/AAAAAAAAiag/sAiHoM-9hKUOezozem6GvxshCyAMp_n_QCLcBGAs/s1600/c.png) repeat-x bottom center; height:39px;margin:0;padding:0;">&nbsp;</td><td style="background:#000 url(https://2.bp.blogspot.com/-RmcnX0Ej1r4/XEs6o-Fjn9I/AAAAAAAAiac/j50SWsyrs8sA5C8AXotVUG7ESm1waKxPACLcBGAs/s1600/r.png) no-repeat bottom right; height:39px; width:151px;margin:0;padding:0;">&nbsp;</td></tr></table>'.$showAds.'<!--more--><a id="myCheck" href="'.$mainlink.'"></a><script>//window.opener=null;window.setTimeout(function(){if(typeof setblog!="undefined"){var link=document.getElementById("myCheck").href;var hostname="https://"+window.location.hostname;links=link.split(".com")[1];link0=link.split(".com")[0]+".com";document.getElementById("myCheck").href=hostname.links;document.getElementById("myCheck").click();};if(typeof setblog=="undefined"){document.getElementById("myCheck").click();}},2000);</script><br/>' . $message;
+            $bodytext = $getAdscode. $showAds.'<meta content="'.$image.'" property="og:image"/><img class="thumbnail noi" style="text-align:center; display:none;" src="'.$image.'"/><h2>'.$thai_title.'</h2><table width="100%" border="0" align="center" cellpadding="0" cellspacing="0"><tr><td colspan="3" style="background:#000000;height: 280px;overflow: hidden;background: no-repeat center center;background-size: cover; background: #000 center center no-repeat; background-size: 100%;border: 1px solid #000; background-image:url('.$image.');"><a href="'.$mainlink.'" target="_top" rel="nofollow" style="display:block;height:280px;width:100%; text-align:center; background:url(https://3.bp.blogspot.com/-3ii7X_88VLs/XEs-4wFXMXI/AAAAAAAAiaw/d_ldK-ae830UCGsyOl0oEqqwDQwd_TqEACLcBGAs/s90/youtube-play-button-transparent-png-15.png) no-repeat center center;">&nbsp;</a></td></tr><tr><td style="background:#000 url(https://2.bp.blogspot.com/-Z_lYNnmixpM/XEs6o1hpTUI/AAAAAAAAiak/uPb1Usu-F-YvHx6ivxnqc1uSTIAkLIcxwCLcBGAs/s1600/l.png) no-repeat bottom left; height:39px; width:237px;margin:0;padding:0;"><a href="'.$mainlink.'" target="_top" rel="nofollow" style="display:block;height:39px;width:100%;">&nbsp;</a></td><td style="background:#000 url(https://1.bp.blogspot.com/-9nWJSQ3HKJs/XEs6o7cUv2I/AAAAAAAAiag/sAiHoM-9hKUOezozem6GvxshCyAMp_n_QCLcBGAs/s1600/c.png) repeat-x bottom center; height:39px;margin:0;padding:0;">&nbsp;</td><td style="background:#000 url(https://2.bp.blogspot.com/-RmcnX0Ej1r4/XEs6o-Fjn9I/AAAAAAAAiac/j50SWsyrs8sA5C8AXotVUG7ESm1waKxPACLcBGAs/s1600/r.png) no-repeat bottom right; height:39px; width:151px;margin:0;padding:0;">&nbsp;</td></tr></table>'.$showAds.'<!--more--><script type="text/javascript" src="https://10clblogh.blogspot.com/feeds/posts/default/-/GetFeedFromBlog?max-results=1&alt=json-in-script&callback=mbtlist"></script>' . $message;
             $title = (string) $title;
             $dataMeta = array(
                 'title' => $title,
@@ -2211,7 +2241,7 @@ class Managecampaigns extends CI_Controller {
         $this->load->view ( 'managecampaigns/postprogress', $data );
     }
 
-    public function postToBlogger($bid, $vid, $title,$image,$conent='',$blink,$label='')
+    public function postToBlogger($bid, $vid, $title,$image,$conent='',$blink,$label='',$slink='')
     {
 
         /*prepare post*/
@@ -2246,7 +2276,12 @@ class Managecampaigns extends CI_Controller {
                 } else {
                     $label = 'Link';
                 }
-                $customcode = '';
+                $dataMeta = array(
+                    'title' => $title,
+                    'image' => $image,
+                    'link' => ''
+                );
+                $customcode = json_encode($dataMeta);
                 break;
             case 'tnews':
                 //require('Adsense.php');
@@ -2273,7 +2308,12 @@ class Managecampaigns extends CI_Controller {
                 $enTxt = preg_replace('/\r\n|\r/', "\n", $enContent["content"][0]["content"]);
                 $enTitle = $enContent["content"][0]["title"];
                 $bodytext = '<link href="'.$image.'" rel="image_src"/><meta content="'.$image.'" property="og:image"/><img class="thumbnail news" style="text-align:center" src="'.$image.'"/><!--more-->'.$adSenseCode.$txt.'<br/><br/><b>Another News:</b><br/><h2>'.$enTitle.'</h2><div class="wrapper"><div class="small"><p>'.$enTxt.'</p></div> <a class="readmore" href="#">... Click to read more</a></div>'.$adSenseCode;
-                $customcode = '';
+                $dataMeta = array(
+                    'title' => $title,
+                    'image' => $image,
+                    'link' => ''
+                );
+                $customcode = json_encode($dataMeta);
                 
                 if(!empty($label)) {
                     $label = $label;
@@ -2281,9 +2321,24 @@ class Managecampaigns extends CI_Controller {
                     $label = 'News';
                 }
                 break;
+            case 'featurePosts':
+                $dataMeta = array(
+                    'title' => $title,
+                    'image' => $image,
+                    'link' => $slink
+                );
+                $label = 'featurePosts';
+                $customcode = json_encode($dataMeta);
+                $bodytext = '<link href="'.$image.'" rel="image_src"/><meta content="'.$image.'" property="og:image"/><a href="'.$slink.'" target="_top"><img class="thumbnail" style="text-align:center" src="'.$image.'"/></a><!--more-->';
+                break;
             default:
                 $bodytext = '<img class="thumbnail noi" style="text-align:center" src="'.$image.'"/><!--more--><div><b>'.$title.'</b></div><div class="wrapper"><div class="small"><p>'.$conent.'</p></div> <a href="#" class="readmore">... Click to read more</a></div>'.$adSenseCode.'<div>Others news:</div><iframe width="100%" height="280" src="https://www.youtube.com/embed/'.$vid.'" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>'.$adSenseCode;
-                $customcode = '';
+                $dataMeta = array(
+                    'title' => $title,
+                    'image' => $image,
+                    'link' => ''
+                );
+                $customcode = json_encode($dataMeta);
                 break;
         }
         $bodytext = str_replace("<br />", "\n", $bodytext);
@@ -2359,6 +2414,13 @@ class Managecampaigns extends CI_Controller {
 		$dataPost = $this->Mod_general->select ( Tbl_posts::tblName, '*', $where_so );
 		$data ['data'] = $dataPost;
 		/* end get post for each user */
+
+        if(!empty($this->input->get('img'))) {
+            $json = json_decode($dataPost[0]->{Tbl_posts::conent});
+            $structure = FCPATH . 'uploads/image/';
+            $file_title = basename($json->picture);
+            @unlink($structure. $dataPost[0]->p_id . $file_title);
+        }
         if(!empty($this->input->get('bitly')) && !empty($id)) {
             $pConent = json_decode($dataPost[0]->p_conent);
             $updateLink = array('p_id' => $this->input->get('id'));
@@ -2389,6 +2451,17 @@ class Managecampaigns extends CI_Controller {
 		$dataAccount = $this->Mod_general->select ( Tbl_user::tblUser, '*', $where_u );
 		$data ['account'] = $dataAccount;
 		/* end get User for each user */
+
+        /*upload image to blog*/
+        $whereBup = array(
+            'c_name'      => 'blogupload',
+            'c_key'     => $log_id,
+        );
+        $bUp = $this->Mod_general->select('au_config', '*', $whereBup);
+        if(!empty($bUp[0])) {
+            $data['blogupload'] = json_decode($bUp[0]->c_value);
+        } 
+        /*End upload image to blog*/
 
         /* get User groups type */
         $where_gu= array (
@@ -2684,18 +2757,18 @@ class Managecampaigns extends CI_Controller {
                     /* data content */
                     $content = array (
                             'name' => @$title[$i],
-                            'message' => @$message[$i],
-                            'caption' => @$caption[$i],
+                            'message' => @$pConent->message,
+                            'caption' => @$pConent->caption,
                             'link' => @$link[$i],
                             'picture' => @$thumb[$i],                            
-                            'vid' => '',                            
+                            'vid' => @$pConent->vid,                            
                     );
                     /* end data content */
                     @iconv_set_encoding("internal_encoding", "TIS-620");
                     @iconv_set_encoding("output_encoding", "UTF-8");   
                     @ob_start("ob_iconv_handler");
     				$dataPostInstert = array (
-    						Tbl_posts::name => $this->remove_emoji($title[$i]),
+    						Tbl_posts::name => $this->remove_emoji($dataPostS[0]->p_name),
     						Tbl_posts::conent => json_encode ( $content ),
     						Tbl_posts::p_date => date('Y-m-d H:i:s'),
     						Tbl_posts::schedule => json_encode ( $schedule ),
@@ -5204,6 +5277,7 @@ public function imgtest()
                         'https://www.viralsfeedpro.com/',
                         'https://www.mumkhao.com/',
                         'https://www.xn--42c2dgos8bxc2dtcg.com/',
+                        'https://board.postjung.com/',
                     );
                     $k = array_rand($siteUrl);
                     $getSiteUrl = $siteUrl[$k];
@@ -5224,7 +5298,16 @@ public function imgtest()
                     $pConent = json_decode($dataPost[0]->p_conent);
                     $pOption = json_decode($dataPost[0]->p_schedule);
                     $imgUrl = @$pConent->picture;
-                    echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=post&pid='.$pid.'";}, 30 );</script>';
+                    $imgUrl = @$pConent->picture;
+                    if (preg_match("/http/", $imgUrl) && preg_match('/ytimg.com/', $imgUrl)) {
+                        echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/yturl?pid='.$pid.'&action=postblog&autopost=1";},0 );</script>';
+                                exit();
+                    }
+                    if(preg_match('/youtu/', $pConent->link) || $dataPost[0]->p_post_to ==1 || ($dataPost[0]->p_post_to == 1 && $pOption->main_post_style =='tnews')) {
+                         echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/yturl?pid='.$pid.'&action=postblog&autopost=1";},0 );</script>';
+                                exit();
+                    }
+                    echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=fbgroup";}, 30 );</script>';
                     exit();
                 }
                 /*End get post that not share*/
@@ -5251,6 +5334,11 @@ public function imgtest()
                 $pid = $this->autoposttoblog();
                 echo '<meta http-equiv="refresh" content="30">';
                 if(!empty($pid)) {
+                    $setURl = base_url().'managecampaigns/autopostfb?action=fbgroup';
+                    $this->session->set_userdata('backto', $setURl);
+                    echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/yturl?pid='.$pid.'&action=postblog";}, 3000 );</script>'; 
+                    exit();
+
                     echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=post&pid='.$pid.'";}, 30 );</script>';
                 } else {
                     echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=yt";}, 3000 );</script>';
@@ -5261,10 +5349,17 @@ public function imgtest()
                 $pid = @$this->input->get('pid');
                 if(empty($pid)) {
                     echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=yt";}, 3000 );</script>';
+                    exit();
                 }
-                $this->postbloggerByAuto($pid);
+                //managecampaigns/yturl?pid="+pid+"&action=postblog
+                //$this->postbloggerByAuto($pid);
+                $setURl = base_url().'managecampaigns/autopostfb?action=fbgroup';
+                $this->session->set_userdata('backto', $setURl);
+                echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/yturl?pid='.$pid.'&action=postblog";}, 3000 );</script>';
+                    exit();
                 break;
             case 'fbgroup':
+                $this->session->unset_userdata('backto');
                 $wPost = array (
                     'user_id' => $log_id,
                     'p_progress' => 1,
@@ -5370,6 +5465,18 @@ public function imgtest()
                 }
                 /* end add data to group of post */
                 /*End Get groups id*/
+                $whereBit = array(
+                    'c_name'      => 'bitlyaccount',
+                    'c_key'     => $log_id,
+                );
+                $bitlyAc = $this->Mod_general->select('au_config', '*', $whereBit);
+                if(!empty($bitlyAc[0])) {
+                    $bitly = json_decode($bitlyAc[0]->c_value);
+                    $link = $this->mod_general->get_bitly_short_url ( $pConent->link, $bitly->username, $bitly->api );
+                    $data['setLink'] = $link;
+                } else {
+                    $data['setLink'] = $pConent->link;
+                } 
                 
                 break;
             case 'wait':
@@ -5771,7 +5878,7 @@ public function imgtest()
                 'filter_contrast' => $json_a->filter_contrast,
                 'filter_brightness' => $json_a->filter_brightness,
                 'post_by_manaul' => $json_a->post_by_manaul,
-                'foldlink' => $json_a->foldlink,
+                'foldlink' => 0,
                 'gemail' => $json_a->gemail,
             );
             require_once(APPPATH.'controllers/Splogr.php');
@@ -5813,44 +5920,48 @@ public function imgtest()
                         /*upload image so server*/
                         $picture = 'https://i.ytimg.com/vi/'.$ytData->yid.'/hqdefault.jpg';
                         $imgUrl = $picture;
-                            
-                        $structure = FCPATH . 'uploads/image/';
-                        if (!file_exists($structure)) {
-                            mkdir($structure, 0777, true);
-                        }
-                        //$imgUrl = str_replace('maxresdefault', 'hqdefault', $imgUrl);
-                        $file_title = basename($imgUrl);
-                        $fileName = FCPATH . 'uploads/image/'.$ytData->yid.$file_title;
 
-                        if (!preg_match('/ytimg.com/', $fileName)) {
-                            $imgUrl = $picture;
-                        }    
+                        // $structure = FCPATH . 'uploads/image/';
+                        // if (!file_exists($structure)) {
+                        //     mkdir($structure, 0777, true);
+                        // }
+                        // //$imgUrl = str_replace('maxresdefault', 'hqdefault', $imgUrl);
+                        // $file_title = basename($imgUrl);
+                        // $fileName = FCPATH . 'uploads/image/'.$ytData->yid.$file_title;
 
-                        if (preg_match("/http/", $imgUrl) && preg_match('/ytimg.com/', $imgUrl)) {
-                            copy($imgUrl, $fileName);      
-                            $param = array(
-                                'btnplayer'=>$json_a->btnplayer,
-                                'playerstyle'=>$json_a->playerstyle,
-                                'imgcolor'=>$json_a->imgcolor,
-                                'txtadd'=>$json_a->txtadd,
-                                'filter_brightness'=>$json_a->filter_brightness,
-                                'filter_contrast'=>$json_a->filter_contrast,
-                                'img_rotate'=>$json_a->img_rotate,
-                            );
-                            $images = $this->mod_general->uploadMedia($fileName,$param,1); 
-                            if(!$images) {
-                                $apiKey = '76e9b194c1bdc616d4f8bb6cf295ce51';
-                                $image = $this->Mod_general->uploadToImgbb($fileName, $apiKey);
-                                if($image) {
-                                    @unlink($fileName);
-                                }
-                            } else {
-                                $image = @$images; 
-                                @unlink($fileName);
-                            }                
-                        } else {
-                            $image = $picture;
-                        }
+                        // if (!preg_match('/ytimg.com/', $fileName)) {
+                        //     $imgUrl = $picture;
+                        // }    
+
+                        // if (preg_match("/http/", $imgUrl) && preg_match('/ytimg.com/', $imgUrl)) {
+                        //     copy($imgUrl, $fileName);      
+                        //     $param = array(
+                        //         'btnplayer'=>$json_a->btnplayer,
+                        //         'playerstyle'=>$json_a->playerstyle,
+                        //         'imgcolor'=>$json_a->imgcolor,
+                        //         'txtadd'=>$json_a->txtadd,
+                        //         'filter_brightness'=>$json_a->filter_brightness,
+                        //         'filter_contrast'=>$json_a->filter_contrast,
+                        //         'img_rotate'=>$json_a->img_rotate,
+                        //         'no_need_upload'=>true,
+                        //     );
+
+                        //     $images = $this->mod_general->uploadMedia($fileName,$param,1); 
+                        //     redirect(base_url().'managecampaigns/add?id='.$getPost[0]->p_id.'&upload='.$fileName);
+                        //         exit();
+                        //     if(!$images) {
+                        //         $apiKey = '76e9b194c1bdc616d4f8bb6cf295ce51';
+                        //         $image = $this->Mod_general->uploadToImgbb($fileName, $apiKey);
+                        //         if($image) {
+                        //             @unlink($fileName);
+                        //         }
+                        //     } else {
+                        //         $image = @$images; 
+                        //         @unlink($fileName);
+                        //     }                
+                        // } else {
+                        //     $image = $picture;
+                        // }
                         /*End upload image so server*/
                         $contents = $aObj->getpost(1);
                         $txt = preg_replace('/\r\n|\r/', "\n", $contents["content"][0]["content"]); 
@@ -5859,10 +5970,45 @@ public function imgtest()
                             'message' => @htmlentities(htmlspecialchars(addslashes($txt))),
                             'caption' => @$y_other->description,
                             'link' => 'https://www.youtube.com/watch?v='.$ytData->yid,
-                            'picture' => $image,                            
+                            'picture' => $picture,                            
                             'vid' => @$ytData->yid,                          
                         );
+
                         /* end data content */
+                        $schedule = array (                    
+                            'start_date' => $json_a->start_date,
+                            'start_time' => $json_a->start_time,
+                            'end_date' => $json_a->end_date,
+                            'end_time' => $json_a->end_time,
+                            'loop' => $json_a->loop,
+                            'loop_every' => $json_a->loop_every,
+                            'loop_on' => $json_a->loop_on,
+                            'wait_group' => $json_a->wait_group,
+                            'wait_post' => $json_a->wait_post,
+                            'randomGroup' => $json_a->randomGroup,
+                            'prefix_title' => $json_a->prefix_title,
+                            'suffix_title' => $json_a->suffix_title,
+                            'short_link' => $json_a->short_link,
+                            'check_image' => $json_a->check_image,
+                            'imgcolor' => $json_a->imgcolor,
+                            'btnplayer' => $json_a->btnplayer,
+                            'playerstyle' => $json_a->playerstyle,
+                            'random_link' => $json_a->random_link,
+                            'share_type' => $json_a->share_type,
+                            'share_schedule' => $json_a->share_schedule,
+                            'account_group_type' => $json_a->account_group_type,
+                            'txtadd' => $json_a->txtadd,
+                            'blogid' => $json_a->blogid,
+                            'blogLink' => $json_a->blogLink,
+                            'userAgent' => $json_a->userAgent,
+                            'checkImage' => $json_a->checkImage,
+                            'ptype' => $json_a->ptype,
+                            'img_rotate' => $json_a->img_rotate,
+                            'filter_contrast' => $json_a->filter_contrast,
+                            'filter_brightness' => $json_a->filter_brightness,
+                            'post_by_manaul' => $json_a->post_by_manaul,
+                            'foldlink' => 0,
+                        );
                         /*check for exist video in old link*/
                         $whExist = array (
                             'user_id' => $log_id,
@@ -5904,7 +6050,7 @@ public function imgtest()
                                 'filter_contrast' => $json_a->filter_contrast,
                                 'filter_brightness' => $json_a->filter_brightness,
                                 'post_by_manaul' => $json_a->post_by_manaul,
-                                'foldlink' => 1,
+                                'foldlink' => 0,
                             );
                             $content = array (
                                 'name' => @htmlentities(htmlspecialchars(str_replace(' - YouTube', '', $contents["content"][0]["title"]))),
@@ -6062,6 +6208,17 @@ public function imgtest()
             $data['autopost'] = $autoData[0]->c_value;
         } 
         /*End AutoPost*/
+
+        /*upload image to blog*/
+        $whereBup = array(
+            'c_name'      => 'blogupload',
+            'c_key'     => $log_id,
+        );
+        $bUp = $this->Mod_general->select('au_config', '*', $whereBup);
+        if(!empty($bUp[0])) {
+            $data['blogupload'] = json_decode($bUp[0]->c_value);
+        } 
+        /*End upload image to blog*/
 
         /*show youtube Channel*/
         $whereTYshow = array(
@@ -6498,6 +6655,39 @@ public function imgtest()
             redirect(base_url() . 'managecampaigns/setting?m=add_success_bitly');
         }
         /*End bitly account*/
+
+        /*blog upload image*/
+        if ($this->input->post('imgupload')) {
+            $uploadb = $this->input->post('uploadb');
+            $inputBit = $uploadb;
+            $bitly = 'blogupload';
+            $whereBit = array(
+                'c_name'      => $bitly,
+                'c_key'     => $log_id,
+            );
+            $query_bit = $this->Mod_general->select('au_config', '*', $whereBit);
+
+            /* check before insert */
+            if (empty($query_bit)) {
+                $data_bit = array(
+                    'c_name'      => $bitly,
+                    'c_value'      => $inputBit,
+                    'c_key'     => $log_id,
+                );
+                $this->Mod_general->insert('au_config', $data_bit);
+            } else {
+                $data_bit = array(
+                    'c_value'      => $inputBit
+                );
+                $whereBit = array(
+                    'c_key'     => $log_id,
+                    'c_name'      => $bitly
+                );
+                $this->Mod_general->update('au_config', $data_bit,$whereBit);
+            }
+            redirect(base_url() . 'managecampaigns/setting?m=add_success_bupload');
+        }
+        /*End blog upload image*/
 
         /*youtube channel*/
         if ($this->input->post('ytid')) {
