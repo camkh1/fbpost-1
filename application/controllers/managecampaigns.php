@@ -328,7 +328,7 @@ class Managecampaigns extends CI_Controller {
                 }
             }
             if(empty($blID)) {
-                echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'facebook/shareation?post=getpost";}, 30 );</script>';
+                echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=yt";}, 3000 );</script>';
             }
             /*End get blog id*/
             //echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns?m=runout_post";}, 30 );</script>';
@@ -379,10 +379,10 @@ class Managecampaigns extends CI_Controller {
                     $fbpid = $this->Mod_general->select('meta', '*', $wFbconfig);
                     if(!empty($fbpid[0])) {
                         $setTime = $arrX[$randIndex] * (1000 * 60);
-                    echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=yt";}, '.$setTime.' );</script>';
+                        echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=yt";}, '.$setTime.' );</script>';
                     } else {
                         $setTime = $arrX[$randIndex] * (1000 * 60);
-                        echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/postprogress";}, '.$setTime.' );</script>';
+                        echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=yt";}, '.$setTime.' );</script>';
                     }
                     /*End get page id*/
                     // output the value for the random index
@@ -1031,7 +1031,7 @@ class Managecampaigns extends CI_Controller {
                         'label' => $labels,
                     );
                     /*save tmp data post*/
-                    if($main_post_type!= 'tnews') {
+                    if($main_post_type!= 'tnews' || empty($featurePosts)) {
                         $target_dir = './uploads/image/';
                         $tmp_path = './uploads/'.$log_id.'/';
                         $file_tmp_name = $fbuids . '_tmp_action.json';
@@ -1460,7 +1460,7 @@ class Managecampaigns extends CI_Controller {
                                                 $slink = $pConent->link;
                                                 $title = $getPost[0]->p_name;
                                             }
-                                            $blogData = $this->postToBlogger($bid, $vid, $title,$image,$message,$main_post_style,@$pOption->label,$slink);
+                                            $blogData = $this->postToBlogger($bid, $vid, $title,$image,$message,$main_post_style,@$pOption->label,$getPost[0]);
                                             //$blogData['error'] = true;
                                             if(!empty($blogData['error'])) {
                                                 //redirect(base_url() . 'managecampaigns?m=blog_main_error&bid='.$bid);
@@ -1895,10 +1895,12 @@ class Managecampaigns extends CI_Controller {
             }
             $getAdscode = '<script>function mbtlist(json){for(var i=0;i<json.feed.entry.length;i++){ListConten=json.feed.entry[i].content.$t;document.write(ListConten);}}</script>';
             $showAds = '<center><script type="text/javascript" src="https://10clblogh.blogspot.com/feeds/posts/default/-/getad?max-results=1&amp;alt=json-in-script&amp;callback=mbtlist"></script></center>'; 
-            $bodytext = $getAdscode. $showAds.'<meta content="'.$image.'" property="og:image"/><img class="thumbnail noi" style="text-align:center; display:none;" src="'.$image.'"/><h2>'.$thai_title.'</h2><table width="100%" border="0" align="center" cellpadding="0" cellspacing="0"><tr><td colspan="3" style="background:#000000;height: 280px;overflow: hidden;background: no-repeat center center;background-size: cover; background: #000 center center no-repeat; background-size: 100%;border: 1px solid #000; background-image:url('.$image.');"><a href="'.$mainlink.'" target="_top" rel="nofollow" style="display:block;height:280px;width:100%; text-align:center; background:url(https://3.bp.blogspot.com/-3ii7X_88VLs/XEs-4wFXMXI/AAAAAAAAiaw/d_ldK-ae830UCGsyOl0oEqqwDQwd_TqEACLcBGAs/s90/youtube-play-button-transparent-png-15.png) no-repeat center center;">&nbsp;</a></td></tr><tr><td style="background:#000 url(https://2.bp.blogspot.com/-Z_lYNnmixpM/XEs6o1hpTUI/AAAAAAAAiak/uPb1Usu-F-YvHx6ivxnqc1uSTIAkLIcxwCLcBGAs/s1600/l.png) no-repeat bottom left; height:39px; width:237px;margin:0;padding:0;"><a href="'.$mainlink.'" target="_top" rel="nofollow" style="display:block;height:39px;width:100%;">&nbsp;</a></td><td style="background:#000 url(https://1.bp.blogspot.com/-9nWJSQ3HKJs/XEs6o7cUv2I/AAAAAAAAiag/sAiHoM-9hKUOezozem6GvxshCyAMp_n_QCLcBGAs/s1600/c.png) repeat-x bottom center; height:39px;margin:0;padding:0;">&nbsp;</td><td style="background:#000 url(https://2.bp.blogspot.com/-RmcnX0Ej1r4/XEs6o-Fjn9I/AAAAAAAAiac/j50SWsyrs8sA5C8AXotVUG7ESm1waKxPACLcBGAs/s1600/r.png) no-repeat bottom right; height:39px; width:151px;margin:0;padding:0;">&nbsp;</td></tr></table>'.$showAds.'<!--more--><script type="text/javascript" src="https://10clblogh.blogspot.com/feeds/posts/default/-/GetFeedFromBlog?max-results=1&alt=json-in-script&callback=mbtlist"></script>' . $message;
+            $lineButton = '<center><div class="line-it-button" data-lang="en" data-type="friend" data-lineid="0888250488" data-count="true" data-home="true" style="display: none;"></div> 
+<div class="line-it-button" data-lang="en" data-type="like" data-url="'.$mainlink.'" data-share="true" data-lineid="0888250488" style="display: none;"></div><script src="https://d.line-scdn.net/r/web/social-plugin/js/thirdparty/loader.min.js" async="async" defer="defer"></script></center>';
+            $bodytext = $getAdscode. $showAds.'<meta content="'.$image.'" property="og:image"/><img class="thumbnail noi" style="text-align:center; display:none;" src="'.$image.'"/><h2>'.$thai_title.'</h2><table width="100%" border="0" align="center" cellpadding="0" cellspacing="0"><tr><td colspan="3" style="background:#000000;height: 280px;overflow: hidden;background: no-repeat center center;background-size: cover; background: #000 center center no-repeat; background-size: 100%;border: 1px solid #000; background-image:url('.$image.');"><a href="'.$mainlink.'" target="_top" rel="nofollow" style="display:block;height:280px;width:100%; text-align:center; background:url(https://3.bp.blogspot.com/-3ii7X_88VLs/XEs-4wFXMXI/AAAAAAAAiaw/d_ldK-ae830UCGsyOl0oEqqwDQwd_TqEACLcBGAs/s90/youtube-play-button-transparent-png-15.png) no-repeat center center;">&nbsp;</a></td></tr><tr><td style="background:#000 url(https://2.bp.blogspot.com/-Z_lYNnmixpM/XEs6o1hpTUI/AAAAAAAAiak/uPb1Usu-F-YvHx6ivxnqc1uSTIAkLIcxwCLcBGAs/s1600/l.png) no-repeat bottom left; height:39px; width:237px;margin:0;padding:0;"><a href="'.$mainlink.'" target="_top" rel="nofollow" style="display:block;height:39px;width:100%;">&nbsp;</a></td><td style="background:#000 url(https://1.bp.blogspot.com/-9nWJSQ3HKJs/XEs6o7cUv2I/AAAAAAAAiag/sAiHoM-9hKUOezozem6GvxshCyAMp_n_QCLcBGAs/s1600/c.png) repeat-x bottom center; height:39px;margin:0;padding:0;">&nbsp;</td><td style="background:#000 url(https://2.bp.blogspot.com/-RmcnX0Ej1r4/XEs6o-Fjn9I/AAAAAAAAiac/j50SWsyrs8sA5C8AXotVUG7ESm1waKxPACLcBGAs/s1600/r.png) no-repeat bottom right; height:39px; width:151px;margin:0;padding:0;">&nbsp;</td></tr></table>'.$lineButton.$showAds.'<!--more--><img src="https://3.bp.blogspot.com/-IDEnasS2NeM/Xbpa6kTL_dI/AAAAAAAAnOE/71KpKu86xW4TiGKcCp1YstZy3Ol94f7zACNcBGAsYHQ/s1600/Line-button-thai.png" style="width:100%;height:auto;"/>' . $message . '<div><script type="text/javascript" src="https://10clblogh.blogspot.com/feeds/posts/default/-/GetFeedFromBlog?max-results=1&alt=json-in-script&callback=mbtlist"></script></div>';
             $title = (string) $title;
             $dataMeta = array(
-                'title' => $title,
+                'title' => $getPost[0]->p_name,
                 'image' => $image,
                 'link' => $mainlink
             );
@@ -2241,9 +2243,10 @@ class Managecampaigns extends CI_Controller {
         $this->load->view ( 'managecampaigns/postprogress', $data );
     }
 
-    public function postToBlogger($bid, $vid, $title,$image,$conent='',$blink,$label='',$slink='')
+    public function postToBlogger($bid, $vid, $title,$image,$conent='',$blink,$label='',$allData='')
     {
-
+        $pConent = json_decode($allData->p_conent);
+        $pOption = json_decode($allData->p_schedule);
         /*prepare post*/
         $conent = str_replace('&gt;', '>', $conent);
         $conent = str_replace('&lt;', '<', $conent);
@@ -2256,13 +2259,13 @@ class Managecampaigns extends CI_Controller {
 
         $strTime = strtotime(date("Y-m-d H:i:s"));
         $dataContent          = new stdClass();
-
+        $lineButton = '<center><div class="line-it-button" data-lang="en" data-type="friend" data-lineid="0888250488" data-count="true" data-home="true" style="display: none;"></div> <img src="https://3.bp.blogspot.com/-IDEnasS2NeM/Xbpa6kTL_dI/AAAAAAAAnOE/71KpKu86xW4TiGKcCp1YstZy3Ol94f7zACNcBGAsYHQ/s1600/Line-button-thai.png" style="width:100%;height:auto;"/><script src="https://d.line-scdn.net/r/web/social-plugin/js/thirdparty/loader.min.js" async="async" defer="defer"></script></center>';
         $adSenseCode = "<div style=\"text-align: center;\"><script async src=\"//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js\"></script><script>if(typeof startin!=='undefined'){document.write(setCode);} if(typeof startin==='undefined'){document.write(inSide);(adsbygoogle=window.adsbygoogle||[]).push({});}</script></div>";
         $adSenseCode = trim_slashes($adSenseCode);
         switch ($blink) {
             case '2':
                 $dataMeta = array(
-                    'titleEn' => $title,
+                    'titleEn' => $allData->p_name,
                     'image' => $image,
                     'videoID' => $vid
                 );
@@ -2277,7 +2280,7 @@ class Managecampaigns extends CI_Controller {
                     $label = 'Link';
                 }
                 $dataMeta = array(
-                    'title' => $title,
+                    'title' => $allData->p_name,
                     'image' => $image,
                     'link' => ''
                 );
@@ -2307,9 +2310,9 @@ class Managecampaigns extends CI_Controller {
                 $enContent = $aObj->getpost(1);
                 $enTxt = preg_replace('/\r\n|\r/', "\n", $enContent["content"][0]["content"]);
                 $enTitle = $enContent["content"][0]["title"];
-                $bodytext = '<link href="'.$image.'" rel="image_src"/><meta content="'.$image.'" property="og:image"/><img class="thumbnail news" style="text-align:center" src="'.$image.'"/><!--more-->'.$adSenseCode.$txt.'<br/><br/><b>Another News:</b><br/><h2>'.$enTitle.'</h2><div class="wrapper"><div class="small"><p>'.$enTxt.'</p></div> <a class="readmore" href="#">... Click to read more</a></div>'.$adSenseCode;
+                $bodytext = '<link href="'.$image.'" rel="image_src"/><meta content="'.$image.'" property="og:image"/><img class="thumbnail news" style="text-align:center" src="'.$image.'"/><!--more-->'.$adSenseCode.$txt.$lineButton.'<br/><br/><b>Another News:</b><br/><h2>'.$enTitle.'</h2><div class="wrapper"><div class="small"><p>'.$enTxt.'</p></div> <a class="readmore" href="#">... Click to read more</a></div>'.$adSenseCode;
                 $dataMeta = array(
-                    'title' => $title,
+                    'title' => $allData->p_name,
                     'image' => $image,
                     'link' => ''
                 );
@@ -2323,18 +2326,18 @@ class Managecampaigns extends CI_Controller {
                 break;
             case 'featurePosts':
                 $dataMeta = array(
-                    'title' => $title,
+                    'title' => $allData->p_name,
                     'image' => $image,
-                    'link' => $slink
+                    'link' => $pConent->link
                 );
                 $label = 'featurePosts';
                 $customcode = json_encode($dataMeta);
-                $bodytext = '<link href="'.$image.'" rel="image_src"/><meta content="'.$image.'" property="og:image"/><a href="'.$slink.'" target="_top"><img class="thumbnail" style="text-align:center" src="'.$image.'"/></a><!--more-->';
+                $bodytext = '<link href="'.$image.'" rel="image_src"/><meta content="'.$image.'" property="og:image"/><a href="'.$pConent->link.'" target="_top"><img class="thumbnail" style="text-align:center" src="'.$image.'"/></a><!--more-->';
                 break;
             default:
-                $bodytext = '<img class="thumbnail noi" style="text-align:center" src="'.$image.'"/><!--more--><div><b>'.$title.'</b></div><div class="wrapper"><div class="small"><p>'.$conent.'</p></div> <a href="#" class="readmore">... Click to read more</a></div>'.$adSenseCode.'<div>Others news:</div><iframe width="100%" height="280" src="https://www.youtube.com/embed/'.$vid.'" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>'.$adSenseCode;
+                $bodytext = '<img class="thumbnail noi" style="text-align:center" src="'.$image.'"/><!--more--><div><b>'.$title.'</b></div><div class="wrapper"><div class="small"><p>'.$conent.'</p></div> <a href="#" class="readmore">... Click to read more</a></div>'.$adSenseCode.'<div>Others news:</div><iframe width="100%" height="280" src="https://www.youtube.com/embed/'.$vid.'" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>'.$adSenseCode.$lineButton;
                 $dataMeta = array(
-                    'title' => $title,
+                    'title' => $allData->p_name,
                     'image' => $image,
                     'link' => ''
                 );
@@ -2357,7 +2360,6 @@ class Managecampaigns extends CI_Controller {
             $dataContent->label    = 'default';
         }
         return $this->Mod_general->blogger_post($client,$dataContent);
-
         /*end prepare post*/
     }
 
@@ -5287,47 +5289,52 @@ public function imgtest()
                 /*End get link from DB*/
                 break;
             case 'yt':
-                /*get post that not share ixist*/
-                $where_Pshare = array (
-                    'u_id' => $sid,
-                    'p_status' => 1,
-                );
-                $dataPost = $this->Mod_general->select ('post','*', $where_Pshare);
-                if(!empty($dataPost[0])) {
-                    $pid = $dataPost[0]->p_id;
-                    $pConent = json_decode($dataPost[0]->p_conent);
-                    $pOption = json_decode($dataPost[0]->p_schedule);
-                    $imgUrl = @$pConent->picture;
-                    $imgUrl = @$pConent->picture;
-                    if (preg_match("/http/", $imgUrl) && preg_match('/ytimg.com/', $imgUrl)) {
-                        echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/yturl?pid='.$pid.'&action=postblog&autopost=1";},0 );</script>';
-                                exit();
+                if (date('H') <= 23 && date('H') > 4 && date('H') !='00') {
+                    /*get post that not share ixist*/
+                    $where_Pshare = array (
+                        'u_id' => $sid,
+                        'p_status' => 1,
+                    );
+                    $dataPost = $this->Mod_general->select ('post','*', $where_Pshare);
+                    if(!empty($dataPost[0])) {
+                        $pid = $dataPost[0]->p_id;
+                        $pConent = json_decode($dataPost[0]->p_conent);
+                        $pOption = json_decode($dataPost[0]->p_schedule);
+                        $imgUrl = @$pConent->picture;
+                        $imgUrl = @$pConent->picture;
+                        if (preg_match("/http/", $imgUrl) && preg_match('/ytimg.com/', $imgUrl)) {
+                            echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/yturl?pid='.$pid.'&action=postblog&autopost=1";},0 );</script>';
+                                    exit();
+                        }
+                        if(preg_match('/youtu/', $pConent->link) || $dataPost[0]->p_post_to ==1 || ($dataPost[0]->p_post_to == 1 && $pOption->main_post_style =='tnews')) {
+                             echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/yturl?pid='.$pid.'&action=postblog&autopost=1";},0 );</script>';
+                                    exit();
+                        }
+                        echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=fbgroup";}, 30 );</script>';
+                        exit();
                     }
-                    if(preg_match('/youtu/', $pConent->link) || $dataPost[0]->p_post_to ==1 || ($dataPost[0]->p_post_to == 1 && $pOption->main_post_style =='tnews')) {
-                         echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/yturl?pid='.$pid.'&action=postblog&autopost=1";},0 );</script>';
-                                exit();
-                    }
-                    echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=fbgroup";}, 30 );</script>';
-                    exit();
-                }
-                /*End get post that not share*/
+                    /*End get post that not share*/
 
-                $RanChoose = array(
-                    'site',
-                    'yt',
-                );
-                $l = array_rand($RanChoose);
-                $getChoose = $RanChoose[$l];
-                switch ($getChoose) {
-                    case 'yt':
-                        $this->getYtToPost();
-                        break;
-                    case 'site':
-                        echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=site";}, 1000 );</script>';
-                        break;
-                    default:
-                        # code...
-                        break;
+                    $RanChoose = array(
+                        'site',
+                        'yt',
+                    );
+                    $l = array_rand($RanChoose);
+                    $getChoose = $RanChoose[$l];
+                    switch ($getChoose) {
+                        case 'yt':
+                            $this->getYtToPost();
+                            break;
+                        case 'site':
+                            echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=site";}, 1000 );</script>';
+                            break;
+                        default:
+                            # code...
+                            break;
+                    }
+                } else {
+                    echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/waiting";}, 3000 );</script>';
+                    exit();
                 }
                 break;
             case 'pblog':
@@ -5472,12 +5479,15 @@ public function imgtest()
                 $bitlyAc = $this->Mod_general->select('au_config', '*', $whereBit);
                 if(!empty($bitlyAc[0])) {
                     $bitly = json_decode($bitlyAc[0]->c_value);
-                    $link = $this->mod_general->get_bitly_short_url ( $pConent->link, $bitly->username, $bitly->api );
-                    $data['setLink'] = $link;
+                    if($bitly->api) {
+                        $link = $this->mod_general->get_bitly_short_url ( $pConent->link, $bitly->username, $bitly->api );
+                        $data['setLink'] = $link;
+                    } else {
+                        $data['setLink'] = $pConent->link;
+                    }
                 } else {
                     $data['setLink'] = $pConent->link;
                 } 
-                
                 break;
             case 'wait':
                 $whereShowAuto = array(
@@ -6620,7 +6630,7 @@ public function imgtest()
         /*End fb Page to post*/
 
         /*bitly account*/
-        if ($this->input->post('buserid')) {
+        if ($this->input->post('bitly')) {
             $buserid = $this->input->post('buserid');
             $bapi = $this->input->post('bapi');
             $inputBit = array(

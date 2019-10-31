@@ -527,12 +527,12 @@ $btemplate = "D:&bsol;&bsol;PROGRAM&bsol;&bsol;templates&bsol;&bsol;";
                                 <form class="form-horizontal row-border" id="bitly" method="post">
                                 <div class="form-group">
                                     <div class="col-md-12">
-                                        <input type="text" name="buserid" class="form-control" style="width: 100%" placeholder="USER NAME (Bitly)" value="<?php echo @$bitly->username;?>" required />
+                                        <input type="text" name="buserid" class="form-control" style="width: 100%" placeholder="USER NAME (Bitly)" value="<?php echo @$bitly->username;?>" />
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <div class="col-md-12">
-                                        <input type="text" name="bapi" class="form-control" style="width: 100%" placeholder="API KEY (Bitly)" value="<?php echo @$bitly->api;?>" required />
+                                        <input type="text" name="bapi" class="form-control" style="width: 100%" placeholder="API KEY (Bitly)" value="<?php echo @$bitly->api;?>" />
                                     </div>
                                 </div>
                                 <div class="form-actions">
