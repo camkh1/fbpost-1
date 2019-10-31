@@ -1409,8 +1409,8 @@ class Managecampaigns extends CI_Controller {
                                 $images = $this->mod_general->uploadMedia($fileName,$param);
                                 if($no_need_upload) {
                                     redirect(base_url().'managecampaigns/add?id='.$getPost[0]->p_id.'&upload='.$fileName);
+                                    exit();
                                 }
-                                exit();
                                 if(!$images) {
                                     $apiKey = '76e9b194c1bdc616d4f8bb6cf295ce51';
                                     $image = $this->Mod_general->uploadToImgbb($fileName, $apiKey);
