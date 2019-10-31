@@ -1409,7 +1409,6 @@ class Managecampaigns extends CI_Controller {
                                 $images = $this->mod_general->uploadMedia($fileName,$param);
                                 if($no_need_upload) {
                                     redirect(base_url().'managecampaigns/add?id='.$getPost[0]->p_id.'&upload='.$fileName);
-                                    exit();
                                 }
                                 if(!$images) {
                                     $apiKey = '76e9b194c1bdc616d4f8bb6cf295ce51';
@@ -1463,7 +1462,8 @@ class Managecampaigns extends CI_Controller {
                                             $blogData = $this->postToBlogger($bid, $vid, $title,$image,$message,$main_post_style,@$pOption->label,$getPost[0]);
                                             //$blogData['error'] = true;
                                             if(!empty($blogData['error'])) {
-                                                //redirect(base_url() . 'managecampaigns?m=blog_main_error&bid='.$bid);
+                                                redirect(base_url() . 'managecampaigns?m=blog_main_error&bid='.$bid);
+                                                exit();
                                                 $p_id = $this->input->get('pid');
                                                 if(count($postsLoop)>5) {
                                                    //echo $showHTHM;
