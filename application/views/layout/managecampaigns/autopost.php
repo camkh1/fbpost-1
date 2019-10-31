@@ -287,7 +287,7 @@ $glogin = str_replace('autopost;=', 'autopost=', $glogin);
             changeBlogURL();
         <?php endif;?>
         <?php if(!empty($this->input->get('checkspamurl')) && !empty($this->input->get('bid'))):?>
-            //checkBloggerPost();
+            checkBloggerPost();
         <?php endif;?>
         <?php if(!empty($this->input->get('bitly'))):?>
             bitly();
