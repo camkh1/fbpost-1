@@ -5316,8 +5316,8 @@ public function imgtest()
                     /*End get post that not share*/
 
                     $RanChoose = array(
-                        'site',
                         'yt',
+                        'site',
                     );
                     $l = array_rand($RanChoose);
                     $getChoose = $RanChoose[$l];
@@ -5338,8 +5338,8 @@ public function imgtest()
                 }
                 break;
             case 'pblog':
-                $pid = $this->autoposttoblog();
                 echo '<meta http-equiv="refresh" content="30">';
+                $pid = $this->autoposttoblog();
                 if(!empty($pid)) {
                     $setURl = base_url().'managecampaigns/autopostfb?action=fbgroup';
                     $this->session->set_userdata('backto', $setURl);
@@ -5389,7 +5389,7 @@ public function imgtest()
                 $sh_type = $pSchedule->ptype;
                 $account_group_type = $pSchedule->account_group_type;
                 /*Show data Prefix*/
-                if($pSchedule->main_post_style !='tnews') {
+                if(@$pSchedule->main_post_style !='tnews') {
                     if(!empty($pSchedule->prefix_title)) {
                         $prefixArr = explode('|', $pSchedule->prefix_title);
                         $preRand = $prefixArr[mt_rand(0, count($prefixArr) - 1)];
@@ -5408,7 +5408,7 @@ public function imgtest()
                 }
                 /*End Show data Prefix*/
 
-                if($pSchedule->main_post_style !='tnews') {
+                if(@$pSchedule->main_post_style !='tnews') {
                     if(!empty($pSchedule->suffix_title)) {
                         $subFixArr = explode('|', $pSchedule->suffix_title);
                         $subRand = $subFixArr[mt_rand(0, count($subFixArr) - 1)];
@@ -5426,7 +5426,7 @@ public function imgtest()
                     }
                 }
                 /*End Show data Prefix*/
-                if($pSchedule->main_post_style !='tnews') {
+                if(@$pSchedule->main_post_style !='tnews') {
                     if(!empty($pSchedule->prefix_title)) {
                         $title = $preRand . '<br/>' . $data['post']->p_name . '<br/>' . $subRand;
                     } else {
@@ -5855,6 +5855,12 @@ public function imgtest()
             $string = file_get_contents($tmp_path);
             $json_a = json_decode($string);
 
+            // if($json_a->main_post_style !='tnews') {
+            //     $main_post_style = $json_a->main_post_style;
+            // } else {
+            //     $main_post_style = 1;
+            // }
+            $main_post_style = 1;
             $schedule = array (                    
                 'start_date' => $json_a->start_date,
                 'start_time' => $json_a->start_time,
@@ -5880,7 +5886,7 @@ public function imgtest()
                 'txtadd' => $json_a->txtadd,
                 'blogid' => $json_a->blogid,
                 'blogLink' => $json_a->blogLink,
-                'main_post_style' => $json_a->main_post_style,
+                'main_post_style' => $main_post_style,
                 'userAgent' => $json_a->userAgent,
                 'checkImage' => $json_a->checkImage,
                 'ptype' => $json_a->ptype,

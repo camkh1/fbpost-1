@@ -69,44 +69,44 @@ class Getcontent extends CI_Controller
                 foreach($sectionC->find('article') as $index => $clink) {
                     $linkc = $clink->find('a',0)->href;
                     /*check duplicate link*/
-                    $whereDupA = array(
-                        'object_id'      => $linkc,
-                        'meta_name'     => $log_id . 'sitelink',
-                        'meta_key'      => date('Y-m-d'),
-                    );
-                    $queryCheckDup = $this->Mod_general->select('meta', '*', $whereDupA);
-                    if(empty($queryCheckDup[0])) {
-                        $data_blogC = array(
-                            'meta_key'      => date('Y-m-d'),
-                            'object_id'      => $linkc,
-                            'meta_value'     => 0,
-                            'meta_name'     => $log_id . 'sitelink',
-                        );
-                        $lastID = $this->Mod_general->insert('meta', $data_blogC);
-                    }
+                    // $whereDupA = array(
+                    //     'object_id'      => $linkc,
+                    //     'meta_name'     => $log_id . 'sitelink',
+                    //     'meta_key'      => date('Y-m-d'),
+                    // );
+                    // $queryCheckDup = $this->Mod_general->select('meta', '*', $whereDupA);
+                    // if(empty($queryCheckDup[0])) {
+                    //     $data_blogC = array(
+                    //         'meta_key'      => date('Y-m-d'),
+                    //         'object_id'      => $linkc,
+                    //         'meta_value'     => 0,
+                    //         'meta_name'     => $log_id . 'sitelink',
+                    //     );
+                    //     $lastID = $this->Mod_general->insert('meta', $data_blogC);
+                    // }
                     /*End check duplicate link*/
                 }
                 break;
             case 'www.viralsfeedpro.com':
                 $sectionA = $html->find('#main .news-lay-3',0);
                 foreach($sectionA->find('article') as $index => $slink) {
-                    $link = $slink->find('a',0)->href;
-                    /*check duplicate link*/
-                    $whereDupA = array(
-                        'object_id'      => $link,
-                        'meta_name'     => $log_id . 'sitelink',
-                        'meta_key'      => date('Y-m-d'),
-                    );
-                    $queryCheckDup = $this->Mod_general->select('meta', '*', $whereDupA);
-                    if(empty($queryCheckDup[0])) {
-                        $data_blog = array(
-                            'meta_key'      => date('Y-m-d'),
-                            'object_id'      => $link,
-                            'meta_value'     => 0,
-                            'meta_name'     => $log_id . 'sitelink',
-                        );
-                        $lastID = $this->Mod_general->insert('meta', $data_blog);
-                    }
+                    // $link = $slink->find('a',0)->href;
+                    // /*check duplicate link*/
+                    // $whereDupA = array(
+                    //     'object_id'      => $link,
+                    //     'meta_name'     => $log_id . 'sitelink',
+                    //     'meta_key'      => date('Y-m-d'),
+                    // );
+                    // $queryCheckDup = $this->Mod_general->select('meta', '*', $whereDupA);
+                    // if(empty($queryCheckDup[0])) {
+                    //     $data_blog = array(
+                    //         'meta_key'      => date('Y-m-d'),
+                    //         'object_id'      => $link,
+                    //         'meta_value'     => 0,
+                    //         'meta_name'     => $log_id . 'sitelink',
+                    //     );
+                    //     $lastID = $this->Mod_general->insert('meta', $data_blog);
+                    // }
                     /*End check duplicate link*/
                 }
                 $sectionC = $html->find('#main .news-lay-3',2);
@@ -1462,32 +1462,32 @@ class Getcontent extends CI_Controller
                 $content = preg_replace('/<ins\b[^>]*>(.*?)<\/ins>/is', '<div class="setAds"></div>', $content);
                 $content = preg_replace("/<a(.*?)>/", "<a$1 target=\"_blank\">", $content);
 
-                $regex = '/< *img[^>]*src *= *["\']?([^"\']*)/';
-                preg_match_all( $regex, $content, $matches );
-                $ImgSrc = array_pop($matches);
-                // reversing the matches array
-                if(!empty($ImgSrc)) {
-                    foreach ($ImgSrc as $image) {
-                        $imagedd = strtok($image, "?");
-                        $file_title = basename($imagedd);
-                        $fileName = FCPATH . 'uploads/image/'.$file_title;
-                        @copy($imagedd, $fileName);   
-                        $images = $this->mod_general->uploadtoImgur($fileName);
-                        if(empty($images)) {
-                            $apiKey = '76e9b194c1bdc616d4f8bb6cf295ce51';
-                            $images = $this->Mod_general->uploadToImgbb($fileName, $apiKey);
-                            if($images) {
-                                @unlink($fileName);
-                            }
-                        } else {
-                            $gimage = @$images; 
-                            @unlink($fileName);
-                        }
-                        if(!empty($gimage)) {
-                            $content = str_replace($image,$gimage,$content);
-                        }
-                    }
-                }
+                // $regex = '/< *img[^>]*src *= *["\']?([^"\']*)/';
+                // preg_match_all( $regex, $content, $matches );
+                // $ImgSrc = array_pop($matches);
+                // // reversing the matches array
+                // if(!empty($ImgSrc)) {
+                //     foreach ($ImgSrc as $image) {
+                //         $imagedd = strtok($image, "?");
+                //         $file_title = basename($imagedd);
+                //         $fileName = FCPATH . 'uploads/image/'.$file_title;
+                //         @copy($imagedd, $fileName);   
+                //         $images = $this->mod_general->uploadtoImgur($fileName);
+                //         if(empty($images)) {
+                //             $apiKey = '76e9b194c1bdc616d4f8bb6cf295ce51';
+                //             $images = $this->Mod_general->uploadToImgbb($fileName, $apiKey);
+                //             if($images) {
+                //                 @unlink($fileName);
+                //             }
+                //         } else {
+                //             $gimage = @$images; 
+                //             @unlink($fileName);
+                //         }
+                //         if(!empty($gimage)) {
+                //             $content = str_replace($image,$gimage,$content);
+                //         }
+                //     }
+                // }
                 $obj->vid = '';
                 $obj->conent = $content;
                 $obj->fromsite = $parse['host'];
@@ -1814,37 +1814,37 @@ class Getcontent extends CI_Controller
                 $content = preg_replace('/<ins\b[^>]*>(.*?)<\/ins>/is', '<div class="setAds"></div>', $content);
                 $content = preg_replace("/<a(.*?)>/", "<a$1 target=\"_blank\">", $content);
 
-                $regex = '/< *img[^>]*src *= *["\']?([^"\']*)/';
-                preg_match_all( $regex, $content, $matches );
-                $ImgSrc = array_pop($matches);
+                // $regex = '/< *img[^>]*src *= *["\']?([^"\']*)/';
+                // preg_match_all( $regex, $content, $matches );
+                // $ImgSrc = array_pop($matches);
 
-                // reversing the matches array
-                if(!empty($ImgSrc)) {
-                    foreach ($ImgSrc as $image) {
-                        $imagedd = strtok($image, "?");
+                // // reversing the matches array
+                // if(!empty($ImgSrc)) {
+                //     foreach ($ImgSrc as $image) {
+                //         $imagedd = strtok($image, "?");
 
-                        if(!preg_match('/^(http)/', $imagedd)){
-                            $imagedd = 'http://tnews.teenee.com/crime/'.$imagedd;
-                        }
-                        $file_title = basename($imagedd);
-                        $fileName = FCPATH . 'uploads/image/'.$file_title;
-                        @copy($imagedd, $fileName);   
-                        $images = $this->mod_general->uploadtoImgur($fileName);
-                        if(empty($images)) {
-                            $apiKey = '76e9b194c1bdc616d4f8bb6cf295ce51';
-                            $images = $this->Mod_general->uploadToImgbb($fileName, $apiKey);
-                            if($images) {
-                                @unlink($fileName);
-                            }
-                        } else {
-                            $gimage = @$images; 
-                            @unlink($fileName);
-                        }
-                        if(!empty($gimage)) {
-                            $content = str_replace($image,$gimage,$content);
-                        }
-                    }
-                }
+                //         if(!preg_match('/^(http)/', $imagedd)){
+                //             $imagedd = 'http://tnews.teenee.com/crime/'.$imagedd;
+                //         }
+                //         $file_title = basename($imagedd);
+                //         $fileName = FCPATH . 'uploads/image/'.$file_title;
+                //         @copy($imagedd, $fileName);   
+                //         $images = $this->mod_general->uploadtoImgur($fileName);
+                //         if(empty($images)) {
+                //             $apiKey = '76e9b194c1bdc616d4f8bb6cf295ce51';
+                //             $images = $this->Mod_general->uploadToImgbb($fileName, $apiKey);
+                //             if($images) {
+                //                 @unlink($fileName);
+                //             }
+                //         } else {
+                //             $gimage = @$images; 
+                //             @unlink($fileName);
+                //         }
+                //         if(!empty($gimage)) {
+                //             $content = str_replace($image,$gimage,$content);
+                //         }
+                //     }
+                // }
                 $obj->vid = '';
                 $obj->conent = $content;
                 $obj->fromsite = $parse['host'];
