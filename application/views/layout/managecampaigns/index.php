@@ -275,6 +275,7 @@ function parse_query_string(query) {
 						<tbody>
     <?php
     if(!empty($socialList)):
+    $Mod_general = new Mod_general ();
      foreach ($socialList as $value):
     	$content = json_decode($value->p_conent);
     	$getLink = $content->link;
@@ -310,6 +311,17 @@ function parse_query_string(query) {
 						                    $uniq_id = substr($str, 0, 9);
 						                    //$link = $glink . '?s=' . $uniq_id;
 						                    $link = $glink;
+						                    $whereBit = array(
+							                    'c_name'      => 'bitlyaccount',
+							                    'c_key'     => $log_id,
+							                );
+							                $bitlyAc = $Mod_general->select('au_config', '*', $whereBit);
+							                if(!empty($bitlyAc[0])) {
+							                    $bitly = json_decode($bitlyAc[0]->c_value);
+							                    if($bitly->api) {
+							                        $link = $Mod_general->get_bitly_short_url ( $link, $bitly->username, $bitly->api );
+							                    } 
+							                } 
 						                    //$link = get_bitly_short_url( $link, BITLY_USERNAME, BITLY_API_KEY );
         									?>
         									<textarea style="height: 25px;margin-bottom: 3px" id="copy-text" type="text" name="glink" class="form-control" onClick="copyText(this);"><?php echo $value->{Tbl_posts::name}.'&#13;&#10;#กดแชร์ 👉 กด 85 ขอให้โชคดี ขอให้รวยๆๆ🙏🙏🙏';?> <?php echo @$link;?></textarea>
