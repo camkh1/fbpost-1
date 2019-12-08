@@ -714,6 +714,7 @@ HTML;
         if ($this->input->post('itemid')) {
             $id = $this->input->post('itemid');   
             $itemidall = $this->input->post('itemidall');                    
+            $itemname = $this->input->post('itemname');                    
                 $this->load->library('form_validation');
                 $this->form_validation->set_rules('Typelist', 'Typelist', 'required');                
                 $existGroups = array();
@@ -729,14 +730,21 @@ HTML;
                         $file_name = 'group_list_'.$this->session->userdata('fb_user_id').'.json';
                         $list = array();
                         foreach ($itemidall as $key => $gall) {
-                            $ArrData = explode('||', $gall);
-                            $gID = $ArrData[0];
-                            $gTitle = $ArrData[1];
-                            $list[] = array(
-                                'gid' => $gID,
-                                'gname' => $gTitle,
-                                'members' => 0
-                            );
+                            if(!empty($gall)) {
+                                if(!empty($itemname)) {
+                                    $gID = $gall;
+                                    $gTitle = $itemname[$key];
+                                } else {
+                                    $ArrData = explode('||', $gall);
+                                    $gID = $ArrData[0];
+                                    $gTitle = $ArrData[1];
+                                }
+                                $list[] = array(
+                                    'gid' => $gID,
+                                    'gname' => $gTitle,
+                                    'members' => 0
+                                );
+                            }
                         }
                         $f = fopen($file_path.$file_name, 'w');
                         $fwrite = fwrite($f, json_encode($list));
@@ -768,10 +776,17 @@ HTML;
                         }                        
                         foreach ($id as $key => $gvalue) {
                             /*add to group*/
-                            $ArrayData = explode('||', $gvalue);
-                            $groupID = $ArrayData[0];
-                            $groupTitle = $ArrayData[1];
-                            $groupMember = $ArrayData[2];
+                            if(!empty($itemname)) {
+                                $groupID = $itemidall[$key];
+                                $gTitle = $itemname[$key];
+                                $groupMember = 0;
+                            } else {
+                                $ArrayData = explode('||', $gvalue);
+                                $groupID = $ArrayData[0];
+                                $groupTitle = $ArrayData[1];
+                                $groupMember = $ArrayData[2];
+                            }
+                            
                             $checkID = $this->mod_general->select('socail_network_group','*',array('sg_page_id'=>$groupID,'s_id' => $sid));
                             if(!empty($checkID[0])) {
                                 $fgId = $checkID[0]->sg_id;
@@ -1609,6 +1624,20 @@ WHERE gl.`gu_grouplist_id` = {$id}");
                     $PID = $pid = $dataPost[0]->p_id;
                     $pConent = json_decode($dataPost[0]->p_conent);
                     $pOption = json_decode($dataPost[0]->p_schedule);
+                    $parse = parse_url($pConent->link);
+                    $siteUrl = array(
+                        'www.siamnews.com',
+                        'www.viralsfeedpro.com',
+                        'www.mumkhao.com',
+                        'www.xn--42c2dgos8bxc2dtcg.com',
+                        'board.postjung.com',
+                    );
+                    $linkFound = array_search($parse['host'], $siteUrl);
+                    if(!empty($linkFound)) {
+                        echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/yturl?pid='.$PID.'&action=postblog&autopost=1";},0 );</script>';
+                                    exit();
+                    }
+
                     if($pOption->short_link==1 && !(preg_match('/bit.ly/', $pConent->link) || preg_match('/tiny.cc/', $pConent->link)) && !preg_match('/youtu/', $pConent->link)  && $dataPost[0]->p_post_to ==0){
                         //http://localhost/autopost/managecampaigns/autopost?bitly=1&pid=2
                         if(empty($this->input->get('noshort'))) {
@@ -1706,6 +1735,7 @@ WHERE gl.`gu_grouplist_id` = {$id}");
                         /* end add data to group of post */
                         /*End if empty groups*/
                     }
+                    
                     if(!empty($dataShare[0])) {
                         $pid = $dataShare[0]->p_id;
                         $postId = $dataShare[0]->p_id;
@@ -1715,11 +1745,12 @@ WHERE gl.`gu_grouplist_id` = {$id}");
 
                         $postAto = $this->Mod_general->getActionPost();
                         if(!empty($postAto)) {
-                            $imgUrl = @$pConent->picture;
-                            if (preg_match("/http/", $imgUrl) && preg_match('/ytimg.com/', $imgUrl)) {
-                                echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/yturl?pid='.$PID.'&bid='.$json_a->blogid.'&action=postblog&blink='.$json_a->blogLink.'&autopost=1";},0 );</script>';
-                                        exit();
+                            $checkLink = $this->mod_general->chceckLink($dataShare[0]->p_id);
+                            if($checkLink->needToPost) {
+                                echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/yturl?pid='.$PID.'&action=postblog&autopost=1";},0 );</script>';
+                                    exit();
                             }
+
 
 
                             if (date('H') <= 23 && date('H') > 4 && date('H') !='00') {
@@ -1921,10 +1952,51 @@ WHERE gl.`gu_grouplist_id` = {$id}");
                         $where_shCo
                     );
                     if(count($dataShCheck) == $count_shared) {
-                        $this->Mod_general->delete ( 'post', array (
-                            'p_id' => $dataPost[0]->p_id,
-                            'user_id' => $log_id,
-                        ));
+                        /*clean*/
+                        $oneDaysAgo = date('Y-m-d h:m:s', strtotime('-1 days', strtotime(date('Y-m-d'))));
+                        $where_pro = array('p_progress' => 1,'u_id' => $sid,'p_date <= '=> $oneDaysAgo);
+                        $getProDel = $this->Mod_general->select('post', '*', $where_pro);
+
+                        foreach ($getProDel as $prodel) {
+                            @$this->Mod_general->delete ( Tbl_share::TblName, array (
+                                'p_id' => $prodel->p_id,
+                                'social_id' => @$sid,
+                            ) );
+                            $this->Mod_general->delete ( 'meta', array (
+                                'object_id' => $prodel->p_id,
+                                'meta_key'  => $sid,
+                            ) );
+                            $this->Mod_general->delete ( 'post', array (
+                                'p_id' => $prodel->p_id,
+                            ) );
+                        }
+                        /*End clean*/
+                        $whereFb = array(
+                            'meta_name'      => 'post_progress',
+                            'meta_key'      => $sid,
+                            'meta_value'      => 1,
+                            'object_id'      => $dataPost[0]->p_id,
+                        );
+                        $DataPostProgress = $this->Mod_general->select('meta', '*', $whereFb);
+
+                        if(empty($DataPostProgress[0])) {
+                            $this->Mod_general->delete ( 'post', array (
+                                'p_id' => $pid,
+                                'user_id' => $log_id,
+                                'u_id' => $sid
+                            ));
+                        } else {
+                            $this->Mod_general->update ( 
+                                Tbl_posts::tblName, 
+                                array(
+                                    'p_post_status'=>1
+                                ), 
+                                array (
+                                    Tbl_posts::id => $dataPost[0]->p_id,
+                                    'u_id' => $sid
+                                ) 
+                            );
+                        }
                         $this->Mod_general->delete ( 'share', array (
                             'p_id' => $dataPost[0]->p_id,
                             'uid' => $log_id,
@@ -1933,6 +2005,10 @@ WHERE gl.`gu_grouplist_id` = {$id}");
                             'shp_posted_id' => $dataPost[0]->p_id,
                             'uid' => $log_id,
                         ));
+                        //                         echo '<pre>';
+                        // print_r($getProDel);
+                        // echo '</pre>';
+                        // die;
                         /*go to check post*/
                         echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'Facebook/share?post=checkpost";}, 2000 );</script>';
                         exit();

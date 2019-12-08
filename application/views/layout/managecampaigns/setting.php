@@ -147,7 +147,6 @@ $btemplate = "D:&bsol;&bsol;PROGRAM&bsol;&bsol;templates&bsol;&bsol;";
             <div class="row">
                     <!-- body -->
                     <div class="col-md-4">
-                        <a href="javascript:;" onclick="javascript:checkBloggerPost()" class="btn btn-primary pull-right">Start now</a>
                         <form class="form-horizontal row-border" action="" method="post"> 
                             <div class="row">
                                 <div class="col-md-12">
@@ -203,7 +202,7 @@ $btemplate = "D:&bsol;&bsol;PROGRAM&bsol;&bsol;templates&bsol;&bsol;";
 
 
                     <div class="col-md-8">
-                        <div class="widget box">
+                        <div class="widget box widget-closed">
                             <div class="widget-header">
                                 <h4><i class="icon-reorder"></i> Blog post</h4>
                                 <div class="toolbar no-padding">
@@ -250,7 +249,7 @@ $btemplate = "D:&bsol;&bsol;PROGRAM&bsol;&bsol;templates&bsol;&bsol;";
                 <div class="row">
                     <div class="col-md-6">
                         <!-- blog link -->
-                        <div class="widget box" id="blogLink">
+                        <div class="widget box widget-closed" id="blogLink">
                             <div class="widget-header">
                                 <h4><i class="icon-reorder"></i> Blog Link</h4>
                                 <div class="toolbar no-padding">
@@ -271,7 +270,7 @@ $btemplate = "D:&bsol;&bsol;PROGRAM&bsol;&bsol;templates&bsol;&bsol;";
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php if(!empty($bloglinkA)):
+                                        <?php if(!empty($this->session->userdata ('guid'))):
                                             foreach ($bloglinkA as $key => $linkA):
                                                 $linkAID = (int) $linkA->meta_id;
                                                 ?>
@@ -385,6 +384,12 @@ $btemplate = "D:&bsol;&bsol;PROGRAM&bsol;&bsol;templates&bsol;&bsol;";
                                         <div class="col-md-12"> 
                                             <input class="form-control required" name="fbconfig" type="text" value="<?php echo !empty($query_fb[0])? $query_fb[0]->meta_value : '';?>"> 
                                             <span class="help-block">fb Page to post.</span> 
+                                        </div> 
+                                    </div>
+                                    <div class="form-group"> 
+                                        <div class="col-md-12"> 
+                                            <input class="form-control required" name="fbgconfig" type="text" value="<?php echo !empty($query_fbg[0])? $query_fbg[0]->meta_value : '';?>"> 
+                                            <span class="help-block">fb Group to post.</span> 
                                         </div> 
                                     </div>
                                     <div class="form-actions"> 
@@ -570,7 +575,7 @@ $btemplate = "D:&bsol;&bsol;PROGRAM&bsol;&bsol;templates&bsol;&bsol;";
 
                     <div class="col-md-9">
                         <!-- youtube -->
-                        <div class="widget box" id="YoutubeChannel">
+                        <div class="widget box widget-closed" id="YoutubeChannel">
                             <div class="widget-header">
                                 <h4><i class="icon-reorder"></i> Youtube Channel</h4>
                                 <div class="toolbar no-padding">
@@ -627,18 +632,24 @@ $btemplate = "D:&bsol;&bsol;PROGRAM&bsol;&bsol;templates&bsol;&bsol;";
                         </div>
                         <!-- End youtube -->
 
-                        <div class="widget box widget-closed">
+                        <div class="widget box" id="multifb">
+                            <form method="post">
                             <div class="widget-header">
                                 <h4><i class="icon-reorder"></i> Facebook Accounts</h4>
                                 <div class="toolbar no-padding">
-                                    <div class="btn-group"> <span class="btn btn-xs widget-collapse"><i class="icon-angle-down"></i></span> </div>
+                                    <div class="btn-group">
+                                        <button type="submit" id="multidelfb" name="delete"
+                            class="btn btn-xs btn-google-plus" value="delete"><i class="icon-trash"></i> Delete</button> 
+                                        <span class="btn btn-xs widget-collapse"><i class="icon-angle-down"></i></span> </div>
                                 </div>
                             </div>
                             <div class="widget-content">
+                                
                                 <table class="table table-hover table-striped">
                                     <thead>
                                         <tr>
-                                            <th>#</th>
+                                            <th><input type="checkbox" class="uniform" name="allbox"
+                                    id="checkFbAll" /> #</th>
                                             <th>ID</th>
                                             <th>Name</th>
                                             <th>Action</th>
@@ -648,7 +659,9 @@ $btemplate = "D:&bsol;&bsol;PROGRAM&bsol;&bsol;templates&bsol;&bsol;";
                                         <?php if(!empty($facebook)):
                                             foreach ($facebook as $key => $fb):?>
                                         <tr>
-                                            <td><?php echo $key;?></td>
+                                            <td><input type="checkbox" id="fbitemid"
+                                    name="fbitemid[]" class="uniform itemid"
+                                    value="<?php echo @$fb->u_id;?>" /> <?php echo $key;?></td>
                                             <td><a href="https://mobile.facebook.com/<?php echo $fb->u_id;?>" target="_blank"><?php echo $fb->u_provider_uid;?></a></td>
                                             <td style="width: 50%"><img src="https://graph.facebook.com/<?php echo $fb->u_provider_uid;?>/picture" style="width: 60px;float: left" /><a href="https://mobile.facebook.com/<?php echo $fb->u_id;?>" target="_blank"><?php echo $fb->u_name;?></a></td>
                                             <td>
@@ -662,6 +675,7 @@ $btemplate = "D:&bsol;&bsol;PROGRAM&bsol;&bsol;templates&bsol;&bsol;";
                                     </tbody>
                                 </table>
                             </div>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -701,6 +715,19 @@ $btemplate = "D:&bsol;&bsol;PROGRAM&bsol;&bsol;templates&bsol;&bsol;";
                     }
                 });
             });
+
+            $('#checkFbAll').click(function () {
+                 $('input:checkbox.itemid').not(this).prop('checked', this.checked);
+             });
+             $('#multidelfb').click(function () {
+                 if (!$('#fbitemid:checked').val()) {
+                        alert('please select one');
+                        return false;
+                } else {
+                        return confirm('Do you want to delete all?');
+                }
+             });
+
         });
 
 

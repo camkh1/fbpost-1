@@ -1,5 +1,13 @@
 <?php
-
+$is_connected = is_connected();
+if($is_connected) {
+	define('is_connected', true);
+} else {
+	define('is_connected', false);
+	echo '<meta http-equiv="refresh" content="10">';
+	echo '<div style="text-align:center;color:red;">Internet Disconnect!</div>';
+	die;
+}
 /*
  *---------------------------------------------------------------
  * APPLICATION ENVIRONMENT
@@ -190,7 +198,19 @@ if (defined('ENVIRONMENT'))
 
 		define('APPPATH', BASEPATH.$application_folder.'/');
 	}
+	function is_connected()
+	{
+	    $connected = @fsockopen("www.google.com", 80); 
+	                                        //website, port  (try 80 or 443)
+	    if ($connected){
+	        $is_conn = true; //action when connected
+	        fclose($connected);
+	    }else{
+	        $is_conn = false; //action in connection failure
+	    }
+	    return $is_conn;
 
+	}
 /*
  * --------------------------------------------------------------------
  * LOAD THE BOOTSTRAP FILE

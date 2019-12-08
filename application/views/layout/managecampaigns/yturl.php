@@ -687,6 +687,14 @@
                                                     <i class="subtopmenu hangmeas khmer">Addition text / ថែមអត្ថបទ?</i>
                                                 </label>   
                                             </div>
+                                        </div>
+                                        <div class="form-group chekimg">
+                                            <div class="col-md-8">
+                                                <label class="radio-inline">
+                                                    <input type="checkbox" value="1" name="pprogress" />
+                                                    <i class="subtopmenu hangmeas khmer">Post progross?</i>
+                                                </label>   
+                                            </div>
                                         </div>                                       
 
                                     </div>

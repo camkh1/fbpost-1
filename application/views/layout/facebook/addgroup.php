@@ -28,7 +28,8 @@
                         <?php if(!empty($error)):?>
                             <?php var_dump($error);?>
                         <?php endif;?>
-                            <?php if(empty($_GET['file'])):?>                                
+                            <?php
+                             if(empty($_GET['file']) && empty($this->input->get('add'))):?>      
                                 <?php if(!empty($filesJson)):?>
                                     <div class="widget box">
                                         <div class="widget-content">
@@ -57,7 +58,7 @@
                                     </div>
                                     <hr/>
                                 <?php endif;?>
-
+                                <?php if(empty($_GET['file'])):?>
                                 <?php if(!empty($_GET['step']) && $_GET['step'] == 'facebook'):?>
                                     <!-- get from facebook by imacors -->
                                     <div class="col-md-12">
@@ -166,7 +167,7 @@
                                         </div> 
                                     </div>
                                     <!-- end get from facebook by imacors -->
-
+                                    <?php endif;?>
                                 <?php else:?>
                                 <div class="row">
                                     <div class="col-md-4">
@@ -311,18 +312,60 @@
                                 <div style="height:400px;overflow: auto;">
                                     <table class="table table-striped table-condensed table-hover table-checkable datatable">                                        
                                         <tbody>
-                                        <?php foreach ($gList as $value):?>
-                                            <tr>
-                                                <td style="width:10px" class="checkbox-column"><input type="checkbox" id="itemid"
-                                                    name="itemid[]" class="uniform"
-                                                    value="<?php echo $value['gid']; ?>||<?php echo $value['title'];?>||<?php echo $value['members'];?>" /><input type="hidden" id="itemid"
-                                                    name="itemidall[]" class="uniform"
-                                                    value="<?php echo $value['gid']; ?>||<?php echo $value['title'];?>||<?php echo $value['members'];?>" /></td>
-                                                <td style="width:135px">http://fb.com/<?php echo $value['gid']; ?></td>
-                                                <td><?php echo $value['title'];?></td>
-                                                <td style="width:100px"><?php echo $value['members'];?></td> 
-                                            </tr>
-                                            <?php endforeach;?>
+                                        <?php if(!empty($this->input->get('add'))):?>
+                                            <div class="form-group"> 
+                                                <div class="col-md-1">
+                                                    <input type="checkbox" id="itemid"
+                                                        name="itemid[]" class="uniform"
+                                                        value=""/>
+                                                </div>
+                                                <div class="col-md-5">
+                                                    <input type="text" name="itemidall[]" class="form-control" placeholder="FB ID">
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <input type="text" name="itemname[]" class="form-control" placeholder="ឈ្មោះ / Name">
+                                                </div>
+                                            </div>
+                                            <div class="form-group"> 
+                                                <div class="col-md-1">
+                                                    <input type="checkbox" id="itemid"
+                                                        name="itemid[]" class="uniform"
+                                                        value=""/>
+                                                </div>
+                                                <div class="col-md-5">
+                                                    <input type="text" name="itemidall[]" class="form-control" placeholder="FB ID">
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <input type="text" name="itemname[]" class="form-control" placeholder="ឈ្មោះ / Name">
+                                                </div>
+                                            </div>
+                                            <div class="form-group"> 
+                                                <div class="col-md-1">
+                                                    <input type="checkbox" id="itemid"
+                                                        name="itemid[]" class="uniform"
+                                                        value=""/>
+                                                </div>
+                                                <div class="col-md-5">
+                                                    <input type="text" name="itemidall[]" class="form-control" placeholder="FB ID">
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <input type="text" name="itemname[]" class="form-control" placeholder="ឈ្មោះ / Name">
+                                                </div>
+                                            </div>
+                                        <?php else:?>
+                                            <?php foreach ($gList as $value):?>
+                                                <tr>
+                                                    <td style="width:10px" class="checkbox-column"><input type="checkbox" id="itemid"
+                                                        name="itemid[]" class="uniform"
+                                                        value="<?php echo $value['gid']; ?>||<?php echo $value['title'];?>||<?php echo $value['members'];?>" /><input type="hidden" id="itemid"
+                                                        name="itemidall[]" class="uniform"
+                                                        value="<?php echo $value['gid']; ?>||<?php echo $value['title'];?>||<?php echo $value['members'];?>" /></td>
+                                                    <td style="width:135px">http://fb.com/<?php echo $value['gid']; ?></td>
+                                                    <td><?php echo $value['title'];?></td>
+                                                    <td style="width:100px"><?php echo $value['members'];?></td> 
+                                                </tr>
+                                                <?php endforeach;?>
+                                            <?php endif;?>
                                             </tbody>
                                     </table>
                                 </div>

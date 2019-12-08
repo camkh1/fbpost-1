@@ -134,6 +134,26 @@ function parse_query_string(query) {
 			<?php endif;?>
 			<br/><div style="width: 60px;overflow: hidden;height: 15px"><?php echo !empty($this->session->userdata ( 'fb_user_name' )) ? $this->session->userdata ( 'fb_user_name' ) : ''; ?></div>
 		</div>
+		<?php else:?>
+			<div class="statbox widget box box-shadow"> 
+				<div class="widget-content">
+					<form method="get" class="form-horizontal row-border">
+						<div class="form-group"> 
+							<label class="col-md-2 control-label">FB ID:</label> 
+							<div class="col-md-10">
+								<input type="text" name="fbuid" class="form-control" placeholder="FB ID">
+							</div> 
+						</div>
+						<div class="form-group"> 
+							<label class="col-md-2 control-label">fb_user_name:</label> 
+							<div class="col-md-10">
+								<input type="text" name="fbname" class="form-control" placeholder="ឈ្មោះ / Name">
+							</div> 
+						</div>
+						<button type="submit" class="btn btn-primary pull-right">OK</button>
+					</form>
+				</div> 
+			</div>
 		<?php endif;?>
 		<?php
 		 if(!empty($this->session->userdata ( 'gimage' ))):?>
@@ -287,6 +307,12 @@ function parse_query_string(query) {
                 $picture = 'https://i.ytimg.com/vi/'.$picture.'/hqdefault.jpg';
             endif;
     	endif;
+    	$glink = $content->link;
+		$str = time();
+        $str = md5($str);
+        $uniq_id = substr($str, 0, 9);
+        //$link = $glink . '?s=' . $uniq_id;
+        $link = $glink;  
      ?>
                                     <tr>
 								<td class="checkbox-column"><input type="checkbox" id="itemid"
@@ -299,29 +325,26 @@ function parse_query_string(query) {
         <?php echo $value->{Tbl_posts::p_date}; ?>
                                         </td>
 								<td class="hidden-xs" style="width:300px;overflow: auto;">
-   										<?php echo $content->link;?>
+   										<?php echo $link;?>
    										<?php if(!empty($this->input->get('post_by_manaul'))):?>
    											<textarea style="height: 40px;" id="copy-text" type="text" name="glink" class="form-control" onClick="copyText(this);"><?php echo $value->{Tbl_posts::name}; ?>&#13;&#10;<img class="thumbnail noi" style="text-align:center" src="'.$picture.'"/><!--more--><div><b>'.$title.'</b></div><div class="wrapper"><div class="small"><p><?php echo $content->message;?></p></div> <a href="#" class="readmore">... Click to read more</a></div><div style="text-align: center;"><script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" ></script><script>document.write(inSide);(adsbygoogle = window.adsbygoogle || []).push({});</script></div><iframe width="100%" height="280" src="https://www.youtube.com/embed/<?php echo $content->vid;?>" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe><div style="text-align: center;"><script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" ></script><script>document.write(inSide);(adsbygoogle = window.adsbygoogle || []).push({});</script></div></textarea>
    										<?php endif;?>
                                         </td>
 								<td>
-									<?php $glink = $content->link;
-        									$str = time();
-						                    $str = md5($str);
-						                    $uniq_id = substr($str, 0, 9);
-						                    //$link = $glink . '?s=' . $uniq_id;
-						                    $link = $glink;
-						                    $whereBit = array(
-							                    'c_name'      => 'bitlyaccount',
-							                    'c_key'     => $log_id,
-							                );
-							                $bitlyAc = $Mod_general->select('au_config', '*', $whereBit);
-							                if(!empty($bitlyAc[0])) {
-							                    $bitly = json_decode($bitlyAc[0]->c_value);
-							                    if($bitly->api) {
-							                        $link = $Mod_general->get_bitly_short_url ( $link, $bitly->username, $bitly->api );
-							                    } 
-							                } 
+									<?php  
+									if(!preg_match('/facebook/', $link)) {
+							        	// $whereBit = array(
+								        //     'c_name'      => 'bitlyaccount',
+								        //     'c_key'     => $log_id,
+								        // );
+								        // $bitlyAc = $Mod_general->select('au_config', '*', $whereBit);
+								        // if(!empty($bitlyAc[0])) {
+								        //     $bitly = json_decode($bitlyAc[0]->c_value);
+								        //     if($bitly->api) {
+								        //         $link = $Mod_general->get_bitly_short_url ( $link, $bitly->username, $bitly->api );
+								        //     } 
+								        // }
+							        }
 						                    //$link = get_bitly_short_url( $link, BITLY_USERNAME, BITLY_API_KEY );
         									?>
         									<textarea style="height: 25px;margin-bottom: 3px" id="copy-text" type="text" name="glink" class="form-control" onClick="copyText(this);"><?php echo $value->{Tbl_posts::name}.'&#13;&#10;#กดแชร์ 👉 กด 85 ขอให้โชคดี ขอให้รวยๆๆ🙏🙏🙏';?> <?php echo @$link;?></textarea>

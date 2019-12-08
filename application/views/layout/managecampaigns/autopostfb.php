@@ -88,31 +88,43 @@ function curl_get_result($url) {
 // $slink = $pConent->link;
 // $slink = get_bitly_short_url( $slink, BITLY_USERNAME, BITLY_API_KEY );
 $slink = trim($setLink);
+if(preg_match('/facebook/', $slink) && preg_match('/permalink/', $slink)) {
+    $pageid = '';
+} else {
+    $pageid = !empty(@$fbpid[0]) ? $fbpid[0]->meta_value : '';
+}
+$groupid = str_replace(' ', '', $groupid);
+$fb_user_id = $this->session->userdata ( 'fb_user_id' );
     ?>
 <div id="ptitle" style="display: none;"><?php echo $pTitle;?></div>    
-<code id="examplecode5" style="width:300px;overflow:hidden;display:none">var codedefault2=&quot;SET !EXTRACT_TEST_POPUP NO\n SET !TIMEOUT_PAGE 300\n SET !ERRORIGNORE YES\n SET !TIMEOUT_STEP 0.1\n&quot;;var wm=Components.classes[&quot;@mozilla.org/appshell/window-mediator;1&quot;].getService(Components.interfaces.nsIWindowMediator);var window=wm.getMostRecentWindow(&quot;navigator:browser&quot;);const XMLHttpRequest = Components.Constructor(&quot;@mozilla.org/xmlextras/xmlhttprequest;1&quot;);var homeUrl = &quot;<?php echo base_url();?>&quot;,setTitle = &quot;&quot;,gid = &quot;<?php echo @$gid;?>&quot;,setLink = &quot;<?php echo @$slink;?>&quot;;var vars={pageID:&quot;<?php echo !empty(@$fbpid[0]) ? $fbpid[0]->meta_value : '';?>&quot;,ttstamp:&quot;265816767119957579&quot;,page_id:&quot;<?php echo !empty(@$fbpid[0]) ? $fbpid[0]->meta_value : '';?>&quot;,share_id:'',postid:&quot;<?php echo !empty(@$post) ? $post->p_id : '';?>&quot;,group:[<?php echo @$groupid;?>],title:&quot;&quot;,homeUrl:&quot;<?php echo base_url();?>&quot;,link:'<?php echo @$slink;?>',__rev:&quot;1033590&quot;};</code>
+<code id="examplecode5" style="width:300px;overflow:hidden;display:none">var codedefault2=&quot;SET !EXTRACT_TEST_POPUP NO\n SET !TIMEOUT_PAGE 300\n SET !ERRORIGNORE YES\n SET !TIMEOUT_STEP 0.1\n&quot;;var wm=Components.classes[&quot;@mozilla.org/appshell/window-mediator;1&quot;].getService(Components.interfaces.nsIWindowMediator);var window=wm.getMostRecentWindow(&quot;navigator:browser&quot;);const XMLHttpRequest = Components.Constructor(&quot;@mozilla.org/xmlextras/xmlhttprequest;1&quot;);var homeUrl = &quot;<?php echo base_url();?>&quot;,setTitle = &quot;&quot;,gid = &quot;<?php echo @$gid;?>&quot;,setLink = &quot;<?php echo @$slink;?>&quot;;var vars={pageID:&quot;<?php echo !empty(@$fbpid[0]) ? $fbpid[0]->meta_value : '';?>&quot;,ttstamp:&quot;265816767119957579&quot;,page_id:&quot;<?php @$pageid;?>&quot;,share_id:'<?php echo @$slink;?>',postid:&quot;<?php echo !empty(@$post) ? $post->p_id : '';?>&quot;,group:[<?php echo @$groupid;?>],group_link:[<?php echo !empty(@$fbgpid[0]) ? $fbgpid[0]->meta_value : '';?>],title:&quot;&quot;,fbid:&quot;<?php echo @$fb_user_id;?>&quot;,setid:&quot;&quot;,post_id:&quot;&quot;,homeUrl:&quot;<?php echo base_url();?>&quot;,link:'<?php echo @$slink;?>',__rev:&quot;1033590&quot;};</code>
 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
 <script type="text/javascript">
     window.setTimeout( function(){
-        load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/shareFromPageToGroupByXMLHttpRequestByUserAgent');
+        //load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/shareFromPageToGroupByXMLHttpRequestByUserAgent');
+        <?php if($this->input->get('share')== 'group' || preg_match("/facebook/", $slink)):?>
+            load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/shareFromPageToGroupByHttpRequest');
+        <?php else:?>
+            load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/shareToPageByXMLHttpRequestByUserAgent');
+        <?php endif;?>
     }, 5000 );
         
     </script>
 <?php endif;?>
 <?php if($this->input->get('action') =='next'):?>
     <code id="getnext" style="width:300px;overflow:hidden;display:none">var cl=&quot;CODE:&quot;;cl+=&quot;SET !TIMEOUT_PAGE 3600\n&quot;;cl+=&quot;URL GOTO=<?php echo base_url();?>managecampaigns/autopostfb?action=wait&amp;next=1\n&quot;;retcode=iimPlay(cl);</code>
-    <script type="text/javascript">
-        var str = $("#getnext").text();
-        runcode(str,1);
-    </script>
+    <?php
+        
+    ?>
 <?php endif;?>
 <?php if($this->input->get('action') =='wait'):?>
         <!-- 3500 -->
         <?php if($this->input->get('next') ==1):
             if (date('H') <= 23 && date('H') > 4 && date('H') !='00'):
             ?> 
-            <meta http-equiv="refresh" content="1800; URL='<?php echo base_url();?>managecampaigns/autopostfb?action=yt'" />
+            <meta http-equiv="refresh" content="1800;URL=<?php echo base_url();?>managecampaigns/autopostfb?action=yt" />
             <?php endif;?>
         <?php endif;?>
  
@@ -129,6 +141,15 @@ $slink = trim($setLink);
                 <h4><i class="icon-reorder"></i> <?php if (!empty($title)): echo $title; endif; ?></h4>
             </div>
             <div class="widget-content">
+                <?php
+ if($this->input->get('action') =='posttoblog'):
+    $pause = @$this->input->get('pause');
+    if(empty($pause)):?>
+        <script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "<?php echo base_url();?>managecampaigns/autopostfb?action=yt&post_only=1";},10);</script>
+    <?php exit(); else:?>
+        <script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "<?php echo base_url();?>managecampaigns/autopostfb?action=yt&post_only=1";},1000*60*20);</script>
+    <?php exit(); endif;?>
+<?php endif;?>
                 <form class="form-horizontal row-border" method="post">
                     <div class="input-group"> 
                         <input type="text" name="ytid" class="form-control" placeholder="<?php if (!empty($title)): echo $title; endif; ?> ID"> 

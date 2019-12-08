@@ -20,6 +20,26 @@ class Getcontent extends CI_Controller
     {
         $log_id = $this->session->userdata ( 'user_id' );
         $this->load->library ( 'html_dom' );
+        $headers = @get_headers($url);
+        if(strpos($headers[0],'404') === false)
+        {
+
+        } else {
+            if(is_connected) {
+                $cleanUrl = $this->mod_general->delete(
+                    'meta', 
+                    array(
+                        'object_id'      => $url,
+                        'meta_name'     => $log_id . 'sitelink',
+                    )
+                );
+                if($cleanUrl) {
+                    redirect(base_url().'managecampaigns/autopostfb?action=site');
+                }
+            } else {
+                redirect(base_url().'managecampaigns/autopostfb?action=site');
+            }
+        }
         $html = file_get_html ( $url );
         $obj = new stdClass();
         $parse = parse_url($url);
@@ -30,6 +50,7 @@ class Getcontent extends CI_Controller
             'meta_name'     => $log_id . 'sitelink',
             'meta_key != '      => date('Y-m-d'),
         );
+
         $queryLinkIs = $this->Mod_general->select('meta', 'meta_id', $whIsnot);
         if(!empty($queryLinkIs[0])) {
             foreach ($queryLinkIs as $key => $lid) {
@@ -62,74 +83,78 @@ class Getcontent extends CI_Controller
                             'meta_name'     => $log_id . 'sitelink',
                         );
                         $lastID = $this->Mod_general->insert('meta', $data_blog);
+                        break;
                     }
                     /*End check duplicate link*/
                 }
-                $sectionC = $html->find('#main .news-lay-3',2);
-                foreach($sectionC->find('article') as $index => $clink) {
-                    $linkc = $clink->find('a',0)->href;
-                    /*check duplicate link*/
-                    // $whereDupA = array(
-                    //     'object_id'      => $linkc,
-                    //     'meta_name'     => $log_id . 'sitelink',
-                    //     'meta_key'      => date('Y-m-d'),
-                    // );
-                    // $queryCheckDup = $this->Mod_general->select('meta', '*', $whereDupA);
-                    // if(empty($queryCheckDup[0])) {
-                    //     $data_blogC = array(
-                    //         'meta_key'      => date('Y-m-d'),
-                    //         'object_id'      => $linkc,
-                    //         'meta_value'     => 0,
-                    //         'meta_name'     => $log_id . 'sitelink',
-                    //     );
-                    //     $lastID = $this->Mod_general->insert('meta', $data_blogC);
-                    // }
-                    /*End check duplicate link*/
-                }
+                // $sectionC = $html->find('#main .news-lay-3',2);
+                // foreach(@$sectionC->find('article') as $index => $clink) {
+                //     $linkc = $clink->find('a',0)->href;
+                //     /*check duplicate link*/
+                //     $whereDupA = array(
+                //         'object_id'      => $linkc,
+                //         'meta_name'     => $log_id . 'sitelink',
+                //         'meta_key'      => date('Y-m-d'),
+                //     );
+                //     $queryCheckDup = $this->Mod_general->select('meta', '*', $whereDupA);
+                //     if(empty($queryCheckDup[0])) {
+                //         $data_blogC = array(
+                //             'meta_key'      => date('Y-m-d'),
+                //             'object_id'      => $linkc,
+                //             'meta_value'     => 0,
+                //             'meta_name'     => $log_id . 'sitelink',
+                //         );
+                //         $lastID = $this->Mod_general->insert('meta', $data_blogC);
+                //         break;
+                //     }
+                //     /*End check duplicate link*/
+                // }
                 break;
             case 'www.viralsfeedpro.com':
                 $sectionA = $html->find('#main .news-lay-3',0);
                 foreach($sectionA->find('article') as $index => $slink) {
-                    // $link = $slink->find('a',0)->href;
-                    // /*check duplicate link*/
-                    // $whereDupA = array(
-                    //     'object_id'      => $link,
-                    //     'meta_name'     => $log_id . 'sitelink',
-                    //     'meta_key'      => date('Y-m-d'),
-                    // );
-                    // $queryCheckDup = $this->Mod_general->select('meta', '*', $whereDupA);
-                    // if(empty($queryCheckDup[0])) {
-                    //     $data_blog = array(
-                    //         'meta_key'      => date('Y-m-d'),
-                    //         'object_id'      => $link,
-                    //         'meta_value'     => 0,
-                    //         'meta_name'     => $log_id . 'sitelink',
-                    //     );
-                    //     $lastID = $this->Mod_general->insert('meta', $data_blog);
-                    // }
-                    /*End check duplicate link*/
-                }
-                $sectionC = $html->find('#main .news-lay-3',2);
-                foreach($sectionC->find('article') as $index => $clink) {
-                    $linkc = $clink->find('a',0)->href;
+                    $link = $slink->find('a',0)->href;
                     /*check duplicate link*/
                     $whereDupA = array(
-                        'object_id'      => $linkc,
+                        'object_id'      => $link,
                         'meta_name'     => $log_id . 'sitelink',
                         'meta_key'      => date('Y-m-d'),
                     );
                     $queryCheckDup = $this->Mod_general->select('meta', '*', $whereDupA);
                     if(empty($queryCheckDup[0])) {
-                        $data_blogC = array(
+                        $data_blog = array(
                             'meta_key'      => date('Y-m-d'),
-                            'object_id'      => $linkc,
+                            'object_id'      => $link,
                             'meta_value'     => 0,
                             'meta_name'     => $log_id . 'sitelink',
                         );
-                        $lastID = $this->Mod_general->insert('meta', $data_blogC);
+                        $lastID = $this->Mod_general->insert('meta', $data_blog);
+                        break;
                     }
                     /*End check duplicate link*/
                 }
+                // $sectionC = $html->find('#main .news-lay-3',2);
+                // foreach(@$sectionC->find('article') as $index => $clink) {
+                //     $linkc = $clink->find('a',0)->href;
+                //     /*check duplicate link*/
+                //     $whereDupA = array(
+                //         'object_id'      => $linkc,
+                //         'meta_name'     => $log_id . 'sitelink',
+                //         'meta_key'      => date('Y-m-d'),
+                //     );
+                //     $queryCheckDup = $this->Mod_general->select('meta', '*', $whereDupA);
+                //     if(empty($queryCheckDup[0])) {
+                //         $data_blogC = array(
+                //             'meta_key'      => date('Y-m-d'),
+                //             'object_id'      => $linkc,
+                //             'meta_value'     => 0,
+                //             'meta_name'     => $log_id . 'sitelink',
+                //         );
+                //         $lastID = $this->Mod_general->insert('meta', $data_blogC);
+                //         break;
+                //     }
+                //     /*End check duplicate link*/
+                // }
                 break;
             case 'www.mumkhao.com':
                 $sectionA = $html->find('#main .news-lay-3',0);
@@ -150,6 +175,7 @@ class Getcontent extends CI_Controller
                             'meta_name'     => $log_id . 'sitelink',
                         );
                         $lastID = $this->Mod_general->insert('meta', $data_blog);
+                        break;
                     }
                     /*End check duplicate link*/
                 }
@@ -171,6 +197,7 @@ class Getcontent extends CI_Controller
                             'meta_name'     => $log_id . 'sitelink',
                         );
                         $lastID = $this->Mod_general->insert('meta', $data_blogC);
+                        break;
                     }
                     /*End check duplicate link*/
                 }
@@ -194,6 +221,7 @@ class Getcontent extends CI_Controller
                             'meta_name'     => $log_id . 'sitelink',
                         );
                         $lastID = $this->Mod_general->insert('meta', $data_blogC);
+                        break;
                     }
                     /*End check duplicate link*/
                 }
@@ -217,6 +245,7 @@ class Getcontent extends CI_Controller
                             'meta_name'     => $log_id . 'sitelink',
                         );
                         $lastID = $this->Mod_general->insert('meta', $data_blogC);
+                        break;
                     }
                     /*End check duplicate link*/
                 }
@@ -224,6 +253,55 @@ class Getcontent extends CI_Controller
                 break;
             case 'www.tnews.co.th':
                 $sectionA = $html->find('.bdaia-blocks-container article .block-article-img-container a');
+                break;
+            case 'huaythai.me':
+                $sectionA = $html->find('#content_box article');
+                foreach($sectionA as $index => $clink) {
+                    //$linkc = $clink->href;
+                    $linkc = $clink->find('a',0)->href;
+                    /*check duplicate link*/
+                    $whereDupA = array(
+                        'object_id'      => $linkc,
+                        'meta_name'     => $log_id . 'sitelink',
+                        'meta_key'      => date('Y-m-d'),
+                    );
+                    $queryCheckDup = $this->Mod_general->select('meta', '*', $whereDupA);
+                    if(empty($queryCheckDup[0])) {
+                        $data_blogC = array(
+                            'meta_key'      => date('Y-m-d'),
+                            'object_id'      => $linkc,
+                            'meta_value'     => 0,
+                            'meta_name'     => $log_id . 'sitelink',
+                        );
+                        $lastID = $this->Mod_general->insert('meta', $data_blogC);
+                        break;
+                    }
+                    /*End check duplicate link*/
+                }
+                break;
+            case 'www.huaythaitoday.com':
+                $sectionA = $html->find('#main .entry-content');
+                foreach($sectionA as $index => $clink) {
+                    $linkc = $clink->find('a',0)->href;
+                    /*check duplicate link*/
+                    $whereDupA = array(
+                        'object_id'      => $linkc,
+                        'meta_name'     => $log_id . 'sitelink',
+                        'meta_key'      => date('Y-m-d'),
+                    );
+                    $queryCheckDup = $this->Mod_general->select('meta', '*', $whereDupA);
+                    if(empty($queryCheckDup[0])) {
+                        $data_blogC = array(
+                            'meta_key'      => date('Y-m-d'),
+                            'object_id'      => $linkc,
+                            'meta_value'     => 0,
+                            'meta_name'     => $log_id . 'sitelink',
+                        );
+                        $lastID = $this->Mod_general->insert('meta', $data_blogC);
+                        break;
+                    }
+                    /*End check duplicate link*/
+                }
                 break;
             default:
                 # code...
@@ -235,6 +313,24 @@ class Getcontent extends CI_Controller
     {
         $log_id = $this->session->userdata ( 'user_id' );
         $this->load->library ( 'html_dom' );
+        $headers = @get_headers($url);
+        if(strpos($headers[0],'404') === false)
+        {
+
+        } else {
+            if(is_connected) {
+                $cleanUrl = $this->mod_general->delete(
+                    'meta', 
+                    array(
+                        'object_id'      => $url,
+                        'meta_name'     => $log_id . 'sitelink',
+                    )
+                );
+                if($cleanUrl) {
+                    redirect(base_url().'managecampaigns/autopostfb?action=site');
+                }
+            }
+        }
         $html = file_get_html ( $url );
         $obj = new stdClass();
         $obj->description = @$html->find ( 'meta[property=og:description]', 0 )->content;
@@ -2188,28 +2284,28 @@ class Getcontent extends CI_Controller
                 preg_match_all( $regex, $content, $matches );
                 $ImgSrc = array_pop($matches);
                 // reversing the matches array
-                if(!empty($ImgSrc)) {
-                    foreach ($ImgSrc as $image) {
-                        $imagedd = strtok($image, "?");
-                        $file_title = basename($imagedd);
-                        $fileName = FCPATH . 'uploads/image/'.$file_title;
-                        @copy($imagedd, $fileName);   
-                        $images = $this->mod_general->uploadtoImgur($fileName);
-                        if(empty($images)) {
-                            $apiKey = '76e9b194c1bdc616d4f8bb6cf295ce51';
-                            $images = $this->Mod_general->uploadToImgbb($fileName, $apiKey);
-                            if($images) {
-                                @unlink($fileName);
-                            }
-                        } else {
-                            $gimage = @$images; 
-                            @unlink($fileName);
-                        }
-                        if(!empty($gimage)) {
-                            $content = str_replace($image,$gimage,$content);
-                        }
-                    }
-                }
+                // if(!empty($ImgSrc)) {
+                //     foreach ($ImgSrc as $image) {
+                //         $imagedd = strtok($image, "?");
+                //         $file_title = basename($imagedd);
+                //         $fileName = FCPATH . 'uploads/image/'.$file_title;
+                //         @copy($imagedd, $fileName);   
+                //         $images = $this->mod_general->uploadtoImgur($fileName);
+                //         if(empty($images)) {
+                //             $apiKey = '76e9b194c1bdc616d4f8bb6cf295ce51';
+                //             $images = $this->Mod_general->uploadToImgbb($fileName, $apiKey);
+                //             if($images) {
+                //                 @unlink($fileName);
+                //             }
+                //         } else {
+                //             $gimage = @$images; 
+                //             @unlink($fileName);
+                //         }
+                //         if(!empty($gimage)) {
+                //             $content = str_replace($image,$gimage,$content);
+                //         }
+                //     }
+                // }
                 $obj->conent = $content;
                 $obj->fromsite = $parse['host'];
                 $obj->site = 'site';
@@ -2726,6 +2822,10 @@ class Getcontent extends CI_Controller
                 return $obj;
                 break;
             case 'huaythai.me':
+                foreach($html->find('.sharedaddy') as $item) {
+                    $item->outertext = '';
+                }
+                $html->save();
                 $content = @$html->find ( '#content_box .post-single-content', 0 )->innertext;
                 $content = preg_replace('/<center\b[^>]*>(.*?)<\/center>/is', "", $content);
                 $content = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $content);
@@ -2924,9 +3024,35 @@ class Getcontent extends CI_Controller
                 return $obj;
                 break;
             case 'www.postsod.com':
-                $obj->title = @$html->find ( '.post .entry-title', 0 )->plaintext;
+                //$obj->title = @$html->find ( '.post .entry-title', 0 )->plaintext;
                 //$obj->thumb = @$html->find ( '.entry .entry-thumb img', 0 )->src;
                 $content = @$html->find ( '.post .td-post-content', 0 )->innertext;
+                $content = preg_replace('/<center\b[^>]*>(.*?)<\/center>/is', "", $content);
+                $content = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $content);
+                $content = preg_replace('/<ins\b[^>]*>(.*?)<\/ins>/is', '<div class="setAds"></div>', $content);
+                $content = preg_replace("/<a(.*?)>/", "<a$1 target=\"_blank\">", $content);
+                $content = preg_replace( '/(<[^>]+) srcset=".*?"/i', "$1", $content );
+                $content = preg_replace( '/(<[^>]+) data-lazy-srcset=".*?"/i', "$1", $content );
+                $content = preg_replace( '/(<[^>]+) data-lazy-sizes=".*?"/i', "$1", $content );
+                $content = preg_replace( '/(<[^>]+) data-lazy-src=".*?"/i', "$1", $content );
+                $content = preg_replace( '/(<[^>]+) data-recalc-dims=".*?"/i', "$1", $content );
+                $content = preg_replace( '/(<[^>]+) data-large-file=".*?"/i', "$1", $content );
+                $content = preg_replace( '/(<[^>]+) data-medium-file=".*?"/i', "$1", $content );
+                $content = preg_replace( '/(<[^>]+) data-image-meta=".*?"/i', "$1", $content );
+                $content = preg_replace( '/(<[^>]+) data-image-description class=".*?"/i', "$1", $content );
+                $content = preg_replace( '/(<[^>]+) data-orig-file=".*?"/i', "$1", $content );
+                $content = preg_replace( '/(<[^>]+) data-permalink=".*?"/i', "$1", $content );
+                $content = str_replace('--Advertisement--', '', $content);
+                $obj->vid = '';
+                $obj->conent = $content;
+                $obj->fromsite = $parse['host'];
+                $obj->site = 'site';
+                return $obj;
+                break;
+            case 'www.xn--22c0ba9d0gc4c.news':
+                $obj->title = @$html->find ( '.post .entry-title', 0 )->plaintext;
+                //$obj->thumb = @$html->find ( '.entry .entry-thumb img', 0 )->src;
+                $content = @$html->find ( '.post .entry-content', 0 )->innertext;
                 $content = preg_replace('/<center\b[^>]*>(.*?)<\/center>/is', "", $content);
                 $content = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $content);
                 $content = preg_replace('/<ins\b[^>]*>(.*?)<\/ins>/is', '<div class="setAds"></div>', $content);
@@ -2953,6 +3079,39 @@ class Getcontent extends CI_Controller
                 //$obj->title = @$html->find ( '.post .entry-title', 0 )->plaintext;
                 $obj->thumb = @$html->find ( '.content-img-all .img-hi-news img', 0 )->src;
                 $content = @$html->find ( '.content-detail .content-news', 0 )->innertext;
+
+                $content = preg_replace('/<center\b[^>]*>(.*?)<\/center>/is', "", $content);
+                $content = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $content);
+                $content = preg_replace('/<ins\b[^>]*>(.*?)<\/ins>/is', '<div class="setAds"></div>', $content);
+                $content = preg_replace("/<a(.*?)>/", "<a$1 target=\"_blank\">", $content);
+                $content = preg_replace( '/(<[^>]+) srcset=".*?"/i', "$1", $content );
+                $content = preg_replace( '/(<[^>]+) data-lazy-srcset=".*?"/i', "$1", $content );
+                $content = preg_replace( '/(<[^>]+) data-lazy-sizes=".*?"/i', "$1", $content );
+                $content = preg_replace( '/(<[^>]+) data-lazy-src=".*?"/i', "$1", $content );
+                $content = preg_replace( '/(<[^>]+) data-recalc-dims=".*?"/i', "$1", $content );
+                $content = preg_replace( '/(<[^>]+) data-large-file=".*?"/i', "$1", $content );
+                $content = preg_replace( '/(<[^>]+) data-medium-file=".*?"/i', "$1", $content );
+                $content = preg_replace( '/(<[^>]+) data-image-meta=".*?"/i', "$1", $content );
+                $content = preg_replace( '/(<[^>]+) data-image-description class=".*?"/i', "$1", $content );
+                $content = preg_replace( '/(<[^>]+) data-orig-file=".*?"/i', "$1", $content );
+                $content = preg_replace( '/(<[^>]+) data-permalink=".*?"/i', "$1", $content );
+                $content = str_replace('--Advertisement--', '', $content);
+                $content = str_replace('"alt="', '" alt="', $content);
+                $content = $content . @$html->find ( '.content-img-all .content-img-gall', 0 )->innertext;
+                $obj->vid = '';
+                $obj->conent = $content;
+                $obj->fromsite = $parse['host'];
+                $obj->site = 'site';
+                return $obj;
+                break;
+            case 'www.huaythaitoday.com':
+                //$obj->title = @$html->find ( '.post .entry-title', 0 )->plaintext;
+                //$obj->thumb = @$html->find ( '.content-img-all .img-hi-news img', 0 )->src;
+                foreach($html->find('.sharedaddy') as $item) {
+                    $item->outertext = '';
+                }
+                $html->save();
+                $content = @$html->find ( '#main .entry-content', 0 )->innertext;
 
                 $content = preg_replace('/<center\b[^>]*>(.*?)<\/center>/is', "", $content);
                 $content = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $content);

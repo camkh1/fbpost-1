@@ -159,6 +159,52 @@ class Mod_general extends CI_Model
         }
     }
 
+    /*
+    * check link to sahre
+    */
+    public function chceckLink($pid)
+    {
+        $sid = $this->session->userdata ( 'sid' );
+        $where_Pshare = array (
+            'p_id' => $pid,
+            'u_id' => $sid,
+            'p_status' => 1,
+        );
+        $dataPost = $this->Mod_general->select ('post','*', $where_Pshare);
+        $datareturn = new ArrayObject();
+        $pConent = json_decode($dataPost[0]->p_conent);
+        $pOption = json_decode($dataPost[0]->p_schedule);
+        $imgUrl = @$pConent->picture;
+        if (preg_match("/http/", $imgUrl) && preg_match('/ytimg.com/', $imgUrl)) {
+            $datareturn->needToPost = true;
+            $datareturn->share = false;
+            $datareturn->dataPost = $dataPost[0];
+            $datareturn->pConent = $pConent;
+            $datareturn->pOption = $pOption;
+            //echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/yturl?pid='.$dataPost[0]->p_id.'&action=postblog&autopost=1";},0 );</script>';
+        }
+        if (date('H') <= 23 && date('H') > 4 && date('H') !='00') {
+            if(preg_match('/youtu/', $pConent->link) || $dataPost[0]->p_post_to ==1 || ($dataPost[0]->p_post_to == 1 && $pOption->main_post_style =='tnews')) {
+                $datareturn->needToPost = true;
+                $datareturn->share = false;
+                $datareturn->dataPost = $dataPost[0];
+                $datareturn->pConent = $pConent;
+                $datareturn->pOption = $pOption;
+                //echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/yturl?pid='.$dataPost[0]->p_id.'&action=postblog&autopost=1";},0 );</script>';
+            } else {
+                $datareturn->needToPost = false;
+                $datareturn->share = true;
+                $datareturn->dataPost = $dataPost[0];
+                $datareturn->pConent = $pConent;
+                $datareturn->pOption = $pOption;
+            }
+        } else {
+            echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/waiting";}, 30 );</script>';
+            exit();
+        }
+        return $datareturn;
+    }
+
     public function userrole($type='')
     {
         $log_id = $this->session->userdata('user_id');
