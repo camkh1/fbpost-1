@@ -778,7 +778,7 @@ HTML;
                             /*add to group*/
                             if(!empty($itemname)) {
                                 $groupID = $itemidall[$key];
-                                $gTitle = $itemname[$key];
+                                $groupTitle = $itemname[$key];
                                 $groupMember = 0;
                             } else {
                                 $ArrayData = explode('||', $gvalue);
@@ -786,7 +786,6 @@ HTML;
                                 $groupTitle = $ArrayData[1];
                                 $groupMember = $ArrayData[2];
                             }
-                            
                             $checkID = $this->mod_general->select('socail_network_group','*',array('sg_page_id'=>$groupID,'s_id' => $sid));
                             if(!empty($checkID[0])) {
                                 $fgId = $checkID[0]->sg_id;
