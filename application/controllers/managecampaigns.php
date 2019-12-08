@@ -5854,6 +5854,16 @@ public function imgtest()
                     /*End get post that not share*/
                     /*check post progress frist*/
 
+                    /*set facebook name*/
+                    $fbAccount = array();
+                    if($this->session->userdata ( 'fb_user_name' )) {
+                        $fbAccount = array(
+                            'fbid' => $this->session->userdata ( 'uid' ),
+                            'fb_name' => $this->session->userdata ( 'fb_user_name' ),
+                        );
+                     }
+                    /*End set facebook name*/
+
                     if(empty($dataJson['post'])) {
                         $progrs = $this->getprogress();
                         $where_Pshare = array (
@@ -5866,7 +5876,7 @@ public function imgtest()
                             'post' =>$dataPostg
                         );
                     }
-                    $result = array_merge($dataJson, $fbgpids,$fbpids);
+                    $result = array_merge($dataJson, $fbgpids,$fbpids,$fbAccount);
                     echo json_encode($result);
                     /*End check post progress frist*/ 
                 } else {
