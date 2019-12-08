@@ -180,6 +180,15 @@ class Managecampaigns extends CI_Controller {
         if($fbname) {
             $fbname = nl2br(trim(strip_tags($fbname))); 
             $this->session->set_userdata('fb_user_name', $fbname);
+            if($this->session->userdata ( 'sid' )) {
+                $whereU = array(
+                    'u_id' => $this->session->userdata ( 'sid' ),                    
+                );
+                $data_user = array(
+                    Tbl_user::u_name => @$this->session->userdata ( 'fb_user_name' ),
+                );
+                $this->mod_general->update(Tbl_user::tblUser, $data_user,$whereU);
+            }
         }
         $this->session->unset_userdata('back');
         if($fbuid) {
