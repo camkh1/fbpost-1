@@ -2822,6 +2822,7 @@ class Getcontent extends CI_Controller
                 return $obj;
                 break;
             case 'huaythai.me':
+                //$obj->thumb = @$html->find ( '.image-link img.attachment-hitmag-featured', 0 )->src; 
                 foreach($html->find('.sharedaddy') as $item) {
                     $item->outertext = '';
                 }

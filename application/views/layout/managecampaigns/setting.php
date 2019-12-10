@@ -560,7 +560,7 @@ $btemplate = "D:&bsol;&bsol;PROGRAM&bsol;&bsol;templates&bsol;&bsol;";
                                 <form class="form-horizontal row-border" id="bitly" method="post">
                                 <div class="form-group">
                                     <div class="col-md-12">
-                                        <input type="text" name="uploadb" class="form-control" style="width: 100%" placeholder="Blog ID for upload image" value="<?php echo @$blogupload;?>" required />
+                                        <input type="text" name="uploadb" class="form-control" style="width: 100%" placeholder="Blog ID for upload image" value="<?php echo @$blogupload;?>" />
                                     </div>
                                 </div>
                                 <div class="form-actions">

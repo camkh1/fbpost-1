@@ -1516,14 +1516,13 @@ class Managecampaigns extends CI_Controller {
                                 'c_key'     => $log_id,
                             );
                             $bUp = $this->Mod_general->select('au_config', '*', $whereBup);
+                            $no_need_upload = false;
                             if(!empty($bUp[0])) {
-                                //$data['blogupload'] = json_decode($bUp[0]->c_value);
-                                $no_need_upload = true;
-                            }  else {
-                                $no_need_upload = false;
-                            }
+                                if($bUp[0]->c_value) {
+                                    $no_need_upload = true;
+                                }
+                            } 
                             /*End upload image to blog*/   
-
                             $param = array(
                                 'btnplayer'=>$pOption->btnplayer,
                                 'playerstyle'=>$pOption->playerstyle,
@@ -2590,8 +2589,9 @@ class Managecampaigns extends CI_Controller {
                 /*if empty groups*/
                 $fbUserId = $this->session->userdata('fb_user_id');
                 $tmp_path = './uploads/'.$log_id.'/'. $fbUserId . '_tmp_action.json';
-                $string = file_get_contents($tmp_path);
-                $json_a = json_decode($string);
+                            
+                $string = @file_get_contents($tmp_path);
+                $json_a = @json_decode($string);
                 /*get group*/
                 $wGList = array (
                     'lname' => 'post_progress',
@@ -2781,6 +2781,7 @@ class Managecampaigns extends CI_Controller {
 
     public function postToBlogger($bid, $vid, $title,$image,$conent='',$blink,$label='',$allData='')
     {
+        $log_id = $this->session->userdata ( 'user_id' );
         $pConent = json_decode($allData->p_conent);
         $pOption = json_decode($allData->p_schedule);
         /*prepare post*/
@@ -2874,7 +2875,16 @@ class Managecampaigns extends CI_Controller {
                 $bodytext = '<link href="'.$image.'" rel="image_src"/><meta content="'.$image.'" property="og:image"/><a href="'.$pConent->link.'" target="_top"><img class="thumbnail" style="text-align:center" src="'.$image.'"/></a><!--more-->';
                 break;
             default:
-                $bodytext = '<img class="thumbnail noi" style="text-align:center" src="'.$image.'"/><!--more--><div><b>'.$title.'</b></div><div class="wrapper"><div class="small"><p>'.$conent.'</p></div> <a href="#" class="readmore">... Click to read more</a></div>'.$adSenseCode.'<div>Others news:</div><iframe width="100%" height="280" src="https://www.youtube.com/embed/'.$vid.'" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>'.$adSenseCode.$lineButton;
+                if ($log_id == 2 || $log_id == 527 || $log_id == 511) {
+                    $addTitle = $allData->p_name;
+                    $EngTitle = $title;
+                    $thaiText = '<p>วันนี้ทางทีมงานขอนำเสนอ <b>'.$allData->p_name.'</b> งวดนี้ (โปรดใช้วิจารณญาณในการรับชม)<br />คอหวยลองพิจารณาเลขเด็ดงวดนี้ งวดประจำวันที่ 16/12/62<br />เป็นยังไงก็ลองพิจารณาและเสี่ยงโชคดูนะคะ ขอให้โชคดีทุกคนนะค่ะ<br /></p><br /><p>อัพเดทกันเรื่อยๆครับกับพวกเราทีมงานหวยไทย ที่พร้อมจะนำข้อมูลหวยเด็ดเลขเด่นแนวทางสลากกินแบ่งรัฐบาลมานำเสนอให้กับแฟนหวยคนเล่นหวยทุกท่าน งวดที่ผ่านมาคงจะใด้เฮกันน่ะครับ แต่ก็มีบ้างที่พลาดไป มีใด้มาก็ต้องมีเสียไปเป็นธรรมดา แต่ก็เริ่มใหม่ใด้ครับ งวดนี้เราจึงนำข้อมูลหวยอัพเดทมาฝากกันครับกับ เลขเด่น ที่ทางเจ้าของข้อมูลเค้าสรุปมาแล้วว่าเด่นจริง ไปดูกันครับว่ามีเลขใดบ้าง</p><br /><br /><p style="color:red">คำเตือน&nbsp; การ เล่นการพนัน ทุกชนิด ชื่อก็บอกตรงๆว่า เล่น อย่าจริงจังนะคับผม&nbsp; ...ไม่ว่าจะชนะหรือแพ้ ขอให้สนุกกับการเล่นนะครับ หากรู้สึกเครียดหรือไม่สนุก ขอให้หยุดหรือเลิกเล่น ..เพราะแสดงว่าเล่นไม่เป็นไม่เหมาะสมแล้วคับ ..ความพอดีเหมาะสมของแต่ละคนไม่เท่ากัน ให้ใช้ความรู้สึกที่ตามที่แนะนำนะคับผม..18+ เด็กและเยาวชน และ&nbsp; ผู้ยังไม่มีรายได้ห้ามเล่นนะคับ</p><br /><br />';
+                } else {
+                    $addTitle = $title;
+                    $thaiText = '';
+                    $EngTitle = '';
+                }
+                $bodytext = '<img class="thumbnail noi" style="text-align:center" src="'.$image.'"/><!--more--><div><b>'.$addTitle.'</b></div><div class="wrapper"><div class="small">'.$thaiText.'<b>'.$EngTitle.'</b><p>'.$conent.'</p></div> <a href="#" class="readmore">... Click to read more</a></div>'.$adSenseCode.'<div>Others news:</div><iframe width="100%" height="280" src="https://www.youtube.com/embed/'.$vid.'" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>'.$adSenseCode.$lineButton;
                 $dataMeta = array(
                     'title' => $allData->p_name,
                     'image' => $image,
@@ -6125,7 +6135,6 @@ public function imgtest()
                     /*End check post progress frist*/ 
 
                     $RanChoose = array(
-                        'site',
                         'site',
                         'yt',
                     );
