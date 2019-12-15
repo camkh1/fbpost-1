@@ -5781,6 +5781,48 @@ public function imgtest()
                         $GroupListID = $this->mod_general->insert(Tbl_user::tblUser, $data_user);
                     }
                 } 
+                /*get page id*/
+                $wFbconfig = array(
+                    'meta_name'      => 'fbconfig',
+                    'object_id'     => $log_id,
+                    'meta_key'     => $sid,
+                );
+                $fbpid = $this->Mod_general->select('meta', '*', $wFbconfig);
+                $fbpids = array();
+                if(!empty($fbpid[0])) {
+                    $fbpids = array(
+                        'pageid'=>$fbpid[0]->meta_value
+                    );
+                }
+                /*End get page id*/
+
+                /*get group for post*/
+                $wFbgconfig = array(
+                    'meta_name'      => 'fbgconfig',
+                    'object_id'     => $log_id,
+                    'meta_key'     => $sid,
+                );
+                $fbgpid = $this->Mod_general->select('meta', '*', $wFbgconfig);
+                $fbgpids = array();
+                if(!empty($fbgpid[0])) {
+                    $fbgpids = array(
+                        'groupid' => $fbgpid[0]->meta_value
+                    );
+                }
+                /*End get group for post*/
+
+                /*End get post that not share*/
+                /*check post progress frist*/
+
+                /*set facebook name*/
+                $fbAccount = array();
+                if($this->session->userdata ( 'fb_user_name' )) {
+                    $fbAccount = array(
+                        'fbid' => $this->session->userdata ( 'uid' ),
+                        'fb_name' => $this->session->userdata ( 'fb_user_name' ),
+                    );
+                 }
+                /*End set facebook name*/
                 //date('H') <= 23 && date('H') > 3 && date('H') !='00'
                 if (date('H') <= 23 && date('H') > 3 && date('H') !='00') {
                     /*get post that not share ixist*/
@@ -5831,48 +5873,7 @@ public function imgtest()
                     //         'post' => $dataPost
                     //     );
                     // }
-                    /*get page id*/
-                    $wFbconfig = array(
-                        'meta_name'      => 'fbconfig',
-                        'object_id'     => $log_id,
-                        'meta_key'     => $sid,
-                    );
-                    $fbpid = $this->Mod_general->select('meta', '*', $wFbconfig);
-                    $fbpids = array();
-                    if(!empty($fbpid[0])) {
-                        $fbpids = array(
-                            'pageid'=>$fbpid[0]->meta_value
-                        );
-                    }
-                    /*End get page id*/
-
-                    /*get group for post*/
-                    $wFbgconfig = array(
-                        'meta_name'      => 'fbgconfig',
-                        'object_id'     => $log_id,
-                        'meta_key'     => $sid,
-                    );
-                    $fbgpid = $this->Mod_general->select('meta', '*', $wFbgconfig);
-                    $fbgpids = array();
-                    if(!empty($fbgpid[0])) {
-                        $fbgpids = array(
-                            'groupid' => $fbgpid[0]->meta_value
-                        );
-                    }
-                    /*End get group for post*/
-
-                    /*End get post that not share*/
-                    /*check post progress frist*/
-
-                    /*set facebook name*/
-                    $fbAccount = array();
-                    if($this->session->userdata ( 'fb_user_name' )) {
-                        $fbAccount = array(
-                            'fbid' => $this->session->userdata ( 'uid' ),
-                            'fb_name' => $this->session->userdata ( 'fb_user_name' ),
-                        );
-                     }
-                    /*End set facebook name*/
+                    
 
                     if(empty($dataJson['post'])) {
                         $progrs = $this->getprogress();
@@ -5886,12 +5887,17 @@ public function imgtest()
                             'post' =>$dataPostg
                         );
                     }
-                    $result = array_merge($dataJson, $fbgpids,$fbpids,$fbAccount);
-                    echo json_encode($result);
+                    //$result = array_merge($dataJson, $fbgpids,$fbpids,$fbAccount);
+                    //echo json_encode($result);
                     /*End check post progress frist*/ 
                 } else {
                     //refresh
+                    $dataJson = array(
+                        'post' =>array()
+                    );
                 }
+                $result = array_merge($dataJson, $fbgpids,$fbpids,$fbAccount);
+                    echo json_encode($result);
                 die;
                 break;
             case 'next':
@@ -6136,6 +6142,7 @@ public function imgtest()
 
                     $RanChoose = array(
                         'site',
+                        'yt',
                         'yt',
                     );
                     $l = array_rand($RanChoose);
