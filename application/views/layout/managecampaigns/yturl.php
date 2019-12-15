@@ -1454,9 +1454,12 @@
                       if(obj.from != 'site') {
                         getcontent(id.replace("link_", ""));
                       }
+                      if(obj.from == 'yt') {
+                            $("input[name=mpoststyle][value=1]").prop('checked', true);
+                      }
                       if(obj.from == 'site') {
                         $('#post_' + sid + ' .set_balel').val(obj.label);
-                        $('#post_' + sid + ' .setPrefix').val('#ชอบก็ไลค์ #ใช่ก็แชร์');
+                        //$('#post_' + sid + ' .setPrefix').val('#ชอบก็ไลค์ #ใช่ก็แชร์');
                         $('#post_' + sid + ' .smpoststyle[value=tnews]').prop('checked', true);
                       }
                       if(obj.from == 'site') {
