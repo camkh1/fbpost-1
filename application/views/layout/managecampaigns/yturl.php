@@ -1456,6 +1456,7 @@
                       }
                       if(obj.from == 'yt') {
                             $("input[name=mpoststyle][value=1]").prop('checked', true);
+                            $('#post_' + sid + ' .smpoststyle[value=1]').prop('checked', true);
                       }
                       if(obj.from == 'site') {
                         $('#post_' + sid + ' .set_balel').val(obj.label);

@@ -2799,6 +2799,9 @@ class Managecampaigns extends CI_Controller {
         $lineButton = '<center><div class="line-it-button" data-lang="en" data-type="friend" data-lineid="0888250488" data-count="true" data-home="true" style="display: none;"></div> <img src="https://3.bp.blogspot.com/-IDEnasS2NeM/Xbpa6kTL_dI/AAAAAAAAnOE/71KpKu86xW4TiGKcCp1YstZy3Ol94f7zACNcBGAsYHQ/s1600/Line-button-thai.png" style="width:100%;height:auto;"/><script src="https://d.line-scdn.net/r/web/social-plugin/js/thirdparty/loader.min.js" async="async" defer="defer"></script></center>';
         $adSenseCode = "<div style=\"text-align: center;\"><script async src=\"//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js\"></script><script>if(typeof startin!=='undefined'){document.write(setCode);} if(typeof startin==='undefined'){document.write(inSide);(adsbygoogle=window.adsbygoogle||[]).push({});}</script></div>";
         $adSenseCode = trim_slashes($adSenseCode);
+        if (preg_match('/youtube/', $pConent->link)) {
+            $blink = 1;
+        }
         switch ($blink) {
             case '2':
                 $dataMeta = array(
