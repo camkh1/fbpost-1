@@ -1164,7 +1164,14 @@ class Managecampaigns extends CI_Controller {
                         'label' => $labels,
                     );
                     /*save tmp data post*/
-                    if($main_post_type!= 'tnews' || empty($featurePosts)) {
+                    $saveTmp = false;
+                    if($main_post_type!= 'tnews') {
+                        $saveTmp = true;
+                    }
+                    if(empty($featurePosts)) {
+                        $saveTmp = true;
+                    }
+                    if($saveTmp) {
                         $target_dir = './uploads/image/';
                         $tmp_path = './uploads/'.$log_id.'/';
                         $file_tmp_name = $fbuids . '_tmp_action.json';
