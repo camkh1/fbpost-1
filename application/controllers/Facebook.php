@@ -1570,10 +1570,6 @@ WHERE gl.`gu_grouplist_id` = {$id}");
         /*End if random Link*/
         switch ($action) {
             case 'getpost':
-                if(!empty($this->session->userdata('post_only'))) {
-                    redirect(base_url().'managecampaigns/autopostfb?action=posttoblog');
-                    exit();
-                }
                 $sid = $this->session->userdata ( 'sid' );
                 $fbUserId = $this->session->userdata('fb_user_id');
                 $licence = $this->session->userdata('licence');
@@ -2091,6 +2087,10 @@ WHERE gl.`gu_grouplist_id` = {$id}");
     }
     public function share()
     {
+        if(!empty($this->session->userdata('post_only'))) {
+            redirect(base_url().'managecampaigns/autopostfb?action=posttoblog');
+            exit();
+        }
         $log_id = !empty($this->input->get('uid')) ? $this->input->get('uid') : $this->session->userdata('user_id');
         $user = $this->session->userdata('email');
         $action = $this->input->get('post');
