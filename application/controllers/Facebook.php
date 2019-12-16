@@ -2246,7 +2246,8 @@ WHERE gl.`gu_grouplist_id` = {$id}");
                 if(!empty($preRand)) {
                     $sharePost->title = $preRand . '<br/>' . $sharePost->pTitle . '<br/>' . $subRand;
                 } else {
-                    $sharePost->title = $sharePost->pTitle . !empty($subRand)? '<br/>' . $subRand :'';
+                    $getSub = !empty($subRand)? '<br/>' . $subRand :'';
+                    $sharePost->title = $sharePost->pTitle . $getSub;
                 }
                 /*count share posts*/
                 $whereCount = array (
