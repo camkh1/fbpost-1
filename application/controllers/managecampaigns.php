@@ -1123,6 +1123,17 @@ class Managecampaigns extends CI_Controller {
                     $post_blog_link = !empty($postbloglink[$i]) ? $postbloglink[$i] : $blogLink;
                     $AddSuffixTitle = !empty($saddtxt[$i]) ? $saddtxt[$i] : $SuffixTitle;
                     $labels = !empty($label[$i]) ? $label[$i] : '';
+
+                    $saveTmp = false;
+                    if($main_post_type!= 'tnews') {
+                        $saveTmp = true;
+                    }
+                    if(empty($featurePosts)) {
+                        $saveTmp = true;
+                    }
+                    if(!empty($featurePosts)) {
+                         $post_blog_link = 0;
+                    }
                     $schedule = array (                    
                         'start_date' => @$startDate,
                         'start_time' => @$startTime,
@@ -1164,13 +1175,6 @@ class Managecampaigns extends CI_Controller {
                         'label' => $labels,
                     );
                     /*save tmp data post*/
-                    $saveTmp = false;
-                    if($main_post_type!= 'tnews') {
-                        $saveTmp = true;
-                    }
-                    if(empty($featurePosts)) {
-                        $saveTmp = true;
-                    }
                     if($saveTmp) {
                         $target_dir = './uploads/image/';
                         $tmp_path = './uploads/'.$log_id.'/';
