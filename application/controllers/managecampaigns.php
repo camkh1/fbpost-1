@@ -6072,13 +6072,13 @@ public function imgtest()
                     require_once(APPPATH.'controllers/Getcontent.php');
                     $aObj = new Getcontent();
                     $siteUrl = array(
-                        'https://www.siamnews.com/',
-                        'https://www.viralsfeedpro.com/',
-                        'https://www.mumkhao.com/',
+                        //'https://www.siamnews.com/',
+                        //'https://www.viralsfeedpro.com/',
+                        //'https://www.mumkhao.com/',
                         'https://www.xn--42c2dgos8bxc2dtcg.com/',
                         'https://board.postjung.com/',
-                        'http://huaythai.me/',
-                        'http://www.huaythaitoday.com/',
+                        //'http://huaythai.me/',
+                       // 'http://www.huaythaitoday.com/',
                     );
                     $k = array_rand($siteUrl);
                     $getSiteUrl = $siteUrl[$k];
@@ -6156,8 +6156,8 @@ public function imgtest()
                     /*End check post progress frist*/ 
 
                     $RanChoose = array(
-                        'yt',
-                        'yt',
+                        'site',
+                        'site',
                     );
                     $l = array_rand($RanChoose);
                     $getChoose = $RanChoose[$l];
