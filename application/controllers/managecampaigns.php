@@ -8588,6 +8588,7 @@ public function imgtest()
                         $m[] = 'no-ad';
                     }
                 } 
+                
                 /**-----------------------------------------------------------------------------
                  *
                  *  Use two different ads, one for each section
