@@ -6122,6 +6122,7 @@ public function imgtest()
                     $this->session->set_userdata('backto', $setURl);
                     $this->session->set_userdata('post_only', 1);
                 }
+                echo '<meta http-equiv="refresh" content="30;URL'.base_url().'managecampaigns/autopostfb?action=posttoblog" />';
                 if (date('H') <= 23 && date('H') > 3 && date('H') !='00') {
                     /*get post that not share ixist*/
                     $where_Pshare = array (
