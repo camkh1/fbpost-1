@@ -508,7 +508,7 @@ class Managecampaigns extends CI_Controller {
                 if ($log_id == 2 || $log_id == 527 || $log_id == 511) {
                     if (date('H') <= 23 && date('H') > 3 && date('H') !='00') {
                         $setTime = $arrX[$randIndex] * (1000 * 60);
-                        echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/postprogress";}, '.$setTime.' );</script>';
+                        echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=yt&post_only=1";}, '.$setTime.' );</script>';
                     } else {
                     echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/waiting";}, 30 );</script>';
                     }
@@ -5620,7 +5620,7 @@ public function imgtest()
                 } else {
                     if ($log_id == 2 || $log_id == 527 || $log_id == 511) {
                         if (date('H') <= 23 && date('H') > 3 && date('H') !='00') {
-                            echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/postprogress";}, '.$arrX[$randIndex].' );</script>';
+                            echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=yt&post_only=1";}, '.$arrX[$randIndex].' );</script>';
                         }
                     }
                 }
