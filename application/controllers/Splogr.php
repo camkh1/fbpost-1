@@ -158,7 +158,7 @@ class Splogr extends CI_Controller
         }
         switch ($parse['host']) {
             case 'ezinearticles.com':
-                foreach($html->find('#page-inner .article') as $e) {
+                foreach(@$html->find('#page-inner .article') as $e) {
                     $link = @$e->find('.article-title-link',0)->href;
                     $title = @$e->find('.article-title-link',0)->innertext;
                     $summary = @$e->find('.article-summary',0)->innertext;
