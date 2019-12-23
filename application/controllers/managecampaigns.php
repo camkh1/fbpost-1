@@ -6099,8 +6099,8 @@ public function imgtest()
                         'https://www.mumkhao.com/',
                         'https://www.xn--42c2dgos8bxc2dtcg.com/',
                         'https://board.postjung.com/',
-                        //'http://huaythai.me/',
-                       // 'http://www.huaythaitoday.com/',
+                        'http://huaythai.me/',
+                        'http://www.huaythaitoday.com/',
                     );
                     $k = array_rand($siteUrl);
                     $getSiteUrl = $siteUrl[$k];
