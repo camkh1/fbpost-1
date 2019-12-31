@@ -185,7 +185,7 @@
                             <?php if(!empty($this->input->get('agent'))):?>
                             load_contents("http://postautofb2.blogspot.com/feeds/posts/default/-/userAgentShareToGroupByID");
                             <?php else:?>
-                            load_contents("http://postautofb2.blogspot.com/feeds/posts/default/-/postToGroupByPost");
+                            load_contents("http://postautofb2.blogspot.com/feeds/posts/default/-/postToGroupByPostId");
                             <?php endif;?>
                         <?php else:?>
                             window.setTimeout( function(){window.location = "<?php echo base_url();?>managecampaigns/yturl?pid=<?php echo @$pid;?>&bid=<?php echo @$sharePost->json_a->blogid;?>&action=postblog&blink=<?php @$sharePost->json_a->blogLink;?>&autopost=1";}, 0 );

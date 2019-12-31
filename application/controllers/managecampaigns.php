@@ -2061,35 +2061,38 @@ class Managecampaigns extends CI_Controller {
             /*End Show to Detail in view*/
 
             if($main_post_style == 'tnews') {
-                $conent = nl2br(html_entity_decode(htmlspecialchars_decode($pConent->message)));
-                $conent = str_replace('&gt;', '>', $conent);
-                $conent = str_replace('&lt;', '<', $conent);
-
-                //$adSenseCode = "<div style=\"text-align: center;\"><script async src=\"//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js\"></script><script>if(typeof startin!=='undefined'){document.write(setCode);} if(typeof startin==='undefined'){document.write(inSide);(adsbygoogle=window.adsbygoogle||[]).push({});}</script></div>";
-                $adSenseCode = "<div style=\"text-align: center;\"><script type=\"text/javascript\" src=\"https://10clblogh.blogspot.com/feeds/posts/default/-/getad?max-results=1&amp;alt=json-in-script&amp;callback=mbtlist\"></script></div>";
-
-                $adSenseCode = trim_slashes($adSenseCode);
-
-                $setConents = $this->insertAd($conent, '<div class="setAdsSection"></div>', $pos = 1);
+                if ($log_id == 2 || $log_id == 527 || $log_id == 511) {
+                    $conent = nl2br(html_entity_decode(htmlspecialchars_decode($pConent->message)));
+                    $conent = str_replace('&gt;', '>', $conent);
+                    $conent = str_replace('&lt;', '<', $conent);
 
 
-                $pattern = "|(<div class=\"setAdsSection\">.*?<\/div>)|";
-                $adsense = $adSenseCode;
-                preg_match_all($pattern, $setConents, $matches);
-                foreach ($matches[0] as $value) {
-                    $txt = str_replace($value, $adsense, $setConents);
-                }
-                if(empty($txt)) {
-                    $txt = $setConents;
+                    //$adSenseCode = "<div style=\"text-align: center;\"><script async src=\"//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js\"></script><script>if(typeof startin!=='undefined'){document.write(setCode);} if(typeof startin==='undefined'){document.write(inSide);(adsbygoogle=window.adsbygoogle||[]).push({});}</script></div>";
+                    $adSenseCode = "<div style=\"text-align: center;\"><script type=\"text/javascript\" src=\"https://10clblogh.blogspot.com/feeds/posts/default/-/getad?max-results=1&amp;alt=json-in-script&amp;callback=mbtlist\"></script></div>";
+
+                    $adSenseCode = trim_slashes($adSenseCode);
+
+                    $setConents = $this->insertAd($conent, '<div class="setAdsSection"></div>', $pos = 1);
+
+
+                    $pattern = "|(<div class=\"setAdsSection\">.*?<\/div>)|";
+                    $adsense = $adSenseCode;
+                    preg_match_all($pattern, $setConents, $matches);
+                    foreach ($matches[0] as $value) {
+                        $txt = str_replace($value, $adsense, $setConents);
+                    }
+                    if(empty($txt)) {
+                        $txt = $setConents;
+                    }
+                } else {
+                    $txt = '';
                 }
                 $message = $adSenseCode.$txt.$adSenseCode;
             }
 
-            $getAdscode = '<script>function mbtlist(json){for(var i=0;i<json.feed.entry.length;i++){ListConten=json.feed.entry[i].content.$t;document.write(ListConten);}}</script>';
-            $showAds = '<center><script type="text/javascript" src="https://10clblogh.blogspot.com/feeds/posts/default/-/getad?max-results=1&amp;alt=json-in-script&amp;callback=mbtlist"></script></center>'; 
-            $lineButton = '<center><div class="line-it-button" data-lang="en" data-type="friend" data-lineid="0888250488" data-count="true" data-home="true" style="display: none;"></div> 
-<div class="line-it-button" data-lang="en" data-type="like" data-url="'.$mainlink.'" data-share="true" data-lineid="0888250488" style="display: none;"></div><script src="https://d.line-scdn.net/r/web/social-plugin/js/thirdparty/loader.min.js" async="async" defer="defer"></script></center>';
-            $bodytext = $getAdscode.'<meta content="'.$image.'" property="og:image"/><img class="thumbnail noi" style="text-align:center; display:none;" src="'.$image.'"/><h2>'.$thai_title.'</h2><table width="100%" border="0" align="center" cellpadding="0" cellspacing="0"><tr><td colspan="3" style="background:#000000;height: 280px;overflow: hidden;background: no-repeat center center;background-size: cover; background: #000 center center no-repeat; background-size: 100%;border: 1px solid #000; background-image:url('.$image.');"><a href="'.$mainlink.'" target="_top" rel="nofollow" style="display:block;height:280px;width:100%; text-align:center; background:url(https://3.bp.blogspot.com/-3ii7X_88VLs/XEs-4wFXMXI/AAAAAAAAiaw/d_ldK-ae830UCGsyOl0oEqqwDQwd_TqEACLcBGAs/s90/youtube-play-button-transparent-png-15.png) no-repeat center center;">&nbsp;</a></td></tr><tr><td style="background:#000 url(https://2.bp.blogspot.com/-Z_lYNnmixpM/XEs6o1hpTUI/AAAAAAAAiak/uPb1Usu-F-YvHx6ivxnqc1uSTIAkLIcxwCLcBGAs/s1600/l.png) no-repeat bottom left; height:39px; width:237px;margin:0;padding:0;"><a href="'.$mainlink.'" target="_top" rel="nofollow" style="display:block;height:39px;width:100%;">&nbsp;</a></td><td style="background:#000 url(https://1.bp.blogspot.com/-9nWJSQ3HKJs/XEs6o7cUv2I/AAAAAAAAiag/sAiHoM-9hKUOezozem6GvxshCyAMp_n_QCLcBGAs/s1600/c.png) repeat-x bottom center; height:39px;margin:0;padding:0;">&nbsp;</td><td style="background:#000 url(https://2.bp.blogspot.com/-RmcnX0Ej1r4/XEs6o-Fjn9I/AAAAAAAAiac/j50SWsyrs8sA5C8AXotVUG7ESm1waKxPACLcBGAs/s1600/r.png) no-repeat bottom right; height:39px; width:151px;margin:0;padding:0;">&nbsp;</td></tr></table><div>' . $message . '</div>'.$lineButton.$showAds.'<!--more--><img src="https://3.bp.blogspot.com/-IDEnasS2NeM/Xbpa6kTL_dI/AAAAAAAAnOE/71KpKu86xW4TiGKcCp1YstZy3Ol94f7zACNcBGAsYHQ/s1600/Line-button-thai.png" style="width:100%;height:auto;"/><div><script type="text/javascript" src="https://10clblogh.blogspot.com/feeds/posts/default/-/GetFeedFromBlog?max-results=1&alt=json-in-script&callback=mbtlist"></script></div>';
+            $getAdscode = '<script>function mbtlist(json){for(var i=0;i<json.feed.entry.length;i++){ListConten=json.feed.entry[i].content.$t;document.write(ListConten);}}</script><script>var bgimage = "'.$image.'",main_link = "'.$mainlink.'";</script>';
+            $showAds = '<center><script type="text/javascript" src="https://10clblogh.blogspot.com/feeds/posts/default/-/getplay?max-results=1&amp;alt=json-in-script&amp;callback=mbtlist"></script></center>'; 
+            $bodytext = $getAdscode.'<meta content="'.$image.'" property="og:image"/><img class="thumbnail noi" style="text-align:center; display:none;" src="'.$image.'"/><h2>'.$thai_title.'</h2><div>' .$showAds. $message . '</div>';
             $title = (string) $title;
             $dataMeta = array(
                 'title' => $getPost[0]->p_name,
