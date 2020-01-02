@@ -28,6 +28,58 @@
                         <?php if(!empty($error)):?>
                             <?php var_dump($error);?>
                         <?php endif;?>
+                        <?php
+                             if(empty($_GET['file']) && empty($this->input->get('add'))):?>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="widget box">
+                                    <div class="widget-content">
+                                        <div class="ribbon-wrapper ribbon-top-right"> <div class="ribbon orange">get Wizard</div> </div>
+                                        <p>យកក្រុមពីហ្វេសប៊ុក ដោយខ្លួនវា</p>
+                                        <p>Get groups from facebook by wizard.</p>
+                                        <div class="form-group">
+                                            <button type="button" class="btn btn-lg btn-primary" onclick="load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/getgGroupsWizard');" id="getnow">Get now</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>                                
+                            <div class="col-md-8">
+                                <div class="widget box">
+                                    <div class="widget-content">
+                                        <div class="ribbon-wrapper ribbon-top-right"> 
+                                            <div class="ribbon orange">Get from file</div> 
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-md-2">Suorce code</label>
+                                            <div class="col-md-10">
+                                                <p>The easiest way to add the groups you have joined is to follow these simple directions.</p>
+                                                <ul>
+                                                    <li><p><b>All groups</b>:<br/></p>
+                                                    <p>only <b>Public groups</b>:<br/>
+                                                    Go to <a href="https://mobile.facebook.com/settings/notifications/groups/?_rdc=1&_rdr" rel="noreferrer" target="_blank">https://www.facebook.com/</a>  then click on your name in the upper right part of the screen. <br/><img alt="find FB profile name" src="http://img.constantcontact.com/faq/kb/FB_ProfileName.png"><br/>
+                                                    click <b>About</b> under your profile picture and scroll down to Groups to see them.
+                                                    </p></li>
+                                                    <li>In your browser right click then choose "Save as...", "Save Page As...", etc</li>
+                                                    <li>Save the file.</li>
+                                                    <li>Choose the file you just saved.</li>
+                                                    <li>Click the upload button below.</li>
+                                                    <li>Return to the Groups List page to categorize your groups.</li>
+                                                </ul>
+                                                <input type="file" name="userfile" class="form-control"/>
+                                                <label class="checkbox">Prevent other members from adding you back to this group</label>
+                                            </div>
+                                        </div>
+                                        <div style="clear: both;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-12">
+                                    <input name="submit" type="submit" value="Submit" class="btn btn-primary pull-right" />
+                                </div>
+                            </div> 
+                        </div>
+                        <?php endif;?>
                             <?php
                              if(empty($_GET['file']) && empty($this->input->get('add'))):?>      
                                 <?php if(!empty($filesJson)):?>
@@ -169,55 +221,7 @@
                                     <!-- end get from facebook by imacors -->
                                     <?php endif;?>
                                 <?php else:?>
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="widget box">
-                                            <div class="widget-content">
-                                                <div class="ribbon-wrapper ribbon-top-right"> <div class="ribbon orange">get Wizard</div> </div>
-                                                <p>យកក្រុមពីហ្វេសប៊ុក ដោយខ្លួនវា</p>
-                                                <p>Get groups from facebook by wizard.</p>
-                                                <div class="form-group">
-                                                    <button type="button" class="btn btn-lg btn-primary" onclick="load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/getgGroupsWizard');" id="getnow">Get now</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>                                
-                                    <div class="col-md-8">
-                                        <div class="widget box">
-                                            <div class="widget-content">
-                                                <div class="ribbon-wrapper ribbon-top-right"> 
-                                                    <div class="ribbon orange">Get from file</div> 
-                                                </div>
-                                                <div class="form-group">
-                                                    <label class="col-md-2">Suorce code</label>
-                                                    <div class="col-md-10">
-                                                        <p>The easiest way to add the groups you have joined is to follow these simple directions.</p>
-                                                        <ul>
-                                                            <li><p><b>All groups</b>:<br/></p>
-                                                            <p>only <b>Public groups</b>:<br/>
-                                                            Go to <a href="https://mobile.facebook.com/settings/notifications/groups/?_rdc=1&_rdr" rel="noreferrer" target="_blank">https://www.facebook.com/</a>  then click on your name in the upper right part of the screen. <br/><img alt="find FB profile name" src="http://img.constantcontact.com/faq/kb/FB_ProfileName.png"><br/>
-                                                            click <b>About</b> under your profile picture and scroll down to Groups to see them.
-                                                            </p></li>
-                                                            <li>In your browser right click then choose "Save as...", "Save Page As...", etc</li>
-                                                            <li>Save the file.</li>
-                                                            <li>Choose the file you just saved.</li>
-                                                            <li>Click the upload button below.</li>
-                                                            <li>Return to the Groups List page to categorize your groups.</li>
-                                                        </ul>
-                                                        <input type="file" name="userfile" class="form-control"/>
-                                                        <label class="checkbox">Prevent other members from adding you back to this group</label>
-                                                    </div>
-                                                </div>
-                                                <div style="clear: both;"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="col-md-12">
-                                            <input name="submit" type="submit" value="Submit" class="btn btn-primary pull-right" />
-                                        </div>
-                                    </div> 
-                                </div>
+                                
                                 <?php endif;?>
                             <?php else:?>
                                 <div class="form-group">
