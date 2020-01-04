@@ -5863,16 +5863,29 @@ public function imgtest()
                  }
                 /*End set facebook name*/
                 //date('H') <= 23 && date('H') > 3 && date('H') !='00'
-                if (date('H') <= 23 && date('H') > 3 && date('H') !='00') {
+                //if (date('H') <= 23 && date('H') > 3 && date('H') !='00') {
                     /*get post that not share ixist*/
                     $where_pro = array(
                         'u_id ' => $sid,
                         'user_id' => $log_id
                     );
                     $dataJsons = array();
+                    $siteUrl = array(
+                        'www.siamnews.com',
+                        'www.viralsfeedpro.com',
+                        'www.mumkhao.com',
+                        'www.xn--42c2dgos8bxc2dtcg.com',
+                        'board.postjung.com',
+                        'huaythai.me',
+                        'www.huaythaitoday.com',
+                        'www.youtube.com',
+                        'youtu.be',
+                    );
                     $getPost = $this->Mod_general->select('post', '*', $where_pro);
                     if(!empty($getPost[0])) {
                         foreach ($getPost as $gvalue) {
+                            $pConent = json_decode($gvalue->p_conent);
+
                             $whereMt = array(
                                 'meta_name'      => 'post_progress',
                                 'meta_key'      => $sid,
@@ -5880,8 +5893,13 @@ public function imgtest()
                                 'object_id'      => $gvalue->p_id,
                             );
                             $checkExistP = $this->Mod_general->select('meta','*', $whereMt);
-                            if(empty($checkExistP[0])) {
-                                $dataJsons[] = $gvalue;
+                            /*Check if not post*/
+                            $check_url = 'https://www.huaythaitodays.com/questions/10456113/check-file-extension-in-upload-form-in-php';
+                            $parse = parse_url($pConent->link);
+                            if (!in_array($parse['host'], $siteUrl)) {
+                                if(empty($checkExistP[0])) {
+                                    $dataJsons[] = $gvalue;
+                                }
                             }
                         }
                     }
@@ -5929,12 +5947,12 @@ public function imgtest()
                     //$result = array_merge($dataJson, $fbgpids,$fbpids,$fbAccount);
                     //echo json_encode($result);
                     /*End check post progress frist*/ 
-                } else {
-                    //refresh
-                    $dataJson = array(
-                        'post' =>array()
-                    );
-                }
+                // } else {
+                //     //refresh
+                //     $dataJson = array(
+                //         'post' =>array()
+                //     );
+                // }
                 $result = array_merge($dataJson, $fbgpids,$fbpids,$fbAccount);
                     echo json_encode($result);
                 die;
