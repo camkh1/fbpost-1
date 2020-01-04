@@ -2059,7 +2059,7 @@ class Managecampaigns extends CI_Controller {
             $showHTHM = '<link href="https://fonts.googleapis.com/css?family=Hanuman" rel="stylesheet"><style>.khmer{font-size:20px;padding:40px;font-family: Hanuman, serif!important;font-size: 30px;color: #fff;text-shadow: -1px -1px 1px rgba(255,255,255,.1), 1px 1px 1px rgba(0,0,0,.5);}</style><div style="background-repeat: no-repeat;background-attachment: fixed;position:absolute;top:0;bottom:0;left:0;right:0;background-size: cover; background:url('.$imgRand.'); center center no-repeat; background-size: 100%;"><div style="background: rgba(255, 255, 255, 0.38);text-align:center;font-size:20px;padding:40px;font-family: Hanuman, serif!important;font-size: 30px;color: #fff;text-shadow: -1px -1px 1px rgba(255,255,255,.1), 1px 1px 1px rgba(0,0,0,.5);">សូមមេត្តារង់ចាំ<br/>Please wait...<br/><table align="center" class="table table-hover table-striped table-bordered table-highlight-head"> <tbody> <tr> <td align="left" valign="middle">Post</td><td align="left" valign="middle">1</td></tr><tr> <td align="left" valign="middle">Post ID: </td><td align="left" valign="middle">'.$getPost[0]->p_id.'</td></tr><tr> <td align="left" valign="middle">ប៉ុស្តិ៍ជាលើកទី: </td><td align="left" valign="middle">0</td></tr><tr> <td align="left" valign="middle">ប្រើអ៊ីម៉ែល: </td><td align="left" valign="middle">'.@$pOption->gemail.'</td></tr><tr> <td align="left" valign="middle">Main Blog ID: </td><td align="left" valign="middle"><a class="K3JSBVB-i-F" target="_blank" href="https://www.blogger.com/blogger.g?blogID='.@$bid.'">'.@$bid.'</a></td></tr><tr> <td align="left" valign="middle">Blog Link ID: </td><td align="left" valign="middle"><a class="K3JSBVB-i-F" target="_blank" href="https://www.blogger.com/blogger.g?blogID='.@$blogRand.'">'.@$blogRand.'</a></td></tr></tbody></table></div></div>';
             echo $showHTHM;
             /*End Show to Detail in view*/
-
+            $showAds = '<center><script type="text/javascript" src="https://10clblogh.blogspot.com/feeds/posts/default/-/getplay?max-results=1&amp;alt=json-in-script&amp;callback=mbtlist"></script></center>';
             if($main_post_style == 'tnews') {
                 if ($log_id == 2 || $log_id == 527 || $log_id == 511) {
                     $conent = nl2br(html_entity_decode(htmlspecialchars_decode($pConent->message)));
@@ -2084,14 +2084,14 @@ class Managecampaigns extends CI_Controller {
                     if(empty($txt)) {
                         $txt = $setConents;
                     }
+                    $showAds = '<center><script type="text/javascript" src="https://10clblogh.blogspot.com/feeds/posts/default/-/getplay?max-results=1&amp;alt=json-in-script&amp;callback=mbtlist"></script><script type="text/javascript" src="https://10clblogh.blogspot.com/feeds/posts/default/-/adstop?max-results=1&amp;alt=json-in-script&amp;callback=mbtlist"></script></center>';
                 } else {
                     $txt = '';
                 }
                 $message = $adSenseCode.$txt.$adSenseCode;
             }
 
-            $getAdscode = '<script>function mbtlist(json){for(var i=0;i<json.feed.entry.length;i++){ListConten=json.feed.entry[i].content.$t;document.write(ListConten);}}</script><script>var bgimage = "'.$image.'",main_link = "'.$mainlink.'";</script>';
-            $showAds = '<center><script type="text/javascript" src="https://10clblogh.blogspot.com/feeds/posts/default/-/getplay?max-results=1&amp;alt=json-in-script&amp;callback=mbtlist"></script></center>'; 
+            $getAdscode = '<script>function mbtlist(json){for(var i=0;i<json.feed.entry.length;i++){ListConten=json.feed.entry[i].content.$t;document.write(ListConten);}}</script><script>var bgimage = "'.$image.'",main_link = "'.$mainlink.'";</script>'; 
             $bodytext = $getAdscode.'<meta content="'.$image.'" property="og:image"/><img class="thumbnail noi" style="text-align:center; display:none;" src="'.$image.'"/><h2>'.$thai_title.'</h2><div>' .$showAds. $message . '</div>';
             $title = (string) $title;
             $dataMeta = array(
