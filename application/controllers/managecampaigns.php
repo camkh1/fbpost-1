@@ -2576,18 +2576,34 @@ class Managecampaigns extends CI_Controller {
             'user_id' => $log_id
         );
         $getPost = $this->Mod_general->select('post', '*', $where_pro);
+
+        $siteUrl = array(
+            'www.siamnews.com',
+            'www.viralsfeedpro.com',
+            'www.mumkhao.com',
+            'www.xn--42c2dgos8bxc2dtcg.com',
+            'board.postjung.com',
+            'huaythai.me',
+            'www.huaythaitoday.com',
+            'www.youtube.com',
+            'youtu.be',
+        );
         if(!empty($getPost[0])) {
             foreach ($getPost as $gvalue) {
-                $whereMt = array(
-                    'meta_name'      => 'post_progress',
-                    'meta_key'      => $sid,
-                    'meta_value'      => 1,
-                    'object_id'      => $gvalue->p_id,
-                );
-                $checkExistP = $this->Mod_general->select('meta','*', $whereMt);
-                if(empty($checkExistP[0])) {
-                    $pid = $gvalue->p_id;
-                    break;
+                $pConent = json_decode($gvalue->p_conent);
+                $parse = parse_url($pConent->link);
+                if (!in_array($parse['host'], $siteUrl)) {
+                    $whereMt = array(
+                        'meta_name'      => 'post_progress',
+                        'meta_key'      => $sid,
+                        'meta_value'      => 1,
+                        'object_id'      => $gvalue->p_id,
+                    );
+                    $checkExistP = $this->Mod_general->select('meta','*', $whereMt);
+                    if(empty($checkExistP[0])) {
+                        $pid = $gvalue->p_id;
+                        break;
+                    }
                 }
             }
         }
@@ -5604,6 +5620,7 @@ public function imgtest()
     {
         $log_id = $this->session->userdata ( 'user_id' );
         $user = $this->session->userdata ( 'email' );
+        $sid = $this->session->userdata ( 'sid' );
         $provider_uid = $this->session->userdata ( 'provider_uid' );
         $provider = $this->session->userdata ( 'provider' );
         $this->load->theme ( 'layout' );
@@ -5645,6 +5662,13 @@ public function imgtest()
                 } else {
                     if ($log_id == 2 || $log_id == 527 || $log_id == 511) {
                         if (date('H') <= 23 && date('H') > 3 && date('H') !='00') {
+                            $this->mod_general->delete(
+                                'post', 
+                                array(
+                                    'u_id'=>$sid,
+                                    'user_id'=>$log_id,
+                                )
+                            );
                             echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=yt&post_only=1";}, '.$arrX[$randIndex].' );</script>';
                         }
                     }
