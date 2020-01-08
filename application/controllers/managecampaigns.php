@@ -2608,7 +2608,6 @@ class Managecampaigns extends CI_Controller {
             }
         }
         /*End check post progress frist*/ 
-        
         if(!empty($pid)) {
             $wPost = array (
                 'u_id != ' => $sid,
@@ -2744,7 +2743,7 @@ class Managecampaigns extends CI_Controller {
                         $itemGroups = $this->Mod_general->join('group_user', $tablejoin, $fields = '*', $wGroupType);
 
                         if(!empty($itemGroups)) {
-                            if($json_a->share_schedule == 1) {
+                            if(@$json_a->share_schedule == 1) {
                                 $date = DateTime::createFromFormat('m-d-Y H:i:s',$startDate . ' ' . $startTime);
                                 $cPost = $date->format('Y-m-d H:i:s');
                             } else {
@@ -2760,7 +2759,7 @@ class Managecampaigns extends CI_Controller {
                                         'sg_page_id' => $groups->sg_id,
                                         'social_id' => @$sid,
                                         'sh_social_type' => 'Facebook',
-                                        'sh_type' => $json_a->ptype,
+                                        'sh_type' => @$json_a->ptype,
                                         'c_date' => $cPost,
                                         'uid' => $log_id,                                    
                                         'sh_option' => json_encode($ShContent),                                    
