@@ -2084,11 +2084,7 @@ class Managecampaigns extends CI_Controller {
                     if(empty($txt)) {
                         $txt = $setConents;
                     }
-<<<<<<< HEAD
                     $showAds = '<center><script type="text/javascript" src="https://10clblogh.blogspot.com/feeds/posts/default/-/getplay?max-results=1&amp;alt=json-in-script&amp;callback=mbtlist"></script><script type="text/javascript" src="https://10clblogh.blogspot.com/feeds/posts/default/-/adstop?max-results=1&amp;alt=json-in-script&amp;callback=mbtlist"></script></center>';
-=======
-                    $showAds = '<center><script type="text/javascript" src="https://10clblogh.blogspot.com/feeds/posts/default/-/adstop?max-results=1&amp;alt=json-in-script&amp;callback=mbtlist"></script></center>';
->>>>>>> 34441750e74eb90819ef5dc0226f00f80d677a4f
                 } else {
                     $txt = '';
                 }
