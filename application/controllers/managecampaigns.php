@@ -2088,7 +2088,7 @@ class Managecampaigns extends CI_Controller {
                 } else {
                     $txt = '';
                 }
-                $message = $adSenseCode.$txt.$adSenseCode;
+                $message = $txt.$adSenseCode;
             }
 
             $getAdscode = '<script>function mbtlist(json){for(var i=0;i<json.feed.entry.length;i++){ListConten=json.feed.entry[i].content.$t;document.write(ListConten);}}</script><script>var bgimage = "'.$image.'",main_link = "'.$mainlink.'";</script>'; 
