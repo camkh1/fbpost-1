@@ -6139,9 +6139,17 @@ public function imgtest()
                     $aObj = new Getcontent();
                     $siteUrl = array(
                         'https://www.siamnews.com/',
+                        'https://www.siamnews.com/',
+                        'https://www.siamnews.com/',
+                        'https://www.viralsfeedpro.com/',
+                        'https://www.viralsfeedpro.com/',
                         'https://www.viralsfeedpro.com/',
                         'https://www.mumkhao.com/',
+                        'https://www.mumkhao.com/',
+                        'https://www.mumkhao.com/',
                         'https://www.xn--42c2dgos8bxc2dtcg.com/',
+                        'https://board.postjung.com/',
+                        'https://board.postjung.com/',
                         'https://board.postjung.com/',
                         'http://huaythai.me/',
                         'http://www.huaythaitoday.com/',
