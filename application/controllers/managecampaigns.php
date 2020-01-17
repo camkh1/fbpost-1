@@ -2938,7 +2938,7 @@ class Managecampaigns extends CI_Controller {
                     $thaiText = '';
                     $EngTitle = '';
                 }
-                $bodytext = '<img class="thumbnail noi" style="text-align:center" src="'.$image.'"/><!--more--><div><b>'.$addTitle.'</b></div><div class="wrapper"><div class="small">'.$thaiText.'<b>'.$EngTitle.'</b><p>'.$conent.'</p></div> <a href="#" class="readmore">... Click to read more</a></div>'.$adSenseCode.'<div>Others news:</div><iframe width="100%" height="280" src="https://www.youtube.com/embed/'.$vid.'" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>'.$adSenseCode.$lineButton;
+                $bodytext = '<img class="thumbnail noi" style="text-align:center" src="'.$image.'"/><!--more--><div><b>'.$addTitle.'</b></div><div class="wrapper"><div class="small">'.$thaiText.'<b>'.$EngTitle.'</b><p>'.$conent.'</p></div> <a href="#" class="readmore">... Click to read more</a></div><div id="tohere"></div>'.$adSenseCode.'<div>Others news:</div><iframe width="100%" height="280" src="https://www.youtube.com/embed/'.$vid.'" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>'.$adSenseCode.$lineButton;
                 $dataMeta = array(
                     'title' => $allData->p_name,
                     'image' => $image,
@@ -6151,8 +6151,8 @@ public function imgtest()
                         'https://board.postjung.com/',
                         'https://board.postjung.com/',
                         'https://board.postjung.com/',
-                        'http://huaythai.me/',
-                        'http://www.huaythaitoday.com/',
+                        //'http://huaythai.me/',
+                        //'http://www.huaythaitoday.com/',
                     );
                     $k = array_rand($siteUrl);
                     $getSiteUrl = $siteUrl[$k];
@@ -6232,7 +6232,7 @@ public function imgtest()
                     $RanChoose = array(
                         'site',
                         'site',
-                        'yt',
+                        //'yt',
                     );
                     $l = array_rand($RanChoose);
                     $getChoose = $RanChoose[$l];
