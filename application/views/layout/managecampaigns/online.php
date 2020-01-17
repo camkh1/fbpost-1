@@ -110,6 +110,7 @@ var myImages = new Array("https://preykabbas.files.wordpress.com/2012/08/dsc_098
 var otherOnline = [
 {"name":"SN1","online":"nb21iphzm4"},
 {"name":"K","online":"juvmwyjkv9"},
+{"name":"All link","online":"xj6pvq4tkt"},
 {"name":"BS","online":"djspuafipc"},
 {"name":"01","online":"lm7gtmo6fo"},
 {"name":"02","online":"x45suc0hoh"},
