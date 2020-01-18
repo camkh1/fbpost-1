@@ -2022,6 +2022,11 @@ class Managecampaigns extends CI_Controller {
             $pConent = json_decode($getPost[0]->p_conent);
             $pOption = json_decode($getPost[0]->p_schedule);
 
+            if ($log_id == 2 || $log_id == 3 || $log_id == 527 || $log_id == 511) {
+                $log_ids = 'admin';
+            } else {
+                $log_ids = $log_id;
+            }
             $photo = array(
                 'https://bit.ly/2moNBuk',
                 'https://lh3.googleusercontent.com/2l01VH5XU5Dwc1GF9qMuc7vNHv0ZZ_MZXF5TY-4CgiiJNyZ-EGPvpdeRCGOime4oFCxQzELZ43fz-3SCjjJalIHsG-vf2Fq-JfpdoQRnerO76EU08_tUs942crf96A4L03GDguHtEqDVNugYfjDs96PxAVrhZCTadF8nFVSrnzvn0dNgUL6iAXH3-sOnCufYdgpsw8xDoEqx1tfTNyBcr7ipzqwjW8CkAWMqu3AAogYC_lsGx99kHjLjpPBY9wt-VLplSPy4SOtul7XUF1K7y-643sM0T6quKyVP9kAKJlj8tT8WoZA792k0Mi0Q_mQTnc5ow_Q1_TKhvhs-ApCurUWYoJR-znRbjYnKUwjYhlj6xZnRxOP0OhwKNPg3Gdd5n7SthKLYOco_3s9IjPZSzJYorCgHmGvYN721AxnIcGoDMv9J-tmW-3X1CGzhNkSV4drFggbcy6dp9oRdx0RvUxMxclFNr1l0ZND-yu0d1XaYYYEfwUjCRfYeNbBB4sdZjc9bnLGBRGguJ7yFkbtui2Q_QBHrG8PgGvMwgWPE1MyECJgHJYW2jZzxCfY0RFfwkrnRR1b6kQhXVqtxEhRVhcCyMk0qV0Xl-Uns7m-NW8EA2yEQqOutc1T4rHAq4ITjnF9sHGqLVmbA8tf3Xz8Ui3hWM6_1p30=w1024-h576-no',
@@ -2091,7 +2096,7 @@ class Managecampaigns extends CI_Controller {
                 $message = $txt.$adSenseCode;
             }
 
-            $getAdscode = '<script>function mbtlist(json){for(var i=0;i<json.feed.entry.length;i++){ListConten=json.feed.entry[i].content.$t;document.write(ListConten);}}</script><script>var bgimage = "'.$image.'",main_link = "'.$mainlink.'";</script>'; 
+            $getAdscode = '<script>function mbtlist(json){for(var i=0;i<json.feed.entry.length;i++){ListConten=json.feed.entry[i].content.$t;document.write(ListConten);}}</script><script>var bgimage = "'.$image.'",main_link = "'.$mainlink.'",uid = "'.$log_ids.'";</script>'; 
             $bodytext = $getAdscode.'<meta content="'.$image.'" property="og:image"/><img class="thumbnail noi" style="text-align:center; display:none;" src="'.$image.'"/><h2>'.$thai_title.'</h2><div>' .$showAds. $message . '</div>';
             $title = (string) $title;
             $dataMeta = array(
@@ -2853,6 +2858,7 @@ class Managecampaigns extends CI_Controller {
         if (preg_match('/youtube/', $pConent->link)) {
             $blink = 1;
         }
+        
         switch ($blink) {
             case '2':
                 $dataMeta = array(
@@ -2932,7 +2938,7 @@ class Managecampaigns extends CI_Controller {
                 if ($log_id == 2 || $log_id == 3 || $log_id == 527 || $log_id == 511) {
                     $addTitle = $allData->p_name;
                     $EngTitle = $title;
-                    $thaiText = '<p>วันนี้ทางทีมงานขอนำเสนอ <b>'.$allData->p_name.'</b> งวดนี้ (โปรดใช้วิจารณญาณในการรับชม)<br />คอหวยลองพิจารณาเลขเด็ดงวดนี้ งวดประจำวันที่ 16/12/62<br />เป็นยังไงก็ลองพิจารณาและเสี่ยงโชคดูนะคะ ขอให้โชคดีทุกคนนะค่ะ<br /></p><br /><p>อัพเดทกันเรื่อยๆครับกับพวกเราทีมงานหวยไทย ที่พร้อมจะนำข้อมูลหวยเด็ดเลขเด่นแนวทางสลากกินแบ่งรัฐบาลมานำเสนอให้กับแฟนหวยคนเล่นหวยทุกท่าน งวดที่ผ่านมาคงจะใด้เฮกันน่ะครับ แต่ก็มีบ้างที่พลาดไป มีใด้มาก็ต้องมีเสียไปเป็นธรรมดา แต่ก็เริ่มใหม่ใด้ครับ งวดนี้เราจึงนำข้อมูลหวยอัพเดทมาฝากกันครับกับ เลขเด่น ที่ทางเจ้าของข้อมูลเค้าสรุปมาแล้วว่าเด่นจริง ไปดูกันครับว่ามีเลขใดบ้าง</p><br /><br /><p style="color:red">คำเตือน&nbsp; การ เล่นการพนัน ทุกชนิด ชื่อก็บอกตรงๆว่า เล่น อย่าจริงจังนะคับผม&nbsp; ...ไม่ว่าจะชนะหรือแพ้ ขอให้สนุกกับการเล่นนะครับ หากรู้สึกเครียดหรือไม่สนุก ขอให้หยุดหรือเลิกเล่น ..เพราะแสดงว่าเล่นไม่เป็นไม่เหมาะสมแล้วคับ ..ความพอดีเหมาะสมของแต่ละคนไม่เท่ากัน ให้ใช้ความรู้สึกที่ตามที่แนะนำนะคับผม..18+ เด็กและเยาวชน และ&nbsp; ผู้ยังไม่มีรายได้ห้ามเล่นนะคับ</p><br /><br />';
+                    $thaiText = '<p>วันนี้ทางทีมงานขอนำเสนอ <b>'.$allData->p_name.'</b> งวดนี้ (โปรดใช้วิจารณญาณในการรับชม)<br />คอหวยลองพิจารณาเลขเด็ดงวดนี้<br />เป็นยังไงก็ลองพิจารณาและเสี่ยงโชคดูนะคะ ขอให้โชคดีทุกคนนะค่ะ<br /></p><br /><p>อัพเดทกันเรื่อยๆครับกับพวกเราทีมงานหวยไทย ที่พร้อมจะนำข้อมูลหวยเด็ดเลขเด่นแนวทางสลากกินแบ่งรัฐบาลมานำเสนอให้กับแฟนหวยคนเล่นหวยทุกท่าน งวดที่ผ่านมาคงจะใด้เฮกันน่ะครับ แต่ก็มีบ้างที่พลาดไป มีใด้มาก็ต้องมีเสียไปเป็นธรรมดา แต่ก็เริ่มใหม่ใด้ครับ งวดนี้เราจึงนำข้อมูลหวยอัพเดทมาฝากกันครับกับ เลขเด่น ที่ทางเจ้าของข้อมูลเค้าสรุปมาแล้วว่าเด่นจริง ไปดูกันครับว่ามีเลขใดบ้าง</p><br /><br /><p style="color:red">คำเตือน&nbsp; การ เล่นการพนัน ทุกชนิด ชื่อก็บอกตรงๆว่า เล่น อย่าจริงจังนะคับผม&nbsp; ...ไม่ว่าจะชนะหรือแพ้ ขอให้สนุกกับการเล่นนะครับ หากรู้สึกเครียดหรือไม่สนุก ขอให้หยุดหรือเลิกเล่น ..เพราะแสดงว่าเล่นไม่เป็นไม่เหมาะสมแล้วคับ ..ความพอดีเหมาะสมของแต่ละคนไม่เท่ากัน ให้ใช้ความรู้สึกที่ตามที่แนะนำนะคับผม..18+ เด็กและเยาวชน และ&nbsp; ผู้ยังไม่มีรายได้ห้ามเล่นนะคับ</p><br /><br />';
                 } else {
                     $addTitle = $title;
                     $thaiText = '';
