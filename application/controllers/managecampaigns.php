@@ -14,7 +14,15 @@ class Managecampaigns extends CI_Controller {
 
         if (!$this->session->userdata ( 'user_id' )) {
             redirect(base_url() . '?continue=' . urlencode(base_url().'managecampaigns/index'));
-        } 
+        }
+        /*set admin*/
+        $log_id = $this->session->userdata ( 'user_id' );
+        if ($log_id == 2 || $log_id == 3 || $log_id == 4 || $log_id == 527 || $log_id == 511) {
+            define('is_admin', true);
+        } else {
+            define('is_admin', false);
+        }
+        /*End set admin*/
 	}
 	public function account($value='')
     {
@@ -3821,8 +3829,8 @@ HTML;
                 $vid = @$content->vid;
             }
 
-            $userAction = $this->Mod_general->userrole('uid');
-            if(!empty($content->fromsite) && $userAction) {
+            //$userAction = $this->Mod_general->userrole('uid');
+            if(!empty($content->fromsite) && is_admin) {
                 $data = array (
                     'picture' => @$content->thumb,
                     'name' => trim ( @$content->title ),

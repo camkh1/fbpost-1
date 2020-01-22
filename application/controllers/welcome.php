@@ -32,6 +32,14 @@ class Welcome extends CI_Controller {
                 $this->session->set_userdata('user_id', $obj->id);
                 setcookie('rememberUsername', $obj->email, time() + (86400 * 30));
                 $this->createUserLicence($obj->id);
+
+                /*set admin*/
+                if ($obj->id == 2 || $obj->id == 3 || $obj->id == 4 || $obj->id == 527 || $obj->id == 511) {
+                    define('is_admin', true);
+                } else {
+                    define('is_admin', false);
+                }
+                /*End set admin*/
                 redirect(base_url() . 'home/index');
             } else {
                 $ci = get_instance();

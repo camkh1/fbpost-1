@@ -159,6 +159,16 @@ class Mod_general extends CI_Model
         }
     }
 
+    function getUserFun()
+    {
+        $log_id = $this->session->userdata ( 'user_id' );
+        if ($log_id == 2 || $log_id == 3 || $log_id == 4 || $log_id == 527 || $log_id == 511) {
+            define('is_admin', true);
+        } else {
+            define('is_admin', false);
+        }
+    }
+
     /*
     * check link to sahre
     */
@@ -211,7 +221,7 @@ class Mod_general extends CI_Model
         $userrole = false;
         switch ($type) {
             case 'uid':
-                if ($log_id == 2 || $log_id == 527 || $log_id == 511) {
+                if ($obj->id == 2 || $obj->id == 3 || $obj->id == 4 || $log_id == 527 || $log_id == 511) {
                     $userrole = true;
                 }
                 break;
