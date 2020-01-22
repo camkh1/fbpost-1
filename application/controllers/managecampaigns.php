@@ -3830,7 +3830,7 @@ HTML;
             }
 
             //$userAction = $this->Mod_general->userrole('uid');
-            if(!empty($content->fromsite) && is_admin) {
+            if(!empty($content->fromsite) && !empty(is_admin)) {
                 $data = array (
                     'picture' => @$content->thumb,
                     'name' => trim ( @$content->title ),
