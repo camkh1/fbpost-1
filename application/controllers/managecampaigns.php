@@ -505,7 +505,7 @@ class Managecampaigns extends CI_Controller {
                 }
                 //localhost/autopost/managecampaigns/autopost?start=1
             } else {
-                if ($log_id == 2 || $log_id == 3 || $log_id == 527 || $log_id == 511) {
+                if ($log_id == 2 || $log_id == 3 || $log_id == 4 || $log_id == 527 || $log_id == 511) {
                     if (date('H') <= 23 && date('H') > 3 && date('H') !='00') {
                         $setTime = $arrX[$randIndex] * (1000 * 60);
                         echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=yt&post_only=1";}, '.$setTime.' );</script>';
@@ -2022,7 +2022,7 @@ class Managecampaigns extends CI_Controller {
             $pConent = json_decode($getPost[0]->p_conent);
             $pOption = json_decode($getPost[0]->p_schedule);
 
-            if ($log_id == 2 || $log_id == 3 || $log_id == 527 || $log_id == 511) {
+            if ($log_id == 2 || $log_id == 3 || $log_id == 4 || $log_id == 527 || $log_id == 511) {
                 $log_ids = 'admin';
             } else {
                 $log_ids = $log_id;
@@ -2066,7 +2066,7 @@ class Managecampaigns extends CI_Controller {
             /*End Show to Detail in view*/
             $showAds = '<center><script type="text/javascript" src="https://10clblogh.blogspot.com/feeds/posts/default/-/getplay?max-results=1&amp;alt=json-in-script&amp;callback=mbtlist"></script></center>';
             if($main_post_style == 'tnews') {
-                if ($log_id == 2 || $log_id == 3 || $log_id == 527 || $log_id == 511) {
+                if ($log_id == 2 || $log_id == 3 || $log_id == 4 || $log_id == 527 || $log_id == 511) {
                     $conent = nl2br(html_entity_decode(htmlspecialchars_decode($pConent->message)));
                     $conent = str_replace('&gt;', '>', $conent);
                     $conent = str_replace('&lt;', '<', $conent);
@@ -2935,10 +2935,11 @@ class Managecampaigns extends CI_Controller {
                 $bodytext = '<link href="'.$image.'" rel="image_src"/><meta content="'.$image.'" property="og:image"/><a href="'.$pConent->link.'" target="_top"><img class="thumbnail" style="text-align:center" src="'.$image.'"/></a><!--more-->';
                 break;
             default:
-                if ($log_id == 2 || $log_id == 3 || $log_id == 527 || $log_id == 511) {
+                if ($log_id == 2 || $log_id == 3 || $log_id == 4 || $log_id == 527 || $log_id == 511) {
                     $addTitle = $allData->p_name;
                     $EngTitle = $title;
-                    $thaiText = '<p>วันนี้ทางทีมงานขอนำเสนอ <b>'.$allData->p_name.'</b> งวดนี้ (โปรดใช้วิจารณญาณในการรับชม)<br />คอหวยลองพิจารณาเลขเด็ดงวดนี้<br />เป็นยังไงก็ลองพิจารณาและเสี่ยงโชคดูนะคะ ขอให้โชคดีทุกคนนะค่ะ<br /></p><br /><p>อัพเดทกันเรื่อยๆครับกับพวกเราทีมงานหวยไทย ที่พร้อมจะนำข้อมูลหวยเด็ดเลขเด่นแนวทางสลากกินแบ่งรัฐบาลมานำเสนอให้กับแฟนหวยคนเล่นหวยทุกท่าน งวดที่ผ่านมาคงจะใด้เฮกันน่ะครับ แต่ก็มีบ้างที่พลาดไป มีใด้มาก็ต้องมีเสียไปเป็นธรรมดา แต่ก็เริ่มใหม่ใด้ครับ งวดนี้เราจึงนำข้อมูลหวยอัพเดทมาฝากกันครับกับ เลขเด่น ที่ทางเจ้าของข้อมูลเค้าสรุปมาแล้วว่าเด่นจริง ไปดูกันครับว่ามีเลขใดบ้าง</p><br /><br /><p style="color:red">คำเตือน&nbsp; การ เล่นการพนัน ทุกชนิด ชื่อก็บอกตรงๆว่า เล่น อย่าจริงจังนะคับผม&nbsp; ...ไม่ว่าจะชนะหรือแพ้ ขอให้สนุกกับการเล่นนะครับ หากรู้สึกเครียดหรือไม่สนุก ขอให้หยุดหรือเลิกเล่น ..เพราะแสดงว่าเล่นไม่เป็นไม่เหมาะสมแล้วคับ ..ความพอดีเหมาะสมของแต่ละคนไม่เท่ากัน ให้ใช้ความรู้สึกที่ตามที่แนะนำนะคับผม..18+ เด็กและเยาวชน และ&nbsp; ผู้ยังไม่มีรายได้ห้ามเล่นนะคับ</p><br /><br />';
+                    //$thaiText = '<p>วันนี้ทางทีมงานขอนำเสนอ <b>'.$allData->p_name.'</b> งวดนี้ (โปรดใช้วิจารณญาณในการรับชม)<br />คอหวยลองพิจารณาเลขเด็ดงวดนี้<br />เป็นยังไงก็ลองพิจารณาและเสี่ยงโชคดูนะคะ ขอให้โชคดีทุกคนนะค่ะ<br /></p><br /><p>อัพเดทกันเรื่อยๆครับกับพวกเราทีมงานหวยไทย ที่พร้อมจะนำข้อมูลหวยเด็ดเลขเด่นแนวทางสลากกินแบ่งรัฐบาลมานำเสนอให้กับแฟนหวยคนเล่นหวยทุกท่าน งวดที่ผ่านมาคงจะใด้เฮกันน่ะครับ แต่ก็มีบ้างที่พลาดไป มีใด้มาก็ต้องมีเสียไปเป็นธรรมดา แต่ก็เริ่มใหม่ใด้ครับ งวดนี้เราจึงนำข้อมูลหวยอัพเดทมาฝากกันครับกับ เลขเด่น ที่ทางเจ้าของข้อมูลเค้าสรุปมาแล้วว่าเด่นจริง ไปดูกันครับว่ามีเลขใดบ้าง</p><br /><br /><p style="color:red">คำเตือน&nbsp; การ เล่นการพนัน ทุกชนิด ชื่อก็บอกตรงๆว่า เล่น อย่าจริงจังนะคับผม&nbsp; ...ไม่ว่าจะชนะหรือแพ้ ขอให้สนุกกับการเล่นนะครับ หากรู้สึกเครียดหรือไม่สนุก ขอให้หยุดหรือเลิกเล่น ..เพราะแสดงว่าเล่นไม่เป็นไม่เหมาะสมแล้วคับ ..ความพอดีเหมาะสมของแต่ละคนไม่เท่ากัน ให้ใช้ความรู้สึกที่ตามที่แนะนำนะคับผม..18+ เด็กและเยาวชน และ&nbsp; ผู้ยังไม่มีรายได้ห้ามเล่นนะคับ</p><br /><br />';
+                    $thaiText = '';
                 } else {
                     $addTitle = $title;
                     $thaiText = '';
@@ -5665,7 +5666,7 @@ public function imgtest()
                     } 
                     //localhost/autopost/managecampaigns/autopost?start=1
                 } else {
-                    if ($log_id == 2 || $log_id == 3 || $log_id == 527 || $log_id == 511) {
+                    if ($log_id == 2 || $log_id == 3 || $log_id == 4 || $log_id == 527 || $log_id == 511) {
                         if (date('H') <= 23 && date('H') > 3 && date('H') !='00') {
                             $this->mod_general->delete(
                                 'post', 
