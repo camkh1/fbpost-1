@@ -45,21 +45,26 @@ class Getcontent extends CI_Controller
         $parse = parse_url($url);
         //echo $parse['host'];
 
-        /*clean link is not today*/
+        /*clean link is later -15 days*/
         $whIsnot = array(
             'meta_name'     => $log_id . 'sitelink',
-            'meta_key != '      => date('Y-m-d'),
         );
 
-        $queryLinkIs = $this->Mod_general->select('meta', 'meta_id', $whIsnot);
+        $queryLinkIs = $this->Mod_general->select('meta', 'meta_id,meta_key', $whIsnot);
+        $todaysdate = date('Y/m/d', strtotime('-15 days'));
         if(!empty($queryLinkIs[0])) {
             foreach ($queryLinkIs as $key => $lid) {
-                $this->mod_general->delete(
-                    'meta', 
-                    array(
-                        'meta_id'=>$lid->meta_id
-                    )
-                );
+                $mydate=$lid->meta_key;
+                if (strtotime($todaysdate)>=strtotime($mydate))
+                {
+                    //IS Equal or Later
+                    $this->mod_general->delete(
+                        'meta', 
+                        array(
+                            'meta_id'=>$lid->meta_id
+                        )
+                    );
+                }
             }
         }
         /*clean link is not today*/

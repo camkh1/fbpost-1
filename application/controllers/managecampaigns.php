@@ -6064,6 +6064,9 @@ public function imgtest()
                     'meta_value'     => 0,
                 );
                 $queryLinkIs = $this->Mod_general->select('meta', '*', $whIsnot);
+
+
+
                 if(!empty($queryLinkIs[0])) {
                     $getContent = $this->get_from_url($queryLinkIs[0]->object_id);
 
@@ -6166,8 +6169,8 @@ public function imgtest()
                         'https://board.postjung.com/',
                         'https://board.postjung.com/',
                         'https://board.postjung.com/',
-                        //'http://huaythai.me/',
-                        //'http://www.huaythaitoday.com/',
+                        'http://huaythai.me/',
+                        'http://www.huaythaitoday.com/',
                     );
                     $k = array_rand($siteUrl);
                     $getSiteUrl = $siteUrl[$k];
