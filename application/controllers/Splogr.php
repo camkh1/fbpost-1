@@ -57,6 +57,7 @@ class Splogr extends CI_Controller
     }
     public function getpost($get='')
     {
+        $actions = $this->uri->segment(3);
         $log_id = $this->session->userdata ('user_id');
         /*check link*/
         $where_link = array(
@@ -96,6 +97,9 @@ class Splogr extends CI_Controller
                 $getJsonArray = array_merge($error,$setContent);
             } else {
                 $getJsonArray = $this->get_from_site_id('https://www.alibaba.com/premium/laser_machines/1.html',$get);
+                if(empty($getJsonArray)) {
+                    $getJsonArray = $this->get_from_site_id('https://www.alibaba.com/premium/laser_machines/2.html',$get);
+                }
                 if($get == 1) {
                     return $getJsonArray;
                 } else {
@@ -215,8 +219,8 @@ class Splogr extends CI_Controller
 
                 break; 
             case 'www.alibaba.com':
-                $script = @$html->find('script',25)->innertext;
-                $perPages = @explode('"total":', $script);
+                //$script = @$html->find('script',25)->innertext;
+                $perPages = @explode('"total":', $html);
 
                 $perPage = @explode(',', $perPages[1]);
                 $totalP = @$perPage[0];
@@ -227,7 +231,7 @@ class Splogr extends CI_Controller
                 
                 $nexts = @explode('/', $site_url);
                 $last = @count($nexts) - 1;
-
+                //$totalPost = count(($html->find('.l-main-content .m-gallery-product-item-wrap')));
                 foreach($html->find('.l-main-content .m-gallery-product-item-wrap') as $e) {
                     $link = $e->find('.item-info .title a',0)->href;
                     $where_u = array(
@@ -249,8 +253,8 @@ class Splogr extends CI_Controller
                         if(strpos($link, "http://") === false) {
                             $link = 'http:'.$link;
                         }
-                        return $this->fromAlibaba($link,$get);
-                        break;
+                        // return $this->fromAlibaba($link,$get);
+                        // break;
                     } else {
                         continue;
                     }
