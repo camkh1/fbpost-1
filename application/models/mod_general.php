@@ -267,19 +267,24 @@ class Mod_general extends CI_Model
     }
     
     public function getuser($field = '*', $where = '') {
-        if (!empty($field)) {
-            $this->select($field);
-        } 
-        else {
-            $this->select('username');
+        $log_id = $this->session->userdata ( 'user_id' );
+        $this->load->database('default', true);
+        if (!empty($field) && $field == 'me') {
+            $log_id = $this->session->userdata ( 'user_id' );
+            $this->db->select('*');
+        } else if (!empty($field) && $field != 'me') {
+            $this->db->select($field);
+        } else {
+            $this->db->select('*');
         }
-        $this->from('login');
-        $this->join('users', 'login.id = users.log_id');
+        $this->db->from('users');
         if (!empty($where)) {
-            $this->where($where);
+            $this->db->where($where);
         }
-        
-        $query = $this->get();
+        if($field == 'me') {
+            $this->db->where(array('u_id' => $log_id));
+        }
+        $query = $this->db->get();
         return $query->result();
     }
     

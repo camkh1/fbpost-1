@@ -17,8 +17,14 @@ class User extends CI_Controller {
         $this->load->theme('layout');
 
         $data['title'] = 'List of user';
+        $log_id = $this->session->userdata ( 'user_id' );
+        if($log_id == 1) {
+            $field = '*';
+        } else {
+            $field = 'me';
+        }
 
-        $data['user_list'] = $this->Mod_general->getuser('*');
+        $data['user_list'] = $this->Mod_general->getuser($field);
 
         if ($this->session->flashdata('edituser')) {
 

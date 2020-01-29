@@ -788,6 +788,7 @@ class Managecampaigns extends CI_Controller {
 	}
 
     public function yturl() {
+        @$this->session->unset_userdata('back');
         $access_token = $this->session->userdata('access_token');
         $data['access_token_time'] = $this->session->userdata('access_token_time');
 
@@ -2738,7 +2739,7 @@ class Managecampaigns extends CI_Controller {
                     $dataPostInstert = array (
                         Tbl_posts::name => $getPost[0]->p_name,
                         Tbl_posts::conent => $getPost[0]->p_conent,
-                        Tbl_posts::p_date => date('Y-m-d H:i:s'),
+                        Tbl_posts::p_date => $getPost[0]->p_date,
                         Tbl_posts::schedule => json_encode($schedule),
                         Tbl_posts::user => $sid,
                         'user_id' => $log_id,
@@ -5885,7 +5886,7 @@ public function imgtest()
                 $fbgpids = array();
                 if(!empty($fbgpid[0])) {
                     $fbgpids = array(
-                        'groupid' => $fbgpid[0]->meta_value
+                        'groupid' => $fbgpid[0]->meta_value,
                     );
                 }
                 /*End get group for post*/
