@@ -1752,6 +1752,7 @@ class Managecampaigns extends CI_Controller {
                                                     $params = $_SERVER['QUERY_STRING']; //for parameters
                                                     $fullURL = $currentURL . '?' . $params;
                                                     echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopost?createblog=1&backto='.urlencode($fullURL).'";}, 3000 );</script>';
+                                                    die;
                                                 }
                                                 $backto = base_url().'managecampaigns/posttotloglink?pid='.$pid.'&bid='.$bLinkData;
                                                 /*check blog spam or not*/
@@ -5776,7 +5777,7 @@ public function imgtest()
                     /* check before insert */
                     $dataBlink = array(
                         'status'=>1,
-                        'post'=> date('Y-m-d', strtotime('-2 days', strtotime(date('Y-m-d')))),
+                        'post'=> date('Y-m-d', strtotime('-5 days', strtotime(date('Y-m-d')))),
                         'date'=> date('Y-m-d')
                     );
                     if (empty($queryLinkData[0])) {
