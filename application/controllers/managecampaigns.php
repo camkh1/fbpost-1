@@ -177,6 +177,9 @@ class Managecampaigns extends CI_Controller {
         $this->load->view ( 'managecampaigns/account', $data );
     }
 	public function index() {
+        if(!empty($this->session->userdata ( 'post_all' ))) {
+            redirect('managecampaigns/posttotloglink', 'location');
+        }
         $log_id = $this->session->userdata ( 'user_id' );
         $fbuid = $this->input->get('fbuid', TRUE);
         $fbname = $this->input->get('fbname', TRUE);
@@ -808,6 +811,11 @@ class Managecampaigns extends CI_Controller {
             //redirect($setUrl);
             //exit();
         }
+
+        if(!empty($this->session->userdata ( 'post_all' ))) {
+
+        }
+
         if(!empty($this->input->get('renew'))) {
             $currentURL = current_url();
             $setUrl = base_url() . 'managecampaigns/account?renew=1' . '&back='. urlencode($currentURL);
@@ -1724,6 +1732,21 @@ class Managecampaigns extends CI_Controller {
                                                 $blogRand = $blog_link_id;
                                             } else {
                                                 $bLinkData = $this->getBlogLink();
+                                                /*count blog link first*/
+                                                // $guid = $this->session->userdata ('guid');
+                                                // $blogLinkType = 'blog_linkA';
+                                                // $whereLinkA = array(
+                                                //     'meta_key'      => $blogLinkType . '_'. $guid,
+                                                // );
+                                                // $queryLinkData = $this->Mod_general->select('meta', '*', $whereLinkA);
+                                                // /*End count blog link first*/
+                                                // if(count($queryLinkData)<90) {
+                                                //     $currentURL = current_url(); //for simple URL
+                                                //     $params = $_SERVER['QUERY_STRING']; //for parameters
+                                                //     $fullURL = $currentURL . '?' . $params;
+                                                //     echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopost?createblog=1&backto='.urlencode($fullURL).'";}, 3000 );</script>';
+                                                //     die;
+                                                // }
                                                 if(empty($bLinkData)) {
                                                     $currentURL = current_url(); //for simple URL
                                                     $params = $_SERVER['QUERY_STRING']; //for parameters
@@ -1960,10 +1983,10 @@ class Managecampaigns extends CI_Controller {
             $big = array();
             foreach ($queryLinkData as $key => $blog) {
                 $dataJon = json_decode($blog->meta_value);
-                $status = $dataJon->status;
-                $dates = $dataJon->date;
-                $post = $dataJon->post;
-                if($status ==1 && $post == date('Y-m-d', strtotime('-2 days', strtotime(date('Y-m-d'))))) {
+                $status = @$dataJon->status;
+                $dates = @$dataJon->date;
+                $post = @$dataJon->post;
+                if($status ==1 && $post == date('Y-m-d', strtotime('-5 days', strtotime(date('Y-m-d'))))) {
                     $big[] = $blog->object_id;
                 } 
                 $blink[] = $blog->object_id;                               
@@ -1974,6 +1997,16 @@ class Managecampaigns extends CI_Controller {
             } else {
                 $k = array_rand($big);
                 $blogRand = $big[$k];
+            }
+            $countBlink = count($queryLinkData);
+            if($countBlink<90 && empty($blogRand)) {
+                $currentURL = current_url(); //for simple URL
+                 $params = $_SERVER['QUERY_STRING']; //for parameters
+                 $fullURL = $currentURL . '?' . $params;
+                 echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopost?createblog=1&backto='.urlencode($fullURL).'";}, 3000 );</script>';
+                //$setUrl = base_url() . 'managecampaigns/autopost?createblog=1&backto='. urlencode($fullURL);
+                //redirect($setUrl);
+                die;
             }
         } else {
             $blogRand = false;
@@ -2185,48 +2218,7 @@ class Managecampaigns extends CI_Controller {
             }
             /*End update youtube if autopost*/
 
-            /*Post all post*/
-            $post_all = $this->session->userdata ( 'post_all' );
-                if($post_all) {
-                $fbUserId = $this->session->userdata ( 'sid' );
-                $whereNext = array (
-                    'user_id' => $log_id,
-                    'u_id' => $fbUserId,
-                    'p_post_to' => 1,
-                );
-                $nextPost = $this->Mod_general->select ( Tbl_posts::tblName, '*', $whereNext );
-                if(!empty($nextPost[0])) {
-                    $p_id = $nextPost[0]->p_id;
-                    $pConent = json_decode($nextPost[0]->p_conent);
-                    $pOption = json_decode($nextPost[0]->p_schedule);
-                    $bid = $pOption->blogid;
-                    //redirect(base_url() . 'managecampaigns/yturl?pid='.$p_id.'&bid=' . $bid . '&action=postblog&blink='.$blogLink); 
-                    /*get blog link from database*/
-                    $blogRand = $big = $this->getBlogLink();
-                    if (!empty($blogRand)) {
-                        if(empty($big)) {
-                            $currentURL = current_url(); //for simple URL
-                             $params = $_SERVER['QUERY_STRING']; //for parameters
-                             $fullURL = $currentURL . '?' . $params;
-                             echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopost?createblog=1&backto='.urlencode($fullURL).'";}, 3000 );</script>';
-                            //$setUrl = base_url() . 'managecampaigns/autopost?createblog=1&backto='. urlencode($fullURL);
-                            //redirect($setUrl);
-                            exit();
-                        }
-                    } else {
-                        $currentURL = current_url(); //for simple URL
-                         $params = $_SERVER['QUERY_STRING']; //for parameters
-                         $fullURL = $currentURL . '?' . $params;
-                         echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopost?createblog=1&backto='.urlencode($fullURL).'";}, 3000 );</script>';
-                        exit();
-                    }
-                    echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/yturl?pid='.$p_id.'&bid='.$bid.'&action=postblog&blink=1&autopost=1";}, 300 );</script>';
-                    exit();
-                } else {
-                    $this->session->unset_userdata('post_all');
-                } 
-            }
-            /*Post all post*/
+            
 
             if(!empty($backto)) {
                 $runpost  = '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.$backto.'";}, 30 );</script>';
@@ -2239,6 +2231,49 @@ class Managecampaigns extends CI_Controller {
                 exit();
             } 
         }
+        /*Post all post*/
+        $post_all = $this->session->userdata ( 'post_all' );
+            if($post_all) {
+            $fbUserId = $this->session->userdata ( 'sid' );
+            $whereNext = array (
+                'user_id' => $log_id,
+                'u_id' => $fbUserId,
+                'p_post_to' => 1,
+            );
+            $nextPost = $this->Mod_general->select ( Tbl_posts::tblName, '*', $whereNext );
+            if(!empty($nextPost[0])) {
+                $p_id = $nextPost[0]->p_id;
+                $pConent = json_decode($nextPost[0]->p_conent);
+                $pOption = json_decode($nextPost[0]->p_schedule);
+                $bid = $pOption->blogid;
+                //redirect(base_url() . 'managecampaigns/yturl?pid='.$p_id.'&bid=' . $bid . '&action=postblog&blink='.$blogLink); 
+                /*get blog link from database*/
+                $blogRand = $big = $this->getBlogLink();
+                if (!empty($blogRand)) {
+                    if(empty($big)) {
+                        $currentURL = current_url(); //for simple URL
+                         $params = $_SERVER['QUERY_STRING']; //for parameters
+                         $fullURL = $currentURL . '?' . $params;
+                         echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopost?createblog=1&backto='.urlencode($fullURL).'";}, 3000 );</script>';
+                        //$setUrl = base_url() . 'managecampaigns/autopost?createblog=1&backto='. urlencode($fullURL);
+                        //redirect($setUrl);
+                        exit();
+                    }
+                } else {
+                    $currentURL = current_url(); //for simple URL
+                     $params = $_SERVER['QUERY_STRING']; //for parameters
+                     $fullURL = $currentURL . '?' . $params;
+                     echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopost?createblog=1&backto='.urlencode($fullURL).'";}, 3000 );</script>';
+                    exit();
+                }
+                echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/yturl?pid='.$p_id.'&bid='.$bid.'&action=postblog&blink=1&autopost=1";}, 300 );</script>';
+                exit();
+            } else {
+                $this->session->unset_userdata('post_all');
+                redirect('managecampaigns', 'location');
+            } 
+        }
+        /*Post all post*/
     }
     public function postBlogger($dataContent)
     {

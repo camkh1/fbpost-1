@@ -14,6 +14,8 @@
     Please wait...
 </div>
 <?php
+$setTemplate = 0;
+$btemplate = 0;
 function generateRandomString($length = 10) {
     $characters = 'abcdefghijklmnopqrstuvwxyz';
     $charactersLength = strlen($characters);
@@ -71,8 +73,7 @@ if(empty($bLinkID) && empty($this->input->get('createblog')) && empty($this->inp
     exit();
 }
 //$btemplate = "D:&bsol;&bsol;PROGRAM&bsol;&bsol;templates&bsol;&bsol;";
-$setTemplate = 0;
-$btemplate = 0;
+
 if(!empty($autopost->templateLink)) {
     $setTemplate = 1;
     $btemplate = trim($autopost->templateLink);
@@ -202,10 +203,11 @@ $glogin = str_replace('autopost;=', 'autopost=', $glogin);
                         var str = $("#codeC").text();
                         var res = str.replace("xxxxxxxxxxx", posturl);
                         //console.log(res);
+                        if(totalResults<90) {
+                            createblog();
+                        }
                         runcode(res);
-                        // if(totalResults>15) {
-                        //     createblog();
-                        // }
+                        
                         // if(totalResults<15) {
                         //     alert(totalResults);
                         //     var str = $("#codeC").text();
