@@ -5958,10 +5958,10 @@ public function imgtest()
                         'www.mumkhao.com',
                         'www.xn--42c2dgos8bxc2dtcg.com',
                         'board.postjung.com',
-                        'huaythai.me',
-                        'www.huaythaitoday.com',
-                        'www.youtube.com',
-                        'youtu.be',
+                        //'huaythai.me',
+                        //'www.huaythaitoday.com',
+                        //'www.youtube.com',
+                        //'youtu.be',
                     );
                     $getPost = $this->Mod_general->select('post', '*', $where_pro);
                     if(!empty($getPost[0])) {
