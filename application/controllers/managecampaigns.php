@@ -2055,6 +2055,7 @@ class Managecampaigns extends CI_Controller {
         $blogRand = $this->input->get('bid');
         $backto = @!empty($this->input->get('backto')) ? $this->input->get('backto') : $this->session->userdata ( 'backto' );
         //$blogRand = $this->getBlogLink(); backto
+        $post_all = $this->session->userdata ( 'post_all' );
 
         $wPost = array (
             'user_id' => $log_id,
@@ -2103,6 +2104,8 @@ class Managecampaigns extends CI_Controller {
             $main_post_style = @$pOption->main_post_style;
             $bid = @$pOption->blogid;
             $mainlink = @$pConent->mainlink;
+
+            
 
             /*Show to Detail in view*/
             $showHTHM = '<link href="https://fonts.googleapis.com/css?family=Hanuman" rel="stylesheet"><style>.khmer{font-size:20px;padding:40px;font-family: Hanuman, serif!important;font-size: 30px;color: #fff;text-shadow: -1px -1px 1px rgba(255,255,255,.1), 1px 1px 1px rgba(0,0,0,.5);}</style><div style="background-repeat: no-repeat;background-attachment: fixed;position:absolute;top:0;bottom:0;left:0;right:0;background-size: cover; background:url('.$imgRand.'); center center no-repeat; background-size: 100%;"><div style="background: rgba(255, 255, 255, 0.38);text-align:center;font-size:20px;padding:40px;font-family: Hanuman, serif!important;font-size: 30px;color: #fff;text-shadow: -1px -1px 1px rgba(255,255,255,.1), 1px 1px 1px rgba(0,0,0,.5);">សូមមេត្តារង់ចាំ<br/>Please wait...<br/><table align="center" class="table table-hover table-striped table-bordered table-highlight-head"> <tbody> <tr> <td align="left" valign="middle">Post</td><td align="left" valign="middle">1</td></tr><tr> <td align="left" valign="middle">Post ID: </td><td align="left" valign="middle">'.$getPost[0]->p_id.'</td></tr><tr> <td align="left" valign="middle">ប៉ុស្តិ៍ជាលើកទី: </td><td align="left" valign="middle">0</td></tr><tr> <td align="left" valign="middle">ប្រើអ៊ីម៉ែល: </td><td align="left" valign="middle">'.@$pOption->gemail.'</td></tr><tr> <td align="left" valign="middle">Main Blog ID: </td><td align="left" valign="middle"><a class="K3JSBVB-i-F" target="_blank" href="https://www.blogger.com/blogger.g?blogID='.@$bid.'">'.@$bid.'</a></td></tr><tr> <td align="left" valign="middle">Blog Link ID: </td><td align="left" valign="middle"><a class="K3JSBVB-i-F" target="_blank" href="https://www.blogger.com/blogger.g?blogID='.@$blogRand.'">'.@$blogRand.'</a></td></tr></tbody></table></div></div>';
@@ -2227,13 +2230,15 @@ class Managecampaigns extends CI_Controller {
                 exit();
             } else {
                 //$runpost  = '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'facebook/shareation?post=getpost&pid='.$getPost[0]->p_id.'";}, 30 );</script>';
-                $runpost  = '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/index";}, 30 );</script>';
-                echo $runpost;
-                exit();
+                if(empty($post_all)) {
+                    $runpost  = '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/index";}, 30 );</script>';
+                    echo $runpost;
+                    exit();
+                }
             } 
         }
         /*Post all post*/
-        $post_all = $this->session->userdata ( 'post_all' );
+        
             if($post_all) {
             $fbUserId = $this->session->userdata ( 'sid' );
             $whereNext = array (
