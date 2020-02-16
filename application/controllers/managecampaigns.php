@@ -6294,7 +6294,7 @@ public function imgtest()
                     $RanChoose = array(
                         'site',
                         'site',
-                        'yt',
+                        //'yt',
                     );
                     $l = array_rand($RanChoose);
                     $getChoose = $RanChoose[$l];
