@@ -6324,6 +6324,8 @@ public function imgtest()
                 }
                 break;
             case 'amung':
+                $setURl = base_url().'managecampaigns';
+                $this->session->set_userdata('backto', $setURl);
                 $amoung = $this->amung('xj6pvq4tkt',1,true);
                 $getUrl = $amoung->pages;
                 krsort($getUrl);
@@ -6377,8 +6379,10 @@ public function imgtest()
                 $vids = !empty($this->input->get('vid')) ? $this->input->get('vid') : '';
                 $pid = $this->autoposttoblog($vids);
                 if(!empty($pid)) {
-                    $setURl = base_url().'managecampaigns/autopostfb?action=fbgroup';
-                    $this->session->set_userdata('backto', $setURl);
+                    if(empty($vids)) {
+                        $setURl = base_url().'managecampaigns/autopostfb?action=fbgroup';
+                        $this->session->set_userdata('backto', $setURl);
+                    }
                     echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/yturl?pid='.$pid.'&action=postblog";}, 3000 );</script>'; 
                     exit();
 

@@ -3331,7 +3331,7 @@ class Getcontent extends CI_Controller
             $html1 = file_get_html ( $iframe );
             $obj->title = @$html1->find ( 'meta[property=og:title]', 0 )->content; 
             //$title = $html1->find ( 'tit.youtube_linkle', 0 )->innertext;
-            $obj->vid = $iframe;
+            $obj->vid = $this->mod_general->get_video_id($iframe)['vid'];
             return $obj;
         } 
         if(!empty($matches[0][0])) {
