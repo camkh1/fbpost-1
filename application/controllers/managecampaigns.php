@@ -4361,6 +4361,7 @@ HTML;
                     /*End check video exist*/ 
                      break;
                  case 'online':
+                    $type = $this->input->get('type');
                     $id = ! empty ($this->input->get('id')) ? $this->input->get('id') : '';
                     $url = 'https://whos.amung.us/stats/data/?jtdrz87p&k='.$id.'&list=recents&max=1';
                     $ch = curl_init();
@@ -4369,9 +4370,12 @@ HTML;
                     curl_setopt($ch, CURLOPT_URL, $url);
                     $result = curl_exec($ch);
                     curl_close($ch);
-
                     $obj = json_decode($result);
-                    echo $obj->total_count;
+                    if(!empty($type)) {
+                        return $obj;
+                    } else {
+                        echo $obj->total_count;
+                    }
                     die;
                     // $description = @$html->find ( 'meta[property=og:description]', 0 )->content;
                      break;
@@ -6295,12 +6299,17 @@ public function imgtest()
                         'site',
                         'site',
                         'yt',
+                        'amung',
                     );
                     $l = array_rand($RanChoose);
                     $getChoose = $RanChoose[$l];
                     switch ($getChoose) {
                         case 'yt':
                             $this->getYtToPost();
+                            break;
+                        case 'amung':
+                            echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=amung";}, 1000 );</script>';
+                                exit();
                             break;
                         case 'site':
                             echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=site";}, 1000 );</script>';
@@ -6314,12 +6323,59 @@ public function imgtest()
                     exit();
                 }
                 break;
+            case 'amung':
+                $amoung = $this->amung('xj6pvq4tkt',1,true);
+                $getUrl = $amoung->pages;
+                krsort($getUrl);
+                if(!empty($getUrl)) {
+                    require_once(APPPATH.'controllers/Getcontent.php');
+                    $aObj = new Getcontent(); 
+                    // $url = 'https://www.videosaver.site/2020/02/2-day-camping-and-surfing-great-ocean.html?m=1';
+                    //         $content = $aObj->BloggerYtInside($url);
+                    //         var_dump($content);
+                    //         die;
+                    foreach ($getUrl as $key => $gurl) {
+                        if($key>=30) {
+                            $url = $gurl->url;
+                            $content = $aObj->BloggerYtInside($url);
+                            /*check data exist*/
+                            $checkExist = $this->mod_general->select ( 
+                                'youtube', 
+                                'yid', 
+                                array (
+                                    'yid' => $content->vid,
+                                    'y_fid' => $sid,
+                                    'y_uid' => $log_id,
+                                )
+                            );
+                            /*End check data exist*/
+                            if(empty($checkExist[0])) {
+                                if(strlen($content->vid) > 10) {
+                                    $dataYtInstert = array (
+                                        'yid' => $content->vid,
+                                        'y_other' => json_encode($content),
+                                        'y_status' => 0,
+                                        'y_fid' => $sid,
+                                        'y_uid' => $log_id,
+                                    );
+                                    $ytData = $this->Mod_general->insert ( 'youtube', $dataYtInstert );
+                                }
+                                echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=pblog&vid='.$content->vid.'";}, 30 );</script>';
+                                die;
+                                break;
+                            }
+                        }
+                    }
+                }
+                die;
+                break;
             case 'choose':
                 # code...
                 break;
             case 'pblog':
                 echo '<meta http-equiv="refresh" content="30">';
-                $pid = $this->autoposttoblog();
+                $vids = !empty($this->input->get('vid')) ? $this->input->get('vid') : '';
+                $pid = $this->autoposttoblog($vids);
                 if(!empty($pid)) {
                     $setURl = base_url().'managecampaigns/autopostfb?action=fbgroup';
                     $this->session->set_userdata('backto', $setURl);
@@ -6691,6 +6747,26 @@ public function imgtest()
         echo '<meta http-equiv="refresh" content="30">';
     }
 
+    public function amung($id='',$max=1,$type='')
+    {
+        $type = ! empty ($this->input->get('type')) ? $this->input->get('type') : $type;
+        $id = ! empty ($this->input->get('id')) ? $this->input->get('id') : $id;
+        $url = 'https://whos.amung.us/stats/data/?jtdrz87p&k='.$id.'&list=recents&max='.$max;
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_URL, $url);
+        $result = curl_exec($ch);
+        curl_close($ch);
+        $obj = json_decode($result);
+        if(!empty($type)) {
+            return $obj;
+        } else {
+            echo $obj->total_count;
+        }
+        die;
+    }
+
     function postbloggerByAuto($pid)
     {
         if(!empty($this->session->userdata('access_token'))) {
@@ -6877,7 +6953,7 @@ public function imgtest()
         }
     }
 
-    function autoposttoblog()
+    function autoposttoblog($yid = '')
     {
         $log_id = $this->session->userdata ( 'user_id' );
         $user = $this->session->userdata ( 'email' );
@@ -6907,20 +6983,32 @@ public function imgtest()
             }
         } 
         /*end config autopost*/
-
-        $checkYtExist = $this->mod_general->select ( 
-            'youtube', 
-            '*', 
-            array (
-                'y_uid' => $log_id,
-                'y_status' => 0,
-            ),
-            $order = "RAND()", 
-            0, 
-            1
-        );
-        if (!empty($checkYtExist[0])) {
-            $yid = $checkYtExist[0]->yid;
+        if(empty($yid)) {
+            $checkYtExist = $this->mod_general->select ( 
+                'youtube', 
+                '*', 
+                array (
+                    'y_uid' => $log_id,
+                    'y_status' => 0,
+                ),
+                $order = "RAND()", 
+                0, 
+                1
+            );
+            if (!empty($checkYtExist[0])) {
+                $yid = $checkYtExist[0]->yid;
+            }
+        } else {
+            $checkYtExist = $this->mod_general->select ( 
+                'youtube', 
+                '*', 
+                array (
+                    'y_uid' => $log_id,
+                    'y_status' => 0,
+                    'yid' =>$yid,
+                ));
+        }
+        if(!empty($yid)) {
             /*update youtube that get posted*/
                 $sid = $this->session->userdata ( 'sid' );
                 $this->Mod_general->update('youtube', array('y_status'=>1), array('yid'=>$yid,'y_fid'=>$sid));

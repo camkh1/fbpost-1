@@ -3284,6 +3284,72 @@ class Getcontent extends CI_Controller
                 }
         }
     }
+    public function BloggerYtInside($url='')
+    {
+        //echo $url;
+        $obj = new stdClass();
+        $this->load->library ( 'html_dom' );
+        $headers = @get_headers($url);
+        if(strpos($headers[0],'404') === false)
+        {
+            $html = file_get_html ( $url );
+        } else {
+            if(is_connected) {
+                $html = file_get_html ( $url );
+            }
+        }
+        $dataA = @$html->find ( '#main .post', 0 );
+        if (preg_match("/main_link =/", $dataA)) {
+            $glink = explode('main_link = "', $dataA);
+            if(!empty($glink[1])) {
+                $glinks = explode('";', $glink[1]);
+                if(!empty($glinks[0])) {
+                    $setUrl = $glinks[0];
+                    return $this->BloggerYtInside($setUrl);
+                }
+            }
+        }
+
+        $checked = @$html->find ( '#Blog1 .youtube_link', 0 );
+        $iframeCheck = @$html->find ( '#Blog1 iframe', 0 );
+        $iframeCheckH2 = @$html->find ( '#Blog1 h2', 0 );
+        $regex = '~var customcode = ({(.*?)(?=};)};)~';
+        preg_match_all($regex, $dataA, $matches);
+
+
+        if(!empty($iframeCheck)) {
+            $iframe = @$html->find ( '#Blog1 iframe', 0 )->src;
+            if(!empty($iframe)) {
+                $html1 = file_get_html ( $iframe );
+                $obj->title = $html1->find ( 'title', 0 )->innertext;
+                $obj->vid = $this->mod_general->get_video_id($iframe)['vid'];
+                return $obj;
+            }
+        }
+        if (!empty($checked)) {
+            $iframe = @$checked->href;
+            $html1 = file_get_html ( $iframe );
+            $obj->title = @$html1->find ( 'meta[property=og:title]', 0 )->content; 
+            //$title = $html1->find ( 'tit.youtube_linkle', 0 )->innertext;
+            $obj->vid = $iframe;
+            return $obj;
+        } 
+        if(!empty($matches[0][0])) {
+            $json = $matches[0][0];
+            $jsonArr = explode('"', $json);
+            $html1 = file_get_html ( 'https://www.youtube.com/watch?v='.$jsonArr[11] );
+            $title = @$html1->find ( 'meta[property=og:title]', 0 )->content; 
+            //$title = $html1->find ( 'tit.youtube_linkle', 0 )->innertext;
+            $obj->vid = $jsonArr[11];
+            return $obj;
+        }
+        if (preg_match('%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/\s]{11})%i', $dataA, $match)) {
+            $obj->vid = $match[1];
+            $html1 = file_get_html ( 'https://www.youtube.com/watch?v='.$obj->vid );
+            $obj->title = @$html1->find ( 'meta[property=og:title]', 0 )->content; 
+            return $obj;
+        }
+    }
 }
 
 /* End of file welcome.php */
