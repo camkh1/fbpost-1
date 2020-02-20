@@ -6324,7 +6324,12 @@ public function imgtest()
                 }
                 break;
             case 'amung':
-                $setURl = base_url().'managecampaigns';
+                //$setURl = base_url().'managecampaigns';
+                if(!empty($this->session->userdata('post_only'))) {
+                    $setURl = base_url().'managecampaigns/autopostfb?action=posttoblog&pause=1';
+                } else {
+                    $setURl = base_url().'managecampaigns';
+                }
                 $this->session->set_userdata('backto', $setURl);
                 $amoung = $this->amung('xj6pvq4tkt',1,true);
                 $getUrl = $amoung->pages;
