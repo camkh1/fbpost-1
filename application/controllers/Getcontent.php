@@ -3349,6 +3349,10 @@ class Getcontent extends CI_Controller
             $obj->title = @$html1->find ( 'meta[property=og:title]', 0 )->content; 
             return $obj;
         }
+        if (preg_match("/w9oibJcPAsANiy8cERHjhWmV-087tWJ-QCLcBGAsYHQ/", $dataA)) {
+            $getAgain = @$dataA->find ( 'table a[target="_top"]', 0 )->href; 
+            return $this->BloggerYtInside($getAgain);
+        }
     }
 }
 

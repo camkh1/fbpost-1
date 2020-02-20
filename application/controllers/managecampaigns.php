@@ -6299,7 +6299,7 @@ public function imgtest()
                         'site',
                         'site',
                         'yt',
-                        'amung',
+                        //'amung',
                     );
                     $l = array_rand($RanChoose);
                     $getChoose = $RanChoose[$l];
@@ -6337,7 +6337,7 @@ public function imgtest()
                 if(!empty($getUrl)) {
                     require_once(APPPATH.'controllers/Getcontent.php');
                     $aObj = new Getcontent(); 
-                    // $url = 'https://www.videosaver.site/2020/02/2-day-camping-and-surfing-great-ocean.html?m=1';
+                    // $url = 'https://bajdkowjddbkw.blogspot.com/2020/02/the-arusun-aruba-catamaran-sail-with.html?m=1';
                     //         $content = $aObj->BloggerYtInside($url);
                     //         var_dump($content);
                     //         die;
