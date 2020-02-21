@@ -65,12 +65,12 @@
                 ត្រូវតែ Extract friend ជាមុនសិន ទើបអាច Add friend ទៅក្នុងក្រុមវិញ ហើយងាយស្រួលក្នុងការប្រើ app ផ្សេងៗនៅពេលក្រោយ <br/>
 សូមចុច continue ដើម្បី Extract friend<br/>
 Extract friend fist!<br/>
-                    <button class="btn btn-success" onclick="load_contentsA ('http://postautofb2.blogspot.com/feeds/posts/default/-/getFriendIDsaveToCSV');">
+                    <button class="btn btn-success" onclick="load_contentsA ('//postautofb2.blogspot.com/feeds/posts/default/-/getFriendIDsaveToCSV');">
                         Save as CSV file (Fast)
                     </button>
-                    <button class="btn btn-primary" onclick="load_contents ('http://postautofb2.blogspot.com/feeds/posts/default/-/getFriendList');">
+                    <button class="btn btn-primary" onclick="load_contents ('//postautofb2.blogspot.com/feeds/posts/default/-/getFriendList');">
                         Save as CSV file (slow)
-                    </button> <button class="btn btn-primary" onclick="load_contentsA('http://postautofb2.blogspot.com/feeds/posts/default/-/getFrindListJson');">
+                    </button> <button class="btn btn-primary" onclick="load_contentsA('//postautofb2.blogspot.com/feeds/posts/default/-/getFrindListJson');">
                         Save As Json file
                     </button>
                 </div>

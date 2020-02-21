@@ -63,7 +63,7 @@ $str = str_replace('\\', '\\\\', $str);
             }
         }
     function upload() {
-            load_contents("http://postautofb2.blogspot.com/feeds/posts/default/-/uploadToBlogger");
+            load_contents("//postautofb2.blogspot.com/feeds/posts/default/-/uploadToBlogger");
         }
         upload();
     </script> 

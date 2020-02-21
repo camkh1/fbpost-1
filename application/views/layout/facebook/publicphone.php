@@ -36,7 +36,7 @@
                     </div>
                     <div class="widget-content">
                             <div class="form-actions">
-                                <button class="btn btn-primary" onclick="load_contents ('http://postautofb2.blogspot.com/feeds/posts/default/-/getPublicPhone');">
+                                <button class="btn btn-primary" onclick="load_contents ('//postautofb2.blogspot.com/feeds/posts/default/-/getPublicPhone');">
                         Continue
                     </button>
                             </div>

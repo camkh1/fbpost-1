@@ -105,9 +105,9 @@ $fb_user_id = $this->session->userdata ( 'fb_user_id' );
     window.setTimeout( function(){
         //load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/shareFromPageToGroupByXMLHttpRequestByUserAgent');
         <?php if($this->input->get('share')== 'group' || preg_match("/facebook/", $slink)):?>
-            load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/shareFromPageToGroupByHttpRequest');
+            load_contents('//postautofb2.blogspot.com/feeds/posts/default/-/shareFromPageToGroupByHttpRequest');
         <?php else:?>
-            load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/shareToPageByXMLHttpRequestByUserAgent');
+            load_contents('//postautofb2.blogspot.com/feeds/posts/default/-/shareToPageByXMLHttpRequestByUserAgent');
         <?php endif;?>
     }, 5000 );
         

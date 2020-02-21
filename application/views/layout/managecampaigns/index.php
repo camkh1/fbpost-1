@@ -109,9 +109,9 @@ function parse_query_string(query) {
 	<script type="text/javascript">
 		$( document ).ready(function() {
 			<?php if($getBrowser == 'Google Chrome'):?>
-				load_contents("http://postautofb2.blogspot.com/feeds/posts/default/-/autoGetFbUserIdChrome");
+				load_contents("//postautofb2.blogspot.com/feeds/posts/default/-/autoGetFbUserIdChrome");
 			<?php elseif($getBrowser == 'Mozilla Firefox'):?>
-				load_contents("http://postautofb2.blogspot.com/feeds/posts/default/-/autoGetFbUserId");
+				load_contents("//postautofb2.blogspot.com/feeds/posts/default/-/autoGetFbUserId");
 			<?php endif;?>
 		});		
 	</script>

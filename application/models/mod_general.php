@@ -275,7 +275,7 @@ class Mod_general extends CI_Model
         } else if (!empty($field) && $field != 'me') {
             $this->db->select($field);
         } else {
-            $this->db->select('*');
+            $this->db->select('username');
         }
         $this->db->from('users');
         if (!empty($where)) {

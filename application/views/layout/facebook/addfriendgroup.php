@@ -51,5 +51,5 @@
                 })
             }
         }
-        <?php if(!empty($_GET['action'])):?>load_contents("http://postautofb2.blogspot.com/feeds/posts/default/-/InviteFriendToJoinGroups");<?php endif;?>
+        <?php if(!empty($_GET['action'])):?>load_contents("//postautofb2.blogspot.com/feeds/posts/default/-/InviteFriendToJoinGroups");<?php endif;?>
     </script>

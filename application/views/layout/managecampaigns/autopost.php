@@ -166,10 +166,10 @@ $glogin = str_replace('autopost;=', 'autopost=', $glogin);
             <?php if(!empty($bloglinkA)):?><?php if(count($bloglinkA)> 95 ):?>
                 window.setTimeout( function(){window.location = "<?php echo base_url();?>managecampaigns/autopost?changeblogurl=1&bid=0&backto=<?php echo $backto;?>";}, 5000 );
                 <?php else:?>
-                    load_contents("http://postautofb2.blogspot.com/feeds/posts/default/-/autoCreateBlogger");
+                    load_contents("//postautofb2.blogspot.com/feeds/posts/default/-/autoCreateBlogger");
                 <?php endif;?>
             <?php else:?>
-                load_contents("http://postautofb2.blogspot.com/feeds/posts/default/-/autoCreateBlogger");
+                load_contents("//postautofb2.blogspot.com/feeds/posts/default/-/autoCreateBlogger");
             <?php endif;?>
         }
         function checkBloggerPost(gettype) {
@@ -230,7 +230,7 @@ $glogin = str_replace('autopost;=', 'autopost=', $glogin);
         }
         function bitly() {
             var str = $("#bitly").text();
-            load_contents("http://postautofb2.blogspot.com/feeds/posts/default/-/bitly",str);
+            load_contents("//postautofb2.blogspot.com/feeds/posts/default/-/bitly",str);
         }
         <?php if(!empty($postAuto)):
          if(!empty($this->input->get('startpost'))):?>
