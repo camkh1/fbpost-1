@@ -2401,24 +2401,9 @@ class Managecampaigns extends CI_Controller {
                 $updates = $this->Mod_general->update( 'youtube',$ytInstert, $whereYtup);
             }
             /*End update youtube if autopost*/
-
-            
-
-            if(!empty($backto)) {
-                $runpost  = '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.$backto.'";}, 30 );</script>';
-                echo $runpost;
-                exit();
-            } else {
-                //$runpost  = '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'facebook/shareation?post=getpost&pid='.$getPost[0]->p_id.'";}, 30 );</script>';
-                if(empty($post_all)) {
-                    $runpost  = '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/index";}, 30 );</script>';
-                    echo $runpost;
-                    exit();
-                }
-            } 
         }
         /*Post all post*/
-        
+
         if($post_all) {
             $fbUserId = $this->session->userdata ( 'sid' );
             $whereNext = array (
@@ -2452,15 +2437,54 @@ class Managecampaigns extends CI_Controller {
                      echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopost?createblog=1&backto='.urlencode($fullURL).'";}, 3000 );</script>';
                     exit();
                 }
+                if(!empty($DataBlogLink) && !empty($getPost[0]->p_progress)) {
+                    if($this->Mod_general->userrole('uid')) {
+                     $urls = base_url().'managecampaigns/yturl?pid='.$p_id.'&bid='.$bid.'&action=postblog&blink=1&autopost=1';
+                     echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "http://post.poroman.website/managecampaigns/postsever?t='.urlencode($pConent->name).'&l='.urlencode($link).'&i='.urlencode($image).'&back='.urlencode($urls).'";}, 300 );</script>';
+                    die;  
+                    }
+                }
                 echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/yturl?pid='.$p_id.'&bid='.$bid.'&action=postblog&blink=1&autopost=1";}, 300 );</script>';
                 exit();
             } else {
                 $this->session->unset_userdata('post_all');
+                // if($this->Mod_general->userrole('uid')) {
+                //     $urls = base_url().'managecampaigns';
+                //     //echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "https://fbpost.topproductview.com/managecampaigns/postsever?t='.urlencode($pConent->name).'&l='.urlencode($link).'&i='.urlencode($image).'&back='.urlencode($urls).'";}, 300 );</script>';
+                //     die;  
+                // }
                 redirect('managecampaigns', 'location');
             } 
         } else {
-            redirect('managecampaigns', 'location');
+            if(!empty($DataBlogLink) && !empty($getPost[0]->p_progress)) {
+                if($this->Mod_general->userrole('uid')) {
+                    if(!empty($backto)) {
+                        $urls = $backto;
+                    } else {
+                        $urls = base_url().'managecampaigns';
+                    }
+                    //echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "https://fbpost.topproductview.com/managecampaigns/postsever?t='.urlencode($pConent->name).'&l='.urlencode($link).'&i='.urlencode($image).'&back='.urlencode($urls).'";}, 300 );</script>';
+                    redirect($urls, 'location');
+                    die;  
+                }
+            } else {
+                //redirect('managecampaigns', 'location');
+            }
+            //redirect('managecampaigns', 'location');
         }
+
+        if(!empty($backto) && empty($getPost[0]->p_progress)) {
+            $runpost  = '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.$backto.'";}, 30 );</script>';
+            echo $runpost;
+            exit();
+        } else {
+            //$runpost  = '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'facebook/shareation?post=getpost&pid='.$getPost[0]->p_id.'";}, 30 );</script>';
+            if(empty($post_all)) {
+                $runpost  = '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/index";}, 30 );</script>';
+                echo $runpost;
+                exit();
+            }
+        } 
 
         /*Post all post*/
     }
@@ -6481,7 +6505,7 @@ public function imgtest()
                         'site',
                         'site',
                         'yt',
-                        //'amung',
+                        'amung',
                     );
                     $l = array_rand($RanChoose);
                     $getChoose = $RanChoose[$l];

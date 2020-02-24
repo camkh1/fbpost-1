@@ -34,6 +34,7 @@ $config['g_client_secret'] = 'sBKCkX2261txKtwilMcCSsuI';
 //$config['g_client_id'] = '349110711361-e8s7hb0qh5sttv2lv81qflangn96par1.apps.googleusercontent.com';
 //$config['g_client_secret'] = 'm7Qrf9qVKMnEFMdEFsIyIie4';
 $config['g_redirect_uri'] = 'http://localhost/fbpost/managecampaigns/account';
+$config['post_to'] = 'http://localhost/fbpost/managecampaigns/account';
 
 /*Watermark text*/
 $config['wathermark_type'] = 'logo';
