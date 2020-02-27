@@ -352,7 +352,7 @@ class Getcontent extends CI_Controller
         $obj->thumb = $thumb;
         $parse = parse_url($url);
         //echo $parse['host'];
-        $checkSite = $html->find('#main #Blog1');
+        $checkSite = $html->find('#main #Blog1 .post');
         if(count($checkSite)==1) {
             $setHost = 'blogspot';
         } else {
@@ -1740,7 +1740,7 @@ class Getcontent extends CI_Controller
                 /*End get label*/
 
                 $content = '';
-                foreach($html->find ('#main div[itemprop=articleBody]') as $item) {
+                foreach($html->find ('#Blog1 div[itemprop=articleBody]') as $item) {
                     $content .= $item->innertext;
                 }
                 $content = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $content);
@@ -1754,22 +1754,22 @@ class Getcontent extends CI_Controller
                     foreach ($ImgSrc as $image) {
                         $imagedd = strtok($image, "?");
                         if(!preg_match('/^(http)/', $imagedd)){
-                            $imagedd = 'http://entertain.teenee.com/thaistar/'.$imagedd;
+                            $gimage = 'http://entertain.teenee.com/thaistar/'.$imagedd;
                         }
-                        $file_title = basename($imagedd);
-                        $fileName = FCPATH . 'uploads/image/'.$file_title;
-                        @copy($imagedd, $fileName);   
-                        $images = $this->mod_general->uploadtoImgur($fileName);
-                        if(empty($images)) {
-                            $apiKey = '76e9b194c1bdc616d4f8bb6cf295ce51';
-                            $images = $this->Mod_general->uploadToImgbb($fileName, $apiKey);
-                            if($images) {
-                                @unlink($fileName);
-                            }
-                        } else {
-                            $gimage = @$images; 
-                            @unlink($fileName);
-                        }
+                        // $file_title = basename($imagedd);
+                        // $fileName = FCPATH . 'uploads/image/'.$file_title;
+                        // @copy($imagedd, $fileName);   
+                        // $images = $this->mod_general->uploadtoImgur($fileName);
+                        // if(empty($images)) {
+                        //     $apiKey = '76e9b194c1bdc616d4f8bb6cf295ce51';
+                        //     $images = $this->Mod_general->uploadToImgbb($fileName, $apiKey);
+                        //     if($images) {
+                        //         @unlink($fileName);
+                        //     }
+                        // } else {
+                        //     $gimage = @$images; 
+                        //     @unlink($fileName);
+                        // }
                         if(!empty($gimage)) {
                             $content = str_replace($image,$gimage,$content);
                         }

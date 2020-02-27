@@ -2440,8 +2440,8 @@ class Managecampaigns extends CI_Controller {
                 if(!empty($DataBlogLink) && !empty($getPost[0]->p_progress)) {
                     if($this->Mod_general->userrole('uid')) {
                      $urls = base_url().'managecampaigns/yturl?pid='.$p_id.'&bid='.$bid.'&action=postblog&blink=1&autopost=1';
-                     echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "http://post.poroman.website/managecampaigns/postsever?t='.urlencode($pConent->name).'&l='.urlencode($link).'&i='.urlencode($image).'&back='.urlencode($urls).'";}, 300 );</script>';
-                    die;  
+                     //echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "http://post.poroman.website/managecampaigns/postsever?t='.urlencode($pConent->name).'&l='.urlencode($link).'&i='.urlencode($image).'&back='.urlencode($urls).'";}, 300 );</script>';
+                    //die;  
                     }
                 }
                 echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/yturl?pid='.$p_id.'&bid='.$bid.'&action=postblog&blink=1&autopost=1";}, 300 );</script>';
