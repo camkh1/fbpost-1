@@ -6188,7 +6188,7 @@ public function imgtest()
                             /*Check if not post*/
                             $check_url = 'https://www.huaythaitodays.com/questions/10456113/check-file-extension-in-upload-form-in-php';
                             $parse = parse_url($pConent->link);
-                            if (!in_array($parse['host'], $siteUrl)) {
+                            if (!in_array(@$parse['host'], $siteUrl)) {
                                 if(empty($checkExistP[0])) {
                                     $dataJsons[] = $gvalue;
                                 }
