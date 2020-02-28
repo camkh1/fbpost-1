@@ -6177,7 +6177,20 @@ public function imgtest()
                     if(!empty($getPost[0])) {
                         foreach ($getPost as $gvalue) {
                             $pConent = json_decode($gvalue->p_conent);
-
+                            if(empty($pConent->link)) {
+                                @$this->Mod_general->delete ( Tbl_share::TblName, array (
+                                    'p_id' => $getPost[0]->p_id,
+                                    'social_id' => @$sid,
+                                ) );
+                                @$this->Mod_general->delete ( 'meta', array (
+                                    'object_id' => $getPost[0]->p_id,
+                                ) );
+                                @$this->Mod_general->delete ( 'post', array (
+                                    'p_id' => $getPost[0]->p_id,
+                                ) );
+                            } else {
+                                continue;
+                            }
                             $whereMt = array(
                                 'meta_name'      => 'post_progress',
                                 'meta_key'      => $sid,
