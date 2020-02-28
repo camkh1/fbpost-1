@@ -6188,9 +6188,7 @@ public function imgtest()
                                 @$this->Mod_general->delete ( 'post', array (
                                     'p_id' => $getPost[0]->p_id,
                                 ) );
-                            } else {
-                                continue;
-                            }
+                            } 
                             $whereMt = array(
                                 'meta_name'      => 'post_progress',
                                 'meta_key'      => $sid,
