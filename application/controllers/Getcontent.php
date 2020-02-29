@@ -3172,6 +3172,55 @@ class Getcontent extends CI_Controller
                 $content = preg_replace( '/(<[^>]+) data-orig-file=".*?"/i', "$1", $content );
                 $content = preg_replace( '/(<[^>]+) data-permalink=".*?"/i', "$1", $content );
                 $content = str_replace('--Advertisement--', '', $content);
+                if(!empty($oldurl)) {
+                    $dataA = @$html->find ( '#main .post', 0 );
+                    $checked = @$html->find ( '#Blog1 .youtube_link', 0 );
+                    $iframeCheck = @$html->find ( '#Blog1 iframe', 0 );
+                    $iframeCheckH2 = @$html->find ( '#Blog1 h2', 0 );
+                    $regex = '~var customcode = ({(.*?)(?=};)};)~';
+                    preg_match_all($regex, $dataA, $matches);
+
+                    $dataA = @$html->find ( '#main .post', 0 );
+                    $checked = @$html->find ( '#Blog1 .youtube_link', 0 );
+                    $iframeCheck = @$html->find ( '#Blog1 iframe', 0 );
+                    $iframeCheckH2 = @$html->find ( '#Blog1 h2', 0 );
+                    $regex = '~var customcode = ({(.*?)(?=};)};)~';
+                    preg_match_all($regex, $dataA, $matches);
+
+                    $found = false;
+                    if(!empty($iframeCheck)) {
+                        $iframe = @$html->find ( '#Blog1 iframe', 0 )->src;
+                        if(!empty($iframe)) {
+                            $html1 = file_get_html ( $iframe );
+                            $obj->title = $html1->find ( 'title', 0 )->innertext;
+                            $found = true;
+                            //$obj->vid = $this->mod_general->get_video_id($iframe)['vid'];
+                        }
+                    }
+                    if (!empty($checked) && empty($found)) {
+                        $iframe = @$checked->href;
+                        $html1 = file_get_html ( $iframe );
+                        $obj->title = @$html1->find ( 'meta[property=og:title]', 0 )->content; 
+                        $found = true;
+                        //$title = $html1->find ( 'tit.youtube_linkle', 0 )->innertext;
+                        //$obj->vid = $this->mod_general->get_video_id($iframe)['vid'];
+                    } 
+                    if(!empty($matches[0][0]) && empty($found)) {
+                        $json = $matches[0][0];
+                        $jsonArr = explode('"', $json);
+                        $html1 = file_get_html ( 'https://www.youtube.com/watch?v='.$jsonArr[11] );
+                        $title = @$html1->find ( 'meta[property=og:title]', 0 )->content;
+                        $found = true; 
+                        //$title = $html1->find ( 'tit.youtube_linkle', 0 )->innertext;
+                        //$obj->vid = $jsonArr[11];
+                    }
+                    if (preg_match('%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/\s]{11})%i', $dataA, $match) && empty($found)) {
+                        $obj->vid = $match[1];
+                        $html1 = file_get_html ( 'https://www.youtube.com/watch?v='.$obj->vid );
+                        $obj->title = @$html1->find ( 'meta[property=og:title]', 0 )->content; 
+                        $found = true;
+                    }
+                }
                 $obj->vid = '';
                 $obj->conent = $content;
                 $obj->fromsite = $parse['host'];
