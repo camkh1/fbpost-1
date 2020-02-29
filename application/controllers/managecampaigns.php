@@ -2404,6 +2404,7 @@ class Managecampaigns extends CI_Controller {
         }
         /*Post all post*/
 
+        $postauto = $this->session->userdata ( 'postauto' );
         if($post_all) {
             $fbUserId = $this->session->userdata ( 'sid' );
             $whereNext = array (
@@ -2456,6 +2457,12 @@ class Managecampaigns extends CI_Controller {
                 redirect('managecampaigns', 'location');
             } 
         } else {
+            if(!empty($postauto)) {
+                $this->session->unset_userdata('postauto');
+                $runpost  = '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=posttoblog&pause=1";}, 30 );</script>';
+                echo $runpost;
+                die;
+            }
             if(!empty($DataBlogLink) && !empty($getPost[0]->p_progress)) {
                 if($this->Mod_general->userrole('uid')) {
                     if(!empty($backto)) {
@@ -2464,13 +2471,19 @@ class Managecampaigns extends CI_Controller {
                         $urls = base_url().'managecampaigns';
                     }
                     //echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "https://fbpost.topproductview.com/managecampaigns/postsever?t='.urlencode($pConent->name).'&l='.urlencode($link).'&i='.urlencode($image).'&back='.urlencode($urls).'";}, 300 );</script>';
-                    redirect($urls, 'location');
+                    redirect($urls);
                     die;  
                 }
             } else {
                 //redirect('managecampaigns', 'location');
             }
             //redirect('managecampaigns', 'location');
+        }
+        if(!empty($postauto)) {
+            $this->session->unset_userdata('postauto');
+            $runpost  = '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=posttoblog&pause=1";}, 30 );</script>';
+            echo $runpost;
+            die;
         }
 
         if(!empty($backto) && empty($getPost[0]->p_progress)) {
@@ -6875,6 +6888,7 @@ public function imgtest()
             case 'posttoblog':
                 //&post_only=1
                 $this->session->unset_userdata('backto');
+                $this->session->userdata('postauto',1);
                 break;
             default:
                 # code...
