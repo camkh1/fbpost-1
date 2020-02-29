@@ -17,7 +17,7 @@ class Managecampaigns extends CI_Controller {
         }
         /*set admin*/
         $log_id = $this->session->userdata ( 'user_id' );
-        if ($log_id == 2 || $log_id == 3 || $log_id == 4 || $log_id == 527 || $log_id == 511) {
+        if($this->Mod_general->userrole('uid')) {
             define('is_admin', true);
         } else {
             define('is_admin', false);
@@ -516,7 +516,7 @@ class Managecampaigns extends CI_Controller {
                 }
                 //localhost/autopost/managecampaigns/autopost?start=1
             } else {
-                if ($log_id == 2 || $log_id == 3 || $log_id == 4 || $log_id == 527 || $log_id == 511) {
+                if($this->Mod_general->userrole('uid')) {
                     if (date('H') <= 23 && date('H') > 3 && date('H') !='00') {
                         $setTime = $arrX[$randIndex] * (1000 * 60);
                         echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=yt&post_only=1";}, '.$setTime.' );</script>';
@@ -2246,7 +2246,7 @@ class Managecampaigns extends CI_Controller {
             $pConent = json_decode($getPost[0]->p_conent);
             $pOption = json_decode($getPost[0]->p_schedule);
 
-            if ($log_id == 2 || $log_id == 3 || $log_id == 4 || $log_id == 527 || $log_id == 511) {
+            if($this->Mod_general->userrole('uid')) {
                 $log_ids = 'admin';
             } else {
                 $log_ids = $log_id;
@@ -2293,7 +2293,7 @@ class Managecampaigns extends CI_Controller {
             /*End Show to Detail in view*/
             $showAds = '<center><script type="text/javascript" src="https://10clblogh.blogspot.com/feeds/posts/default/-/getplay?max-results=1&amp;alt=json-in-script&amp;callback=mbtlist"></script></center>';
             if($main_post_style == 'tnews') {
-                if ($log_id == 2 || $log_id == 3 || $log_id == 4 || $log_id == 527 || $log_id == 511) {
+                if($this->Mod_general->userrole('uid')) {
                     $conent = nl2br(html_entity_decode(htmlspecialchars_decode($pConent->message)));
                     $conent = str_replace('&gt;', '>', $conent);
                     $conent = str_replace('&lt;', '<', $conent);
@@ -3192,7 +3192,7 @@ class Managecampaigns extends CI_Controller {
                 $bodytext = '<link href="'.$image.'" rel="image_src"/><meta content="'.$image.'" property="og:image"/><a href="'.$pConent->link.'" target="_top"><img class="thumbnail" style="text-align:center" src="'.$image.'"/></a><!--more-->';
                 break;
             default:
-                if ($log_id == 2 || $log_id == 3 || $log_id == 4 || $log_id == 527 || $log_id == 511) {
+                if($this->Mod_general->userrole('uid')) {
                     //$addTitle = $allData->p_name;
                     $addTitle = $title;
                     $EngTitle = $title;
@@ -5715,7 +5715,7 @@ public function imgtest()
                     $this->Mod_general->update('au_config', $data_yt,$whereYT);
                 }
             }
-            redirect(base_url() . 'managecampaigns/setting?m=add_success_yt#YoutubeChannel');
+            redirect(base_url() . 'managecampaigns/autopost?m=add_success_yt#YoutubeChannel');
         }
         /*End youtube channel*/
 
@@ -5928,7 +5928,7 @@ public function imgtest()
                     } 
                     //localhost/autopost/managecampaigns/autopost?start=1
                 } else {
-                    if ($log_id == 2 || $log_id == 3 || $log_id == 4 || $log_id == 527 || $log_id == 511) {
+                    if($this->Mod_general->userrole('uid')) {
                         if (date('H') <= 23 && date('H') > 3 && date('H') !='00') {
                             $this->mod_general->delete(
                                 'post', 
