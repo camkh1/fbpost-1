@@ -6435,20 +6435,14 @@ public function imgtest()
                     $aObj = new Getcontent();
                     $siteUrl = array(
                         'https://www.siamnews.com/',
-                        'https://www.siamnews.com/',
-                        'https://www.siamnews.com/',
                         'https://www.viralsfeedpro.com/',
-                        'https://www.viralsfeedpro.com/',
-                        'https://www.viralsfeedpro.com/',
-                        'https://www.mumkhao.com/',
-                        'https://www.mumkhao.com/',
                         'https://www.mumkhao.com/',
                         'https://www.xn--42c2dgos8bxc2dtcg.com/',
                         'https://board.postjung.com/',
                         'https://board.postjung.com/',
                         'https://board.postjung.com/',
-                        'http://huaythai.me/',
-                        'http://www.huaythaitoday.com/',
+                        //'http://huaythai.me/',
+                        //'http://www.huaythaitoday.com/',
                     );
                     $k = array_rand($siteUrl);
                     $getSiteUrl = $siteUrl[$k];
@@ -6527,12 +6521,12 @@ public function imgtest()
 
                     $RanChoose = array(
                         'site',
-                        'yt',
-                        'yt',
-                        'yt',
-                        'amung',
-                        'amung',
-                        'amung',
+                        //'yt',
+                        //'yt',
+                        //'yt',
+                        //'amung',
+                        //'amung',
+                        //'amung',
                     );
                     $l = array_rand($RanChoose);
                     $getChoose = $RanChoose[$l];
