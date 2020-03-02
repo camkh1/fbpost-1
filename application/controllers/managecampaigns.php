@@ -6441,8 +6441,8 @@ public function imgtest()
                         'https://board.postjung.com/',
                         'https://board.postjung.com/',
                         'https://board.postjung.com/',
-                        //'http://huaythai.me/',
-                        //'http://www.huaythaitoday.com/',
+                        'http://huaythai.me/',
+                        'http://www.huaythaitoday.com/',
                     );
                     $k = array_rand($siteUrl);
                     $getSiteUrl = $siteUrl[$k];
@@ -6521,12 +6521,8 @@ public function imgtest()
 
                     $RanChoose = array(
                         'site',
-                        //'yt',
-                        //'yt',
-                        //'yt',
-                        //'amung',
-                        //'amung',
-                        //'amung',
+                        'yt',
+                        'amung',
                     );
                     $l = array_rand($RanChoose);
                     $getChoose = $RanChoose[$l];
