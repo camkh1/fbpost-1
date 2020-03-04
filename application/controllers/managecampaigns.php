@@ -6160,29 +6160,7 @@ public function imgtest()
 
                 /*End get post that not share*/
                 /*check post progress frist*/
-
-                /*Show data Prefix*/
-                if(!empty($pSchedule->prefix_checked)) {
-                    if(!empty($pSchedule->prefix_title)) {
-                        $prefixArr = explode('|', $pSchedule->prefix_title);
-                        $preRand = $prefixArr[mt_rand(0, count($prefixArr) - 1)];
-                    } else {       
-                        $where_pre = array(
-                            'c_name'      => 'prefix_title',
-                            'c_key'     => $log_id,
-                        );
-                        $prefix_title = $this->Mod_general->select('au_config', '*', $where_pre);
-                        if(!empty($prefix_title[0])) {
-                            $prefix = json_decode($prefix_title[0]->c_value);
-                            $prefixArr = explode('|', $prefix);
-                            $preRand = $prefixArr[mt_rand(0, count($prefixArr) - 1)];
-                        }
-                    }
-                }
-                /*End Show data Prefix*/
-
-
-
+                
                 /*set facebook name*/
                 $fbAccount = array();
                 if($this->session->userdata ( 'fb_user_name' )) {
