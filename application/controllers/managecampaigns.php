@@ -6158,6 +6158,28 @@ public function imgtest()
                 /*End get post that not share*/
                 /*check post progress frist*/
 
+                /*Show data Prefix*/
+                if(!empty($pSchedule->prefix_checked)) {
+                    if(!empty($pSchedule->prefix_title)) {
+                        $prefixArr = explode('|', $pSchedule->prefix_title);
+                        $preRand = $prefixArr[mt_rand(0, count($prefixArr) - 1)];
+                    } else {       
+                        $where_pre = array(
+                            'c_name'      => 'prefix_title',
+                            'c_key'     => $log_id,
+                        );
+                        $prefix_title = $this->Mod_general->select('au_config', '*', $where_pre);
+                        if(!empty($prefix_title[0])) {
+                            $prefix = json_decode($prefix_title[0]->c_value);
+                            $prefixArr = explode('|', $prefix);
+                            $preRand = $prefixArr[mt_rand(0, count($prefixArr) - 1)];
+                        }
+                    }
+                }
+                /*End Show data Prefix*/
+
+
+
                 /*set facebook name*/
                 $fbAccount = array();
                 if($this->session->userdata ( 'fb_user_name' )) {
@@ -6175,6 +6197,8 @@ public function imgtest()
                         'user_id' => $log_id
                     );
                     $dataJsons = array();
+                    $preTitle = array();
+                    $subTitle = array();
                     $siteUrl = array(
                         'www.siamnews.com',
                         'www.viralsfeedpro.com',
@@ -6186,10 +6210,11 @@ public function imgtest()
                         'www.youtube.com',
                         'youtu.be',
                     );
-                    $getPost = $this->Mod_general->select('post', '*', $where_pro);
+                    $getPost = $this->Mod_general->select('post', '*', $where_pro,"RAND()");
                     if(!empty($getPost[0])) {
                         foreach ($getPost as $gvalue) {
                             $pConent = json_decode($gvalue->p_conent);
+                            $pSchedule = json_decode($gvalue->p_schedule);
                             if(empty($pConent->link)) {
                                 @$this->Mod_general->delete ( Tbl_share::TblName, array (
                                     'p_id' => $getPost[0]->p_id,
@@ -6202,6 +6227,8 @@ public function imgtest()
                                     'p_id' => $getPost[0]->p_id,
                                 ) );
                             } 
+
+
                             $whereMt = array(
                                 'meta_name'      => 'post_progress',
                                 'meta_key'      => $sid,
@@ -6217,10 +6244,54 @@ public function imgtest()
                                     $dataJsons[] = $gvalue;
                                 }
                             }
+
+                            if(!empty($dataJsons)) {
+                                /*Show data Prefix*/
+                                if(!empty($pSchedule->prefix_checked)) {
+                                    if(!empty($pSchedule->prefix_title)) {
+                                        $prefixArr = explode('|', $pSchedule->prefix_title);
+                                        $preRand = $prefixArr[mt_rand(0, count($prefixArr) - 1)];
+                                    } else {       
+                                        $where_pre = array(
+                                            'c_name'      => 'prefix_title',
+                                            'c_key'     => $log_id,
+                                        );
+                                        $prefix_title = $this->Mod_general->select('au_config', '*', $where_pre);
+                                        if(!empty($prefix_title[0])) {
+                                            $prefix = json_decode($prefix_title[0]->c_value);
+                                            $prefixArr = explode('|', $prefix);
+                                            $preTitle[] = $prefixArr[mt_rand(0, count($prefixArr) - 1)];
+                                        }
+                                    }
+                                }
+                                /*End Show data Prefix*/
+                                /*Show data Prefix*/
+                                
+                                if(!empty($pSchedule->suffix_checked)) {
+                                    if(!empty($pSchedule->suffix_title)) {
+                                        $subFixArr = explode('|', $pSchedule->suffix_title);
+                                        $subRand = $subFixArr[mt_rand(0, count($subFixArr) - 1)];
+                                    } else {
+                                        $whereSuf = array(
+                                            'c_name'      => 'suffix_title',
+                                            'c_key'     => $log_id,
+                                        );
+                                        $suffix_title = $this->Mod_general->select('au_config', '*', $whereSuf);
+                                        if(!empty($suffix_title[0])) {
+                                            $subfix = json_decode($suffix_title[0]->c_value);
+                                            $subFixArr = explode('|', $subfix);
+                                            $subTitle[] = $subFixArr[mt_rand(0, count($subFixArr) - 1)];
+                                        }
+                                    }
+                                }
+                                /*End Show data Prefix*/
+                            }
                         }
                     }
                     $dataJson = array(
-                        'post' => $dataJsons
+                        'post' => $dataJsons,
+                        'preTitle' => $preTitle,
+                        'subTitle' => $subTitle
                     );
                     // $where_Pshare = array (
                     //     'u_id' => $sid,
@@ -6275,6 +6346,12 @@ public function imgtest()
                 break;
             case 'next':
                 /*clean*/
+                header("Access-Control-Allow-Origin: *");
+                $getfbuid = $this->input->get('uid');
+                if($this->session->userdata ( 'uid' )) {
+                    $getfbuid = $this->session->userdata ( 'uid' );
+                }
+
                 $spam = $this->input->get('spam');
                 $oneDaysAgo = date('Y-m-d h:m:s', strtotime('-1 days', strtotime(date('Y-m-d'))));
                 $where_pro = array('p_progress' => 1,'u_id' => $sid,'p_date <= '=> $oneDaysAgo);
