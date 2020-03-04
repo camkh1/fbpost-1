@@ -6248,6 +6248,9 @@ public function imgtest()
                                     $dataJsons[] = $gvalue;
                                 }
                             }
+                            if(preg_match('/บน-ล่าง/', $gvalue->p_name) || preg_match('/เลข/', $gvalue->p_name) || preg_match('/งวด/', $gvalue->p_name) || preg_match('/หวย/', $gvalue->p_name) || preg_match('/ปลดหนี้/', $gvalue->p_name))  {
+                                $gLabel == 'lotto';
+                            }
 
                             if(!empty($dataJsons) && !empty($gLabel) && $gLabel == 'lotto') {
                                 /*Show data Prefix*/
