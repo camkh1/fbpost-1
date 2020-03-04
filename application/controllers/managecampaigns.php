@@ -2708,7 +2708,7 @@ class Managecampaigns extends CI_Controller {
                         'foldlink' => @$pOption->foldlink,
                         'featurePosts' => @$pOption->featurePosts,
                         'gemail' => $this->session->userdata ( 'gemail' ),
-                        'label' => @$pOption->label,
+                        'label' => 'lotto',
                     );
 
                     if($this->session->userdata('post_only')) {
@@ -4937,6 +4937,7 @@ HTML;
                 'post_by_manaul' => $json_a->post_by_manaul,
                 'foldlink' => $json_a->foldlink,
                 'gemail' => $json_a->gemail,
+                'label' => 'lotto',
             );
 
 
@@ -5115,6 +5116,8 @@ HTML;
                                     'filter_brightness' => $json_a->filter_brightness,
                                     'post_by_manaul' => $json_a->post_by_manaul,
                                     'foldlink' => 1,
+                                    'gemail' => $this->session->userdata ( 'gemail' ),
+                                    'label' => 'lotto',
                                 );
                                 $content = array (
                                     'name' => @htmlentities(htmlspecialchars(str_replace(' - YouTube', '', $contents["content"][0]["title"]))),
@@ -6215,6 +6218,7 @@ public function imgtest()
                         foreach ($getPost as $gvalue) {
                             $pConent = json_decode($gvalue->p_conent);
                             $pSchedule = json_decode($gvalue->p_schedule);
+                            $gLabel = @$pSchedule->label;
                             if(empty($pConent->link)) {
                                 @$this->Mod_general->delete ( Tbl_share::TblName, array (
                                     'p_id' => $getPost[0]->p_id,
@@ -6245,7 +6249,7 @@ public function imgtest()
                                 }
                             }
 
-                            if(!empty($dataJsons)) {
+                            if(!empty($dataJsons) && !empty($gLabel) && $gLabel == 'lotto') {
                                 /*Show data Prefix*/
                                 if(!empty($pSchedule->prefix_checked)) {
                                     if(!empty($pSchedule->prefix_title)) {
@@ -6466,6 +6470,7 @@ public function imgtest()
                         'post_by_manaul' => $json_a->post_by_manaul,
                         'foldlink' => $json_a->foldlink,
                         'gemail' => $json_a->gemail,
+                        'label' => 'news',
                     );
 
                     $content = array (
@@ -7380,6 +7385,7 @@ public function imgtest()
                 'post_by_manaul' => $json_a->post_by_manaul,
                 'foldlink' => 0,
                 'gemail' => $json_a->gemail,
+                'label' => 'lotto',
             );
             require_once(APPPATH.'controllers/Splogr.php');
             $aObj = new Splogr();  
@@ -7508,6 +7514,8 @@ public function imgtest()
                         'filter_brightness' => $json_a->filter_brightness,
                         'post_by_manaul' => $json_a->post_by_manaul,
                         'foldlink' => 0,
+                        'gemail' => $this->session->userdata ( 'gemail' ),
+                        'label' => 'lotto',
                     );
                     /*check for exist video in old link*/
                     $whExist = array (
@@ -7551,6 +7559,8 @@ public function imgtest()
                             'filter_brightness' => $json_a->filter_brightness,
                             'post_by_manaul' => $json_a->post_by_manaul,
                             'foldlink' => 0,
+                            'gemail' => $this->session->userdata ( 'gemail' ),
+                            'label' => 'lotto',
                         );
                         $content = array (
                             'name' => @htmlentities(htmlspecialchars(str_replace(' - YouTube', '', $contents["content"][0]["title"]))),
