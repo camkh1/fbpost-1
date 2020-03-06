@@ -236,7 +236,9 @@ $glogin = str_replace('autopost;=', 'autopost=', $glogin);
             load_contents("//postautofb2.blogspot.com/feeds/posts/default/-/bitly",str);
         }
         function backto() {
-            window.location.replace("<?php echo $this->session->userdata ( 'backto' );?>");
+            <?php if(!empty($this->session->userdata ( 'backto' ))):?>
+            //window.location.replace("<?php echo $this->session->userdata ( 'backto' );?>");
+            <?php endif;?>
         }
         <?php if(!empty($postAuto)):
          if(!empty($this->input->get('startpost'))):?>
