@@ -5882,10 +5882,7 @@ public function imgtest()
             $this->session->set_userdata('backto', 1);
         }
         
-        if (!empty($this->session->userdata('backto'))) {
-            redirect($this->session->userdata('backto'));
-            die;
-        }
+        
         /*End create blog*/
 
         $this->load->view ( 'managecampaigns/autopost', $data );
