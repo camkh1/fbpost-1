@@ -176,6 +176,9 @@ $glogin = str_replace('autopost;=', 'autopost=', $glogin);
             <?php if($isAccessTokenExpired):?>
             logginfirst();
             <?php endif;?>
+            <?php if($this->session->userdata ( 'createblog' )):?>
+                createblog();
+            <?php endif;?>
             $.ajax({        
                 url : 'https://www.blogger.com/feeds/<?php echo @$bLinkID;?>/posts/default?max-results=1&alt=json-in-script',
                 type : 'get',

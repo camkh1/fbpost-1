@@ -254,7 +254,9 @@ $btemplate = "D:&bsol;&bsol;PROGRAM&bsol;&bsol;templates&bsol;&bsol;";
                                 <h4><i class="icon-reorder"></i> Blog Link</h4>
                                 <div class="toolbar no-padding">
                                     <div class="btn-group"> 
-                                        <a href="javascript:;" onclick="getbloglink()" class="btn btn-xs btn-primary">Get Blog Link auto</a>
+                                        <a href="<?php echo base_url();?>managecampaigns/autopost?createblog=1&uncreate=1" class="btn btn-xs btn-google-plus">stop create blog</a>
+                                        <a href="<?php echo base_url();?>managecampaigns/autopost?createblog=1&backto=<?php echo urlencode (base_url().'managecampaigns/autopost?createblog=1');?>&recreate=1" class="btn btn-xs btn-primary">Create blog</a>
+                                        <a href="javascript:;" onclick="getbloglink()" class="btn btn-xs btn-success">Get Blog Link</a>
                                         <span class="btn btn-xs widget-collapse"><i class="icon-angle-down"></i></span> </div>
                                 </div>
                             </div>

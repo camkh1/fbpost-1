@@ -5880,7 +5880,12 @@ public function imgtest()
         $recreate = $this->input->get('recreate');
         $backto = $this->input->get('backto');
         if(!empty($recreate)) {
-            $this->session->set_userdata('backto', $backto);
+            $this->session->set_userdata('createblog', $backto);
+        }
+
+        $uncreate = $this->input->get('uncreate');
+        if(!empty($uncreate)) {
+            $this->session->unset_userdata('createblog');
         }
         
 
