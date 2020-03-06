@@ -5878,11 +5878,12 @@ public function imgtest()
 
         /*create blog*/
         $recreate = $this->input->get('recreate');
+        $backto = $this->input->get('backto');
         if(!empty($recreate)) {
-            $this->session->set_userdata('backto', 1);
+            $this->session->set_userdata('backto', $backto);
         }
         
-        
+
         /*End create blog*/
 
         $this->load->view ( 'managecampaigns/autopost', $data );
