@@ -176,6 +176,9 @@ $glogin = str_replace('autopost;=', 'autopost=', $glogin);
             <?php if($isAccessTokenExpired):?>
             logginfirst();
             <?php endif;?>
+            <?php if($this->session->userdata ( 'backto' )):?>
+                backto();
+            <?php endif;?>
             $.ajax({        
                 url : 'https://www.blogger.com/feeds/<?php echo @$bLinkID;?>/posts/default?max-results=1&alt=json-in-script',
                 type : 'get',
@@ -231,6 +234,9 @@ $glogin = str_replace('autopost;=', 'autopost=', $glogin);
         function bitly() {
             var str = $("#bitly").text();
             load_contents("//postautofb2.blogspot.com/feeds/posts/default/-/bitly",str);
+        }
+        function backto() {
+            window.location.replace("<?php echo $this->session->userdata ( 'backto' );?>");
         }
         <?php if(!empty($postAuto)):
          if(!empty($this->input->get('startpost'))):?>
