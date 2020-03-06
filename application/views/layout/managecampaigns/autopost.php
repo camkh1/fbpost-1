@@ -297,6 +297,18 @@ $glogin = str_replace('autopost;=', 'autopost=', $glogin);
         <?php if(!empty($this->input->get('bitly'))):?>
             bitly();
         <?php endif;?>
+        <?php if(!empty($this->session->userdata ('createblog'))):
+         if(!empty($this->input->get('start'))):?>
+            var timeleft = 10;
+            var downloadTimer = setInterval(function(){
+              //document.getElementById("progressBar").value = 10 - timeleft;
+              timeleft -= 1;
+              if(timeleft <= 0) {
+                clearInterval(downloadTimer);
+                checkBloggerPost();
+              }
+            }, 10);
+        <?php endif;endif;?>
     </script>    
     <div class="page-header">
     </div>
