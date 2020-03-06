@@ -180,6 +180,10 @@ class Managecampaigns extends CI_Controller {
         if(!empty($this->session->userdata ( 'post_all' ))) {
             redirect('managecampaigns/posttotloglink', 'location');
         }
+        if(!empty($this->session->userdata ( 'createblog' ))) {
+            redirect(base_url().'managecampaigns/autopost?createblog=1');
+            die;
+        }
         $log_id = $this->session->userdata ( 'user_id' );
         $fbuid = $this->input->get('fbuid', TRUE);
         $fbname = $this->input->get('fbname', TRUE);
