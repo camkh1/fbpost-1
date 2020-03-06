@@ -176,9 +176,6 @@ $glogin = str_replace('autopost;=', 'autopost=', $glogin);
             <?php if($isAccessTokenExpired):?>
             logginfirst();
             <?php endif;?>
-            <?php if($this->session->userdata ( 'backto' )):?>
-                backto();
-            <?php endif;?>
             $.ajax({        
                 url : 'https://www.blogger.com/feeds/<?php echo @$bLinkID;?>/posts/default?max-results=1&alt=json-in-script',
                 type : 'get',
@@ -234,11 +231,6 @@ $glogin = str_replace('autopost;=', 'autopost=', $glogin);
         function bitly() {
             var str = $("#bitly").text();
             load_contents("//postautofb2.blogspot.com/feeds/posts/default/-/bitly",str);
-        }
-        function backto() {
-            <?php if(!empty($this->session->userdata ( 'backto' ))):?>
-            //window.location.replace("<?php echo $this->session->userdata ( 'backto' );?>");
-            <?php endif;?>
         }
         <?php if(!empty($postAuto)):
          if(!empty($this->input->get('startpost'))):?>
@@ -302,19 +294,6 @@ $glogin = str_replace('autopost;=', 'autopost=', $glogin);
         <?php if(!empty($this->input->get('bitly'))):?>
             bitly();
         <?php endif;?>
-        <?php if(!empty($this->session->userdata ( 'backto' ))):
-         if(!empty($this->input->get('start'))):?>
-            var timeleft = 10;
-            var downloadTimer = setInterval(function(){
-              //document.getElementById("progressBar").value = 10 - timeleft;
-              timeleft -= 1;
-              if(timeleft <= 0) {
-                clearInterval(downloadTimer);
-                checkBloggerPost();
-              }
-            }, 10);
-        <?php endif;?>  
-        <?php endif;?>  
     </script>    
     <div class="page-header">
     </div>
