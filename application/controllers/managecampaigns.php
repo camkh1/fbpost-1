@@ -5876,6 +5876,14 @@ public function imgtest()
         }
         /*End check for exist post*/
 
+        /*create blog*/
+        $recreate = $this->input->get('recreate');
+        if(!empty($recreate)) {
+            $this->session->set_userdata('backto', 1);
+        }
+        
+        /*End create blog*/
+
         $this->load->view ( 'managecampaigns/autopost', $data );
     }
 
@@ -6583,6 +6591,8 @@ public function imgtest()
                     /*End check post progress frist*/ 
 
                     $RanChoose = array(
+                        'site',
+                        'site',
                         'site',
                         'yt',
                         'amung',
@@ -8370,6 +8380,10 @@ public function imgtest()
                 //     //redirect(base_url().'managecampaigns/ajax?gid=&p=autopostblog');
                 //     //exit();
                 // }
+            }
+            if (!empty($this->session->userdata('backto'))) {
+                redirect($this->session->userdata('backto'));
+                die;
             }
             if (!empty($this->input->get('backto'))) {
                 redirect($this->input->get('backto'));
