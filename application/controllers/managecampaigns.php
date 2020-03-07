@@ -6631,6 +6631,7 @@ public function imgtest()
                 }
                 break;
             case 'amung':
+                echo '<meta http-equiv="refresh" content="30">';
                 $setBack = $this->input->get('index');
                 if(!empty($setBack)) {
                     $setURl = base_url().'managecampaigns';
