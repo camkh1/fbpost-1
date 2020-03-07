@@ -6194,6 +6194,7 @@ public function imgtest()
                     /*get post that not share ixist*/
                     $where_pro = array(
                         'u_id ' => $sid,
+                        'p_post_to ' => 0,
                         'user_id' => $log_id
                     );
                     $dataJsons = array();
@@ -6245,7 +6246,7 @@ public function imgtest()
                                     $dataJsons[] = $gvalue;
                                 }
                             }
-                            if(preg_match('/บน-ล่าง/', $gvalue->p_name) || preg_match('/เลข/', $gvalue->p_name) || preg_match('/งวด/', $gvalue->p_name) || preg_match('/หวย/', $gvalue->p_name) || preg_match('/ปลดหนี้/', $gvalue->p_name) || preg_match('/Lotto/', $gvalue->p_name))  {
+                            if(preg_match('/บน-ล่าง/', $gvalue->p_name) || preg_match('/เลข/', $gvalue->p_name) || preg_match('/งวด/', $gvalue->p_name) || preg_match('/หวย/', $gvalue->p_name) || preg_match('/ปลดหนี้/', $gvalue->p_name) || preg_match('/Lotto/', $gvalue->p_name) || preg_match('/Lottery/', $gvalue->p_name))  {
                                 $gLabel = 'lotto';
                             }
 
