@@ -339,7 +339,7 @@ class Getcontent extends CI_Controller
         $html = file_get_html ( $url );
         $obj = new stdClass();
         $obj->description = @$html->find ( 'meta[property=og:description]', 0 )->content;
-        $obj->title = $html->find ( 'title', 0 )->innertext;
+        $obj->title = @$html->find ( 'title', 0 )->innertext;
         $og_image = @$html->find ( 'meta [property=og:image]', 0 )->content;
         $image_src = @$html->find ( 'link [rel=image_src]', 0 )->href;
         if (! empty ( $image_src )) {
@@ -586,6 +586,62 @@ class Getcontent extends CI_Controller
                 $content = preg_replace('/<ins\b[^>]*>(.*?)<\/ins>/is', '<div class="setAds"></div>', $content);
                 $content = preg_replace("/<a(.*?)>/", "<a$1 target=\"_blank\">", $content);
 
+                // $regex = '/< *img[^>]*src *= *["\']?([^"\']*)/';
+                // preg_match_all( $regex, $content, $matches );
+                // $ImgSrc = array_pop($matches);
+                // // reversing the matches array
+                // if(!empty($ImgSrc)) {
+                //     foreach ($ImgSrc as $image) {
+                //         $file_title = basename($image);
+                //         $imagedd = strtok($image, "?");
+                //         $file_title = basename($imagedd);
+                //         $fileName = FCPATH . 'uploads/image/'.$file_title;
+                //         @copy($image, $fileName);   
+                //         $images = $this->mod_general->uploadtoImgur($fileName);
+                //         if(empty($images)) {
+                //             $apiKey = '76e9b194c1bdc616d4f8bb6cf295ce51';
+                //             $images = $this->Mod_general->uploadToImgbb($fileName, $apiKey);
+                //             if($images) {
+                //                 @unlink($fileName);
+                //             }
+                //         } else {
+                //             $gimage = @$images; 
+                //             @unlink($fileName);
+                //         }
+                //         if(!empty($gimage)) {
+                //             $content = str_replace($image,$gimage,$content);
+                //         }
+                //     }
+                // }
+                $obj->vid = '';
+                $obj->conent = $content;
+                $obj->fromsite = $parse['host'];
+                $obj->site = 'site';
+                return $obj;
+                break;
+            case 'jarm.com':
+            echo $html;
+                // foreach($html->find('.line_view') as $item) {
+                //     $item->outertext = '';
+                // }
+                /*get label*/
+                $label = [];
+                // $last = count($html->find('.breadcrumb li')) - 1;
+                // foreach($html->find('.breadcrumb li') as $index => $labels) {
+                //     if($index != $last && $index !=0) {
+                //         $label[] = $labels->plaintext;
+                //     } 
+                // }
+                //  $obj->label = implode(',', $label);
+                /*End get label*/
+               
+                //$html->save();
+                $content = @$html->find ( '.news-detail', 0 )->innertext;
+                $content = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $content);
+                $content = preg_replace('/<ins\b[^>]*>(.*?)<\/ins>/is', '<div class="setAds"></div>', $content);
+                $content = preg_replace("/<a(.*?)>/", "<a$1 target=\"_blank\">", $content);
+                echo $content;
+                die;
                 // $regex = '/< *img[^>]*src *= *["\']?([^"\']*)/';
                 // preg_match_all( $regex, $content, $matches );
                 // $ImgSrc = array_pop($matches);
@@ -1957,7 +2013,7 @@ class Getcontent extends CI_Controller
                 $obj->site = 'site';
                 return $obj;
                 break;
-            case 'khreality.com':
+            case 'www.khreality.com':
                 /*get label*/
                 $label = $html->find('#main-navigation .current-post-parent a',0)->plaintext;
                 if($label == 'ข่าวทั่วไป') {
@@ -1981,28 +2037,28 @@ class Getcontent extends CI_Controller
                 preg_match_all( $regex, $content, $matches );
                 $ImgSrc = array_pop($matches);
                 // reversing the matches array
-                if(!empty($ImgSrc)) {
-                    foreach ($ImgSrc as $image) {
-                        $imagedd = strtok($image, "?");
-                        $file_title = basename($imagedd);
-                        $fileName = FCPATH . 'uploads/image/'.$file_title;
-                        @copy($imagedd, $fileName);   
-                        $images = $this->mod_general->uploadtoImgur($fileName);
-                        if(empty($images)) {
-                            $apiKey = '76e9b194c1bdc616d4f8bb6cf295ce51';
-                            $images = $this->Mod_general->uploadToImgbb($fileName, $apiKey);
-                            if($images) {
-                                @unlink($fileName);
-                            }
-                        } else {
-                            $gimage = @$images; 
-                            @unlink($fileName);
-                        }
-                        if(!empty($gimage)) {
-                            $content = str_replace($image,$gimage,$content);
-                        }
-                    }
-                }
+                // if(!empty($ImgSrc)) {
+                //     foreach ($ImgSrc as $image) {
+                //         $imagedd = strtok($image, "?");
+                //         $file_title = basename($imagedd);
+                //         $fileName = FCPATH . 'uploads/image/'.$file_title;
+                //         @copy($imagedd, $fileName);   
+                //         $images = $this->mod_general->uploadtoImgur($fileName);
+                //         if(empty($images)) {
+                //             $apiKey = '76e9b194c1bdc616d4f8bb6cf295ce51';
+                //             $images = $this->Mod_general->uploadToImgbb($fileName, $apiKey);
+                //             if($images) {
+                //                 @unlink($fileName);
+                //             }
+                //         } else {
+                //             $gimage = @$images; 
+                //             @unlink($fileName);
+                //         }
+                //         if(!empty($gimage)) {
+                //             $content = str_replace($image,$gimage,$content);
+                //         }
+                //     }
+                // }
                 $obj->vid = '';
                 $obj->conent = $content;
                 $obj->fromsite = $parse['host'];
