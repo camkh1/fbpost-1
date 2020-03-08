@@ -6539,6 +6539,7 @@ public function imgtest()
                         'https://board.postjung.com/',
                         'http://huaythai.me/',
                         'http://www.huaythaitoday.com/',
+                        'http://www.huayhot.com/',
                     );
                     $k = array_rand($siteUrl);
                     $getSiteUrl = $siteUrl[$k];

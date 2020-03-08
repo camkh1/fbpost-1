@@ -308,6 +308,32 @@ class Getcontent extends CI_Controller
                     /*End check duplicate link*/
                 }
                 break;
+            case 'www.huayhot.com':
+                $sectionA = $html->find('#content_box .post h2.title a');
+                foreach($sectionA as $index => $clink) {
+                    if(!empty($clink->href)) {
+                        /*check duplicate link*/
+                        $linkc = $clink->href;
+                        $whereDupA = array(
+                            'object_id'      => $linkc,
+                            'meta_name'     => $log_id . 'sitelink',
+                            'meta_key'      => date('Y-m-d'),
+                        );
+                        $queryCheckDup = $this->Mod_general->select('meta', '*', $whereDupA);
+                        if(empty($queryCheckDup[0])) {
+                            $data_blogC = array(
+                                'meta_key'      => date('Y-m-d'),
+                                'object_id'      => $linkc,
+                                'meta_value'     => 0,
+                                'meta_name'     => $log_id . 'sitelink',
+                            );
+                            $lastID = $this->Mod_general->insert('meta', $data_blogC);
+                            break;
+                        }
+                        /*End check duplicate link*/
+                    }
+                }
+                break;
             default:
                 # code...
                 break;
@@ -954,6 +980,52 @@ class Getcontent extends CI_Controller
                         }
                     }
                 }
+                $obj->vid = '';
+                $obj->conent = $content;
+                $obj->fromsite = $parse['host'];
+                $obj->site = 'site';
+                return $obj;
+                break;
+            case 'www.huayhot.com':
+                /*get label*/
+                $label = [];
+                //$last = count($html->find('.thecategory a')) - 1;
+                foreach($html->find('.thecategory a') as $index => $labels) {
+                    $label[] = $labels->plaintext;
+                }
+                $obj->label = 'lotto'.','.implode(',', $label);
+                /*End get label*/
+                foreach($html->find('.post-single-content .tags') as $item) {
+                    $item->outertext = '';
+                }
+                $html->save();
+                $content = @$html->find ( '.post-single-content', 0 )->innertext;
+                $content = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $content);
+                $content = preg_replace('/<ins\b[^>]*>(.*?)<\/ins>/is', '<div class="setAds"></div>', $content);
+                $content = preg_replace("/<a(.*?)>/", "<a$1 target=\"_blank\">", $content);
+                $regex = '~<img.*?src=["\']+(.*?)["\']+~';
+                preg_match_all( $regex, $content, $matches );
+                $ImgSrc = array_pop($matches);
+
+                // reversing the matches array
+                if(!empty($ImgSrc)) {
+                    $images = explode('_n-', $ImgSrc[0]);
+                    $exten = pathinfo($ImgSrc[0]);
+                    $thumb = $images[0].'_n.'.$exten['extension'];
+
+                    $file_title = basename($thumb);
+                    $fileName = FCPATH . 'uploads/image/'.$file_title;
+                    @copy($thumb, $fileName);   
+                    $thumb = $this->mod_general->uploadMedia($fileName);
+                    if(empty($thumb)) {
+                        $apiKey = '76e9b194c1bdc616d4f8bb6cf295ce51';
+                        $thumb = $this->Mod_general->uploadToImgbb($fileName, $apiKey);
+                        if($gimage) {
+                            @unlink($fileName);
+                        }
+                    }
+                }
+                $obj->thumb = $thumb;
                 $obj->vid = '';
                 $obj->conent = $content;
                 $obj->fromsite = $parse['host'];
