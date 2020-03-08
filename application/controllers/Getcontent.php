@@ -334,6 +334,137 @@ class Getcontent extends CI_Controller
                     }
                 }
                 break;
+            case 'www.tha.supiper.online':
+                $this->session->set_userdata('post_all', 1);
+                $url = 'http://www.blogger.com/feeds/7382768133557108133/posts/default?max-results=10';
+                $id1 = simplexml_load_file($url);
+                foreach ($id1->entry as $value) {
+                    $xmlns = $value->children('http://www.w3.org/2005/Atom');
+                    // get tilte
+                    $title = (string) $value->title;
+                    foreach ($value->link as $links) {
+                        //var_dump($links);
+                        if($links['rel'] == 'alternate' ) {
+                            $link = (string) $links['href'];
+                        }
+                    }
+                    $linkc = $link;
+                    $whereDupA = array(
+                        'object_id'      => $linkc,
+                        'meta_name'     => $log_id . 'sitelink',
+                        'meta_key'      => date('Y-m-d'),
+                    );
+                    $queryCheckDup = $this->Mod_general->select('meta', '*', $whereDupA);
+                    if(empty($queryCheckDup[0])) {
+                        $content = (string) $value->content;
+                        $image = $value->children('http://search.yahoo.com/mrss/')->thumbnail->attributes();
+                        $thumbnail = (string) $image['url'];
+                        $iamges = $this->mod_general->resize_image($thumbnail, 0);
+                        $gLabel = 'News';
+                        if(preg_match('/บน-ล่าง/', $title) || preg_match('/เลข/', $title) || preg_match('/งวด/', $title) || preg_match('/หวย/', $title) || preg_match('/ปลดหนี้/', $title) || preg_match('/Lotto/', $title) || preg_match('/Lottery/', $title))  {
+                            $gLabel = 'lotto';
+                        }
+                        
+                        /*preparepost*/
+                         $sid = $this->session->userdata ( 'sid' );
+                        $fbUserId = $this->session->userdata('fb_user_id');
+                        $tmp_path = './uploads/'.$log_id.'/'. $fbUserId . '_tmp_action.json';
+                        $string = file_get_contents($tmp_path);
+                        $json_a = json_decode($string);
+                        $schedule = array (                    
+                            'start_date' => $json_a->start_date,
+                            'start_time' => $json_a->start_time,
+                            'end_date' => $json_a->end_date,
+                            'end_time' => $json_a->end_time,
+                            'loop' => $json_a->loop,
+                            'loop_every' => $json_a->loop_every,
+                            'loop_on' => $json_a->loop_on,
+                            'wait_group' => $json_a->wait_group,
+                            'wait_post' => $json_a->wait_post,
+                            'randomGroup' => $json_a->randomGroup,
+                            'prefix_title' => $json_a->prefix_title,
+                            'suffix_title' => $json_a->suffix_title,
+                            'short_link' => $json_a->short_link,
+                            'check_image' => $json_a->check_image,
+                            'imgcolor' => $json_a->imgcolor,
+                            'btnplayer' => $json_a->btnplayer,
+                            'playerstyle' => $json_a->playerstyle,
+                            'random_link' => $json_a->random_link,
+                            'share_type' => $json_a->share_type,
+                            'share_schedule' => $json_a->share_schedule,
+                            'account_group_type' => $json_a->account_group_type,
+                            'txtadd' => $json_a->txtadd,
+                            'blogid' => $json_a->blogid,
+                            'blogLink' => $json_a->blogLink,
+                            'main_post_style' => 'tnews',
+                            'userAgent' => $json_a->userAgent,
+                            'checkImage' => $json_a->checkImage,
+                            'ptype' => $json_a->ptype,
+                            'img_rotate' => $json_a->img_rotate,
+                            'filter_contrast' => $json_a->filter_contrast,
+                            'filter_brightness' => $json_a->filter_brightness,
+                            'post_by_manaul' => $json_a->post_by_manaul,
+                            'foldlink' => $json_a->foldlink,
+                            'gemail' => $json_a->gemail,
+                            'label' => @$gLabel,
+                        );
+
+                        $content = array (
+                                'name' => @htmlentities(htmlspecialchars(str_replace($title))),
+                                'message' => @htmlentities(htmlspecialchars(addslashes($content))),
+                                'caption' => '',
+                                'link' => @$link,
+                                'mainlink' => '',
+                                'picture' => @$iamges,                            
+                                'vid' => '',                          
+                        );
+                        /*End preparepost*/
+                        $dataPostInstert = array (
+                            Tbl_posts::name => $title,
+                            Tbl_posts::conent => json_encode($content),
+                            Tbl_posts::p_date => date('Y-m-d H:i:s'),
+                            Tbl_posts::schedule => json_encode($schedule),
+                            Tbl_posts::user => $sid,
+                            'user_id' => $log_id,
+                            Tbl_posts::post_to => 1,
+                            'p_status' => 1,
+                            'p_progress' => 1,
+                            Tbl_posts::type => 'Facebook' 
+                        );
+                        $AddToPost = $this->Mod_general->insert ( Tbl_posts::tblName, $dataPostInstert );
+                        if(@$AddToPost) {
+                            /*check duplicate link*/
+                                $data_blogC = array(
+                                    'meta_key'      => date('Y-m-d'),
+                                    'object_id'      => $linkc,
+                                    'meta_value'     => 1,
+                                    'meta_name'     => $log_id . 'sitelink',
+                                );
+                                $lastID = $this->Mod_general->insert('meta', $data_blogC);
+                            /*End check duplicate link*/
+                        }
+                    }
+                }
+
+                $fbUserId = $this->session->userdata ( 'sid' );
+                $whereNext = array (
+                    'user_id' => $log_id,
+                    'u_id' => $fbUserId,
+                    'p_post_to' => 1,
+                );
+                $nextPost = $this->Mod_general->select ( Tbl_posts::tblName, '*', $whereNext );
+                if(!empty($nextPost[0])) {
+                    $p_id = $nextPost[0]->p_id;
+                    echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=post&pid='.$p_id.'";}, 30 );</script>';
+                    exit();
+                }
+                // if(!empty($AddToPost)) {
+                //     //echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=post&pid='.$AddToPost.'";}, 30 );</script>';
+                //     redirect('managecampaigns/posttotloglink', 'location');
+                //     exit();
+                // }
+                //redirect('managecampaigns/posttotloglink', 'location');
+                break;
             default:
                 # code...
                 break;

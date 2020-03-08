@@ -6540,6 +6540,7 @@ public function imgtest()
                         'http://huaythai.me/',
                         'http://www.huaythaitoday.com/',
                         'http://www.huayhot.com/',
+                        'https://www.tha.supiper.online/',
                     );
                     $k = array_rand($siteUrl);
                     $getSiteUrl = $siteUrl[$k];
