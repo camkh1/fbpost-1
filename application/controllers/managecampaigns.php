@@ -6223,6 +6223,8 @@ public function imgtest()
                         'www.huaythaitoday.com',
                         'www.youtube.com',
                         'youtu.be',
+                        'www.huayhot.com',
+                        'www.tha.supiper.online',
                     );
                     $getPost = $this->Mod_general->select('post', '*', $where_pro,"RAND()");
                     if(!empty($getPost[0])) {
