@@ -3376,7 +3376,7 @@ class Getcontent extends CI_Controller
                 break;
             case 'www.huaythaitoday.com':
                 //$obj->title = @$html->find ( '.post .entry-title', 0 )->plaintext;
-                //$obj->thumb = @$html->find ( '.content-img-all .img-hi-news img', 0 )->src;
+                $obj->thumb = @$html->find ( '#main .entry-content img', 0 )->{'data-src'};
                 foreach($html->find('.sharedaddy') as $item) {
                     $item->outertext = '';
                 }
