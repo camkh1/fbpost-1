@@ -1670,7 +1670,9 @@ class Managecampaigns extends CI_Controller {
                                 'มาดูกันต่อเลยเลขเด็ดงวดนี้ มีเลขอะไรตรงใจกันบ้าง หวยสำหรับคนทุนน้อย หวยเด็ดงวดนี้ '.$thai_title.' ทางเว็บเรานำมาอัพเดทเพื่อแบ่งปันสมาชิกเท่านั้นครับ ขอให้ทุกท่านพิจารณาในการรับข้อมูลเลขเด็ดงวดนี้ ตามความชื่นชอบหรือตามความเหมาะสมกันเลย ขอให้ทุกท่านมีโชคและโชคดีสมหวังกับหวยงวดนี้ด้วยจ้า   ผลงานของหวยงวดนี้ จะเป็นอย่างไร ก็ดูพร้อมกันวันหวยออกทีเดียวเลยแล้วกันจ้า ความแม่นยำของเลขเด็ดงวดนี้ทางเว็บเราไม่อาจการันตีได้ว่าหวยจะออกอะไร ไม่รู้ว่าจะแม่นขนาดไหน  หวยทุกสูตรเป็นแค่การคำนวนความน่าจะเป็นเท่านั้นไม่มีหวยสูตรใดแม่น100%'
                             );
                             $cbrand = mt_rand(0, count($cRan) - 1);
-                            $message = nl2br(html_entity_decode(htmlspecialchars_decode($cRan[$cbrand])));
+                            $adsText = @$pConent->message;
+                            $message = nl2br(html_entity_decode(htmlspecialchars_decode($cRan[$cbrand].'<br/><br/>'.$adsText)));
+
                         } else {
                             $message = nl2br(html_entity_decode(htmlspecialchars_decode(@$pConent->message))); 
                         }
