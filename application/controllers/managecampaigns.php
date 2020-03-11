@@ -1477,6 +1477,7 @@ class Managecampaigns extends CI_Controller {
                             'meta_key'      => $fbUserId,
                             'meta_value'      => 1,
                             'object_id'      => $AddToPost,
+                            'date'      => date('Y-m-d H:i:s'),
                         );
                         @$this->Mod_general->insert('meta', $whereFb);
                     }
@@ -3072,6 +3073,7 @@ class Managecampaigns extends CI_Controller {
                             'meta_key'      => $sid,
                             'meta_value'      => 1,
                             'object_id'      => $pid,
+                            'date'      => date('Y-m-d H:i:s'),
                         );
                         @$this->Mod_general->insert('meta', $whereFb);
                         /*End add to history post*/
@@ -3706,6 +3708,7 @@ class Managecampaigns extends CI_Controller {
                             'object_id'      => $AddToPost,
                             'meta_value'     => 1,
                             'meta_name'     => 'post_progress',
+                            'date'      => date('Y-m-d H:i:s'),
                         );
                         $lastID = $this->Mod_general->insert('meta', $data_blog);
                         // if(!empty($dataFacebook)) {
@@ -6408,6 +6411,7 @@ public function imgtest()
                         'meta_key'      => $sid,
                         'meta_value'      => 1,
                         'object_id'      => $postid,
+                        'date'      => date('Y-m-d H:i:s'),
                     );
                     @$this->Mod_general->insert('meta', $whereFb);
                 }
