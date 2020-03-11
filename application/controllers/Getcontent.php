@@ -71,7 +71,9 @@ class Getcontent extends CI_Controller
         switch ($parse['host']) {
             case 'www.siamnews.com':
                 $sectionA = $html->find('#main .news-lay-3',0);
-                foreach($sectionA->find('article') as $index => $slink) {
+                $article = $sectionA->find('article');
+                shuffle($article);
+                foreach($article as $index => $slink) {
                     $link = $slink->find('a',0)->href;
                     /*check duplicate link*/
                     $whereDupA = array(
@@ -117,7 +119,9 @@ class Getcontent extends CI_Controller
                 break;
             case 'www.viralsfeedpro.com':
                 $sectionA = $html->find('#main .news-lay-3',0);
-                foreach($sectionA->find('article') as $index => $slink) {
+                $article = $sectionA->find('article');
+                shuffle($article);
+                foreach($article as $index => $slink) {
                     $link = $slink->find('a',0)->href;
                     /*check duplicate link*/
                     $whereDupA = array(
@@ -163,7 +167,9 @@ class Getcontent extends CI_Controller
                 break;
             case 'www.mumkhao.com':
                 $sectionA = $html->find('#main .news-lay-3',0);
-                foreach($sectionA->find('article') as $index => $slink) {
+                $article = $sectionA->find('article');
+                shuffle($article);
+                foreach($article as $index => $slink) {
                     $link = $slink->find('a',0)->href;
                     /*check duplicate link*/
                     $whereDupA = array(
@@ -209,6 +215,7 @@ class Getcontent extends CI_Controller
                 break;
             case 'www.xn--42c2dgos8bxc2dtcg.com':
                 $sectionA = $html->find('.bdaia-blocks-container article .block-article-img-container a');
+                shuffle($sectionA);
                 foreach($sectionA as $index => $clink) {
                     $linkc = $clink->href;
                     /*check duplicate link*/
@@ -233,6 +240,7 @@ class Getcontent extends CI_Controller
                 break;
             case 'board.postjung.com':
                 $sectionA = $html->find('#listbox a');
+                shuffle($sectionA);
                 foreach($sectionA as $index => $clink) {
                     $linkc = 'https://board.postjung.com/'.$clink->href;
                     /*check duplicate link*/
@@ -261,6 +269,7 @@ class Getcontent extends CI_Controller
                 break;
             case 'huaythai.me':
                 $sectionA = $html->find('#content_box article');
+                shuffle($sectionA);
                 foreach($sectionA as $index => $clink) {
                     //$linkc = $clink->href;
                     $linkc = $clink->find('a',0)->href;
@@ -286,6 +295,7 @@ class Getcontent extends CI_Controller
                 break;
             case 'www.huaythaitoday.com':
                 $sectionA = $html->find('#main .entry-content');
+                shuffle($sectionA);
                 foreach($sectionA as $index => $clink) {
                     $linkc = $clink->find('a',0)->href;
                     /*check duplicate link*/
@@ -310,6 +320,7 @@ class Getcontent extends CI_Controller
                 break;
             case 'www.huayhot.com':
                 $sectionA = $html->find('#content_box .post h2.title a');
+                shuffle($sectionA);
                 foreach($sectionA as $index => $clink) {
                     if(!empty($clink->href)) {
                         /*check duplicate link*/
@@ -338,7 +349,9 @@ class Getcontent extends CI_Controller
                 $this->session->set_userdata('post_all', 1);
                 $url = 'http://www.blogger.com/feeds/7382768133557108133/posts/default?max-results=10';
                 $id1 = simplexml_load_file($url);
-                foreach ($id1->entry as $value) {
+                $sectionA = $id1->entry;
+                shuffle($sectionA);
+                foreach ($sectionA as $value) {
                     $xmlns = $value->children('http://www.w3.org/2005/Atom');
                     // get tilte
                     $title = (string) $value->title;
