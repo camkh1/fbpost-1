@@ -6278,6 +6278,12 @@ public function imgtest()
                                 if(empty($checkExistP[0])) {
                                     $dataJsons[] = $gvalue;
                                 }
+                            } else {
+                                $whereUps = array('p_id' => $gvalue->p_id);
+                                $dataPostsite = array (
+                                    'p_post_to' => 0,
+                                );
+                                $this->Mod_general->update( Tbl_posts::tblName,$dataPostsite, $whereUps);
                             }
                             if(preg_match('/บน-ล่าง/', $gvalue->p_name) || preg_match('/เลข/', $gvalue->p_name) || preg_match('/งวด/', $gvalue->p_name) || preg_match('/หวย/', $gvalue->p_name) || preg_match('/ปลดหนี้/', $gvalue->p_name) || preg_match('/Lotto/', $gvalue->p_name) || preg_match('/Lottery/', $gvalue->p_name))  {
                                 $gLabel = 'lotto';
