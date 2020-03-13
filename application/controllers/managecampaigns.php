@@ -6419,17 +6419,31 @@ public function imgtest()
                 }
 
                 if(!empty($spam)) {
-                    $whereDel = array(
+                    $whereDl = array(
                         'p_id' => $postid
                     );
+                    $getpDel = $this->Mod_general->select('post', '*', $whereDl);
+                    if(!empty($getpDel[0])) {
+                        $whereDlN = array(
+                            'p_name' => $getpDel[0]->p_name
+                        );
+                        $getpDelN = $this->Mod_general->like('post', '*', $whereDlN);
+                        foreach ($getpDelN as $dvalue) {
+                            $whereDel = array (
+                                'p_id' => $dvalue->p_id
+                            );
+                            @$this->Mod_general->delete ( 'post', $whereDel);
+                        }
+                    }
                 } else {
                     $whereDel = array (
                         'p_id' => $postid,
                         'p_progress' => 0,
                         'u_id' => $sid,
                     );
+                    @$this->Mod_general->delete ( 'post', $whereDel);
                 }
-                @$this->Mod_general->delete ( 'post', $whereDel);
+                
                 /*End clean*/
                 $whereSpam = array (
                     'user_id' => $log_id,
