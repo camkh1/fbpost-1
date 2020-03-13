@@ -2424,9 +2424,41 @@ class Managecampaigns extends CI_Controller {
                 $updates = $this->Mod_general->update( 'youtube',$ytInstert, $whereYtup);
             }
             /*End update youtube if autopost*/
-        }
-        /*Post all post*/
 
+            /*Check link*/
+            $siteUrl = $this->Mod_general->checkSiteLinkStatus();
+            if(!empty($getPost[0])) {
+                foreach ($getPost as $cs) {
+                    $pConents = json_decode($cs->p_conent);
+                    /*if empty link*/
+                    if(empty($pConents->link)) {
+                        @$this->Mod_general->delete ( Tbl_share::TblName, array (
+                            'p_id' => $cs->p_id,
+                        ) );
+                        @$this->Mod_general->delete ( 'meta', array (
+                            'object_id' => $cs->p_id,
+                        ) );
+                        @$this->Mod_general->delete ( 'post', array (
+                            'p_id' => $cs->p_id,
+                        ) );
+                    } 
+                    /*End if empty link*/
+
+                    $parse = parse_url($pConents->link);
+                    if (in_array(@$parse['host'], $siteUrl)) {
+                        $whereUps = array('p_id' => $cs->p_id);
+                        $dataPostsite = array (
+                            'p_post_to' => 0,
+                        );
+                        $this->Mod_general->update( Tbl_posts::tblName,$dataPostsite, $whereUps);
+                    }
+                }
+            }
+            /*End Check link*/
+        }
+
+
+        /*Post all post*/
         $postauto = $this->session->userdata ( 'postauto' );
         if($post_all) {
             $fbUserId = $this->session->userdata ( 'sid' );
@@ -6221,19 +6253,7 @@ public function imgtest()
                     $dataJsons = array();
                     $preTitle = array();
                     $subTitle = array();
-                    $siteUrl = array(
-                        'www.siamnews.com',
-                        'www.viralsfeedpro.com',
-                        'www.mumkhao.com',
-                        'www.xn--42c2dgos8bxc2dtcg.com',
-                        'board.postjung.com',
-                        'huaythai.me',
-                        'www.huaythaitoday.com',
-                        'www.youtube.com',
-                        'youtu.be',
-                        'www.huayhot.com',
-                        'www.tha.supiper.online',
-                    );
+                    $siteUrl = $this->Mod_general->checkSiteLinkStatus();
                     $getPost = $this->Mod_general->select('post', '*', $where_pro,"RAND()");
                     if(!empty($getPost[0])) {
                         foreach ($getPost as $gvalue) {

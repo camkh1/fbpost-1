@@ -293,6 +293,24 @@ class Mod_general extends CI_Model
             echo '<span class="label label-' . $class . '">' . $text . '</span>';
         }
     }
+
+    function checkSiteLinkStatus()
+    {
+        $siteUrl = array(
+            'www.siamnews.com',
+            'www.viralsfeedpro.com',
+            'www.mumkhao.com',
+            'www.xn--42c2dgos8bxc2dtcg.com',
+            'board.postjung.com',
+            'huaythai.me',
+            'www.huaythaitoday.com',
+            'www.youtube.com',
+            'youtu.be',
+            'www.huayhot.com',
+            'www.tha.supiper.online',
+        );
+        return $siteUrl;
+    }
     
     function build_tree_edit($parent_id = 0, $level = 0) {
         $has_childs = false;
