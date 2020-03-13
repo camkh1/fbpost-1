@@ -184,6 +184,7 @@ class Managecampaigns extends CI_Controller {
             redirect(base_url().'managecampaigns/autopost?createblog=1');
             die;
         }
+        
         $log_id = $this->session->userdata ( 'user_id' );
         $fbuid = $this->input->get('fbuid', TRUE);
         $fbname = $this->input->get('fbname', TRUE);
@@ -701,6 +702,8 @@ class Managecampaigns extends CI_Controller {
             $data ["total_rows"] = 0;
             $data ["links"] = '';
         }
+        $siteUrl = $this->Mod_general->checkSiteLinkStatus();
+        $data ["siteUrl"] = $siteUrl;
 		
 		$log_id = $this->session->userdata ( 'log_id' );
 		$user = $this->session->userdata ( 'username' );
@@ -6331,8 +6334,8 @@ public function imgtest()
                                 /*End Show data Prefix*/
                             }
                         }
-                    }
-                    $dataJson = array(
+                    
+}                    $dataJson = array(
                         'post' => $dataJsons,
                         'preTitle' => $preTitle,
                         'subTitle' => $subTitle
