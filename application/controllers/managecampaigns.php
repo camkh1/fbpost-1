@@ -6438,6 +6438,7 @@ public function imgtest()
                     $whereDl = array(
                         'p_id' => $postid
                     );
+                    die;
                     $getpDel = $this->Mod_general->select('post', '*', $whereDl);
                     if(!empty($getpDel[0])) {
                         $whereDlN = array(
@@ -6448,7 +6449,7 @@ public function imgtest()
                             $whereDel = array (
                                 'p_id' => $dvalue->p_id
                             );
-                            @$this->Mod_general->delete ( 'post', $whereDel);
+                            //@$this->Mod_general->delete ( 'post', $whereDel);
                         }
                     }
                 } else {
