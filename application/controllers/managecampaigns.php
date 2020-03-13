@@ -184,7 +184,10 @@ class Managecampaigns extends CI_Controller {
             redirect(base_url().'managecampaigns/autopost?createblog=1');
             die;
         }
-        
+        if(!empty($this->session->userdata('post_only'))) {
+            redirect('managecampaigns/autopostfb?action=posttoblog&pause=1', 'location');
+            die;
+        }
         $log_id = $this->session->userdata ( 'user_id' );
         $fbuid = $this->input->get('fbuid', TRUE);
         $fbname = $this->input->get('fbname', TRUE);
@@ -2462,80 +2465,41 @@ class Managecampaigns extends CI_Controller {
 
 
         /*Post all post*/
+        $fbUserId = $this->session->userdata ( 'sid' );
+        $whereNext = array (
+            'user_id' => $log_id,
+            'u_id' => $fbUserId,
+            'p_post_to' => 1,
+        );
+        $nextPost = $this->Mod_general->select ( Tbl_posts::tblName, '*', $whereNext );
+        if(!empty($nextPost[0])) {
+            $p_id = $nextPost[0]->p_id;
+            $pConent = json_decode($nextPost[0]->p_conent);
+            $pOption = json_decode($nextPost[0]->p_schedule);
+            $bid = $pOption->blogid;
+            echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/yturl?pid='.$p_id.'&action=postblog&autopost=1";},300 );</script>';
+            exit();
+        }
+        /*End Post all post*/
+
         $postauto = $this->session->userdata ( 'postauto' );
-        if($post_all) {
-            $fbUserId = $this->session->userdata ( 'sid' );
-            $whereNext = array (
-                'user_id' => $log_id,
-                'u_id' => $fbUserId,
-                'p_post_to' => 1,
-            );
-            $nextPost = $this->Mod_general->select ( Tbl_posts::tblName, '*', $whereNext );
-            if(!empty($nextPost[0])) {
-                $p_id = $nextPost[0]->p_id;
-                $pConent = json_decode($nextPost[0]->p_conent);
-                $pOption = json_decode($nextPost[0]->p_schedule);
-                $bid = $pOption->blogid;
-                //redirect(base_url() . 'managecampaigns/yturl?pid='.$p_id.'&bid=' . $bid . '&action=postblog&blink='.$blogLink); 
-                /*get blog link from database*/
-                $blogRand = $big = $this->getBlogLink();
-                if (!empty($blogRand)) {
-                    if(empty($big)) {
-                        $currentURL = current_url(); //for simple URL
-                         $params = $_SERVER['QUERY_STRING']; //for parameters
-                         $fullURL = $currentURL . '?' . $params;
-                         echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopost?createblog=1&backto='.urlencode($fullURL).'";}, 3000 );</script>';
-                        //$setUrl = base_url() . 'managecampaigns/autopost?createblog=1&backto='. urlencode($fullURL);
-                        //redirect($setUrl);
-                        exit();
-                    }
+        if(!empty($postauto)) {
+            $this->session->unset_userdata('postauto');
+            $runpost  = '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=posttoblog&pause=1";}, 30 );</script>';
+            echo $runpost;
+            die;
+        }
+        if(!empty($DataBlogLink) && !empty($getPost[0]->p_progress)) {
+            if($this->Mod_general->userrole('uid')) {
+                if(!empty($backto)) {
+                    $urls = $backto;
                 } else {
-                    $currentURL = current_url(); //for simple URL
-                     $params = $_SERVER['QUERY_STRING']; //for parameters
-                     $fullURL = $currentURL . '?' . $params;
-                     echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopost?createblog=1&backto='.urlencode($fullURL).'";}, 3000 );</script>';
-                    exit();
+                    $urls = base_url().'managecampaigns';
                 }
-                if(!empty($DataBlogLink) && !empty($getPost[0]->p_progress)) {
-                    if($this->Mod_general->userrole('uid')) {
-                     $urls = base_url().'managecampaigns/yturl?pid='.$p_id.'&bid='.$bid.'&action=postblog&blink=1&autopost=1';
-                     //echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "http://post.poroman.website/managecampaigns/postsever?t='.urlencode($pConent->name).'&l='.urlencode($link).'&i='.urlencode($image).'&back='.urlencode($urls).'";}, 300 );</script>';
-                    //die;  
-                    }
-                }
-                echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/yturl?pid='.$p_id.'&bid='.$bid.'&action=postblog&blink=1&autopost=1";}, 300 );</script>';
-                exit();
-            } else {
-                $this->session->unset_userdata('post_all');
-                // if($this->Mod_general->userrole('uid')) {
-                //     $urls = base_url().'managecampaigns';
-                //     //echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "https://fbpost.topproductview.com/managecampaigns/postsever?t='.urlencode($pConent->name).'&l='.urlencode($link).'&i='.urlencode($image).'&back='.urlencode($urls).'";}, 300 );</script>';
-                //     die;  
-                // }
-                redirect('managecampaigns', 'location');
-            } 
-        } else {
-            if(!empty($postauto)) {
-                $this->session->unset_userdata('postauto');
-                $runpost  = '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=posttoblog&pause=1";}, 30 );</script>';
-                echo $runpost;
-                die;
+                //echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "https://fbpost.topproductview.com/managecampaigns/postsever?t='.urlencode($pConent->name).'&l='.urlencode($link).'&i='.urlencode($image).'&back='.urlencode($urls).'";}, 300 );</script>';
+                redirect($urls);
+                die;  
             }
-            if(!empty($DataBlogLink) && !empty($getPost[0]->p_progress)) {
-                if($this->Mod_general->userrole('uid')) {
-                    if(!empty($backto)) {
-                        $urls = $backto;
-                    } else {
-                        $urls = base_url().'managecampaigns';
-                    }
-                    //echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "https://fbpost.topproductview.com/managecampaigns/postsever?t='.urlencode($pConent->name).'&l='.urlencode($link).'&i='.urlencode($image).'&back='.urlencode($urls).'";}, 300 );</script>';
-                    redirect($urls);
-                    die;  
-                }
-            } else {
-                //redirect('managecampaigns', 'location');
-            }
-            //redirect('managecampaigns', 'location');
         }
         if(!empty($postauto)) {
             $this->session->unset_userdata('postauto');
@@ -2557,7 +2521,7 @@ class Managecampaigns extends CI_Controller {
             }
         } 
 
-        /*Post all post*/
+        
     }
     public function postBlogger($dataContent)
     {
@@ -5937,6 +5901,10 @@ public function imgtest()
         if(!empty($uncreate)) {
             $this->session->unset_userdata('createblog');
         }
+        $stoppost = $this->input->get('stoppost');
+        if(!empty($stoppost)) {
+            $this->session->unset_userdata('post_only');
+        }
         
 
         /*End create blog*/
@@ -5994,7 +5962,6 @@ public function imgtest()
                 $autopost = json_decode($autoData[0]->c_value);
                 if($autopost->autopost == 1) {
                     if (date('H') <= 23 && date('H') > 3 && date('H') !='00') {
-
                         // $whereDel = array (
                         //     'u_id' => $sid,
                         // );
