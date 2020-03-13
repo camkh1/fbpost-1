@@ -221,7 +221,7 @@ class Mod_general extends CI_Model
         $userrole = false;
         switch ($type) {
             case 'uid':
-                if ($log_id == 2 || $log_id == 3 || $log_id == 4  || $log_id == 24 || $log_id == 527 || $log_id == 511 || $log_id == 533) {
+                if ($log_id == 2 || $log_id == 3 || $log_id == 4  || $log_id == 24 || $log_id == 527 || $log_id == 511 || $log_id == 533 || $log_id == 534) {
                     $userrole = true;
                 }
                 break;
