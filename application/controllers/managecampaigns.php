@@ -2454,7 +2454,7 @@ class Managecampaigns extends CI_Controller {
                     if (in_array(@$parse['host'], $siteUrl)) {
                         $whereUps = array('p_id' => $cs->p_id);
                         $dataPostsite = array (
-                            'p_post_to' => 0,
+                            'p_post_to' => 1,
                         );
                         $this->Mod_general->update( Tbl_posts::tblName,$dataPostsite, $whereUps);
                     }
