@@ -2907,17 +2907,7 @@ class Managecampaigns extends CI_Controller {
         );
         $getPost = $this->Mod_general->select('post', '*', $where_pro);
 
-        $siteUrl = array(
-            'www.siamnews.com',
-            'www.viralsfeedpro.com',
-            'www.mumkhao.com',
-            'www.xn--42c2dgos8bxc2dtcg.com',
-            'board.postjung.com',
-            'huaythai.me',
-            'www.huaythaitoday.com',
-            'www.youtube.com',
-            'youtu.be',
-        );
+        $siteUrl = $this->Mod_general->checkSiteLinkStatus();
         if(!empty($getPost[0])) {
             foreach ($getPost as $gvalue) {
                 $pConent = json_decode($gvalue->p_conent);
