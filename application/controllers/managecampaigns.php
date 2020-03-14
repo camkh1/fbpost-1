@@ -6420,13 +6420,12 @@ public function imgtest()
                             $whereDel = array (
                                 'p_id' => $dvalue->p_id
                             );
-                            //@$this->Mod_general->delete ( 'post', $whereDel);
+                            @$this->Mod_general->delete ( 'post', $whereDel);
                         }
                     }
                 } else {
                     $whereDel = array (
                         'p_id' => $postid,
-                        'p_progress' => 0,
                         'u_id' => $sid,
                     );
                     @$this->Mod_general->delete ( 'post', $whereDel);
