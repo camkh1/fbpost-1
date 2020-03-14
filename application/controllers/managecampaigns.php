@@ -6207,7 +6207,6 @@ public function imgtest()
                     /*get post that not share ixist*/
                     $where_pro = array(
                         'u_id ' => $sid,
-                        'p_post_to ' => 0,
                         'user_id' => $log_id
                     );
                     $dataJsons = array();
@@ -6233,28 +6232,31 @@ public function imgtest()
                                 ) );
                             } 
 
-
-                            $whereMt = array(
-                                'meta_name'      => 'post_progress',
-                                'meta_key'      => $sid,
-                                'meta_value'      => 1,
-                                'object_id'      => $gvalue->p_id,
-                            );
-                            $checkExistP = $this->Mod_general->select('meta','*', $whereMt);
-                            /*Check if not post*/
-                            $check_url = 'https://www.huaythaitodays.com/questions/10456113/check-file-extension-in-upload-form-in-php';
-                            $parse = parse_url($pConent->link);
                             if (!in_array(@$parse['host'], $siteUrl)) {
                                 if(empty($checkExistP[0])) {
                                     $dataJsons[] = $gvalue;
                                 }
-                            } else {
-                                $whereUps = array('p_id' => $gvalue->p_id);
-                                $dataPostsite = array (
-                                    'p_post_to' => 0,
-                                );
-                                $this->Mod_general->update( Tbl_posts::tblName,$dataPostsite, $whereUps);
                             }
+                            // $whereMt = array(
+                            //     'meta_name'      => 'post_progress',
+                            //     'meta_key'      => $sid,
+                            //     'object_id'      => $gvalue->p_id,
+                            // );
+                            // $checkExistP = $this->Mod_general->select('meta','*', $whereMt);
+                            // /*Check if not post*/
+                            // $check_url = 'https://www.huaythaitodays.com/questions/10456113/check-file-extension-in-upload-form-in-php';
+                            // $parse = parse_url($pConent->link);
+                            // if (!in_array(@$parse['host'], $siteUrl)) {
+                            //     if(empty($checkExistP[0])) {
+                            //         $dataJsons[] = $gvalue;
+                            //     }
+                            // } else {
+                            //     $whereUps = array('p_id' => $gvalue->p_id);
+                            //     $dataPostsite = array (
+                            //         'p_post_to' => 0,
+                            //     );
+                            //     $this->Mod_general->update( Tbl_posts::tblName,$dataPostsite, $whereUps);
+                            // }
                             if(preg_match('/บน-ล่าง/', $gvalue->p_name) || preg_match('/เลข/', $gvalue->p_name) || preg_match('/งวด/', $gvalue->p_name) || preg_match('/หวย/', $gvalue->p_name) || preg_match('/ปลดหนี้/', $gvalue->p_name) || preg_match('/Lotto/', $gvalue->p_name) || preg_match('/Lottery/', $gvalue->p_name))  {
                                 $gLabel = 'lotto';
                             }
@@ -6408,7 +6410,6 @@ public function imgtest()
                     $whereDl = array(
                         'p_id' => $postid
                     );
-                    die;
                     $getpDel = $this->Mod_general->select('post', '*', $whereDl);
                     if(!empty($getpDel[0])) {
                         $whereDlN = array(
