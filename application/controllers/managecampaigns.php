@@ -5904,6 +5904,7 @@ public function imgtest()
         $stoppost = $this->input->get('stoppost');
         if(!empty($stoppost)) {
             $this->session->unset_userdata('post_only');
+            $this->session->unset_userdata('post_all');
         }
         
 
@@ -6106,6 +6107,7 @@ public function imgtest()
 
     public function autopostfb($value='')
     {
+        date_default_timezone_set("Asia/Phnom_Penh");
         $log_id = $this->session->userdata ( 'user_id' );
         $user = $this->session->userdata ( 'email' );
         $provider_uid = $this->session->userdata ( 'provider_uid' );
@@ -6205,110 +6207,149 @@ public function imgtest()
                 //date('H') <= 23 && date('H') > 3 && date('H') !='00'
                 //if (date('H') <= 23 && date('H') > 3 && date('H') !='00') {
                     /*get post that not share ixist*/
-                    $where_pro = array(
-                        'u_id ' => $sid,
-                        'user_id' => $log_id
-                    );
-                    $dataJsons = array();
-                    $preTitle = array();
-                    $subTitle = array();
-                    $siteUrl = $this->Mod_general->checkSiteLinkStatus();
-                    $getPost = $this->Mod_general->select('post', '*', $where_pro,"RAND()");
-                    if(!empty($getPost[0])) {
-                        foreach ($getPost as $gvalue) {
-                            $pConent = json_decode($gvalue->p_conent);
-                            $pSchedule = json_decode($gvalue->p_schedule);
-                            $gLabel = @$pSchedule->label;
-                            if(empty($pConent->link)) {
-                                @$this->Mod_general->delete ( Tbl_share::TblName, array (
-                                    'p_id' => $getPost[0]->p_id,
-                                    'social_id' => @$sid,
-                                ) );
-                                @$this->Mod_general->delete ( 'meta', array (
-                                    'object_id' => $getPost[0]->p_id,
-                                ) );
-                                @$this->Mod_general->delete ( 'post', array (
-                                    'p_id' => $getPost[0]->p_id,
-                                ) );
-                            } 
+                $where_pro = array(
+                    'u_id ' => $sid,
+                    'user_id' => $log_id
+                );
+                $dataJsons = array();
+                $preTitle = array();
+                $subTitle = array();
+                $siteUrl = $this->Mod_general->checkSiteLinkStatus();
+                $getPost = $this->Mod_general->select('post', '*', $where_pro,"RAND()");
+                if(!empty($getPost[0])) {
+                    foreach ($getPost as $gvalue) {
+                        $pConent = json_decode($gvalue->p_conent);
+                        $pSchedule = json_decode($gvalue->p_schedule);
+                        $gLabel = @$pSchedule->label;
 
-                            if (!in_array(@$parse['host'], $siteUrl)) {
-                                if(empty($checkExistP[0])) {
+                        /*Clean post if no link*/
+                        if(empty($pConent->link)) {
+                            @$this->Mod_general->delete ( Tbl_share::TblName, array (
+                                'p_id' => $getPost[0]->p_id,
+                                'social_id' => @$sid,
+                            ) );
+                            @$this->Mod_general->delete ( 'meta', array (
+                                'object_id' => $getPost[0]->p_id,
+                            ) );
+                            @$this->Mod_general->delete ( 'post', array (
+                                'p_id' => $getPost[0]->p_id,
+                            ) );
+                        }
+                        /*End Clean post if no link*/
+
+                        /*Check link is avable time*/
+                        $whereStime = array(
+                            'shp_type'      => 'share_update',
+                            'value'      => $pConent->link
+                        );
+                        $checkTimeShare = $this->Mod_general->select('share_progess','*', $whereStime,'shp_id DESC');
+                        if(!empty($checkTimeShare[0])) {
+                            $todaysdate = date('Y/m/d H:i:s', strtotime('-10 minutes'));
+                            $mydate=$checkTimeShare[0]->shp_date;
+                            if (strtotime($todaysdate)>=strtotime($mydate))
+                            {
+                                $isCanPost = true;
+                            }
+                            else
+                            {
+                                // FALSE STATEMENT
+                                $isCanPost = false;
+                                continue;
+                            }
+                        } else {
+                           $isCanPost = true; 
+                        }
+                        
+                        /*End Check link is avable time*/
+                        $parse = parse_url($pConent->link);
+                        if (!in_array(@$parse['host'], $siteUrl)) {
+                            if(empty($checkExistP[0])) {
+                                if(!empty($isCanPost)) {
                                     $dataJsons[] = $gvalue;
                                 }
                             }
-                            // $whereMt = array(
-                            //     'meta_name'      => 'post_progress',
-                            //     'meta_key'      => $sid,
-                            //     'object_id'      => $gvalue->p_id,
-                            // );
-                            // $checkExistP = $this->Mod_general->select('meta','*', $whereMt);
-                            // /*Check if not post*/
-                            // $check_url = 'https://www.huaythaitodays.com/questions/10456113/check-file-extension-in-upload-form-in-php';
-                            // $parse = parse_url($pConent->link);
-                            // if (!in_array(@$parse['host'], $siteUrl)) {
-                            //     if(empty($checkExistP[0])) {
-                            //         $dataJsons[] = $gvalue;
-                            //     }
-                            // } else {
-                            //     $whereUps = array('p_id' => $gvalue->p_id);
-                            //     $dataPostsite = array (
-                            //         'p_post_to' => 0,
-                            //     );
-                            //     $this->Mod_general->update( Tbl_posts::tblName,$dataPostsite, $whereUps);
-                            // }
-                            if(preg_match('/บน-ล่าง/', $gvalue->p_name) || preg_match('/เลข/', $gvalue->p_name) || preg_match('/งวด/', $gvalue->p_name) || preg_match('/หวย/', $gvalue->p_name) || preg_match('/ปลดหนี้/', $gvalue->p_name) || preg_match('/Lotto/', $gvalue->p_name) || preg_match('/Lottery/', $gvalue->p_name))  {
-                                $gLabel = 'lotto';
-                            }
-
-                            if(!empty($dataJsons) && !empty($gLabel) && $gLabel == 'lotto') {
-                                /*Show data Prefix*/
-                                if(!empty($pSchedule->prefix_checked)) {
-                                    if(!empty($pSchedule->prefix_title)) {
-                                        $prefixArr = explode('|', $pSchedule->prefix_title);
-                                        $preRand = $prefixArr[mt_rand(0, count($prefixArr) - 1)];
-                                    } else {       
-                                        $where_pre = array(
-                                            'c_name'      => 'prefix_title',
-                                            'c_key'     => $log_id,
-                                        );
-                                        $prefix_title = $this->Mod_general->select('au_config', '*', $where_pre);
-                                        if(!empty($prefix_title[0])) {
-                                            $prefix = json_decode($prefix_title[0]->c_value);
-                                            $prefixArr = explode('|', $prefix);
-                                            $preTitle[] = $prefixArr[mt_rand(0, count($prefixArr) - 1)];
-                                        }
-                                    }
-                                }
-                                /*End Show data Prefix*/
-                                /*Show data Prefix*/
-                                
-                                if(!empty($pSchedule->suffix_checked)) {
-                                    if(!empty($pSchedule->suffix_title)) {
-                                        $subFixArr = explode('|', $pSchedule->suffix_title);
-                                        $subRand = $subFixArr[mt_rand(0, count($subFixArr) - 1)];
-                                    } else {
-                                        $whereSuf = array(
-                                            'c_name'      => 'suffix_title',
-                                            'c_key'     => $log_id,
-                                        );
-                                        $suffix_title = $this->Mod_general->select('au_config', '*', $whereSuf);
-                                        if(!empty($suffix_title[0])) {
-                                            $subfix = json_decode($suffix_title[0]->c_value);
-                                            $subFixArr = explode('|', $subfix);
-                                            $subTitle[] = $subFixArr[mt_rand(0, count($subFixArr) - 1)];
-                                        }
-                                    }
-                                }
-                                /*End Show data Prefix*/
-                            }
                         }
-                    
-}                    $dataJson = array(
-                        'post' => $dataJsons,
-                        'preTitle' => $preTitle,
-                        'subTitle' => $subTitle
+                        // $whereMt = array(
+                        //     'meta_name'      => 'post_progress',
+                        //     'meta_key'      => $sid,
+                        //     'object_id'      => $gvalue->p_id,
+                        // );
+                        // $checkExistP = $this->Mod_general->select('meta','*', $whereMt);
+                        // /*Check if not post*/
+                        // $check_url = 'https://www.huaythaitodays.com/questions/10456113/check-file-extension-in-upload-form-in-php';
+                        // $parse = parse_url($pConent->link);
+                        // if (!in_array(@$parse['host'], $siteUrl)) {
+                        //     if(empty($checkExistP[0])) {
+                        //         $dataJsons[] = $gvalue;
+                        //     }
+                        // } else {
+                        //     $whereUps = array('p_id' => $gvalue->p_id);
+                        //     $dataPostsite = array (
+                        //         'p_post_to' => 0,
+                        //     );
+                        //     $this->Mod_general->update( Tbl_posts::tblName,$dataPostsite, $whereUps);
+                        // }
+                        if(preg_match('/บน-ล่าง/', $gvalue->p_name) || preg_match('/เลข/', $gvalue->p_name) || preg_match('/งวด/', $gvalue->p_name) || preg_match('/หวย/', $gvalue->p_name) || preg_match('/ปลดหนี้/', $gvalue->p_name) || preg_match('/Lotto/', $gvalue->p_name) || preg_match('/Lottery/', $gvalue->p_name))  {
+                            $gLabel = 'lotto';
+                        }
+
+                        if(!empty($dataJsons) && !empty($gLabel) && $gLabel == 'lotto') {
+                            /*Show data Prefix*/
+                            if(!empty($pSchedule->prefix_checked)) {
+                                if(!empty($pSchedule->prefix_title)) {
+                                    $prefixArr = explode('|', $pSchedule->prefix_title);
+                                    $preRand = $prefixArr[mt_rand(0, count($prefixArr) - 1)];
+                                } else {       
+                                    $where_pre = array(
+                                        'c_name'      => 'prefix_title',
+                                        'c_key'     => $log_id,
+                                    );
+                                    $prefix_title = $this->Mod_general->select('au_config', '*', $where_pre);
+                                    if(!empty($prefix_title[0])) {
+                                        $prefix = json_decode($prefix_title[0]->c_value);
+                                        $prefixArr = explode('|', $prefix);
+                                        $preTitle[] = $prefixArr[mt_rand(0, count($prefixArr) - 1)];
+                                    }
+                                }
+                            }
+                            /*End Show data Prefix*/
+                            /*Show data Prefix*/
+                            if(!empty($pSchedule->suffix_title)) {
+                                $subFixArr = explode('|', $pSchedule->suffix_title);
+                                $subRand = $subFixArr[mt_rand(0, count($subFixArr) - 1)];
+                            } else {
+                                $whereSuf = array(
+                                    'c_name'      => 'suffix_title',
+                                    'c_key'     => $log_id,
+                                );
+                                $suffix_title = $this->Mod_general->select('au_config', '*', $whereSuf);
+                                if(!empty($suffix_title[0])) {
+                                    $subfix = json_decode($suffix_title[0]->c_value);
+                                    $subFixArr = explode('|', $subfix);
+                                    $subTitle[] = $subFixArr[mt_rand(0, count($subFixArr) - 1)];
+                                }
+                            }
+                            /*End Show data Prefix*/
+                        }
+                    }
+                }
+                if(empty($dataJsons)) {
+                    $progrs = $this->getprogress();
+                    $where_Pshare = array (
+                        'u_id' => $sid,
+                        'p_status' => 1,
+                        'p_id' => $progrs,
                     );
+                    $dataPostg = $this->Mod_general->select ('post','*', $where_Pshare);
+                    $dataJson = array(
+                        'post' =>$dataPostg
+                    );
+                }
+                $dataJson = array(
+                    'post' => $dataJsons,
+                    'preTitle' => $preTitle,
+                    'subTitle' => $subTitle
+                );
                     // $where_Pshare = array (
                     //     'u_id' => $sid,
                     //     'p_status' => 1,
@@ -6335,18 +6376,7 @@ public function imgtest()
                     // }
                     
 
-                    if(empty($dataJson['post'])) {
-                        $progrs = $this->getprogress();
-                        $where_Pshare = array (
-                            'u_id' => $sid,
-                            'p_status' => 1,
-                            'p_id' => $progrs,
-                        );
-                        $dataPostg = $this->Mod_general->select ('post','*', $where_Pshare);
-                        $dataJson = array(
-                            'post' =>$dataPostg
-                        );
-                    }
+                    
                     //$result = array_merge($dataJson, $fbgpids,$fbpids,$fbAccount);
                     //echo json_encode($result);
                     /*End check post progress frist*/ 
@@ -6358,6 +6388,38 @@ public function imgtest()
                 // }
                 $result = array_merge($dataJson, $fbgpids,$fbpids,$fbAccount);
                     echo json_encode($result);
+                die;
+                break;
+            case 'share_update':
+                header("Access-Control-Allow-Origin: *");
+                $fb_ojb_id = $this->input->get('post_id');
+
+                $postid = $this->input->get('pid');
+                $getfbuid = $this->session->userdata ( 'fb_user_id' );
+                $link = $this->input->get( 'link' );
+                $message = $this->input->get( 'message' );
+
+                $where_Ppg = array (
+                    'p_progress' => 1,
+                    'user_id' => $log_id
+                );
+                $Postpg = $this->Mod_general->select ('post','*', $where_Ppg);
+                if (!empty($Postpg[0])) {
+                    foreach ($Postpg as $pgvalue) {
+                        $pConent = json_decode($pgvalue->p_conent);
+                        if($pConent->link == $link) {
+                            $dataPostInstert = array (
+                                'shp_date' => date('Y-m-d H:i:s'),
+                                'p_id' => $pgvalue->p_id, 
+                                'object_id' => $fb_ojb_id, 
+                                'fbuid' => $getfbuid, 
+                                'shp_type' => 'share_update', 
+                                'value' => $link,
+                            );
+                            $AddedShare = $this->Mod_general->insert ( 'share_progess', $dataPostInstert );
+                        }
+                    }
+                }
                 die;
                 break;
             case 'next':

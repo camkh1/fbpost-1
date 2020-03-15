@@ -313,12 +313,16 @@ function parse_query_string(query) {
         $uniq_id = substr($str, 0, 9);
         //$link = $glink . '?s=' . $uniq_id;
         $link = $glink;
-        $parse = parse_url($glink);
-        if (in_array(@$parse['host'], $siteUrl)) {
-        	$pid = $value->{Tbl_posts::id};
-        	echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/yturl?pid='.$pid.'&action=postblog&autopost=1";},0 );</script>';
-            exit();
-        }  
+        $UserTable = new Mod_general ();
+    	$getBrowser = $UserTable->getBrowser()['name'];
+    	if($getBrowser=='Mozilla Firefox'){
+	        $parse = parse_url($glink);
+	        if (in_array(@$parse['host'], $siteUrl)) {
+	        	$pid = $value->{Tbl_posts::id};
+	        	echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/yturl?pid='.$pid.'&action=postblog&autopost=1";},0 );</script>';
+	            exit();
+	        } 
+    	}
      ?>
                                     <tr>
 								<td class="checkbox-column"><input type="checkbox" id="itemid"
