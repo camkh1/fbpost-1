@@ -1665,7 +1665,7 @@ class Managecampaigns extends CI_Controller {
                     $imgRand = $photo[$brand];
                 /*End get post from post id*/
                     $links = !empty(@$pConent->vid) ? @$pConent->vid : @$pConent->link;
-                    $title = nl2br(html_entity_decode(htmlspecialchars_decode(@$getPost[0]->p_name)));
+                    $title = nl2br(html_entity_decode(htmlspecialchars_decode(@$pConent->name)));
                     $thai_title = $getPost[0]->p_name;
                     if(@$pOption->label == 'lotto') {
                         if($this->Mod_general->userrole('uid')) {
@@ -3219,8 +3219,8 @@ class Managecampaigns extends CI_Controller {
                 break;
             default:
                 if($this->Mod_general->userrole('uid')) {
-                    //$addTitle = $allData->p_name;
-                    $addTitle = $title;
+                    $addTitle = $allData->p_name;
+                    //$addTitle = $title;
                     $EngTitle = $title;
                     //$thaiText = '<p>วันนี้ทางทีมงานขอนำเสนอ <b>'.$allData->p_name.'</b> งวดนี้ (โปรดใช้วิจารณญาณในการรับชม)<br />คอหวยลองพิจารณาเลขเด็ดงวดนี้<br />เป็นยังไงก็ลองพิจารณาและเสี่ยงโชคดูนะคะ ขอให้โชคดีทุกคนนะค่ะ<br /></p><br /><p>อัพเดทกันเรื่อยๆครับกับพวกเราทีมงานหวยไทย ที่พร้อมจะนำข้อมูลหวยเด็ดเลขเด่นแนวทางสลากกินแบ่งรัฐบาลมานำเสนอให้กับแฟนหวยคนเล่นหวยทุกท่าน งวดที่ผ่านมาคงจะใด้เฮกันน่ะครับ แต่ก็มีบ้างที่พลาดไป มีใด้มาก็ต้องมีเสียไปเป็นธรรมดา แต่ก็เริ่มใหม่ใด้ครับ งวดนี้เราจึงนำข้อมูลหวยอัพเดทมาฝากกันครับกับ เลขเด่น ที่ทางเจ้าของข้อมูลเค้าสรุปมาแล้วว่าเด่นจริง ไปดูกันครับว่ามีเลขใดบ้าง</p><br /><br /><p style="color:red">คำเตือน&nbsp; การ เล่นการพนัน ทุกชนิด ชื่อก็บอกตรงๆว่า เล่น อย่าจริงจังนะคับผม&nbsp; ...ไม่ว่าจะชนะหรือแพ้ ขอให้สนุกกับการเล่นนะครับ หากรู้สึกเครียดหรือไม่สนุก ขอให้หยุดหรือเลิกเล่น ..เพราะแสดงว่าเล่นไม่เป็นไม่เหมาะสมแล้วคับ ..ความพอดีเหมาะสมของแต่ละคนไม่เท่ากัน ให้ใช้ความรู้สึกที่ตามที่แนะนำนะคับผม..18+ เด็กและเยาวชน และ&nbsp; ผู้ยังไม่มีรายได้ห้ามเล่นนะคับ</p><br /><br />';
                     $thaiText = '';
