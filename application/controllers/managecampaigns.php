@@ -496,7 +496,7 @@ class Managecampaigns extends CI_Controller {
             $postAto = $this->Mod_general->getActionPost();
             $arrX = array(5,10,7,6,8,9,11,12);
             $randIndex = array_rand($arrX);
-            if(!empty($postAto)) {
+            if(!empty($postAto->autopost)) {
                 if (date('H') <= 23 && date('H') > 4 && date('H') !='00') {
                    //echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopost?start=1";}, 600000 );</script>';
                     
@@ -1561,11 +1561,11 @@ class Managecampaigns extends CI_Controller {
                     /*End get blog link from database*/
                     if(empty($post_by_manaul)) {
                         /*post by Google API*/
-                        $setUrl = base_url().'managecampaigns/yturl?pid='.$p_id.'&bid='.$bid.'&action=postblog&blink='.$blogLink.'&autopost='.$postAto;
+                        $setUrl = base_url().'managecampaigns/yturl?pid='.$p_id.'&bid='.$bid.'&action=postblog&blink='.$blogLink.'&autopost='.$postAto->autopost;
                         //echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/yturl?pid='.$p_id.'&bid='.$bid.'&action=postblog&blink='.$blogLink.'&autopost=1";}, 300 );</script>';
                         redirect($setUrl); 
                     } else {
-                        $setUrl = base_url().'managecampaigns/postauto?pid='.$p_id.'&bid=' . $bid . '&action=generate&blink='.$blogLink.'&autopost='.$postAto.'&blog_link_id='.$blogRand;
+                        $setUrl = base_url().'managecampaigns/postauto?pid='.$p_id.'&bid=' . $bid . '&action=generate&blink='.$blogLink.'&autopost='.$postAto->autopost.'&blog_link_id='.$blogRand;
                         //echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/postauto?pid='.$p_id.'&bid=' . $bid . '&action=generate&blink='.$blogLink.'&autopost=1&blog_link_id='.$blogRand.'";}, 300 );</script>'; 
                             redirect($setUrl); 
                     }
@@ -1846,6 +1846,26 @@ class Managecampaigns extends CI_Controller {
                                                 $slink = $pConent->link;
                                                 $title = $getPost[0]->p_name;
                                             }
+                                            /*get blog type if set to Autopopst*/
+                                            $geAutoAction = $this->Mod_general->getActionPost();
+                                            if(!empty($geAutoAction->blog_to_post->news)) {
+                                                $bid = $geAutoAction->blog_to_post->news;  
+                                            }
+
+                                            if(preg_match('/บน-ล่าง/', $getPost[0]->p_name) || preg_match('/เลข/', $getPost[0]->p_name) || preg_match('/งวด/', $getPost[0]->p_name) || preg_match('/หวย/', $getPost[0]->p_name) || preg_match('/ปลดหนี้/', $getPost[0]->p_name) || preg_match('/Lotto/', $getPost[0]->p_name) || preg_match('/Lottery/', $getPost[0]->p_name))  {
+                                                if(!empty($pConent->vid)) {
+                                                    $gLabels = 'lottery-video';
+                                                }
+                                            }
+                                            if (preg_match("/lottery-video/", $pOption->label) || preg_match("/news-video/", $pOption->label) || preg_match("/news-video/", $gLabels)) {
+                                                if(!empty($geAutoAction->blog_to_post->lottery)) {
+                                                    $bid = $geAutoAction->blog_to_post->lottery;  
+                                                }
+                                            }
+                                            //var_dump($geAutoAction->blog_to_post->news);
+                                            /*End get blog type if set to Autopopst*/
+
+
                                             $blogData = $this->postToBlogger($bid, $vid, $title,$image,$message,$main_post_style,@$pOption->label,$getPost[0]);
                                             //$blogData['error'] = true;
                                             if(!empty($blogData['error'])) {
@@ -2419,7 +2439,7 @@ class Managecampaigns extends CI_Controller {
             /*End update post*/
             /*update youtube if autopost*/
             $fbid = $this->session->userdata ( 'sid' ); 
-            if(!empty($postAto)) {
+            if(!empty($postAto->autopost)) {
                 $whereYtup = array(
                     'yid' => $vid,
                     'y_fid' => $fbid,
@@ -5547,8 +5567,8 @@ public function imgtest()
             $data['ytdata'] = json_decode($ytdata[0]->c_value);
         } 
         /*End show youtube Channel*/
-
-        $data['postAuto'] = $this->Mod_general->getActionPost();
+        $getActionPost = $this->Mod_general->getActionPost();
+        $data['postAuto'] = $getActionPost->autopost;
         
         /*delete blog data*/
         if(!empty($this->input->get('del'))) {
@@ -5643,6 +5663,8 @@ public function imgtest()
             $inputAuto = $this->input->post('autopost');
             $titleExcept = $this->input->post('titleExcept');
             $bloggerTemplate = $this->input->post('bloggerTemplate');
+            $lotteryBlog = $this->input->post('lotteryBlog');
+            $newsBlog = $this->input->post('newsBlog');
             $posttype = $this->input->post('posttype');
             $fbUserId = $this->session->userdata ( 'sid' );
             $autopost = 'autopost';
@@ -5656,6 +5678,7 @@ public function imgtest()
                 'templateLink' => $bloggerTemplate,
                 'titleExcept' => $titleExcept,
                 'posttype' => $posttype,
+                'blog_to_post' => array('lottery'=>$lotteryBlog,'news'=>$newsBlog),
             );
             /* check before insert */
             if (empty($query_ran)) {
@@ -5869,8 +5892,10 @@ public function imgtest()
         }
         /*End add blog link by Imacros*/
         $tmp_path = './uploads/'.$log_id.'/'. $fbUserId . '_tmp_gmail_account.json';
-        $string = file_get_contents($tmp_path);
-        $data['json_a'] = $json_a = json_decode($string);
+        if (!file_exists($tmp_path)) {
+            $string = @file_get_contents($tmp_path);
+            $data['json_a'] = $json_a = @json_decode($string);
+        }
         /*check for exist post*/
         if(!empty($this->input->get('start')) || !empty($this->input->get('startpost'))) {
             $sid = $this->session->userdata ( 'sid' );
@@ -7373,6 +7398,9 @@ public function imgtest()
         }
     }
 
+    /*
+    * Get post from youtube videos
+    */
     function autoposttoblog($yid = '')
     {
         $log_id = $this->session->userdata ( 'user_id' );
@@ -7389,19 +7417,12 @@ public function imgtest()
         $posttype = false;
 
         /*config autopost*/
-        $whereShowAuto = array(
-            'c_name'      => 'autopost',
-            'c_key'     => $log_id,
-        );
-        $autoData = $this->Mod_general->select('au_config', '*', $whereShowAuto);
-        if(!empty($autoData[0])) {
-            $autopost = json_decode($autoData[0]->c_value);
-            if(!empty($autopost)) {
-                $titleExcept = $autopost->titleExcept;
-                $autoposts = $autopost->autopost;
-                $posttype = $autopost->posttype;
-            }
-        } 
+        $postAto = $this->Mod_general->getActionPost();
+        if(!empty($autopost->autopost)) {
+            $titleExcept = $autopost->titleExcept;
+            $autoposts = $autopost->autopost;
+            $posttype = $autopost->posttype;
+        }
         /*end config autopost*/
         if(empty($yid)) {
             $checkYtExist = $this->mod_general->select ( 
@@ -7427,6 +7448,16 @@ public function imgtest()
                     'y_status' => 0,
                     'yid' =>$yid,
                 ));
+        }
+        if(!empty($checkYtExist[0]->y_type)) {
+            $getlabels = $checkYtExist[0]->y_type;
+            if($getlabels == 'lottery-video') {
+                $labels = 'lottery-video,lotto';
+            } else {
+                $labels = 'news-video,news';
+            }
+        } else {
+            $labels = 'video';
         }
         if(!empty($yid)) {
             /*update youtube that get posted*/
@@ -7478,7 +7509,7 @@ public function imgtest()
                 'post_by_manaul' => $json_a->post_by_manaul,
                 'foldlink' => 0,
                 'gemail' => $json_a->gemail,
-                'label' => 'lotto',
+                'label' => @$labels,
             );
             require_once(APPPATH.'controllers/Splogr.php');
             $aObj = new Splogr();  
@@ -7608,7 +7639,7 @@ public function imgtest()
                         'post_by_manaul' => $json_a->post_by_manaul,
                         'foldlink' => 0,
                         'gemail' => $this->session->userdata ( 'gemail' ),
-                        'label' => 'lotto',
+                        'label' => @$labels,
                     );
                     /*check for exist video in old link*/
                     $whExist = array (
@@ -7653,7 +7684,7 @@ public function imgtest()
                             'post_by_manaul' => $json_a->post_by_manaul,
                             'foldlink' => 0,
                             'gemail' => $this->session->userdata ( 'gemail' ),
-                            'label' => 'lotto',
+                            'label' => @$labels,
                         );
                         $content = array (
                             'name' => @htmlentities(htmlspecialchars(str_replace(' - YouTube', '', $contents["content"][0]["title"]))),

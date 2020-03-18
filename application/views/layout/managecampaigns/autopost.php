@@ -118,8 +118,10 @@ $glogin = str_replace('autopost;=', 'autopost=', $glogin);
 <?php if(!empty($this->input->get('bitly'))):?><code id="bitly" style="width:300px;overflow:hidden;display:none">var links=&quot;<?php echo $this->input->get('bitly');?>&quot;,pid=&quot;<?php echo @$this->input->get('pid');?>&quot;;</code><?php endif;?>
 <?php if(!empty($this->input->get('glogin'))):?><code id="codeE" style="width:300px;overflow:hidden;display:none">mm=&quot;CODE:&quot;;mm+=&quot;SET !ERRORIGNORE YES\n&quot;;mm+=&quot;URL GOTO=&quot;+homeUrl+&quot;managecampaigns/account\n&quot;;mm+=&quot;WAIT SECONDS=10\n&quot;;mm+='TAG POS=1 TYPE=DIV ATTR=TXT:<?php echo !empty($this->session->userdata ( 'gemail' )) ? $this->session->userdata ( 'gemail' ) : @$json_a->email; ?>\n';mm+=&quot;WAIT SECONDS=5\n&quot;;mm+=&quot;TAG POS=1 TYPE=DIV ATTR=ID:profileIdentifier\n&quot;;mm+=&quot;WAIT SECONDS=15\n&quot;;mm+=&quot;URL GOTO=<?php echo !empty($this->input->get('glogin')) ? @$glogin : '&quot;+homeUrl+&quot;managecampaigns/autopost?start=1'; ?>\n&quot;;retcode=iimPlay(mm);if(retcode&lt;0){errtext=iimGetLastError();macro=&quot;CODE:&quot;;macro+=&quot;URL GOTO=<?php echo !empty($this->input->get('glogin')) ? @$glogin : '&quot;+homeUrl+&quot;managecampaigns/autopost?start=1'; ?>\n&quot;;retcode=iimPlay(macro);}</code><?php endif;?>
 <code id="examplecode5" style="width:300px;overflow:hidden;display:none">var codedefault2=&quot;SET !EXTRACT_TEST_POPUP NO\n SET !TIMEOUT_PAGE 300\n SET !ERRORIGNORE YES\n SET !TIMEOUT_STEP 0.1\n&quot;;var wm=Components.classes[&quot;@mozilla.org/appshell/window-mediator;1&quot;].getService(Components.interfaces.nsIWindowMediator);var window=wm.getMostRecentWindow(&quot;navigator:browser&quot;);var bname = &quot;<?php echo @$bNewName;?>&quot;,bid = &quot;<?php echo @$bLinkID;?>&quot;, homeUrl = &quot;<?php echo base_url();?>&quot;, template = &quot;<?php echo @$setTemplate;?>&quot;, tempfolder = &quot;<?php echo @$btemplate;?>&quot;,backto=&quot;<?php echo @$backto;?>&quot;;</code>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />   
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<?php if (!empty($_GET)):?>   
 <meta http-equiv="refresh" content="10"/>
+<?php endif;?>
     <script type="text/javascript">
         function runcode(codes) {
             var str = $("#examplecode5").text();
@@ -315,10 +317,112 @@ $glogin = str_replace('autopost;=', 'autopost=', $glogin);
     <div class="row">
         <div class="col-md-12">
                 <div class="row">
-                    <a href="javascript:;" onclick="checkBloggerPost()" class="btn btn-primary pull-right">Start now</a>
-                    <div class="col-md-6">
+                    <!-- <a href="javascript:;" onclick="checkBloggerPost()" class="btn btn-primary pull-right">Start now</a> -->
+                    <div class="col-md-12">
+                        <div class="widget box widget-close">
+                            <div class="widget-header">
+                                <h4><i class="icon-reorder"></i> Autopost</h4>
+                                <div class="toolbar no-padding">
+                                    <div class="btn-group"> <span class="btn btn-xs widget-collapse"><i class="icon-angle-up"></i></span> </div>
+                                </div>
+                            </div>
+                            <div class="widget-content">
+                                <div class="row">
+                                    <form class="form-horizontal row-border" id="autopost" method="post">
+                                    <div class="col-md-6">
+                                            <div class="form-group">
+                                                <div class="col-md-12">
+                                                    <label class="radio-inline">
+                                                        <input type="radio" value="1" name="autopost" <?php echo !empty($autopost->autopost) ? 'checked': '';?> />
+                                                        <input type="hidden" name="setPostAuto" value="1"/>
+                                                        <i class="subtopmenu hangmeas">Yes</i>
+                                                    </label> 
+                                                    <label class="radio-inline">
+                                                        <input type="radio" value="0" name="autopost" <?php echo empty($autopost->autopost) ? 'checked': '';?>/>
+                                                        <i class="subtopmenu hangmeas">No</i>
+                                                    </label>                                
+                                                </div>
+                                                <div style="clear: both;"></div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="col-md-12">
+                                                    <label class="radio-inline">
+                                                        <input type="radio" value="1" name="posttype" <?php echo !empty($autopost->posttype) ? 'checked': '';?> />
+                                                        <i class="subtopmenu hangmeas">Google API</i>
+                                                    </label> 
+                                                    <label class="radio-inline">
+                                                        <input type="radio" value="0" name="posttype" <?php echo empty($autopost->posttype) ? 'checked': '';?>/>
+                                                        <i class="subtopmenu hangmeas">Post by Manaully</i>
+                                                    </label>                                
+                                                </div>
+                                                <div style="clear: both;"></div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="col-md-12">
+                                                    <input type="text" name="titleExcept" class="form-control" style="width: 100%" placeholder="Title Except... Ex: 16/4/26562|16-4-2562" value="<?php echo @$autopost->titleExcept;?>" required />
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="col-md-12">
+                                                    <input type="text" name="bloggerTemplate" class="form-control" style="width: 100%" placeholder="blogger Template" value="<?php echo @$autopost->templateLink;?>" required />
+                                                </div>
+                                            </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                            <div class="widget box">
+                                    <div class="widget-content">
+                                        <label class="control-label">
+                                            Blogs Post Option:
+                                        </label>
+                                        <div class="col-md-12">
+                                            <label class="radio-inline">
+                                                <input type="radio" value="lottery" name="paction" checked="checked">
+                                                <i class="subtopmenu hangmeas">Lottery blogs:</i>
+                                            </label>
+                                            <label class="radio-inline">
+                                                <input type="radio" value="news" name="paction">
+                                                <i class="subtopmenu hangmeas">News blogs:</i>
+                                            </label>
+                                             
+                                            <div id="blogtype_lottery" style=""> 
+                                                    <div class="form-group">
+                                                        <div class="col-md-12">
+                                                            <input type="text" name="lotteryBlog" class="form-control" style="width: 100%" placeholder="Lottery blog" value="<?php echo @$autopost->blog_to_post->lottery;?>" required="">
+                                                        </div>
+                                                    </div>
+                                                <div style="clear:both"></div>
+                                            </div>
+                                            <div id="blogtype_news" style="display: none;"> 
+                                                    <div class="form-group">
+                                                        <div class="col-md-12">
+                                                            <input type="text" name="newsBlog" class="form-control" style="width: 100%" placeholder="News blog" value="<?php echo @$autopost->blog_to_post->news;?>" required="">
+                                                        </div>
+                                                    </div>
+                                                <div style="clear:both"></div>
+                                            </div>
+                                        </div>
+                                        <div style="clear:both"></div>
+                                    </div>
+                                </div>
+
+                                    </div>
+                                    <div style="clear:both"></div>
+                                    <div class="form-actions" style="padding: 10px 20px 10px;margin: auto;margin-bottom: -10px">
+                                            <input name="saveAuto" type="button" value="Save" class="btn btn-primary pull-right" />
+                                            <?php if(!empty($autopost)):?><a href="javascript:;" onclick="createblog()" class="btn btn-primary pull-right">Start now</a><?php endif;?>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- end autopost -->
+                    </div>
+                </div>
+                <div class="row">
+                    <!-- <a href="javascript:;" onclick="checkBloggerPost()" class="btn btn-primary pull-right">Start now</a> -->
+                    <div class="col-md-12">
                         <!-- blog link -->
-                        <div class="widget box">
+                        <div class="widget box  widget-closed">
                             <div class="widget-header">
                                 <h4><i class="icon-reorder"></i> Blog Link</h4>
                                 <div class="toolbar no-padding">
@@ -358,70 +462,11 @@ $glogin = str_replace('autopost;=', 'autopost=', $glogin);
                         </div>
                         <!-- End blog link -->
                     </div>
-
-                    <div class="col-md-6">
-                        <div class="widget box widget-closed">
-                            <div class="widget-header">
-                                <h4><i class="icon-reorder"></i> Autopost</h4>
-                                <div class="toolbar no-padding">
-                                    <div class="btn-group"> <span class="btn btn-xs widget-collapse"><i class="icon-angle-up"></i></span> </div>
-                                </div>
-                            </div>
-                            <div class="widget-content">
-                                <form class="form-horizontal row-border" id="autopost" method="post">
-                                        <div class="form-group">
-                                            <div class="col-md-12">
-                                                <label class="radio-inline">
-                                                    <input type="radio" value="1" name="autopost" <?php echo !empty($autopost->autopost) ? 'checked': '';?> />
-                                                    <input type="hidden" name="setPostAuto" value="1"/>
-                                                    <i class="subtopmenu hangmeas">Yes</i>
-                                                </label> 
-                                                <label class="radio-inline">
-                                                    <input type="radio" value="0" name="autopost" <?php echo empty($autopost->autopost) ? 'checked': '';?>/>
-                                                    <i class="subtopmenu hangmeas">No</i>
-                                                </label>                                
-                                            </div>
-                                            <div style="clear: both;"></div>
-                                        </div>
-                                        <div class="form-group">
-                                            <div class="col-md-12">
-                                                <label class="radio-inline">
-                                                    <input type="radio" value="1" name="posttype" <?php echo !empty($autopost->posttype) ? 'checked': '';?> />
-                                                    <i class="subtopmenu hangmeas">Google API</i>
-                                                </label> 
-                                                <label class="radio-inline">
-                                                    <input type="radio" value="0" name="posttype" <?php echo empty($autopost->posttype) ? 'checked': '';?>/>
-                                                    <i class="subtopmenu hangmeas">Post by Manaully</i>
-                                                </label>                                
-                                            </div>
-                                            <div style="clear: both;"></div>
-                                        </div>
-                                        <div class="form-group">
-                                            <div class="col-md-12">
-                                                <input type="text" name="titleExcept" class="form-control" style="width: 100%" placeholder="Title Except... Ex: 16/4/26562|16-4-2562" value="<?php echo @$autopost->titleExcept;?>" required />
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <div class="col-md-12">
-                                                <input type="text" name="bloggerTemplate" class="form-control" style="width: 100%" placeholder="blogger Template" value="<?php echo @$autopost->templateLink;?>" required />
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="form-actions" style="padding: 10px 20px 10px">
-                                            <input name="saveAuto" type="button" value="Save" class="btn btn-primary pull-right" />
-                                            <?php if(!empty($autopost)):?><a href="javascript:;" onclick="createblog()" class="btn btn-primary pull-right">Start now</a><?php endif;?>
-                                        </div>
-                                </form>
-                            </div>
-                        </div>
-                        <!-- end autopost -->
-                    </div>
                 </div>
-
                 <div class="row">
                     <div class="col-md-12">
                         <!-- youtube -->
-                        <div class="widget box" id="YoutubeChannel">
+                        <div class="widget box  widget-closed" id="YoutubeChannel">
                             <div class="widget-header">
                                 <h4><i class="icon-reorder"></i> Youtube Channel</h4>
                                 <div class="toolbar no-padding">
@@ -514,6 +559,17 @@ $glogin = str_replace('autopost;=', 'autopost=', $glogin);
                        console.log(textStatus, errorThrown);
                     }
                 });
+            });
+
+            $('input[name=paction]').click(function () {
+                if($(this).val() == 'news') {
+                    $('#blogtype_news').slideDown();
+                    $('#blogtype_lottery').slideUp();
+                }
+                if($(this).val() == 'lottery') {
+                    $('#blogtype_news').slideUp();
+                    $('#blogtype_lottery').slideDown();
+                }
             });
         });
 

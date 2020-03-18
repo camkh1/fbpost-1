@@ -1774,7 +1774,7 @@ public function get_video_id($param, $videotype = '')
         curl_close ( $ch );
         return $data;
     }
-    function getActionPost()
+    function getActionPost($callback = false)
     {
         $log_id = $this->session->userdata ( 'user_id' );
         $sid = $this->session->userdata ( 'sid' );
@@ -1784,10 +1784,7 @@ public function get_video_id($param, $videotype = '')
         );
         $autoData = $this->Mod_general->select('au_config', '*', $whereShowAuto);
         if(!empty($autoData[0])) {
-            $autopost = json_decode($autoData[0]->c_value);
-            if($autopost->autopost == 1) {
-                return $autopost->autopost;
-            }
+            return json_decode($autoData[0]->c_value);
         } else {
             return false;
         }
