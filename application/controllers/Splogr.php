@@ -299,6 +299,9 @@ class Splogr extends CI_Controller
         $dooverview = trim(preg_replace('/\s\s+/', ' ', $dooverview));
         if(empty($title)) {
             $title = @$html->find ( 'title', 0 )->innertext;
+            if(empty($title)) {
+                fromAlibaba($site_url,$get);
+            }
         }
         $contentJson = [];
         $getContent = array('title'=>$title,'content'=>$pricewrap . '<br/>'.$dooverview.'<br/> from: '.$site_url);
