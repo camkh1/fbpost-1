@@ -289,14 +289,17 @@ class Splogr extends CI_Controller
         $log_id = $this->session->userdata ('user_id');
         $this->load->library('html_dom');  
         $html = file_get_html($site_url);      
-        $title = $html->find ( 'h1.ma-title', 0 )->innertext;
+        $title = @$html->find ( 'h1.ma-title', 0 )->innertext;
         $og_image = @$html->find ( 'meta [property=og:image]', 0 )->content;
-        $pricewrap = $html->find ( '.ma-price-wrap', 0 )->innertext;
+        $pricewrap = @$html->find ( '.ma-price-wrap', 0 )->innertext;
         $pricewrap = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $pricewrap);
         $pricewrap = trim(preg_replace('/\s\s+/', ' ', $pricewrap));
-        $dooverview = $html->find ( '.do-overview', 0 )->innertext;
+        $dooverview = @$html->find ( '.do-overview', 0 )->innertext;
         $dooverview = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $dooverview);
         $dooverview = trim(preg_replace('/\s\s+/', ' ', $dooverview));
+        if(empty($title)) {
+            $title = @$html->find ( 'title', 0 )->innertext;
+        }
         $contentJson = [];
         $getContent = array('title'=>$title,'content'=>$pricewrap . '<br/>'.$dooverview.'<br/> from: '.$site_url);
         $contentJson[] = $getContent;

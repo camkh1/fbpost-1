@@ -1334,16 +1334,29 @@
         }
 
         function getcontent(id) {
-            var a = $("#post_"+id);             
+            var a = $("#post_"+id);
+            if($(a).hasClass('loadding')) {
+
+            } else {
+                $(a).addClass('loadding');
+            }
+            var divTimver = $('<div>');
+            $( "#post_"+id +" .widget-header .toolbar .btn-group span" ).before(divTimver);
+                countdown(40, divTimver);      
                 Apps.blockUI(a);
                 if(id!='') {
-                    var jqxhr = $.ajax( "<?php echo base_url();?>splogr/getpost")
+                    var jqxhr = $.ajax({ url:"<?php echo base_url();?>splogr/getpost", timeout:120000})
                       .done(function(data) {
+                        countdown(1, divTimver,1);
                         if ( data ) {                            
                             var obj = JSON.parse(data);                            
                             if(!obj.error) {
                                $('#title_link_' + id).val(obj.content[0].title);
                                $('#description_link_' + id).data("wysihtml5").editor.setValue(obj.content[0].content);
+                               var a = $("#post_"+id);
+                                if($(a).hasClass('loadding')) {
+                                    $(a).removeClass('loadding');
+                                } 
                                 window.setTimeout(function () {
                                     Apps.unblockUI(a);
                                     noty({
@@ -1375,7 +1388,11 @@
                             }, 1000)
                         }
                       })
-                      .fail(function() {
+                      .fail(function(jqXHR, textStatus) {
+                        if(textStatus == 'timeout') {
+                            console.log('try again to get content...');
+                            //getcontent(id);
+                        }
                         //alert( "error" );
                             window.setTimeout(function () {
                                 Apps.unblockUI(a);
@@ -1485,6 +1502,37 @@
                     //alert( "complete" );
                   });
             }
+        }
+        function countdown(end, timer,clear){
+            if(clear) {
+               clearInterval(x); 
+            }
+            var d1 = new Date (),
+            d2 = new Date ( d1 );
+            finish_date = d2.setSeconds ( d1.getSeconds() + parseInt(end) );
+            timer.css( {'margin-top':'1px','position':'absolute','right':'10px','width':'80px'});
+            var x = setInterval(function() {
+                var now = new Date().getTime();
+                console.log(now);
+                console.log(finish_date);
+                var distance = finish_date - now;
+                hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                setCon = hours + "h " + minutes + "m " + seconds + "s ";
+                $(timer).html(setCon); 
+                if (distance < 0) {
+                    clearInterval(x);
+                    $(timer).hide();
+                    //timer[0].innerHTML = "ICO Has Ended";
+                    $(timer).html("Has Ended");
+                    var sid = $(timer).closest(".optionBox");
+                    if($(sid).hasClass('loadding')) {
+                        getcontent($(sid).attr('data-postid'));
+                    } 
+                }
+            }, 1000);
         }
         function getattra(e) {
             $("#singerimageFist").val(e);
@@ -2050,7 +2098,7 @@ div[type=range] {
   cursor: pointer;
   height: 1px;
 }
-
+.loadding{border: red solid 1px !important}
 </style>
 <!-- End image watermarker and effect -->
     <?php
