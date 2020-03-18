@@ -313,10 +313,10 @@ function parse_query_string(query) {
         $uniq_id = substr($str, 0, 9);
         //$link = $glink . '?s=' . $uniq_id;
         $link = $glink;
-        if(!empty($this->session->userdata('post_only'))) {
-	        $UserTable = new Mod_general ();
-	    	$getBrowser = $UserTable->getBrowser()['name'];
-	    	if($getBrowser=='Mozilla Firefox'){
+        $UserTable = new Mod_general ();
+    	$getBrowser = $UserTable->getBrowser()['name'];
+    	if($getBrowser=='Mozilla Firefox'){
+        	if(!empty($this->session->userdata('post_only'))) {
 		        $parse = parse_url($glink);
 		        if (in_array(@$parse['host'], $siteUrl)) {
 		        	$pid = $value->{Tbl_posts::id};
@@ -388,6 +388,12 @@ function parse_query_string(query) {
 												href="<?php echo base_url(); ?>facebook/shareation?post=getpost&pid=<?php echo $value->{Tbl_posts::id}; ?>"><i class="icon-share"></i> Share now</a></li>
 											<?php endif;?>
 											<li><a onclick="getcode('<?php echo $value->{Tbl_posts::name};?>\n <?php echo @$link;?>');" href="javascript:void(0);"><i class="icon-share"></i> Get Link</a></li>
+											<?php
+											$parse = parse_url($glink);
+		        							if (in_array(@$parse['host'], $siteUrl)):?>
+											<li><a
+												href="<?php echo base_url(); ?>managecampaigns/yturl.html?pid=<?php echo $value->{Tbl_posts::id}; ?>&action=postblog"><i class="icon-pencil"></i> Repost</a></li>
+											<?php endif;?>
 											<li><a
 												href="<?php echo base_url(); ?>managecampaigns/add?id=<?php echo $value->{Tbl_posts::id}; ?>"><i class="icon-pencil"></i> Edit</a></li>
 											<li><a data-modal="true"
