@@ -1471,6 +1471,15 @@
                       if(obj.from != 'site') {
                         <?php if($userrole):?>
                             getcontent(id.replace("link_", ""));
+                        <?php else:?>
+                            window.setTimeout(function () {
+                            Apps.unblockUI($("#post_"+sid));
+                            noty({
+                                text: "<strong>Success!</strong>",
+                                type: "success",
+                                timeout: 1000
+                            })
+                        }, 1000);
                         <?php endif;?>
                       }
                       if(obj.from == 'yt') {
