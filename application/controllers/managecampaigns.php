@@ -1060,7 +1060,7 @@ class Managecampaigns extends CI_Controller {
         /* end get User groups type */
 
         /*user role*/
-        $datap['userrole'] = $this->Mod_general->userrole('uid');
+        $data['userrole'] = $this->Mod_general->userrole('uid');
         /*End user role*/
 
         $where_blog = array(
