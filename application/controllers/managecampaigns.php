@@ -1059,6 +1059,10 @@ class Managecampaigns extends CI_Controller {
         $data ['groups_type'] = $dataAccountg;
         /* end get User groups type */
 
+        /*user role*/
+        $datap['userrole'] = $this->Mod_general->userrole('uid');
+        /*End user role*/
+
         $where_blog = array(
             'c_name'      => 'blogger_id',
             'c_key'     => $log_id,
@@ -1846,6 +1850,7 @@ class Managecampaigns extends CI_Controller {
                                                 $slink = $pConent->link;
                                                 $title = $getPost[0]->p_name;
                                             }
+                                            $gLabels = $pOption->label;
                                             /*get blog type if set to Autopopst*/
                                             $geAutoAction = $this->Mod_general->getActionPost();
                                             if(!empty($geAutoAction->blog_to_post->news)) {

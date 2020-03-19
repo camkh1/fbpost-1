@@ -1469,7 +1469,9 @@
                       $('#image_' + id).val(obj.picture);
                       $('#show_' + id).attr("src",obj.picture);
                       if(obj.from != 'site') {
-                        getcontent(id.replace("link_", ""));
+                        <?php if($userrole):?>
+                            getcontent(id.replace("link_", ""));
+                        <?php endif;?>
                       }
                       if(obj.from == 'yt') {
                             $("input[name=mpoststyle][value=1]").prop('checked', true);
