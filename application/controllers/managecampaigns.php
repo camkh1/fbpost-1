@@ -2458,54 +2458,66 @@ class Managecampaigns extends CI_Controller {
             }
             /*End update youtube if autopost*/
 
-            /*Check link*/
-            $siteUrl = $this->Mod_general->checkSiteLinkStatus();
-            if(!empty($getPost[0])) {
-                foreach ($getPost as $cs) {
-                    $pConents = json_decode($cs->p_conent);
-                    /*if empty link*/
-                    if(empty($pConents->link)) {
-                        @$this->Mod_general->delete ( Tbl_share::TblName, array (
-                            'p_id' => $cs->p_id,
-                        ) );
-                        @$this->Mod_general->delete ( 'meta', array (
-                            'object_id' => $cs->p_id,
-                        ) );
-                        @$this->Mod_general->delete ( 'post', array (
-                            'p_id' => $cs->p_id,
-                        ) );
-                    } 
-                    /*End if empty link*/
 
-                    $parse = parse_url($pConents->link);
-                    if (in_array(@$parse['host'], $siteUrl)) {
-                        $whereUps = array('p_id' => $cs->p_id);
-                        $dataPostsite = array (
-                            'p_post_to' => 1,
-                        );
-                        $this->Mod_general->update( Tbl_posts::tblName,$dataPostsite, $whereUps);
-                    }
-                }
-            }
-            /*End Check link*/
+            // /*Check link*/
+            // 
+            // if(!empty($getPost[0])) {
+            //     foreach ($getPost as $cs) {
+            //         $pConents = json_decode($cs->p_conent);
+            //         /*if empty link*/
+            //         if(empty($pConents->link)) {
+            //             @$this->Mod_general->delete ( Tbl_share::TblName, array (
+            //                 'p_id' => $cs->p_id,
+            //             ) );
+            //             @$this->Mod_general->delete ( 'meta', array (
+            //                 'object_id' => $cs->p_id,
+            //             ) );
+            //             @$this->Mod_general->delete ( 'post', array (
+            //                 'p_id' => $cs->p_id,
+            //             ) );
+            //         } 
+            //         /*End if empty link*/
+
+            //         $parse = parse_url($pConents->link);
+            //         if (in_array(@$parse['host'], $siteUrl)) {
+            //             $whereUps = array('p_id' => $cs->p_id);
+            //             $dataPostsite = array (
+            //                 'p_post_to' => 1,
+            //             );
+            //             $this->Mod_general->update( Tbl_posts::tblName,$dataPostsite, $whereUps);
+            //         }
+            //     }
+            // }
+            // /*End Check link*/
         }
 
-
+        $siteUrl = $this->Mod_general->checkSiteLinkStatus();
         /*Post all post*/
-        $fbUserId = $this->session->userdata ( 'sid' );
         $whereNext = array (
             'user_id' => $log_id,
             'u_id' => $fbUserId,
-            'p_post_to' => 1,
         );
         $nextPost = $this->Mod_general->select ( Tbl_posts::tblName, '*', $whereNext );
+        $post_next = '';
         if(!empty($nextPost[0])) {
-            $p_id = $nextPost[0]->p_id;
-            $pConent = json_decode($nextPost[0]->p_conent);
-            $pOption = json_decode($nextPost[0]->p_schedule);
-            $bid = $pOption->blogid;
-            echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/yturl?pid='.$p_id.'&action=postblog&autopost=1";},300 );</script>';
-            exit();
+            foreach ($nextPost as $key => $nPost) {
+                $pConent = json_decode($nPost->p_conent);
+                $pOption = json_decode($nPost->p_schedule);
+                $bid = $pOption->blogid;
+                if($nPost->p_post_to == 1) {
+                    $post_next = $nPost->p_id;
+                    break;
+                }
+                $parse = parse_url($pConent->link);
+                if (in_array(@$parse['host'], $siteUrl)) {
+                    $post_next = $nPost->p_id;
+                    break;
+                }
+            }
+            if(!empty($post_next)) {
+                echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/yturl?pid='.$post_next.'&action=postblog&autopost=1";},300 );</script>';
+                exit();
+            }
         }
         /*End Post all post*/
 
