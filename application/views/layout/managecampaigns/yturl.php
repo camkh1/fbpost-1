@@ -1349,8 +1349,11 @@
                       .done(function(data) {
                         countdown(1, divTimver,1);
                         if ( data ) {                            
-                            var obj = JSON.parse(data);                            
+                            var obj = JSON.parse(data);                 
                             if(!obj.error) {
+                                if(!obj.content[0].title) {
+                                    countdown(1, divTimver,1);
+                                }
                                $('#title_link_' + id).val(obj.content[0].title);
                                $('#description_link_' + id).data("wysihtml5").editor.setValue(obj.content[0].content);
                                var a = $("#post_"+id);
