@@ -300,7 +300,7 @@ class Splogr extends CI_Controller
         if(empty($title)) {
             $title = @$html->find ( 'title', 0 )->innertext;
             if(empty($title)) {
-                fromAlibaba($site_url,$get);
+                $this->fromAlibaba($site_url,$get);
             }
         }
         $contentJson = [];

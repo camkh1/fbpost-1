@@ -1869,8 +1869,10 @@ class Managecampaigns extends CI_Controller {
                                             }
                                             //var_dump($geAutoAction->blog_to_post->news);
                                             /*End get blog type if set to Autopopst*/
-
-
+// echo $getPost[0]->p_name;
+// var_dump($gLabels);
+// var_dump($bid);
+// die;
                                             $blogData = $this->postToBlogger($bid, $vid, $title,$image,$message,$main_post_style,@$pOption->label,$getPost[0]);
                                             //$blogData['error'] = true;
                                             if(!empty($blogData['error'])) {
