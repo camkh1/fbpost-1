@@ -75,6 +75,7 @@ class Managecampaigns extends CI_Controller {
         $client->addScope("https://www.googleapis.com/auth/plus.login");
         $client->addScope("https://www.googleapis.com/auth/plus.media.upload");
         $client->addScope("https://www.googleapis.com/auth/plus.stream.write");
+        //$client->addScope('https://www.googleapis.com/auth/adsense.readonly');
 
         $objOAuthService = new Google_Service_Oauth2($client);
         // Add Access Token to Session
@@ -6737,10 +6738,8 @@ public function imgtest()
 
                     $RanChoose = array(
                         'site',
-                        'site',
-                        'site',
                         'yt',
-                        'amung',
+                        //'amung',
                     );
                     $l = array_rand($RanChoose);
                     $getChoose = $RanChoose[$l];
@@ -8552,6 +8551,110 @@ public function imgtest()
         }
         $this->load->view ( 'managecampaigns/setting', $data );
     }
+
+    public function adsense()
+    {
+         $this->load->library('google_api');
+        $client = new Google_Client();
+        $service = new Google_Service_AdSense($client);
+        $client->setAccessToken($this->session->userdata('access_token'));  
+        $this->makeRequests($service);
+    }
+    // Makes all the API requests.
+function makeRequests($service) {
+    print "\n";
+    define('MAX_LIST_PAGE_SIZE', 1);
+    define('MAX_REPORT_PAGE_SIZE', 10);
+    $this->load->library ( 'adsense' );
+    $GetClass = new Adsense();
+    $GetClass->getFun('GetAllAccounts');
+    $GetAllAccounts = new GetAllAccounts();
+    $accounts = $GetAllAccounts->run($service, MAX_LIST_PAGE_SIZE);
+
+    if (isset($accounts) && !empty($accounts)) {
+        $exampleAccountId = $accounts[0]['id'];
+        // Get an example account ID, so we can run the following sample.
+        $exampleAccountId = $accounts[0]['id'];
+        var_dump($accounts[0]['id']);
+        die;
+        $GetAccountTree = new GetAccountTree();
+        $GetAccountTree->run($service, $exampleAccountId);
+        $GetAllAdClients = new GetAllAdClients();
+        $adClients =
+            $GetAllAdClients->run($service, $exampleAccountId, MAX_LIST_PAGE_SIZE);
+
+        if (isset($adClients) && !empty($adClients)) {
+            // Get an ad client ID, so we can run the rest of the samples.
+            $exampleAdClient = end($adClients);
+            $exampleAdClientId = $exampleAdClient['id'];
+
+            $GetAllAdUnits = new GetAllAdUnits();
+            $adUnits = $GetAllAdUnits->run($service, $exampleAccountId,
+                    $exampleAdClientId, MAX_LIST_PAGE_SIZE);
+            if (isset($adUnits) && !empty($adUnits)) {
+                // Get an example ad unit ID, so we can run the following sample.
+                $exampleAdUnitId = $adUnits[0]['id'];
+                $GetAllCustomChannelsForAdUnit = new GetAllCustomChannelsForAdUnit();
+                $GetAllCustomChannelsForAdUnit->run($service, $exampleAccountId,
+                    $exampleAdClientId, $exampleAdUnitId, MAX_LIST_PAGE_SIZE);
+            } else {
+                print 'No ad units found, unable to run dependant example.';
+            }
+
+            $GetAllCustomChannels = new GetAllCustomChannels();
+            $customChannels = $GetAllCustomChannels->run($service, $exampleAccountId,
+                    $exampleAdClientId, MAX_LIST_PAGE_SIZE);
+            if (isset($customChannels) && !empty($customChannels)) {
+                // Get an example ad unit ID, so we can run the following sample.
+                $exampleCustomChannelId = $customChannels[0]['id'];
+                $GetAllAdUnitsForCustomChannel = new GetAllAdUnitsForCustomChannel();
+                $GetAllAdUnitsForCustomChannel->run($service, $exampleAccountId,
+                    $exampleAdClientId, $exampleCustomChannelId, MAX_LIST_PAGE_SIZE);
+            } else {
+                print 'No custom channels found, unable to run dependant example.';
+            }
+
+            $GetAllUrlChannels = new GetAllUrlChannels();
+            $GetAllUrlChannels->run($service, $exampleAccountId, $exampleAdClientId,
+                MAX_LIST_PAGE_SIZE);
+            $GenerateReport = new GenerateReport();
+            $GenerateReport->run($service, $exampleAccountId, $exampleAdClientId);
+            $GenerateReportWithPaging = new GenerateReportWithPaging();
+            $GenerateReportWithPaging->run($service, $exampleAccountId,
+                $exampleAdClientId, MAX_REPORT_PAGE_SIZE);
+            $FillMissingDatesInReport = new FillMissingDatesInReport();
+            $FillMissingDatesInReport->run($service, $exampleAccountId,
+                $exampleAdClientId);
+            $CollateReportData = new CollateReportData();
+            $CollateReportData->run($service, $exampleAccountId, $exampleAdClientId);
+        } else {
+            print 'No ad clients found, unable to run dependant examples.';
+        }
+
+        $GetAllSavedReports = new GetAllSavedReports();
+        $savedReports = $GetAllSavedReports->run($service, $exampleAccountId,
+                MAX_LIST_PAGE_SIZE);
+        if (isset($savedReports) && !empty($savedReports)) {
+            // Get an example saved report ID, so we can run the following sample.
+            $exampleSavedReportId = $savedReports[0]['id'];
+            $GenerateSavedReport = new GenerateSavedReport();
+            $GenerateSavedReport->run($service, $exampleAccountId,
+                $exampleSavedReportId);
+        } else {
+            print 'No saved reports found, unable to run dependant example.';
+        }
+
+        GetAllSavedAdStyles::run($service, $exampleAccountId, MAX_LIST_PAGE_SIZE);
+        GetAllAlerts::run($service, $exampleAccountId);
+    } else {
+        'No accounts found, unable to run dependant examples.';
+    }
+
+    GetAllDimensions::run($service);
+    GetAllMetrics::run($service);
+    die;
+}
+
 	public function socailpost() {
 		$postProgress = $this->mod_general->select ( Tbl_posts::tblName, '', array (
 				Tbl_posts::status => 1,
@@ -9118,7 +9221,8 @@ public function imgtest()
         $closing_p = '</p>';
         $paragraphs = explode( $closing_p, $content );
         $count = count($paragraphs);
-        $midpoint = floor($count / 1.5);
+        //$midpoint = floor($count / 1.5);
+        $midpoint = floor($count / 2);
 
         if($count == 0  or $count <= $pos){
             return $content;
