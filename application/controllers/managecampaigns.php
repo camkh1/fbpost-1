@@ -6485,7 +6485,6 @@ public function imgtest()
                     $whereShare = array (
                         'uid' => $log_id,
                         'sh_status' => 0,
-                        'sh_type' => 'imacros',
                         'p_id' => $postid,
                         'social_id'=> $sid
                     );
@@ -6498,16 +6497,14 @@ public function imgtest()
                         $limit = 1 
                     );
 
-                    if(empty($dataShare[0])) {
-                        $dataShare = array(
+                    if(!empty($dataShare[0])) {
+                        $dataShares = array(
                             'sh_status' => 1
                         );
-                        $whereShere = array(
-                            'uid' => (int) $log_id,
-                            'p_id'=> $pid,
+                        $whereSheres = array(
                             'sh_id' => $dataShare[0]->sh_id,
                         );
-                        $dataid = $this->Mod_general->update('share', $dataShare, $whereShere);
+                        $dataid = $this->Mod_general->update('share', $dataShares, $whereSheres);
                         /*End update share group id */
                     }
                 }
