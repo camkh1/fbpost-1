@@ -308,6 +308,7 @@ class Mod_general extends CI_Model
             'youtu.be',
             'www.huayhot.com',
             'www.tha.supiper.online',
+            'www.to.supiper.online',
         );
         return $siteUrl;
     }

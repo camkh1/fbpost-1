@@ -6259,6 +6259,7 @@ public function imgtest()
                 $dataJsons = array();
                 $preTitle = array();
                 $subTitle = array();
+                $dataGoupInstert = array();
                 $siteUrl = $this->Mod_general->checkSiteLinkStatus();
                 $getPost = $this->Mod_general->select('post', '*', $where_pro,"RAND()");
                 if(!empty($getPost[0])) {
@@ -6319,6 +6320,31 @@ public function imgtest()
                         
                         /*End Check link is avable time*/
                         if(!empty($dataShare[0])) {
+                            /*get group id*/
+                            // $whereGruops['where_in'] = array('p_id' => $pid);
+                            // $gids = $this->Mod_general->select ('socail_network_group','sg_page_id', $whereGruops);
+                            // if(!empty($gids[0])) {
+                            //     $sharePost->group_id = $gids[0]->sg_page_id;
+
+                            // } 
+
+                            $wGroupType = array (
+                                'p_id' => $pid,
+                            );
+                            $tablejoin = array('socail_network_group'=>'socail_network_group.sg_id=share.sg_page_id');
+                            $dataGroup = $this->Mod_general->join('share', $tablejoin, $fields = '*', $wGroupType);
+                            if(!empty($dataGroup)) {                
+                                foreach($dataGroup as $key => $groups) { 
+                                    if(!empty($groups)) {      
+                                        $dataGoupInstert[] = array(
+                                            'group_id'=>$groups->sg_page_id,
+                                            'group_name'=>$groups->sg_name,
+                                            'status'=>$groups->sh_status);
+                                    }
+                                } 
+                            }
+                            /*End get group id*/
+
                             $parse = parse_url($pConent->link);
                             if (!in_array(@$parse['host'], $siteUrl)) {
                                 if(empty($checkExistP[0])) {
@@ -6409,7 +6435,8 @@ public function imgtest()
                 $dataJson = array(
                     'post' => $dataJsons,
                     'preTitle' => $preTitle,
-                    'subTitle' => $subTitle
+                    'subTitle' => $subTitle,
+                    'groups' =>$dataGoupInstert,
                 );
                     // $where_Pshare = array (
                     //     'u_id' => $sid,
