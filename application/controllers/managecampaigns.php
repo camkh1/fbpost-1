@@ -6263,6 +6263,7 @@ public function imgtest()
                 $getPost = $this->Mod_general->select('post', '*', $where_pro,"RAND()");
                 if(!empty($getPost[0])) {
                     foreach ($getPost as $gvalue) {
+                        $pid = $gvalue->p_id;
                         $pConent = json_decode($gvalue->p_conent);
                         $pSchedule = json_decode($gvalue->p_schedule);
                         $gLabel = @$pSchedule->label;
@@ -6270,14 +6271,14 @@ public function imgtest()
                         /*Clean post if no link*/
                         if(empty($pConent->link)) {
                             @$this->Mod_general->delete ( Tbl_share::TblName, array (
-                                'p_id' => $getPost[0]->p_id,
+                                'p_id' => $pid,
                                 'social_id' => @$sid,
                             ) );
                             @$this->Mod_general->delete ( 'meta', array (
-                                'object_id' => $getPost[0]->p_id,
+                                'object_id' => $pid,
                             ) );
                             @$this->Mod_general->delete ( 'post', array (
-                                'p_id' => $getPost[0]->p_id,
+                                'p_id' => $pid,
                             ) );
                         }
                         /*End Clean post if no link*/
@@ -6304,15 +6305,30 @@ public function imgtest()
                         } else {
                            $isCanPost = true; 
                         }
+
+                        /*Check share exist*/
+                        $where_so = array (
+                            'p_id' => $pid,
+                            'sh_status'=>0
+                        );
+                        $dataShare = $this->Mod_general->select(
+                            'share',
+                            '*', 
+                            $where_so);
+                        /*End Check share exist*/
                         
                         /*End Check link is avable time*/
-                        $parse = parse_url($pConent->link);
-                        if (!in_array(@$parse['host'], $siteUrl)) {
-                            if(empty($checkExistP[0])) {
-                                if(!empty($isCanPost)) {
-                                    $dataJsons[] = $gvalue;
+                        if(!empty($dataShare[0])) {
+                            $parse = parse_url($pConent->link);
+                            if (!in_array(@$parse['host'], $siteUrl)) {
+                                if(empty($checkExistP[0])) {
+                                    if(!empty($isCanPost)) {
+                                        $dataJsons[] = $gvalue;
+                                    }
                                 }
                             }
+                        } else {
+                            continue;
                         }
                         // $whereMt = array(
                         //     'meta_name'      => 'post_progress',
@@ -6463,6 +6479,36 @@ public function imgtest()
                             );
                             $AddedShare = $this->Mod_general->insert ( 'share_progess', $dataPostInstert );
                         }
+                    }
+                }
+                if(!empty($postid)) {
+                    $whereShare = array (
+                        'uid' => $log_id,
+                        'sh_status' => 0,
+                        'sh_type' => 'imacros',
+                        'p_id' => $postid,
+                        'social_id'=> $sid
+                    );
+                    $dataShare = $this->Mod_general->select (
+                        'share',
+                        '*', 
+                        $whereShare,
+                        $order = 'c_date', 
+                        $group = 0, 
+                        $limit = 1 
+                    );
+
+                    if(empty($dataShare[0])) {
+                        $dataShare = array(
+                            'sh_status' => 1
+                        );
+                        $whereShere = array(
+                            'uid' => (int) $log_id,
+                            'p_id'=> $pid,
+                            'sh_id' => $dataShare[0]->sh_id,
+                        );
+                        $dataid = $this->Mod_general->update('share', $dataShare, $whereShere);
+                        /*End update share group id */
                     }
                 }
                 die;
