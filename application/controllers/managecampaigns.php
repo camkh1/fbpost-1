@@ -6498,6 +6498,7 @@ public function imgtest()
                     foreach ($Postpg as $pgvalue) {
                         $pConent = json_decode($pgvalue->p_conent);
                         if($pConent->link == $link) {
+                            $getLink = '';
                             $dataPostInstert = array (
                                 'shp_date' => date('Y-m-d H:i:s'),
                                 'p_id' => $pgvalue->p_id, 
@@ -6507,14 +6508,40 @@ public function imgtest()
                                 'value' => $link,
                             );
                             $AddedShare = $this->Mod_general->insert ( 'share_progess', $dataPostInstert );
-                            $dataShared = array (
-                                'shp_date' => date('Y-m-d H:i:s'),
-                                'sid' => $sid,
-                                'title' => $pgvalue->p_name, 
-                                'uid' => $log_id,
-                                'sg_id' => $fb_ojb_id,
-                            );
-                            $this->Mod_general->insert ( 'share_history', $dataShared );
+
+                            /*Share history*/
+                            $ShareH = $this->Mod_general->select ('share_history','*', array('title' => $pgvalue->p_name,'sid' => $sid,'uid' => $log_id));
+                            if(empty($ShareH[0])) {
+                                $dataShared = array (
+                                    'shp_date' => date('Y-m-d H:i:s'),
+                                    'sid' => $sid,
+                                    'title' => $pgvalue->p_name, 
+                                    'uid' => $log_id,
+                                    'sg_id' => $fb_ojb_id,
+                                );
+                                @$this->Mod_general->insert ( 'share_history', $dataShared );
+                             }
+                             /*End Share history*/
+
+                            /*cound shared*/
+                            $where_shared = array('value' => $link);
+                            $PostShare_pg = $this->Mod_general->select ('share_progess','*', $where_shared);
+                            if(count($PostShare_pg)>=7) {
+                                $whereDlN = array(
+                                    'p_name' => $pgvalue->p_name
+                                );
+                                $getpDelN = $this->Mod_general->like('post', '*', $whereDlN);
+                                foreach ($getpDelN as $dvalue) {
+                                    $whereDel = array (
+                                        'p_id' => $dvalue->p_id
+                                    );
+                                    @$this->Mod_general->delete ( 'post', $whereDel);
+                                    @$this->Mod_general->delete ( 'meta', array (
+                                        'object_id' => $dvalue->p_id,
+                                    ));
+                                }
+                            }
+                            /*End cound shared*/
                         }
                     }
                 }
@@ -6608,6 +6635,9 @@ public function imgtest()
                                 'p_id' => $dvalue->p_id
                             );
                             @$this->Mod_general->delete ( 'post', $whereDel);
+                            @$this->Mod_general->delete ( 'meta', array (
+                                'object_id' => $dvalue->p_id,
+                            ));
                         }
                     }
                 } else {
