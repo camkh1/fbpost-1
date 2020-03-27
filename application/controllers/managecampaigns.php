@@ -6636,8 +6636,11 @@ public function imgtest()
                     'meta_value'     => 0,
                 );
                 $queryLinkIs = $this->Mod_general->select('meta', '*', $whIsnot,'','',1);
-
                 if(!empty($queryLinkIs[0])) {
+                    if(empty($queryLinkIs[0]->object_id)) {
+                        @$this->Mod_general->delete ( 'meta', array('meta_id'=>$queryLinkIs[0]->meta_id));
+                        echo '<meta http-equiv="refresh" content="3">';
+                    }
                     $getContent = $this->get_from_url($queryLinkIs[0]->object_id);
 
 
