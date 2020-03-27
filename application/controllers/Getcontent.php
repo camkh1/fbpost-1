@@ -19,6 +19,17 @@ class Getcontent extends CI_Controller
     public function getLinkFromSite($url='')
     {
         $log_id = $this->session->userdata ( 'user_id' );
+        /*clean*/
+        $oneDaysAgo = date('Y-m-d', strtotime('-30 days', strtotime(date('Y-m-d'))));
+        $where_pro = array('meta_name' => $log_id . 'sitelink','meta_key <= '=> $oneDaysAgo);
+        $getProDel = $this->Mod_general->select('meta', '*', $where_pro);
+        foreach ($getProDel as $prodel) {
+            @$this->Mod_general->delete ( 'meta', array (
+                'meta_id' => $prodel->meta_id,
+            ) );
+        }
+        /*End clean*/
+
         $this->load->library ( 'html_dom' );
         $headers = @get_headers($url);
         if(strpos($headers[0],'404') === false)
@@ -40,36 +51,15 @@ class Getcontent extends CI_Controller
                 redirect(base_url().'managecampaigns/autopostfb?action=site');
             }
         }
-        $html = file_get_html ( $url );
+        
         $obj = new stdClass();
         $parse = parse_url($url);
         //echo $parse['host'];
 
-        /*clean link is later -15 days*/
-        $whIsnot = array(
-            'meta_name'     => $log_id . 'sitelink',
-        );
 
-        $queryLinkIs = $this->Mod_general->select('meta', 'meta_id,meta_key', $whIsnot);
-        $todaysdate = date('Y/m/d', strtotime('-15 days'));
-        if(!empty($queryLinkIs[0])) {
-            foreach ($queryLinkIs as $key => $lid) {
-                $mydate=$lid->meta_key;
-                if (strtotime($todaysdate)>=strtotime($mydate))
-                {
-                    //IS Equal or Later
-                    $this->mod_general->delete(
-                        'meta', 
-                        array(
-                            'meta_id'=>$lid->meta_id
-                        )
-                    );
-                }
-            }
-        }
-        /*clean link is not today*/
         switch ($parse['host']) {
             case 'www.siamnews.com':
+                $html = file_get_html ( 'https://www.siamnews.com/archive.php' );
                 $sectionA = $html->find('#main .news-lay-3',0);
                 $article = $sectionA->find('article');
                 shuffle($article);
@@ -94,30 +84,9 @@ class Getcontent extends CI_Controller
                     }
                     /*End check duplicate link*/
                 }
-                // $sectionC = $html->find('#main .news-lay-3',2);
-                // foreach(@$sectionC->find('article') as $index => $clink) {
-                //     $linkc = $clink->find('a',0)->href;
-                //     /*check duplicate link*/
-                //     $whereDupA = array(
-                //         'object_id'      => $linkc,
-                //         'meta_name'     => $log_id . 'sitelink',
-                //         'meta_key'      => date('Y-m-d'),
-                //     );
-                //     $queryCheckDup = $this->Mod_general->select('meta', '*', $whereDupA);
-                //     if(empty($queryCheckDup[0])) {
-                //         $data_blogC = array(
-                //             'meta_key'      => date('Y-m-d'),
-                //             'object_id'      => $linkc,
-                //             'meta_value'     => 0,
-                //             'meta_name'     => $log_id . 'sitelink',
-                //         );
-                //         $lastID = $this->Mod_general->insert('meta', $data_blogC);
-                //         break;
-                //     }
-                //     /*End check duplicate link*/
-                // }
                 break;
-            case 'www.viralsfeedpro.com':
+            case 'www.siamtopic.com':
+                $html = file_get_html ( 'https://www.siamtopic.com/news/archive.php' );
                 $sectionA = $html->find('#main .news-lay-3',0);
                 $article = $sectionA->find('article');
                 shuffle($article);
@@ -142,30 +111,9 @@ class Getcontent extends CI_Controller
                     }
                     /*End check duplicate link*/
                 }
-                // $sectionC = $html->find('#main .news-lay-3',2);
-                // foreach(@$sectionC->find('article') as $index => $clink) {
-                //     $linkc = $clink->find('a',0)->href;
-                //     /*check duplicate link*/
-                //     $whereDupA = array(
-                //         'object_id'      => $linkc,
-                //         'meta_name'     => $log_id . 'sitelink',
-                //         'meta_key'      => date('Y-m-d'),
-                //     );
-                //     $queryCheckDup = $this->Mod_general->select('meta', '*', $whereDupA);
-                //     if(empty($queryCheckDup[0])) {
-                //         $data_blogC = array(
-                //             'meta_key'      => date('Y-m-d'),
-                //             'object_id'      => $linkc,
-                //             'meta_value'     => 0,
-                //             'meta_name'     => $log_id . 'sitelink',
-                //         );
-                //         $lastID = $this->Mod_general->insert('meta', $data_blogC);
-                //         break;
-                //     }
-                //     /*End check duplicate link*/
-                // }
                 break;
             case 'www.mumkhao.com':
+                $html = file_get_html ( 'https://www.mumkhao.com/archive.php' );
                 $sectionA = $html->find('#main .news-lay-3',0);
                 $article = $sectionA->find('article');
                 shuffle($article);
@@ -186,34 +134,13 @@ class Getcontent extends CI_Controller
                             'meta_name'     => $log_id . 'sitelink',
                         );
                         $lastID = $this->Mod_general->insert('meta', $data_blog);
-                        break;
-                    }
-                    /*End check duplicate link*/
-                }
-                $sectionC = $html->find('#main .news-lay-3',2);
-                foreach($sectionC->find('article') as $index => $clink) {
-                    $linkc = $clink->find('a',0)->href;
-                    /*check duplicate link*/
-                    $whereDupA = array(
-                        'object_id'      => $linkc,
-                        'meta_name'     => $log_id . 'sitelink',
-                        'meta_key'      => date('Y-m-d'),
-                    );
-                    $queryCheckDup = $this->Mod_general->select('meta', '*', $whereDupA);
-                    if(empty($queryCheckDup[0])) {
-                        $data_blogC = array(
-                            'meta_key'      => date('Y-m-d'),
-                            'object_id'      => $linkc,
-                            'meta_value'     => 0,
-                            'meta_name'     => $log_id . 'sitelink',
-                        );
-                        $lastID = $this->Mod_general->insert('meta', $data_blogC);
                         break;
                     }
                     /*End check duplicate link*/
                 }
                 break;
             case 'www.xn--42c2dgos8bxc2dtcg.com':
+                $html = file_get_html ( $url );
                 $sectionA = $html->find('.bdaia-blocks-container article .block-article-img-container a');
                 shuffle($sectionA);
                 foreach($sectionA as $index => $clink) {
@@ -239,6 +166,7 @@ class Getcontent extends CI_Controller
                 }
                 break;
             case 'board.postjung.com':
+                $html = file_get_html ( $url );
                 $sectionA = $html->find('#listbox a');
                 shuffle($sectionA);
                 foreach($sectionA as $index => $clink) {
@@ -265,9 +193,11 @@ class Getcontent extends CI_Controller
                 die;
                 break;
             case 'www.tnews.co.th':
+                $html = file_get_html ( $url );
                 $sectionA = $html->find('.bdaia-blocks-container article .block-article-img-container a');
                 break;
             case 'huaythai.me':
+                $html = file_get_html ( $url );
                 $sectionA = $html->find('#content_box article');
                 shuffle($sectionA);
                 foreach($sectionA as $index => $clink) {
@@ -294,6 +224,7 @@ class Getcontent extends CI_Controller
                 }
                 break;
             case 'www.huaythaitoday.com':
+                $html = file_get_html ( $url );
                 $sectionA = $html->find('#main .entry-content');
                 shuffle($sectionA);
                 foreach($sectionA as $index => $clink) {
@@ -319,6 +250,7 @@ class Getcontent extends CI_Controller
                 }
                 break;
             case 'www.huayhot.com':
+                $html = file_get_html ( $url );
                 $sectionA = $html->find('#content_box .post h2.title a');
                 shuffle($sectionA);
                 foreach($sectionA as $index => $clink) {
@@ -346,6 +278,7 @@ class Getcontent extends CI_Controller
                 }
                 break;
             case 'www.tha.supiper.online':
+                $html = file_get_html ( $url );
                 $this->session->set_userdata('post_all', 1);
                 $url = 'http://www.blogger.com/feeds/7382768133557108133/posts/default?max-results=10';
                 $id1 = simplexml_load_file($url);
@@ -487,6 +420,7 @@ class Getcontent extends CI_Controller
     function getConentFromSite($url,$oldurl='')
     {
         $log_id = $this->session->userdata ( 'user_id' );
+
         $this->load->library ( 'html_dom' );
         $headers = @get_headers($url);
         if(strpos($headers[0],'404') === false)
@@ -494,8 +428,9 @@ class Getcontent extends CI_Controller
 
         } else {
             if(is_connected) {
-                $cleanUrl = $this->mod_general->delete(
+                $cleanUrl = $this->mod_general->update(
                     'meta', 
+                    array('meta_value'=>1),
                     array(
                         'object_id'      => $url,
                         'meta_name'     => $log_id . 'sitelink',
