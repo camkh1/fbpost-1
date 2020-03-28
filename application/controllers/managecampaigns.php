@@ -3229,11 +3229,17 @@ class Managecampaigns extends CI_Controller {
                     //     $txt = str_replace($valueA, $adsense, $txt);
                     // }
                 }
-                require_once(APPPATH.'controllers/Splogr.php');
-                $aObj = new Splogr(); 
-                $enContent = $aObj->getpost(1);
-                $enTxt = preg_replace('/\r\n|\r/', "\n", $enContent["content"][0]["content"]);
-                $enTitle = $enContent["content"][0]["title"];
+                if($label == 'news') {
+                    $enContent = '';
+                    $enTxt = '';
+                    $enTitle = '';
+                } else {
+                    require_once(APPPATH.'controllers/Splogr.php');
+                    $aObj = new Splogr(); 
+                    $enContent = $aObj->getpost(1);
+                    $enTxt = preg_replace('/\r\n|\r/', "\n", $enContent["content"][0]["content"]);
+                    $enTitle = $enContent["content"][0]["title"];
+                }
                 $bodytext = '<link href="'.$image.'" rel="image_src"/><meta content="'.$image.'" property="og:image"/><img class="thumbnail news" style="text-align:center" src="'.$image.'"/><!--more-->'.$adSenseCode.$txt.$lineButton.'<br/><br/><b>Another News:</b><br/><h2>'.$enTitle.'</h2><div class="wrapper"><div class="small"><p>'.$enTxt.'</p></div> <a class="readmore" href="#">... Click to read more</a></div>'.$adSenseCode;
                 $dataMeta = array(
                     'title' => $allData->p_name,
