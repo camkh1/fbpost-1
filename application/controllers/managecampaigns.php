@@ -4180,7 +4180,8 @@ HTML;
                     'label' => @$content->label,
                     'from'=> $from
                 );
-            }           
+            }  
+            //var_dump($data);die;         
             if (! empty ( $data )) {
                 /**/
                 if(!empty($this->input->get('url'))) {

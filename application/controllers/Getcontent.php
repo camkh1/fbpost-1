@@ -443,7 +443,7 @@ class Getcontent extends CI_Controller
         }
         $html = file_get_html ( $url );
         $obj = new stdClass();
-        $obj->description = @$html->find ( 'meta[property=og:description]', 0 )->content;
+        $obj->description = '';
         $obj->title = @$html->find ( 'title', 0 )->innertext;
         $og_image = @$html->find ( 'meta [property=og:image]', 0 )->content;
         $image_src = @$html->find ( 'link [rel=image_src]', 0 )->href;
@@ -689,8 +689,8 @@ class Getcontent extends CI_Controller
 
                 $content = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $content);
                 $content = preg_replace('/<ins\b[^>]*>(.*?)<\/ins>/is', '<div class="setAds"></div>', $content);
+                $content = preg_replace('/<!-- SiamTopic - Responsive -->/is', '', $content);
                 $content = preg_replace("/<a(.*?)>/", "<a$1 target=\"_blank\">", $content);
-
                 // $regex = '/< *img[^>]*src *= *["\']?([^"\']*)/';
                 // preg_match_all( $regex, $content, $matches );
                 // $ImgSrc = array_pop($matches);

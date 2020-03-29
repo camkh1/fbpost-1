@@ -1465,6 +1465,7 @@
                   .done(function(data) {
                     if ( data ) {
                         var obj = JSON.parse(data);
+                        console.log(obj);
                       $('#title_' + id).val(obj.name);
                       $('#name_' + id).val(obj.name);
                       $('#vid_' + id).val(obj.vid);
