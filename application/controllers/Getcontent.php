@@ -390,6 +390,7 @@ class Getcontent extends CI_Controller
                             /*End check duplicate link*/
                         }
                     }
+                    break;
                 }
 
                 $fbUserId = $this->session->userdata ( 'sid' );
