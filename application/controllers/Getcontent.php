@@ -390,21 +390,22 @@ class Getcontent extends CI_Controller
                             /*End check duplicate link*/
                         }
                     }
+                    $fbUserId = $this->session->userdata ( 'sid' );
+                    $whereNext = array (
+                        'user_id' => $log_id,
+                        'u_id' => $fbUserId,
+                        'p_post_to' => 1,
+                    );
+                    $nextPost = $this->Mod_general->select ( Tbl_posts::tblName, '*', $whereNext );
+                    if(!empty($nextPost[0])) {
+                        $p_id = $nextPost[0]->p_id;
+                        echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=post&pid='.$p_id.'";}, 30 );</script>';
+                        exit();
+                    }
                     break;
                 }
 
-                $fbUserId = $this->session->userdata ( 'sid' );
-                $whereNext = array (
-                    'user_id' => $log_id,
-                    'u_id' => $fbUserId,
-                    'p_post_to' => 1,
-                );
-                $nextPost = $this->Mod_general->select ( Tbl_posts::tblName, '*', $whereNext );
-                if(!empty($nextPost[0])) {
-                    $p_id = $nextPost[0]->p_id;
-                    echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=post&pid='.$p_id.'";}, 30 );</script>';
-                    exit();
-                }
+                
                 // if(!empty($AddToPost)) {
                 //     //echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=post&pid='.$AddToPost.'";}, 30 );</script>';
                 //     redirect('managecampaigns/posttotloglink', 'location');
