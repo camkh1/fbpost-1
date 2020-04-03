@@ -6570,7 +6570,7 @@ public function imgtest()
 
                     if(!empty($dataShare[0])) {
                         $dataShares = array(
-                            'sh_status' => 1
+                            'sh_status' => 1,
                         );
                         $whereSheres = array(
                             'sh_id' => $dataShare[0]->sh_id,
@@ -6579,6 +6579,34 @@ public function imgtest()
                         /*End update share group id */
                     }
                 }
+
+                /*upate user  online status*/
+                if($getfbuid) {
+                    $oneDaysAgo = date('Y-m-d', strtotime('-120 minutes', strtotime(date('Y-m-d'))));
+                    $where_online = array('user_id' => $log_id, 'u_dmodify <= '=> $oneDaysAgo,'is_online'=>1);
+                    $PostShare_pg = $this->Mod_general->select ('users','*', $where_online);
+                    if(!empty($PostShare_pg[0])) {
+                        foreach ($PostShare_pg as $ons) {
+                            $dataAllO = array(
+                                'is_online' => 0
+                            );
+                            $whereAllO = array(
+                                'u_id' => $ons->u_id,
+                            );
+                            $dataid = $this->Mod_general->update('users', $dataAllO, $whereAllO);
+                        }
+                    }
+                    $dataUShares = array(
+                        'is_online' => 1,
+                        'u_dmodify' => date('Y-m-d H:i:s'),
+                    );
+                    $whereUSheres = array(
+                        'u_provider_uid' => $getfbuid,
+                        'user_id' => $log_id
+                    );
+                    $dataid = $this->Mod_general->update('users', $dataUShares, $whereUSheres);
+                }
+                /*end upate user status*/
                 die;
                 break;
             case 'next':
@@ -6933,6 +6961,35 @@ public function imgtest()
                                 echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=pblog&vid='.$content->vid.'";}, 30 );</script>';
                                 die;
                                 break;
+                            }
+                        }
+                    }
+                }
+                die;
+                break;
+            case 'mysite':
+                echo '<meta http-equiv="refresh" content="30">';
+                $setBack = $this->input->get('index');
+                if(!empty($setBack)) {
+                    $setURl = base_url().'managecampaigns';
+                } else {
+                    $setURl = base_url().'managecampaigns/autopostfb?action=posttoblog&pause=1';
+                }
+                $this->session->set_userdata('backto', $setURl);
+                $amoung = $this->amung('nb21iphzm4',1,true);
+                $getUrl = $amoung->pages;
+                //$getUrl = array_unique($getUrl);
+                ksort($getUrl);
+                if(!empty($getUrl)) {
+                    // require_once(APPPATH.'controllers/Getcontent.php');
+                    // $aObj = new Getcontent(); 
+                    
+                    foreach ($getUrl as $key => $gurl) {
+                        if($key<6) {
+                            $url = $gurl->url;
+                            $title = $gurl->title;
+                            if (!preg_match('/burma/', $title)) {
+
                             }
                         }
                     }
