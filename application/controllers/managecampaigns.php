@@ -6263,14 +6263,20 @@ public function imgtest()
                     /*get post that not share ixist*/
                 $where_pro = array(
                     'u_id ' => $sid,
-                    'user_id' => $log_id
+                    'share_history.sid' => $sid,
+                    'user_id' => $log_id,
                 );
                 $dataJsons = array();
                 $preTitle = array();
                 $subTitle = array();
                 $dataGoupInstert = array();
                 $siteUrl = $this->Mod_general->checkSiteLinkStatus();
-                $getPost = $this->Mod_general->select('post', '*', $where_pro,"RAND()");
+
+
+                $tablejoin = array('share_history'=>'share_history.title != post.p_name');
+                $getPost = $this->Mod_general->join('post', $tablejoin, $fields = '*', $where_pro,"RAND()",'p_name');
+
+                //$getPost = $this->Mod_general->select('post', '*', $where_pro,"RAND()");
                 if(!empty($getPost[0])) {
                     foreach ($getPost as $gvalue) {
                         $pid = $gvalue->p_id;
@@ -6887,7 +6893,7 @@ public function imgtest()
                     $RanChoose = array(
                         'site',
                         'yt',
-                        //'amung',
+                        'mysite',
                     );
                     $l = array_rand($RanChoose);
                     $getChoose = $RanChoose[$l];
@@ -6983,13 +6989,138 @@ public function imgtest()
                 if(!empty($getUrl)) {
                     // require_once(APPPATH.'controllers/Getcontent.php');
                     // $aObj = new Getcontent(); 
-                    
+                    $fbUserId = $this->session->userdata('fb_user_id');
+                    $tmp_path = './uploads/'.$log_id.'/'. $fbUserId . '_tmp_action.json';
+                    $string = file_get_contents($tmp_path);
+                    $json_a = json_decode($string);
+                    $schedule = array (                    
+                        'start_date' => $json_a->start_date,
+                        'start_time' => $json_a->start_time,
+                        'end_date' => $json_a->end_date,
+                        'end_time' => $json_a->end_time,
+                        'loop' => $json_a->loop,
+                        'loop_every' => $json_a->loop_every,
+                        'loop_on' => $json_a->loop_on,
+                        'wait_group' => $json_a->wait_group,
+                        'wait_post' => $json_a->wait_post,
+                        'randomGroup' => $json_a->randomGroup,
+                        'prefix_title' => $json_a->prefix_title,
+                        'suffix_title' => $json_a->suffix_title,
+                        'short_link' => $json_a->short_link,
+                        'check_image' => $json_a->check_image,
+                        'imgcolor' => $json_a->imgcolor,
+                        'btnplayer' => $json_a->btnplayer,
+                        'playerstyle' => $json_a->playerstyle,
+                        'random_link' => $json_a->random_link,
+                        'share_type' => $json_a->share_type,
+                        'share_schedule' => $json_a->share_schedule,
+                        'account_group_type' => $json_a->account_group_type,
+                        'txtadd' => $json_a->txtadd,
+                        'blogid' => $json_a->blogid,
+                        'blogLink' => $json_a->blogLink,
+                        'main_post_style' => 'tnews',
+                        'userAgent' => $json_a->userAgent,
+                        'checkImage' => $json_a->checkImage,
+                        'ptype' => $json_a->ptype,
+                        'img_rotate' => $json_a->img_rotate,
+                        'filter_contrast' => $json_a->filter_contrast,
+                        'filter_brightness' => $json_a->filter_brightness,
+                        'post_by_manaul' => $json_a->post_by_manaul,
+                        'foldlink' => 1,
+                        'gemail' => $json_a->gemail,
+                        'label' => 'news',
+                    );
+
+                    require_once(APPPATH.'controllers/Getcontent.php');
+                    $aObj = new Getcontent(); 
                     foreach ($getUrl as $key => $gurl) {
                         if($key<6) {
                             $url = $gurl->url;
                             $title = $gurl->title;
                             if (!preg_match('/burma/', $title)) {
-
+                                $wSare = array('title'=>$title,'uid' => $log_id);
+                                $SharedPost = $this->Mod_general->select ( 'share_history', '*', $wSare );
+                                /*End check post that shared*/
+                                if(empty($SharedPost[0])) {
+                                    $oldUrl = $aObj->getMyOldLink($url);
+                                    //$content = $aObj->getConentFromSite($url,1);
+                                    if(!empty($oldUrl)) {
+                                        /*preparepost*/
+                                        $content = array (
+                                            'name' => @htmlentities(htmlspecialchars(str_replace(' - YouTube', '', trim (@$title )))),
+                                            'message' => @htmlentities(htmlspecialchars(addslashes(trim ( @$title )))),
+                                            'caption' => '',
+                                            'link' => @$oldUrl['url'],
+                                            'mainlink' => $oldUrl['url'],
+                                            'picture' => @$oldUrl['image'],                            
+                                            'vid' => '',                          
+                                        );
+                                        /*End preparepost*/
+                                        $p_progress = 1;
+                                        $dataPostInstert = array (
+                                            Tbl_posts::name => trim (@$title ),
+                                            Tbl_posts::conent => json_encode($content),
+                                            Tbl_posts::p_date => date('Y-m-d H:i:s'),
+                                            Tbl_posts::schedule => json_encode($schedule),
+                                            Tbl_posts::user => $sid,
+                                            'user_id' => $log_id,
+                                            Tbl_posts::post_to => 0,
+                                            'p_status' => 1,
+                                            'p_progress' => $p_progress,
+                                            Tbl_posts::type => 'Facebook' 
+                                        );
+                                        $AddToPost = $this->Mod_general->insert ( Tbl_posts::tblName, $dataPostInstert );
+                                        if(!empty($AddToPost)) {
+                                            echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/yturl?pid='.$AddToPost.'&action=postblog&autopost=1";},0 );</script>';
+                                            exit();
+                                        }
+                                        break;
+                                    }
+                                } else {
+                                    /*if found*/
+                                    // foreach ($SharedPost as $key => $linkShred) {
+                                    //     # code...
+                                    // }
+                                    $wU = array('is_online'=>1,'user_id' => $log_id);
+                                    $User = $this->Mod_general->select ( 'users', '*', $wU );
+                                    if(count($SharedPost) < count($User)) {
+                                        $oldUrl = $aObj->getMyOldLink($url);
+                                        //$content = $aObj->getConentFromSite($url,1);
+                                        if(!empty($oldUrl)) {
+                                            /*preparepost*/
+                                            $content = array (
+                                                'name' => @htmlentities(htmlspecialchars(str_replace(' - YouTube', '', trim (@$title )))),
+                                                'message' => @htmlentities(htmlspecialchars(addslashes(trim ( @$title )))),
+                                                'caption' => '',
+                                                'link' => @$oldUrl['url'],
+                                                'mainlink' => $oldUrl['url'],
+                                                'picture' => @$oldUrl['image'],                            
+                                                'vid' => '',                          
+                                            );
+                                            /*End preparepost*/
+                                            $p_progress = 1;
+                                            $dataPostInstert = array (
+                                                Tbl_posts::name => trim (@$title ),
+                                                Tbl_posts::conent => json_encode($content),
+                                                Tbl_posts::p_date => date('Y-m-d H:i:s'),
+                                                Tbl_posts::schedule => json_encode($schedule),
+                                                Tbl_posts::user => $sid,
+                                                'user_id' => $log_id,
+                                                Tbl_posts::post_to => 0,
+                                                'p_status' => 1,
+                                                'p_progress' => $p_progress,
+                                                Tbl_posts::type => 'Facebook' 
+                                            );
+                                            $AddToPost = $this->Mod_general->insert ( Tbl_posts::tblName, $dataPostInstert );
+                                            if(!empty($AddToPost)) {
+                                                echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/yturl?pid='.$AddToPost.'&action=postblog&autopost=1";},0 );</script>';
+                                                exit();
+                                            }
+                                            break;
+                                        }
+                                    }
+                                    /*End if found*/
+                                }
                             }
                         }
                     }

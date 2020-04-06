@@ -3612,6 +3612,41 @@ class Getcontent extends CI_Controller
             return $this->BloggerYtInside($getAgain);
         }
     }
+
+    public function getMyOldLink($url='')
+    {
+        $obj = new stdClass();
+        $this->load->library ( 'html_dom' );
+        $headers = @get_headers($url);
+        if(strpos($headers[0],'404') === false)
+        {
+            $html = file_get_html ( $url );
+        } else {
+            if(is_connected) {
+                $html = file_get_html ( $url );
+            }
+        }
+        $og_image = @$html->find ( 'meta [property=og:image]', 0 )->content;
+        $dataA = @$html->find ( '#main .post', 0 );
+        if (preg_match("/main_link =/", $dataA)) {
+            $glink = explode('main_link = "', $dataA);
+            if(!empty($glink[1])) {
+                $glinks = explode('"', $glink[1]);
+                if(!empty($glinks[0])) {
+                    $data = array(
+                        'url'=>$glinks[0],
+                        'image'=>$og_image,
+                    );
+                }
+            }
+        } else {
+            $data = array(
+                'url'=>$url,
+                'image'=>$og_image,
+            );
+        }
+        return $data;
+    }
 }
 
 /* End of file welcome.php */
