@@ -2926,8 +2926,9 @@ class Managecampaigns extends CI_Controller {
             'p_date >= '=> $oneDaysAgo,
             'user_id' => $log_id
         );
-        $getPost = $this->Mod_general->select('post', '*', $where_pro);
-
+        $tablejoin = array('share_history'=>'share_history.title != post.p_name');
+        $getPost = $this->Mod_general->join('post', $tablejoin, $fields = '*', $where_pro,"RAND()",'p_name');
+        //$getPost = $this->Mod_general->select('post', '*', $where_pro);
         $siteUrl = $this->Mod_general->checkSiteLinkStatus();
         if(!empty($getPost[0])) {
             foreach ($getPost as $gvalue) {
@@ -2957,13 +2958,14 @@ class Managecampaigns extends CI_Controller {
                 'p_progress' => 1,
             );
             $getPost = $this->Mod_general->select ( Tbl_posts::tblName, '*', $wPost );
-
             if(!empty($getPost[0])) {
                 /*check post that shared*/
-                $wSare = array('title'=>$getPost[0]->p_name,'sid'=>$sid,'uid' => $log_id);
-                $SharedPost = $this->Mod_general->select ( 'share_history', '*', $wSare );
-                /*End check post that shared*/
-                if(empty($SharedPost[0])) {
+                // $wSare = array('title'=>$getPost[0]->p_name,'sid'=>$sid,'uid' => $log_id);
+                // $SharedPost = $this->Mod_general->select ( 'share_history', '*', $wSare );
+                // var_dump($SharedPost);
+                // die;
+                // /*End check post that shared*/
+                // if(empty($SharedPost[0])) {
                     /*if empty groups*/
                     $fbUserId = $this->session->userdata('fb_user_id');
                     $tmp_path = './uploads/'.$log_id.'/'. $fbUserId . '_tmp_action.json';
@@ -3119,7 +3121,7 @@ class Managecampaigns extends CI_Controller {
                             //redirect(base_url().'facebook/shareation?post=getpost');
                         }
                         /* end add data to post */
-                    }
+                    //}
                 }
             }
             if(empty($returnData)) {
@@ -6275,7 +6277,6 @@ public function imgtest()
 
                 $tablejoin = array('share_history'=>'share_history.title != post.p_name');
                 $getPost = $this->Mod_general->join('post', $tablejoin, $fields = '*', $where_pro,"RAND()",'p_name');
-
                 //$getPost = $this->Mod_general->select('post', '*', $where_pro,"RAND()");
                 if(!empty($getPost[0])) {
                     foreach ($getPost as $gvalue) {
