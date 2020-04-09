@@ -298,6 +298,9 @@ class Mod_general extends CI_Model
     {
         $siteUrl = array(
             'www.siamnews.com',
+            'www.siamstreet.com',
+            'www.dailyliveexpress.com',
+            'www.siamvariety.com',
             'www.siamtopic.com',
             'www.mumkhao.com',
             'www.xn--42c2dgos8bxc2dtcg.com',

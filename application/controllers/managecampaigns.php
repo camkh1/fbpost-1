@@ -6805,15 +6805,17 @@ public function imgtest()
                     $aObj = new Getcontent();
                     $siteUrl = array(
                         'https://www.siamnews.com/',
-                        'https://www.siamtopic.com/',
+                        'https://www.siamstreet.com/',
+                        'https://www.siamvariety.com/',
+                        'https://www.dailyliveexpress.com/',
                         'https://www.mumkhao.com/',
                         'https://www.xn--42c2dgos8bxc2dtcg.com/',
                         'https://board.postjung.com/',
                         'https://board.postjung.com/',
                         'https://board.postjung.com/',
-                        //'http://huaythai.me/',
-                        //'http://www.huaythaitoday.com/',
-                        //'http://www.huayhot.com/',
+                        'http://huaythai.me/',
+                        'http://www.huaythaitoday.com/',
+                        'http://www.huayhot.com/',
                         'https://www.tha.supiper.online/',
                     );
                     $k = array_rand($siteUrl);

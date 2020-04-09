@@ -85,6 +85,87 @@ class Getcontent extends CI_Controller
                     /*End check duplicate link*/
                 }
                 break;
+            case 'www.siamstreet.com':
+                $html = file_get_html ( 'https://www.siamstreet.com/archive.php' );
+                $sectionA = $html->find('#main .news-lay-3',0);
+                $article = $sectionA->find('article');
+                shuffle($article);
+                foreach($article as $index => $slink) {
+                    $link = $slink->find('a',0)->href;
+                    /*check duplicate link*/
+                    $whereDupA = array(
+                        'object_id'      => $link,
+                        'meta_name'     => $log_id . 'sitelink',
+                        'meta_key'      => date('Y-m-d'),
+                    );
+                    $queryCheckDup = $this->Mod_general->select('meta', '*', $whereDupA);
+                    if(empty($queryCheckDup[0])) {
+                        $data_blog = array(
+                            'meta_key'      => date('Y-m-d'),
+                            'object_id'      => $link,
+                            'meta_value'     => 0,
+                            'meta_name'     => $log_id . 'sitelink',
+                        );
+                        $lastID = $this->Mod_general->insert('meta', $data_blog);
+                        break;
+                    }
+                    /*End check duplicate link*/
+                }
+                break;
+            case 'www.dailyliveexpress.com':
+                $html = file_get_html ( 'https://www.dailyliveexpress.com/archive.php' );
+                $sectionA = $html->find('#main .news-lay-3',0);
+                $article = $sectionA->find('article');
+                shuffle($article);
+                foreach($article as $index => $slink) {
+                    $link = $slink->find('a',0)->href;
+                    /*check duplicate link*/
+                    $whereDupA = array(
+                        'object_id'      => $link,
+                        'meta_name'     => $log_id . 'sitelink',
+                        'meta_key'      => date('Y-m-d'),
+                    );
+                    $queryCheckDup = $this->Mod_general->select('meta', '*', $whereDupA);
+                    if(empty($queryCheckDup[0])) {
+                        $data_blog = array(
+                            'meta_key'      => date('Y-m-d'),
+                            'object_id'      => $link,
+                            'meta_value'     => 0,
+                            'meta_name'     => $log_id . 'sitelink',
+                        );
+                        $lastID = $this->Mod_general->insert('meta', $data_blog);
+                        break;
+                    }
+                    /*End check duplicate link*/
+                }
+                break;
+            case 'www.siamvariety.com':
+                $html = file_get_html ( 'https://www.siamvariety.com/archive.php' );
+                $sectionA = $html->find('#main .news-lay-3',0);
+                $article = $sectionA->find('article');
+                shuffle($article);
+                foreach($article as $index => $slink) {
+                    $link = $slink->find('a',0)->href;
+                    /*check duplicate link*/
+                    $whereDupA = array(
+                        'object_id'      => $link,
+                        'meta_name'     => $log_id . 'sitelink',
+                        'meta_key'      => date('Y-m-d'),
+                    );
+                    $queryCheckDup = $this->Mod_general->select('meta', '*', $whereDupA);
+                    if(empty($queryCheckDup[0])) {
+                        $data_blog = array(
+                            'meta_key'      => date('Y-m-d'),
+                            'object_id'      => $link,
+                            'meta_value'     => 0,
+                            'meta_name'     => $log_id . 'sitelink',
+                        );
+                        $lastID = $this->Mod_general->insert('meta', $data_blog);
+                        break;
+                    }
+                    /*End check duplicate link*/
+                }
+                break;
             case 'www.siamtopic.com':
                 $html = file_get_html ( 'https://www.siamtopic.com/news/archive.php' );
                 $sectionA = $html->find('#main .news-lay-3',0);
@@ -514,6 +595,60 @@ class Getcontent extends CI_Controller
                 //         }
                 //     }
                 // }
+                $obj->vid = '';
+                $obj->conent = $content;
+                $obj->fromsite = $parse['host'];
+                $obj->site = 'site';
+                return $obj;
+                break;
+            case 'www.siamstreet.com':
+                foreach($html->find('.line_view') as $item) {
+                    $item->outertext = '';
+                }
+                /*get label*/
+                $label = [];
+                $last = count($html->find('.breadcrumb li')) - 1;
+                foreach($html->find('.breadcrumb li') as $index => $labels) {
+                    if($index != $last && $index !=0) {
+                        $label[] = $labels->plaintext;
+                    } 
+                }
+                 $obj->label = implode(',', $label);
+                /*End get label*/
+               
+                //$html->save();
+                $content = @$html->find ( '#article-post .data_detail', 0 )->innertext;
+                $content = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $content);
+                $content = preg_replace('/<ins\b[^>]*>(.*?)<\/ins>/is', '<div class="setAds"></div>', $content);
+                $content = preg_replace("/<a(.*?)>/", "<a$1 target=\"_blank\">", $content);
+                
+                $obj->vid = '';
+                $obj->conent = $content;
+                $obj->fromsite = $parse['host'];
+                $obj->site = 'site';
+                return $obj;
+                break;
+            case 'www.dailyliveexpress.com':
+                foreach($html->find('.line_view') as $item) {
+                    $item->outertext = '';
+                }
+                /*get label*/
+                $label = [];
+                $last = count($html->find('.breadcrumb li')) - 1;
+                foreach($html->find('.breadcrumb li') as $index => $labels) {
+                    if($index != $last && $index !=0) {
+                        $label[] = $labels->plaintext;
+                    } 
+                }
+                 $obj->label = implode(',', $label);
+                /*End get label*/
+               
+                //$html->save();
+                $content = @$html->find ( '#article-post .data_detail', 0 )->innertext;
+                $content = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $content);
+                $content = preg_replace('/<ins\b[^>]*>(.*?)<\/ins>/is', '<div class="setAds"></div>', $content);
+                $content = preg_replace("/<a(.*?)>/", "<a$1 target=\"_blank\">", $content);
+                
                 $obj->vid = '';
                 $obj->conent = $content;
                 $obj->fromsite = $parse['host'];
