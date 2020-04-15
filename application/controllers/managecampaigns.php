@@ -4971,6 +4971,7 @@ HTML;
 
         /*update blog link*/
         if(!empty($this->input->get('linkbloglink')) && strlen($this->input->get('linkbloglink')) > 20) {
+
             $bloglink = $this->input->get('linkbloglink');
             $pid = $this->input->get('pid');
             $bid = $this->input->get('bid');
@@ -4978,12 +4979,9 @@ HTML;
             $wPost = array (
                 'user_id' => $log_id,
                 'p_id' => $pid,
-                'p_post_to' => 1,
             );
             $getPost = $this->Mod_general->select ( Tbl_posts::tblName, '*', $wPost );
             if(!empty($getPost[0])) {
-                echo 1111;
-                die;
                 $pConent = json_decode($getPost[0]->p_conent);
                 //$pOption = json_decode($getPost[0]->p_schedule);
                 $whereUp = array('p_id' => $pid,'user_id' => $log_id);
