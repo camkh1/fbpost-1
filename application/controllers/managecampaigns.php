@@ -2320,7 +2320,7 @@ class Managecampaigns extends CI_Controller {
             if (!file_exists($tmp_path)) {
                 mkdir($tmp_path, 0700, true);
             }
-            $tmp_path_sid = './uploads/'.$log_id.'/'.$provider_uid.'/post/';
+            $tmp_path_sid = './uploads/'.$log_id.'/'.$fbUserId.'/post/';
             if (!file_exists($tmp_path_sid)) {
                 mkdir($tmp_path_sid, 0700, true);
             }
