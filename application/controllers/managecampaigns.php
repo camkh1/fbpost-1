@@ -5001,20 +5001,25 @@ HTML;
                 );
                 $blogLinkUpdate = $this->Mod_general->update( Tbl_posts::tblName,$dataPostInstert, $whereUp);
                 if($blogLinkUpdate) {
-                    $sid = $this->session->userdata ( 'sid' );
-                    $whereNext = array (
-                        'user_id' => $log_id,
-                        'u_id' => $sid,
-                        'p_post_to' => 1,
-                    );
-                    $nextPost = $this->Mod_general->select ( Tbl_posts::tblName, 'p_id', $whereNext );
-                    if(!empty($nextPost[0])) {
-                        $p_id = $nextPost[0]->p_id;
-                        echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/postauto?pid='.$p_id.'&bid=' . $bid . '&action=generate&blink=&autopost=1&blog_link_id='.$blog_link_id.'";}, 30 );</script>';  
-                    } else {
-                        //http://localhost/autopost/facebook/shareation?post=getpost
-                        echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'facebook/shareation?post=getpost";}, 30 );</script>'; 
-                    }
+                    $setURl = base_url().'managecampaigns/autopostfb?action=posttoblog&pause=1';
+                        echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.$setURl.'";}, 30 );</script>'; 
+                    
+                        die;
+
+                    // $sid = $this->session->userdata ( 'sid' );
+                    // $whereNext = array (
+                    //     'user_id' => $log_id,
+                    //     'u_id' => $sid,
+                    //     'p_post_to' => 1,
+                    // );
+                    // $nextPost = $this->Mod_general->select ( Tbl_posts::tblName, 'p_id', $whereNext );
+                    // if(!empty($nextPost[0])) {
+                    //     $p_id = $nextPost[0]->p_id;
+                    //     echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/postauto?pid='.$p_id.'&bid=' . $bid . '&action=generate&blink=&autopost=1&blog_link_id='.$blog_link_id.'";}, 30 );</script>';  
+                    // } else {
+                    //     //http://localhost/autopost/facebook/shareation?post=getpost
+                    //     echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'facebook/shareation?post=getpost";}, 30 );</script>'; 
+                    // }
                 }
             }
         } else if($this->input->get('linkbloglink') < 15) {
