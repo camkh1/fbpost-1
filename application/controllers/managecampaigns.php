@@ -4982,6 +4982,8 @@ HTML;
             );
             $getPost = $this->Mod_general->select ( Tbl_posts::tblName, '*', $wPost );
             if(!empty($getPost[0])) {
+                echo 1111;
+                die;
                 $pConent = json_decode($getPost[0]->p_conent);
                 //$pOption = json_decode($getPost[0]->p_schedule);
                 $whereUp = array('p_id' => $pid,'user_id' => $log_id);
