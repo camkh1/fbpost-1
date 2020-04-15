@@ -1611,34 +1611,45 @@ class Managecampaigns extends CI_Controller {
                 $blog_link_id = @$this->input->get('blog_link_id');
 
                 /*check for loop post time*/
-                // $postsLoop[] = array(
-                //     'pid'=> $pid, 
-                //     'uid'=> $log_id,
-                // );
+                $postsLoop[] = array(
+                    'pid'=> $pid, 
+                    'uid'=> $log_id,
+                );
 
-                // $tmp_path = './uploads/'.$log_id.'/';
-                // if (!file_exists($tmp_path)) {
-                //     mkdir($tmp_path, 0700, true);
-                // }
-                // $tmp_path_sid = './uploads/'.$log_id.'/'.$fbid.'/';
-                // if (!file_exists($tmp_path_sid)) {
-                //     mkdir($tmp_path_sid, 0700, true);
-                // }
-                // $file_name = $tmp_path_sid . $pid .'-post.json';
-                // if (file_exists($file_name)) {
-                //     $LoopId = file_get_contents($file_name);
-                //     $LoopIdArr = json_decode($LoopId);
-                //     foreach ($LoopIdArr as $lId) {
-                //         $postsLoop[] = array(
-                //             'pid'=> $lId->pid, 
-                //             'uid'=> $lId->uid,
-                //         );
-                //     }
-                // }
+                $tmp_path = './uploads/'.$log_id.'/';
+                if (!file_exists($tmp_path)) {
+                    mkdir($tmp_path, 0700, true);
+                }
+                $tmp_path_sid = './uploads/'.$log_id.'/'.$fbid.'/post/';
+                if (!file_exists($tmp_path_sid)) {
+                    mkdir($tmp_path_sid, 0700, true);
+                }
+                $file_name = $tmp_path_sid . date('Y-m-d').'_'.$pid .'-post.json';
+                if (file_exists($file_name)) {
+                    $LoopId = file_get_contents($file_name);
+                    $LoopIdArr = json_decode($LoopId);
+                    foreach ($LoopIdArr as $lId) {
+                        $postsLoop[] = array(
+                            'pid'=> $lId->pid, 
+                            'uid'=> $lId->uid,
+                        );
+                    }
+                }
 
-                // $f = fopen($file_name, 'w');
-                // fwrite($f, json_encode($postsLoop));
-                // fclose($f);
+                $f = fopen($file_name, 'w');
+                fwrite($f, json_encode($postsLoop));
+                fclose($f);
+
+                $threeDbefore = date("Y-m-d", strtotime("-1 days"));
+                foreach(glob($tmp_path_sid."*") as $file) {
+                    if (!is_file($file)) {
+                        continue;
+                    }
+                    $fileParts = explode('_', basename($file));
+                    if(!empty($fileParts[0]) && $fileParts[0] <= $threeDbefore) {
+                        unlink($file);
+                    }
+                }
                 /*End check for loop post time*/
                 /*get post from post id*/
                 $wPost = array (
@@ -2299,6 +2310,47 @@ class Managecampaigns extends CI_Controller {
         );
         $getPost = $this->Mod_general->select ( Tbl_posts::tblName, '*', $wPost );
         if(!empty($getPost[0])) {
+            /*check for loop post time*/
+            $postsLoop[] = array(
+                'pid'=> $pid, 
+                'uid'=> $log_id,
+            );
+
+            $tmp_path = './uploads/'.$log_id.'/';
+            if (!file_exists($tmp_path)) {
+                mkdir($tmp_path, 0700, true);
+            }
+            $tmp_path_sid = './uploads/'.$log_id.'/'.$provider_uid.'/post/';
+            if (!file_exists($tmp_path_sid)) {
+                mkdir($tmp_path_sid, 0700, true);
+            }
+            $file_name = $tmp_path_sid . date('Y-m-d').'_'.$pid .'-post.json';
+            if (file_exists($file_name)) {
+                $LoopId = file_get_contents($file_name);
+                $LoopIdArr = json_decode($LoopId);
+                foreach ($LoopIdArr as $lId) {
+                    $postsLoop[] = array(
+                        'pid'=> $lId->pid, 
+                        'uid'=> $lId->uid,
+                    );
+                }
+            }
+
+            $f = fopen($file_name, 'w');
+            fwrite($f, json_encode($postsLoop));
+            fclose($f);
+
+            $threeDbefore = date("Y-m-d", strtotime("-1 days"));
+            foreach(glob($tmp_path_sid."*") as $file) {
+                if (!is_file($file)) {
+                    continue;
+                }
+                $fileParts = explode('_', basename($file));
+                if(!empty($fileParts[0]) && $fileParts[0] <= $threeDbefore) {
+                    unlink($file);
+                }
+            }
+            /*End check for loop post time*/
             $pConent = json_decode($getPost[0]->p_conent);
             $pOption = json_decode($getPost[0]->p_schedule);
 
@@ -2404,12 +2456,15 @@ class Managecampaigns extends CI_Controller {
 
             $postAto = $this->Mod_general->getActionPost();
             if(!empty($DataBlogLink['error'])) {
-                echo '<div style="text-align:center;color:red;" class="khmer">ដោយមានបញ្ហា សូមមេត្តារង់ចាំ ៣០ វិនាទីសិន កុំបិទផ្ទាំងនេះ</div>';
-                sleep(30);
-                echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'facebook/shareation?post=getpost&pid='.$pid.'";}, 1 );</script>'; 
+                // echo '<div style="text-align:center;color:red;" class="khmer">ដោយមានបញ្ហា សូមមេត្តារង់ចាំ ៣០ វិនាទីសិន កុំបិទផ្ទាំងនេះ</div>';
+                // sleep(30);
+                // echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'facebook/shareation?post=getpost&pid='.$pid.'";}, 1 );</script>'; 
+
+                if(count($postsLoop)>2) {
                 //redirect(base_url() . 'managecampaigns?m=blog_link_error&bid='.$blogRand);
-                //echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/postauto?pid='.$pid.'&bid=' . $blogRand . '&action=generate&blink='.$blink.'&autopost='.$postAto.'&blog_link_id='.$blogRand.'";}, 30 );</script>'; 
-                exit();
+                    echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/postauto?pid='.$pid.'&bid=' . $blogRand . '&action=generate&blink='.$blink.'&autopost='.$postAto.'&blog_link_id='.$blogRand.'";}, 30 );</script>'; 
+                    exit();
+                }
             } else {
                 $whereBLId = array(
                     'object_id' => $blogRand
