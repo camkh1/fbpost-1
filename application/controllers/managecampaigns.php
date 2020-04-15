@@ -5476,6 +5476,12 @@ HTML;
             }
         }
         $data['staticdata'] = $json_a;
+        if($this->Mod_general->userrole('uid')) {
+            $log_ids = 'admin';
+        } else {
+            $log_ids = $log_id;
+        }
+        $data['log_ids'] = $log_ids;
         $this->load->view ( 'managecampaigns/postauto', $data );
     }
 
