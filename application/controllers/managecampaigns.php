@@ -4848,6 +4848,8 @@ HTML;
                                         'y_uid' => $log_id,
                                     );
                                     $ytData = $this->Mod_general->insert ( 'youtube', $dataYtInstert );
+                                } else {
+                                    continue;
                                 }
                             } else {
                                 continue;
