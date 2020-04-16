@@ -4837,15 +4837,18 @@ HTML;
                         /*End check data exist*/
                         if(empty($checkExist[0])) {
                             if(strlen($dataContent->vid) > 10) {
-                                $dataYtInstert = array (
-                                    'yid' => $dataContent->vid,
-                                    'y_date' => $ytArr['snippet']['publishedAt'],
-                                    'y_other' => json_encode($dataContent),
-                                    'y_status' => 0,
-                                    'y_fid' => $sid,
-                                    'y_uid' => $log_id,
-                                );
-                                $ytData = $this->Mod_general->insert ( 'youtube', $dataYtInstert );
+                                $ShareH = $this->Mod_general->select ('share_history','*', array('title' => $dataContent->title,'uid' => $log_id));
+                                if(empty($ShareH[0])) {
+                                    $dataYtInstert = array (
+                                        'yid' => $dataContent->vid,
+                                        'y_date' => $ytArr['snippet']['publishedAt'],
+                                        'y_other' => json_encode($dataContent),
+                                        'y_status' => 0,
+                                        'y_fid' => $sid,
+                                        'y_uid' => $log_id,
+                                    );
+                                    $ytData = $this->Mod_general->insert ( 'youtube', $dataYtInstert );
+                                }
                             } else {
                                 continue;
                             }
@@ -7483,7 +7486,7 @@ public function imgtest()
         $this->load->view ( 'managecampaigns/autopostfb', $data );
     }
 
-    public function getYtToPost()
+    public function  bv ()
     {
 
         $log_id = $this->session->userdata ( 'user_id' );
