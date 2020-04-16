@@ -205,7 +205,7 @@ $backto = urlencode($backto);
                                             $vid = $content;
                                         }
                                     }
-                                    $mainLink = @$p_conent->mainLink;
+                                    $mainLink = @$p_conent->mainlink;
                                     ?>
                                     <form class="form-horizontal row-border" id="mainblog" method="post">
                                         <div class="form-group">
