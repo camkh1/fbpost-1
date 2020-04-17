@@ -7488,7 +7488,7 @@ public function imgtest()
         $this->load->view ( 'managecampaigns/autopostfb', $data );
     }
 
-    public function  bv ()
+    public function  getYtToPost()
     {
 
         $log_id = $this->session->userdata ( 'user_id' );
