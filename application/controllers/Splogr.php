@@ -57,6 +57,15 @@ class Splogr extends CI_Controller
     }
     public function getpost($get='')
     {
+        $getJsonArray = array();
+        $error = array('error'=> 1); 
+        $getJsonArray = array('error'=> 1,'content'=> 'not config');
+        if(!empty($get)) {
+            return $getJsonArray;
+        } else {
+            echo json_encode($getJsonArray);
+        }
+        die;
         $actions = $this->uri->segment(3);
         $log_id = $this->session->userdata ('user_id');
         /*check link*/
@@ -80,6 +89,7 @@ class Splogr extends CI_Controller
                 );
                 $updateLink = array('status' => 1);
                 @$this->Mod_general->update ('splogr', $updateLink, $wherelink);
+                $getJsonArray = $this->limit_text($getJsonArray,100);
                 if($get == 1) {
                     return $getJsonArray;
                 } else {
@@ -100,6 +110,7 @@ class Splogr extends CI_Controller
                 if(empty($getJsonArray)) {
                     $getJsonArray = $this->get_from_site_id('https://www.alibaba.com/premium/laser_machines/2.html',$get);
                 }
+                $getJsonArray = $this->limit_text($getJsonArray,100);
                 if($get == 1) {
                     return $getJsonArray;
                 } else {
@@ -118,6 +129,7 @@ class Splogr extends CI_Controller
                 @$this->Mod_general->update ('splogr', $updateLink, $wherelink);
             }
             /*End update link*/
+            $getJsonArray = $this->limit_text($getJsonArray,100);
             if($get == 1) {
                 return $getJsonArray;
             } else {
@@ -148,6 +160,15 @@ class Splogr extends CI_Controller
         die;
     }
 
+    public function limit_text($text, $limit)
+    {
+        if (str_word_count($text, 0) > $limit) {
+              $words = str_word_count($text, 2);
+              $pos = array_keys($words);
+              $text = substr($text, 0, $pos[$limit]) . '...';
+          }
+          return $text;
+    }
     function get_from_site_id($site_url = '', $get = '') {
         ini_set('max_execution_time', 0);
         $log_id = $this->session->userdata ('user_id');
