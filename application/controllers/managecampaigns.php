@@ -2288,6 +2288,27 @@ class Managecampaigns extends CI_Controller {
         $image = $this->Mod_general->uploadMediaWithText($fileName);
         die;
     }
+    public function posttobloggertest($value='')
+    {
+        $title = 'test';
+        $bodytext = '<script>function mbtlist(cods){for(var i=0;i<cods.feed.entry.length;i++){ListConten=cods.feed.entry[i].content.$t;document.write(ListConten);}}</script><script>var bgimage = "https://www.siamstreet.com/data/news_data/picture_800/1628rs.jpg",main_link = "http://l5thaitoursnewsa.blogspot.com/2020/04/93.html",uid = "admin";</script><img class="thumbnail noi" style="text-align:center;display:none;" src="https://www.siamstreet.com/data/news_data/picture_800/1628rs.jpg"/><center><script type="text/javascript" src="https://10clblogh.blogspot.com/feeds/posts/default/-/getplay?max-results=1&amp;alt=json-in-script&amp;callback=mbtlist"></script></center>';
+        //$str = stripslashes($bodytext);
+        $str = str_replace("<br />", "\n", $bodytext);
+        $customcode = '';
+        $dataContent          = new stdClass();
+        $dataContent->setdate = false;        
+        $dataContent->editpost = false;
+        $dataContent->pid      = 0;
+        $dataContent->customcode = '';
+        $dataContent->bid     = '5145631518890399169';
+        $dataContent->title    = $title;        
+        $dataContent->bodytext = $str;
+        $dataContent->label    = 'blink';
+        $DataBlogLink = $this->postBlogger($dataContent);
+        echo '<pre>';
+        print_r($DataBlogLink);
+        die;
+    }
     public function posttotlogLink()
     {
         echo '<meta http-equiv="refresh" content="20">';
@@ -2432,7 +2453,7 @@ class Managecampaigns extends CI_Controller {
                 $message = '';
             }
 
-            $getAdscode = '<script>function mbtlist(json){for(var i=0;i<json.feed.entry.length;i++){ListConten=json.feed.entry[i].content.$t;document.write(ListConten);}}</script><script>var bgimage = "'.$image.'",main_link = "'.$mainlink.'",uid = "'.$log_ids.'";</script>'; 
+            $getAdscode = '<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0"><tr><td id="bgimage" colspan="3" style="background:#000000;height: 280px;overflow: hidden;background: no-repeat center center;background-size: cover; background: #000 center center no-repeat; background-size: 100%;border: 1px solid #000;background-image:url('.$image.');"><a id="main_link" href="'.$mainlink.'" target="_top" rel="nofollow" style="display:block;height:280px;width:100%; text-align:center; background:url(https://3.bp.blogspot.com/-3ii7X_88VLs/XEs-4wFXMXI/AAAAAAAAiaw/d_ldK-ae830UCGsyOl0oEqqwDQwd_TqEACLcBGAs/s90/youtube-play-button-transparent-png-15.png) no-repeat center center;">&nbsp;</a></td></tr><tr><td style="background:#000 url(https://2.bp.blogspot.com/-Z_lYNnmixpM/XEs6o1hpTUI/AAAAAAAAiak/uPb1Usu-F-YvHx6ivxnqc1uSTIAkLIcxwCLcBGAs/s1600/l.png) no-repeat bottom left; height:39px; width:237px;margin:0;padding:0;"><a id="main_link_a" href="'.$mainlink.'" target="_top" rel="nofollow" style="display:block;height:39px;width:100%;">&nbsp;</a></td><td style="background:#000 url(https://1.bp.blogspot.com/-9nWJSQ3HKJs/XEs6o7cUv2I/AAAAAAAAiag/sAiHoM-9hKUOezozem6GvxshCyAMp_n_QCLcBGAs/s1600/c.png) repeat-x bottom center; height:39px;margin:0;padding:0;">&nbsp;</td><td style="background:#000 url(https://2.bp.blogspot.com/-RmcnX0Ej1r4/XEs6o-Fjn9I/AAAAAAAAiac/j50SWsyrs8sA5C8AXotVUG7ESm1waKxPACLcBGAs/s1600/r.png) no-repeat bottom right; height:39px; width:151px;margin:0;padding:0;">&nbsp;</td></tr></table><script>var bgimage = "'.$image.'",main_link = "'.$mainlink.'",uid = "'.$log_ids.'";</script>'; 
             $bodytext = $getAdscode.'<meta content="'.$image.'" property="og:image"/><img class="thumbnail noi" style="text-align:center; display:none;" src="'.$image.'"/><h2>'.$thai_title.'</h2><div>' .$showAds. $message . '</div>';
             $title = (string) $title;
             $dataMeta = array(
@@ -3234,7 +3255,8 @@ class Managecampaigns extends CI_Controller {
 
         $strTime = strtotime(date("Y-m-d H:i:s"));
         $dataContent          = new stdClass();
-        $lineButton = '<center><div class="line-it-button" data-lang="en" data-type="friend" data-lineid="0888250488" data-count="true" data-home="true" style="display: none;"></div> <img src="https://3.bp.blogspot.com/-IDEnasS2NeM/Xbpa6kTL_dI/AAAAAAAAnOE/71KpKu86xW4TiGKcCp1YstZy3Ol94f7zACNcBGAsYHQ/s1600/Line-button-thai.png" style="width:100%;height:auto;"/><script src="https://d.line-scdn.net/r/web/social-plugin/js/thirdparty/loader.min.js" async="async" defer="defer"></script></center>';
+        //$lineButton = '<center><div class="line-it-button" data-lang="en" data-type="friend" data-lineid="0888250488" data-count="true" data-home="true" style="display: none;"></div> <img src="https://3.bp.blogspot.com/-IDEnasS2NeM/Xbpa6kTL_dI/AAAAAAAAnOE/71KpKu86xW4TiGKcCp1YstZy3Ol94f7zACNcBGAsYHQ/s1600/Line-button-thai.png" style="width:100%;height:auto;"/><script src="https://d.line-scdn.net/r/web/social-plugin/js/thirdparty/loader.min.js" async="async" defer="defer"></script></center>';
+        $lineButton = '';
         $adSenseCode = "<div style=\"text-align: center;\"><script async src=\"//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js\"></script><script>if(typeof startin!=='undefined'){document.write(setCode);} if(typeof startin==='undefined'){document.write(inSide);(adsbygoogle=window.adsbygoogle||[]).push({});}</script></div>";
         $adSenseCode = trim_slashes($adSenseCode);
         if (preg_match('/youtube/', $pConent->link)) {
@@ -3292,11 +3314,14 @@ class Managecampaigns extends CI_Controller {
                     $enTxt = '';
                     $enTitle = '';
                 } else {
-                    require_once(APPPATH.'controllers/Splogr.php');
-                    $aObj = new Splogr(); 
-                    $enContent = $aObj->getpost(1);
-                    $enTxt = preg_replace('/\r\n|\r/', "\n", $enContent["content"][0]["content"]);
-                    $enTitle = $enContent["content"][0]["title"];
+                    $enContent = '';
+                    $enTxt = '';
+                    $enTitle = '';
+                    // require_once(APPPATH.'controllers/Splogr.php');
+                    // $aObj = new Splogr(); 
+                    // $enContent = $aObj->getpost(1);
+                    // $enTxt = preg_replace('/\r\n|\r/', "\n", $enContent["content"][0]["content"]);
+                    // $enTitle = $enContent["content"][0]["title"];
                 }
                 $bodytext = '<link href="'.$image.'" rel="image_src"/><meta content="'.$image.'" property="og:image"/><img class="thumbnail news" style="text-align:center" src="'.$image.'"/><!--more-->'.$adSenseCode.$txt.$lineButton.'<br/><br/><b>Another News:</b><br/><h2>'.$enTitle.'</h2><div class="wrapper"><div class="small"><p>'.$enTxt.'</p></div> <a class="readmore" href="#">... Click to read more</a></div>'.$adSenseCode;
                 $dataMeta = array(
