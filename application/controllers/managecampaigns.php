@@ -6366,7 +6366,7 @@ public function imgtest()
                     /*get post that not share ixist*/
                 $where_pro = array(
                     'u_id ' => $sid,
-                    'share_history.sid' => $sid,
+                    //'share_history.sid' => $sid,
                     'user_id' => $log_id,
                 );
                 $dataJsons = array();
