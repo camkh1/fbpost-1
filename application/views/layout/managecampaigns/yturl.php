@@ -1474,7 +1474,15 @@
                       $('#show_' + id).attr("src",obj.picture);
                       if(obj.from != 'site') {
                         <?php if($userrole):?>
-                            getcontent(id.replace("link_", ""));
+                            //getcontent(id.replace("link_", ""));
+                            window.setTimeout(function () {
+                                Apps.unblockUI($("#post_"+sid));
+                                noty({
+                                    text: "<strong>Success!</strong>",
+                                    type: "success",
+                                    timeout: 1000
+                                })
+                            }, 1000);
                         <?php else:?>
                             window.setTimeout(function () {
                             Apps.unblockUI($("#post_"+sid));
