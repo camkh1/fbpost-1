@@ -3007,26 +3007,35 @@ class Managecampaigns extends CI_Controller {
             'p_date >= '=> $oneDaysAgo,
             'user_id' => $log_id
         );
-        $tablejoin = array('share_history'=>'share_history.title != post.p_name');
-        $getPost = $this->Mod_general->join('post', $tablejoin, $fields = '*', $where_pro,"RAND()",'p_name');
-        //$getPost = $this->Mod_general->select('post', '*', $where_pro);
+        // $tablejoin = array('share_history'=>'share_history.title != post.p_name');
+        // $getPost = $this->Mod_general->join('post', $tablejoin, $fields = '*', $where_pro,"RAND()",'p_name');
+        $getPost = $this->Mod_general->select('post', '*', $where_pro);
         $siteUrl = $this->Mod_general->checkSiteLinkStatus();
         if(!empty($getPost[0])) {
             foreach ($getPost as $gvalue) {
-                $pConent = json_decode($gvalue->p_conent);
-                $parse = parse_url($pConent->link);
-                if (!in_array($parse['host'], $siteUrl)) {
-                    $whereMt = array(
-                        'meta_name'      => 'post_progress',
-                        'meta_key'      => $sid,
-                        'meta_value'      => 1,
-                        'object_id'      => $gvalue->p_id,
-                    );
-                    $checkExistP = $this->Mod_general->select('meta','*', $whereMt);
-                    if(empty($checkExistP[0])) {
-                        $pid = $gvalue->p_id;
-                        break;
+                $where_hi = array(
+                    'title' => $gvalue->p_name,
+                    'sid' => $sid
+                );
+                $ChHiPost = $this->Mod_general->select('share_history', 'shp_id', $where_hi);
+                if(empty($ChHiPost)) {
+                    $pConent = json_decode($gvalue->p_conent);
+                    $parse = parse_url($pConent->link);
+                    if (!in_array($parse['host'], $siteUrl)) {
+                        $whereMt = array(
+                            'meta_name'      => 'post_progress',
+                            'meta_key'      => $sid,
+                            'meta_value'      => 1,
+                            'object_id'      => $gvalue->p_id,
+                        );
+                        $checkExistP = $this->Mod_general->select('meta','*', $whereMt);
+                        if(empty($checkExistP[0])) {
+                            $pid = $gvalue->p_id;
+                            break;
+                        }
                     }
+                } else {
+                    continue;
                 }
             }
         }
