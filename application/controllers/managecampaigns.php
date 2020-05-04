@@ -6382,11 +6382,11 @@ public function imgtest()
                 if(!empty($getPost[0])) {
                     foreach ($getPost as $gvalue) {
                         $where_hi = array(
-                            'title != ' => $gvalue->p_name,
-                            'sid != ' => $sid
+                            'title' => $gvalue->p_name,
+                            'sid' => $sid
                         );
                         $ChHiPost = $this->Mod_general->select('share_history', 'shp_id', $where_hi);
-                        if(!empty($ChHiPost[0])) {
+                        if(empty($ChHiPost[0])) {
                             $pid = $gvalue->p_id;
                             $pConent = json_decode($gvalue->p_conent);
                             $pSchedule = json_decode($gvalue->p_schedule);
