@@ -6365,7 +6365,7 @@ public function imgtest()
                 //if (date('H') <= 23 && date('H') > 3 && date('H') !='00') {
                     /*get post that not share ixist*/
                 $where_pro = array(
-                    'u_id ' => $sid,
+                    'u_id != ' => $sid,
                     //'share_history.sid' => $sid,
                     'user_id' => $log_id,
                 );
@@ -6376,164 +6376,171 @@ public function imgtest()
                 $siteUrl = $this->Mod_general->checkSiteLinkStatus();
 
 
-                $tablejoin = array('share_history'=>'share_history.title != post.p_name');
-                $getPost = $this->Mod_general->join('post', $tablejoin, $fields = '*', $where_pro,"RAND()",'p_name');
-                //$getPost = $this->Mod_general->select('post', '*', $where_pro,"RAND()");
+                // $tablejoin = array('share_history'=>'share_history.title != post.p_name');
+                // $getPost = $this->Mod_general->join('post', $tablejoin, $fields = '*', $where_pro,"RAND()",'p_name');
+                $getPost = $this->Mod_general->select('post', '*', $where_pro,"RAND()");
                 if(!empty($getPost[0])) {
                     foreach ($getPost as $gvalue) {
-                        $pid = $gvalue->p_id;
-                        $pConent = json_decode($gvalue->p_conent);
-                        $pSchedule = json_decode($gvalue->p_schedule);
-                        $gLabel = @$pSchedule->label;
-
-                        /*Clean post if no link*/
-                        if(empty($pConent->link)) {
-                            @$this->Mod_general->delete ( Tbl_share::TblName, array (
-                                'p_id' => $pid,
-                                'social_id' => @$sid,
-                            ) );
-                            @$this->Mod_general->delete ( 'meta', array (
-                                'object_id' => $pid,
-                            ) );
-                            @$this->Mod_general->delete ( 'post', array (
-                                'p_id' => $pid,
-                            ) );
-                        }
-                        /*End Clean post if no link*/
-
-                        /*Check link is avable time*/
-                        $whereStime = array(
-                            'shp_type'      => 'share_update',
-                            'value'      => $pConent->link
+                        $where_hi = array(
+                            'title != ' => $gvalue->p_name,
+                            'sid != ' => $sid
                         );
-                        $checkTimeShare = $this->Mod_general->select('share_progess','*', $whereStime,'shp_id DESC');
-                        if(!empty($checkTimeShare[0])) {
-                            $todaysdate = date('Y/m/d H:i:s', strtotime('-10 minutes'));
-                            $mydate=$checkTimeShare[0]->shp_date;
-                            if (strtotime($todaysdate)>=strtotime($mydate))
-                            {
-                                $isCanPost = true;
+                        $ChHiPost = $this->Mod_general->select('share_history', 'shp_id', $where_hi);
+                        if(!empty($ChHiPost[0])) {
+                            $pid = $gvalue->p_id;
+                            $pConent = json_decode($gvalue->p_conent);
+                            $pSchedule = json_decode($gvalue->p_schedule);
+                            $gLabel = @$pSchedule->label;
+
+                            /*Clean post if no link*/
+                            if(empty($pConent->link)) {
+                                @$this->Mod_general->delete ( Tbl_share::TblName, array (
+                                    'p_id' => $pid,
+                                    'social_id' => @$sid,
+                                ) );
+                                @$this->Mod_general->delete ( 'meta', array (
+                                    'object_id' => $pid,
+                                ) );
+                                @$this->Mod_general->delete ( 'post', array (
+                                    'p_id' => $pid,
+                                ) );
                             }
-                            else
-                            {
-                                // FALSE STATEMENT
-                                $isCanPost = false;
+                            /*End Clean post if no link*/
+
+                            /*Check link is avable time*/
+                            $whereStime = array(
+                                'shp_type'      => 'share_update',
+                                'value'      => $pConent->link
+                            );
+                            $checkTimeShare = $this->Mod_general->select('share_progess','*', $whereStime,'shp_id DESC');
+                            if(!empty($checkTimeShare[0])) {
+                                $todaysdate = date('Y/m/d H:i:s', strtotime('-10 minutes'));
+                                $mydate=$checkTimeShare[0]->shp_date;
+                                if (strtotime($todaysdate)>=strtotime($mydate))
+                                {
+                                    $isCanPost = true;
+                                }
+                                else
+                                {
+                                    // FALSE STATEMENT
+                                    $isCanPost = false;
+                                    continue;
+                                }
+                            } else {
+                               $isCanPost = true; 
+                            }
+
+                            /*Check share exist*/
+                            $where_so = array (
+                                'p_id' => $pid,
+                                'sh_status'=>0
+                            );
+                            $dataShare = $this->Mod_general->select(
+                                'share',
+                                '*', 
+                                $where_so);
+                            /*End Check share exist*/
+                            
+                            /*End Check link is avable time*/
+                            if(!empty($dataShare[0])) {
+                                /*get group id*/
+                                // $whereGruops['where_in'] = array('p_id' => $pid);
+                                // $gids = $this->Mod_general->select ('socail_network_group','sg_page_id', $whereGruops);
+                                // if(!empty($gids[0])) {
+                                //     $sharePost->group_id = $gids[0]->sg_page_id;
+
+                                // } 
+
+                                $wGroupType = array (
+                                    'p_id' => $pid,
+                                );
+                                $tablejoin = array('socail_network_group'=>'socail_network_group.sg_id=share.sg_page_id');
+                                $dataGroup = $this->Mod_general->join('share', $tablejoin, $fields = '*', $wGroupType);
+                                if(!empty($dataGroup)) {                
+                                    foreach($dataGroup as $key => $groups) { 
+                                        if(!empty($groups)) {      
+                                            $dataGoupInstert[] = array(
+                                                'group_id'=>$groups->sg_page_id,
+                                                'group_name'=>$groups->sg_name,
+                                                'status'=>$groups->sh_status);
+                                        }
+                                    } 
+                                }
+                                /*End get group id*/
+
+                                $parse = parse_url($pConent->link);
+                                if (!in_array(@$parse['host'], $siteUrl)) {
+                                    if(empty($checkExistP[0])) {
+                                        if(!empty($isCanPost)) {
+                                            $dataJsons[] = $gvalue;
+                                        }
+                                    }
+                                }
+                            } else {
                                 continue;
                             }
-                        } else {
-                           $isCanPost = true; 
-                        }
-
-                        /*Check share exist*/
-                        $where_so = array (
-                            'p_id' => $pid,
-                            'sh_status'=>0
-                        );
-                        $dataShare = $this->Mod_general->select(
-                            'share',
-                            '*', 
-                            $where_so);
-                        /*End Check share exist*/
-                        
-                        /*End Check link is avable time*/
-                        if(!empty($dataShare[0])) {
-                            /*get group id*/
-                            // $whereGruops['where_in'] = array('p_id' => $pid);
-                            // $gids = $this->Mod_general->select ('socail_network_group','sg_page_id', $whereGruops);
-                            // if(!empty($gids[0])) {
-                            //     $sharePost->group_id = $gids[0]->sg_page_id;
-
-                            // } 
-
-                            $wGroupType = array (
-                                'p_id' => $pid,
-                            );
-                            $tablejoin = array('socail_network_group'=>'socail_network_group.sg_id=share.sg_page_id');
-                            $dataGroup = $this->Mod_general->join('share', $tablejoin, $fields = '*', $wGroupType);
-                            if(!empty($dataGroup)) {                
-                                foreach($dataGroup as $key => $groups) { 
-                                    if(!empty($groups)) {      
-                                        $dataGoupInstert[] = array(
-                                            'group_id'=>$groups->sg_page_id,
-                                            'group_name'=>$groups->sg_name,
-                                            'status'=>$groups->sh_status);
-                                    }
-                                } 
+                            // $whereMt = array(
+                            //     'meta_name'      => 'post_progress',
+                            //     'meta_key'      => $sid,
+                            //     'object_id'      => $gvalue->p_id,
+                            // );
+                            // $checkExistP = $this->Mod_general->select('meta','*', $whereMt);
+                            // /*Check if not post*/
+                            // $check_url = 'https://www.huaythaitodays.com/questions/10456113/check-file-extension-in-upload-form-in-php';
+                            // $parse = parse_url($pConent->link);
+                            // if (!in_array(@$parse['host'], $siteUrl)) {
+                            //     if(empty($checkExistP[0])) {
+                            //         $dataJsons[] = $gvalue;
+                            //     }
+                            // } else {
+                            //     $whereUps = array('p_id' => $gvalue->p_id);
+                            //     $dataPostsite = array (
+                            //         'p_post_to' => 0,
+                            //     );
+                            //     $this->Mod_general->update( Tbl_posts::tblName,$dataPostsite, $whereUps);
+                            // }
+                            if(preg_match('/บน-ล่าง/', $gvalue->p_name) || preg_match('/เลข/', $gvalue->p_name) || preg_match('/งวด/', $gvalue->p_name) || preg_match('/หวย/', $gvalue->p_name) || preg_match('/ปลดหนี้/', $gvalue->p_name) || preg_match('/Lotto/', $gvalue->p_name) || preg_match('/Lottery/', $gvalue->p_name))  {
+                                $gLabel = 'lotto';
                             }
-                            /*End get group id*/
 
-                            $parse = parse_url($pConent->link);
-                            if (!in_array(@$parse['host'], $siteUrl)) {
-                                if(empty($checkExistP[0])) {
-                                    if(!empty($isCanPost)) {
-                                        $dataJsons[] = $gvalue;
+                            if(!empty($dataJsons) && !empty($gLabel) && $gLabel == 'lotto') {
+                                /*Show data Prefix*/
+                                if(!empty($pSchedule->prefix_checked)) {
+                                    if(!empty($pSchedule->prefix_title)) {
+                                        $prefixArr = explode('|', $pSchedule->prefix_title);
+                                        $preRand = $prefixArr[mt_rand(0, count($prefixArr) - 1)];
+                                    } else {       
+                                        $where_pre = array(
+                                            'c_name'      => 'prefix_title',
+                                            'c_key'     => $log_id,
+                                        );
+                                        $prefix_title = $this->Mod_general->select('au_config', '*', $where_pre);
+                                        if(!empty($prefix_title[0])) {
+                                            $prefix = json_decode($prefix_title[0]->c_value);
+                                            $prefixArr = explode('|', $prefix);
+                                            $preTitle[] = $prefixArr[mt_rand(0, count($prefixArr) - 1)];
+                                        }
                                     }
                                 }
-                            }
-                        } else {
-                            continue;
-                        }
-                        // $whereMt = array(
-                        //     'meta_name'      => 'post_progress',
-                        //     'meta_key'      => $sid,
-                        //     'object_id'      => $gvalue->p_id,
-                        // );
-                        // $checkExistP = $this->Mod_general->select('meta','*', $whereMt);
-                        // /*Check if not post*/
-                        // $check_url = 'https://www.huaythaitodays.com/questions/10456113/check-file-extension-in-upload-form-in-php';
-                        // $parse = parse_url($pConent->link);
-                        // if (!in_array(@$parse['host'], $siteUrl)) {
-                        //     if(empty($checkExistP[0])) {
-                        //         $dataJsons[] = $gvalue;
-                        //     }
-                        // } else {
-                        //     $whereUps = array('p_id' => $gvalue->p_id);
-                        //     $dataPostsite = array (
-                        //         'p_post_to' => 0,
-                        //     );
-                        //     $this->Mod_general->update( Tbl_posts::tblName,$dataPostsite, $whereUps);
-                        // }
-                        if(preg_match('/บน-ล่าง/', $gvalue->p_name) || preg_match('/เลข/', $gvalue->p_name) || preg_match('/งวด/', $gvalue->p_name) || preg_match('/หวย/', $gvalue->p_name) || preg_match('/ปลดหนี้/', $gvalue->p_name) || preg_match('/Lotto/', $gvalue->p_name) || preg_match('/Lottery/', $gvalue->p_name))  {
-                            $gLabel = 'lotto';
-                        }
-
-                        if(!empty($dataJsons) && !empty($gLabel) && $gLabel == 'lotto') {
-                            /*Show data Prefix*/
-                            if(!empty($pSchedule->prefix_checked)) {
-                                if(!empty($pSchedule->prefix_title)) {
-                                    $prefixArr = explode('|', $pSchedule->prefix_title);
-                                    $preRand = $prefixArr[mt_rand(0, count($prefixArr) - 1)];
-                                } else {       
-                                    $where_pre = array(
-                                        'c_name'      => 'prefix_title',
+                                /*End Show data Prefix*/
+                                /*Show data Prefix*/
+                                if(!empty($pSchedule->suffix_title)) {
+                                    $subFixArr = explode('|', $pSchedule->suffix_title);
+                                    $subRand = $subFixArr[mt_rand(0, count($subFixArr) - 1)];
+                                } else {
+                                    $whereSuf = array(
+                                        'c_name'      => 'suffix_title',
                                         'c_key'     => $log_id,
                                     );
-                                    $prefix_title = $this->Mod_general->select('au_config', '*', $where_pre);
-                                    if(!empty($prefix_title[0])) {
-                                        $prefix = json_decode($prefix_title[0]->c_value);
-                                        $prefixArr = explode('|', $prefix);
-                                        $preTitle[] = $prefixArr[mt_rand(0, count($prefixArr) - 1)];
+                                    $suffix_title = $this->Mod_general->select('au_config', '*', $whereSuf);
+                                    if(!empty($suffix_title[0])) {
+                                        $subfix = json_decode($suffix_title[0]->c_value);
+                                        $subFixArr = explode('|', $subfix);
+                                        $subTitle[] = $subFixArr[mt_rand(0, count($subFixArr) - 1)];
                                     }
                                 }
+                                /*End Show data Prefix*/
                             }
-                            /*End Show data Prefix*/
-                            /*Show data Prefix*/
-                            if(!empty($pSchedule->suffix_title)) {
-                                $subFixArr = explode('|', $pSchedule->suffix_title);
-                                $subRand = $subFixArr[mt_rand(0, count($subFixArr) - 1)];
-                            } else {
-                                $whereSuf = array(
-                                    'c_name'      => 'suffix_title',
-                                    'c_key'     => $log_id,
-                                );
-                                $suffix_title = $this->Mod_general->select('au_config', '*', $whereSuf);
-                                if(!empty($suffix_title[0])) {
-                                    $subfix = json_decode($suffix_title[0]->c_value);
-                                    $subFixArr = explode('|', $subfix);
-                                    $subTitle[] = $subFixArr[mt_rand(0, count($subFixArr) - 1)];
-                                }
-                            }
-                            /*End Show data Prefix*/
                         }
                     }
                 }
