@@ -5716,6 +5716,10 @@ public function imgtest()
                 die;
             }
         }
+        if($this->input->get('action') == 'createblog') {
+            redirect(base_url().'managecampaigns/autopost?createblog=1');
+            die;
+        }
         /*delete blog data*/
         if(!empty($this->input->get('del'))) {
             $delId = $this->input->get('del');
