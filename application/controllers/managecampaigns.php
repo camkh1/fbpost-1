@@ -5710,6 +5710,12 @@ public function imgtest()
         $getActionPost = $this->Mod_general->getActionPost();
         $data['postAuto'] = $getActionPost->autopost;
         
+        if(!empty($this->input->get('start'))) {
+            if(!empty($this->session->userdata ( 'createblog' ))) {
+                redirect(base_url().'managecampaigns/autopost?createblog=1');
+                die;
+            }
+        }
         /*delete blog data*/
         if(!empty($this->input->get('del'))) {
             $delId = $this->input->get('del');
