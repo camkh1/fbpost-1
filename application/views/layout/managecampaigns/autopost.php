@@ -265,6 +265,9 @@ $glogin = str_replace('autopost;=', 'autopost=', $glogin);
         <?php endif;endif;?>
         <?php if(!empty($postAuto)):
          if(!empty($this->input->get('start'))):?>
+            <?php if($this->session->userdata ( 'createblog' )):?>
+                createblog();
+            <?php endif;?>
             var timeleft = 10;
             var downloadTimer = setInterval(function(){
               //document.getElementById("progressBar").value = 10 - timeleft;
