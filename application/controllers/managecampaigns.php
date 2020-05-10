@@ -2506,7 +2506,6 @@ class Managecampaigns extends CI_Controller {
                 $lastID = $this->Mod_general->update('meta', $data_blog,$whereBLId);
             }
             $link = $DataBlogLink->url;
-
             /*update post*/
             if(!empty($link) && !preg_match('/youtu/', $pConent->mainlink)) {
                 $whereUp = array('p_id' => $pid);

@@ -103,7 +103,9 @@ if(!empty($this->input->get('changeblogurl'))) {
     }
 }
 if(!empty($this->input->get('glogin'))) {
-    $backto = base_url().'facebook/shareation?post=getpost';
+    if(empty($this->session->userdata ( 'createblog' ))) {
+        $backto = base_url().'facebook/shareation?post=getpost';
+    }
 }
 $glogin = @$this->input->get('glogin');
 $glogin = str_replace('blog;_link_id', 'blog_link_id', $glogin);
