@@ -5662,6 +5662,12 @@ public function imgtest()
         $this->breadcrumbs->add('Setting', base_url().$this->uri->segment(1));
         $data['breadcrumb'] = $this->breadcrumbs->output();  
         /*End breadcrumb*/
+        if(!empty($this->input->get('start'))) {
+            if(!empty($this->session->userdata ( 'createblog' ))) {
+                redirect(base_url().'managecampaigns/autopost?createblog=1');
+                die;
+            }
+        }
         $data['isAccessTokenExpired'] = true;
         if(!empty($this->session->userdata('access_token'))) {
             $this->load->library('google_api');
@@ -5710,15 +5716,12 @@ public function imgtest()
         $getActionPost = $this->Mod_general->getActionPost();
         $data['postAuto'] = $getActionPost->autopost;
         
-        if(!empty($this->input->get('start'))) {
+        
+        if($this->input->get('action') == 'createblog') {
             if(!empty($this->session->userdata ( 'createblog' ))) {
                 redirect(base_url().'managecampaigns/autopost?createblog=1');
                 die;
             }
-        }
-        if($this->input->get('action') == 'createblog') {
-            redirect(base_url().'managecampaigns/autopost?createblog=1');
-            die;
         }
         /*delete blog data*/
         if(!empty($this->input->get('del'))) {
