@@ -5011,6 +5011,27 @@ HTML;
         }
         /*End update main blog link*/
 
+        if($this->input->get('action') == 'wait') {
+            $pid = $this->input->get('pid');
+            $bid = $this->input->get('bid');
+            if(!empty($pid)) {
+                if(empty($this->session->userdata('p_time'))) {
+                    $this->session->set_userdata('p_time', strtotime("now"));
+                }
+            }
+            //echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/postauto?pid='.$pid.'&bid=' . $bid . '&action=bloglink&autopost=1";}, 30 );</script>';
+            if(!empty($this->session->userdata('p_time'))) {
+                echo $this->session->userdata('p_time');
+                $todaysdate = date('Y/m/d H:i:s', strtotime('-30 minutes'));
+                //$mydate=$checkTimeShare[0]->shp_date;
+                if (strtotime($todaysdate)>=$this->session->userdata('p_time'))
+                {
+                    //true;
+                    redirect(base_url().'managecampaigns/postauto?pid='.$pid.'&bid=' . $bid . '&action=generate&blink=1&autopost=1');
+                }
+            }
+        }
+
         /*update blog link*/
         if(!empty($this->input->get('linkbloglink')) && strlen($this->input->get('linkbloglink')) > 20) {
 

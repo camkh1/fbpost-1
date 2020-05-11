@@ -169,6 +169,9 @@ $backto = urlencode($backto);
                   }
                 }, 1000);
             <?php endif;?>
+            <?php if($this->input->get('action') =='wait'):?>
+                //alert('wait');
+            <?php endif;?>
         <?php endif;?>
     </script>    
     <div class="page-header">
