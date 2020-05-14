@@ -5031,15 +5031,28 @@ HTML;
                             'email'=> $ytex->email,
                             'pass' => $ytex->pass,
                             'status' => $ytex->status,
-                        );
+                            'date' => date('Y/m/d')
+,                        );
                         if($ytex->status == 1) {
                             $this->session->set_userdata('gemail', $ytex->email);
+                        } else {
+                            date_default_timezone_set("Asia/Phnom_Penh");
+                            $todaysdate = date('Y/m/d', strtotime('today'));
+                            $mydate=$ytex->date;
+                            if (strtotime($todaysdate)>=strtotime($mydate))
+                            {
+                                
+                                //echo "$todaysdate IS Equal or Later $mydate";
+                            } else {
+                                $this->session->set_userdata('gemail', $ytex->email);
+                            }
                         }
                     } else {
                        $inputYt[] = array(
                             'email'=> $ytex->email,
                             'pass' => $ytex->pass,
                             'status' => 0,
+                            'date' => date('Y/m/d'),
                         );
                     }
                 }
