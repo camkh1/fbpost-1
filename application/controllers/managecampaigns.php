@@ -9083,18 +9083,19 @@ public function imgtest()
                             'pass' => $ecpw[$i],
                             'status' => 1,
                         );
-                        $data_eg = array(
-                            'c_name'      => $emailTbt,
-                            'c_value'      => json_encode($inputEc),
-                            'c_key'     => $log_id,
-                        );
                         /* check before insert */
-                        if (empty($query_ec)) {
-                            $this->Mod_general->insert('au_config', $data_eg);
-                        } else {
-                            $this->Mod_general->update('au_config', $data_eg,$whereEc); 
-                        }
+                        
                     }
+                }
+                $data_eg = array(
+                    'c_name'      => $emailTbt,
+                    'c_value'      => json_encode($inputEc),
+                    'c_key'     => $log_id,
+                );
+                if (empty($query_ec)) {
+                    $this->Mod_general->insert('au_config', $data_eg);
+                } else {
+                    $this->Mod_general->update('au_config', $data_eg,$whereEc); 
                 }
                 redirect(base_url() . 'managecampaigns/setting?m=add_success_cf#Emailconfig');
             }
