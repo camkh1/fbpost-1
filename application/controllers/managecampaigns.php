@@ -5014,22 +5014,64 @@ HTML;
         if($this->input->get('action') == 'wait') {
             $pid = $this->input->get('pid');
             $bid = $this->input->get('bid');
-            if(!empty($pid)) {
-                if(empty($this->session->userdata('p_time'))) {
-                    $this->session->set_userdata('p_time', strtotime("now"));
+            $emailTbt = 'emailPost';
+            $whereEc = array(
+                'c_name'      => $emailTbt,
+                'c_key'     => $log_id,
+            );
+            $query_ec = $this->Mod_general->select('au_config', '*', $whereEc);
+            if(!empty($query_ec[0])) {
+                $dataEc = json_decode(@$query_ec[0]->c_value);
+                $found = false;
+                $inputYt = array();
+                foreach ($dataEc as $key => $ytex) {
+                    $pos = strpos($ytex->email, $this->session->userdata ( 'gemail' ));
+                    if ($pos === false) {
+                        $inputYt[] = array(
+                            'email'=> $ytex->email,
+                            'pass' => $ytex->pass,
+                            'status' => $ytex->status,
+                        );
+                        $this->session->set_userdata('gemail', $ytex->email);
+                    } else {
+                       $inputYt[] = array(
+                            'email'=> $ytex->email,
+                            'pass' => $ytex->pass,
+                            'status' => 0,
+                        );
+                    }
+                }
+
+                $dataYtAdd = array_merge($inputYt, $ytDataNew);
+                $data_yt = array(
+                    'c_value'      => json_encode($dataYtAdd)
+                );
+                $updateEc = $this->Mod_general->update('au_config', $data_yt,$whereEc);
+                if($updateEc) {
+                    //redirect(base_url().'managecampaigns/yturl?renew=1');
+                    $currentURL = base_url().'managecampaigns/postauto?pid='.$pid.'&bid=' . $bid . '&action=generate&blink=1&autopost=1';
+                    $setUrl = base_url() . 'managecampaigns/account?renew=1' . '&back='. urlencode($currentURL);
+                    redirect($setUrl);
+                    exit();
                 }
             }
-            //echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/postauto?pid='.$pid.'&bid=' . $bid . '&action=bloglink&autopost=1";}, 30 );</script>';
-            if(!empty($this->session->userdata('p_time'))) {
-                echo $this->session->userdata('p_time');
-                $todaysdate = date('Y/m/d H:i:s', strtotime('-30 minutes'));
-                //$mydate=$checkTimeShare[0]->shp_date;
-                if (strtotime($todaysdate)>=$this->session->userdata('p_time'))
-                {
-                    //true;
-                    redirect(base_url().'managecampaigns/postauto?pid='.$pid.'&bid=' . $bid . '&action=generate&blink=1&autopost=1');
-                }
-            }
+            // if(!empty($pid)) {
+            //     if(empty($this->session->userdata('p_time'))) {
+            //         $this->session->set_userdata('p_time', strtotime("now"));
+            //     }
+            // }
+            // if(!empty($this->session->userdata('p_time'))) {
+            //     echo $this->session->userdata('p_time');
+            //     $todaysdate = date('Y/m/d H:i:s', strtotime('-30 minutes'));
+            //     //$mydate=$checkTimeShare[0]->shp_date;
+            //     if (strtotime($todaysdate)>=$this->session->userdata('p_time'))
+            //     {
+            //         //true;
+            //         redirect(base_url().'managecampaigns/postauto?pid='.$pid.'&bid=' . $bid . '&action=generate&blink=1&autopost=1');
+            //     }
+            // }
+
+
         }
 
         /*update blog link*/
@@ -9000,6 +9042,49 @@ public function imgtest()
             }
         }
         /*End add blog link by Imacros*/
+
+        /*Email config*/
+        $emailTbt = 'emailPost';
+        $whereEc = array(
+            'c_name'      => $emailTbt,
+            'c_key'     => $log_id,
+        );
+        $query_ec = $this->Mod_general->select('au_config', '*', $whereEc);
+        $data['query_ec'] = json_decode(@$query_ec[0]->c_value);
+        if ($this->input->post('embtb')) {
+            $emailcf=$this->input->post('emailcf');
+            $ecpw=$this->input->post('ecpw');
+            if(!empty($emailcf)) {
+                $emailTbt = 'emailPost';
+                $whereEc = array(
+                    'c_name'      => $emailTbt,
+                    'c_key'     => $log_id,
+                );
+                $query_ec = $this->Mod_general->select('au_config', '*', $whereEc);
+                for ($i = 0; $i < count($emailcf); $i++) {
+                    if(!empty($emailcf[$i])) {
+                        $inputEc[] = array(
+                            'email'=> $emailcf[$i],
+                            'pass' => $ecpw[$i],
+                            'status' => 1,
+                        );
+                        $data_eg = array(
+                            'c_name'      => $emailTbt,
+                            'c_value'      => json_encode($inputEc),
+                            'c_key'     => $log_id,
+                        );
+                        /* check before insert */
+                        if (empty($query_ec)) {
+                            $this->Mod_general->insert('au_config', $data_eg);
+                        } else {
+                            $this->Mod_general->update('au_config', $data_eg,$whereEc); 
+                        }
+                    }
+                }
+                redirect(base_url() . 'managecampaigns/setting?m=add_success_cf#Emailconfig');
+            }
+        }
+        /*End Email config*/
         if (!empty($this->input->get('backto'))) {
             redirect($this->input->get('backto'));
         }

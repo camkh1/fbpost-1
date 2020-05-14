@@ -330,6 +330,54 @@ $btemplate = "D:&bsol;&bsol;PROGRAM&bsol;&bsol;templates&bsol;&bsol;";
                             </div>
                         </div>
                         <!-- End splogr -->
+
+                        <!-- Email config -->
+                        <div class="widget box widget-closed" id="Emailconfig">
+                            <div class="widget-header">
+                                <h4><i class="icon-reorder"></i> Email posts config</h4>
+                                <div class="toolbar no-padding">
+                                    <div class="btn-group"> <span class="btn btn-xs widget-collapse"><i class="icon-angle-up"></i></span> </div>
+                                </div>
+                            </div>
+                            <div class="widget-content">
+                                <form class="form-horizontal row-border" action="" method="post">
+                                    <div class="form-group"> 
+                                        <div class="col-md-6"> 
+                                            <input class="form-control required" name="emailcf[]" type="text" value="<?php echo !empty($query_ec[0])? $query_ec[0]->email : '';?>"> 
+                                            <span class="help-block">Email 01</span> 
+                                        </div> 
+                                        <div class="col-md-6"> 
+                                            <input class="form-control required" name="ecpw[]" type="text" value="<?php echo !empty($query_ec[0])? $query_ec[0]->pass : '';?>"> 
+                                            <span class="help-block">Pass 01</span> 
+                                        </div>
+                                    </div>
+                                    <div class="form-group"> 
+                                        <div class="col-md-6"> 
+                                            <input class="form-control required" name="emailcf[]" type="text" value="<?php echo !empty($query_ec[1])? $query_ec[1]->email : '';?>"> 
+                                            <span class="help-block">Email 02</span> 
+                                        </div> 
+                                        <div class="col-md-6"> 
+                                            <input class="form-control required" name="ecpw[]" type="text" value="<?php echo !empty($query_ec[1])? $query_ec[1]->pass : '';?>"> 
+                                            <span class="help-block">Pass 02</span> 
+                                        </div>
+                                    </div>
+                                    <div class="form-group"> 
+                                        <div class="col-md-6"> 
+                                            <input class="form-control required" name="emailcf[]" type="text" value="<?php echo !empty($query_ec[2])? $query_ec[2]->email : '';?>"> 
+                                            <span class="help-block">Email 03</span> 
+                                        </div> 
+                                        <div class="col-md-6"> 
+                                            <input class="form-control required" name="ecpw[]" type="text" value="<?php echo !empty($query_ec[2])? $query_ec[2]->pass : '';?>"> 
+                                            <span class="help-block">Pass 03</span> 
+                                        </div> 
+                                    </div>
+                                    <div class="form-actions"> 
+                                        <input type="submit" value="Save" class="btn btn-primary pull-right" name="embtb"> 
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <!-- End Email config -->
                     </div>
 
                     <div class="col-md-6">
