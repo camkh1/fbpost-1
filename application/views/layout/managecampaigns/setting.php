@@ -343,7 +343,7 @@ $btemplate = "D:&bsol;&bsol;PROGRAM&bsol;&bsol;templates&bsol;&bsol;";
                                 <form class="form-horizontal row-border" action="" method="post">
                                     <div class="form-group"> 
                                         <div class="col-md-6"> 
-                                            <input class="form-control required" name="emailcf[]" type="text" value="<?php echo !empty($query_ec[0])? $query_ec[0]->email : '';?>"> 
+                                            <input class="form-control required" name="emailcf[]" type="text" value="<?php echo !empty($query_ec[0])? $query_ec[0]->email : $this->session->userdata ( 'gemail' );?>"> 
                                             <span class="help-block">Email 01</span> 
                                         </div> 
                                         <div class="col-md-6"> 
