@@ -5057,17 +5057,17 @@ HTML;
                     }
                 }
 
-                $dataYtAdd = array_merge($inputYt, $ytDataNew);
+                //$dataYtAdd = array_merge($inputYt, $ytDataNew);
                 $data_yt = array(
-                    'c_value'      => json_encode($dataYtAdd)
+                    'c_value'      => json_encode($inputYt)
                 );
                 $updateEc = $this->Mod_general->update('au_config', $data_yt,$whereEc);
                 if($updateEc) {
                     //redirect(base_url().'managecampaigns/yturl?renew=1');
                     $currentURL = base_url().'managecampaigns/postauto?pid='.$pid.'&bid=' . $bid . '&action=generate&blink=1&autopost=1';
                     $setUrl = base_url() . 'managecampaigns/account?renew=1' . '&back='. urlencode($currentURL);
-                    redirect($setUrl);
-                    exit();
+                    //redirect($setUrl);
+                    //exit();
                 }
             }
             // if(!empty($pid)) {
@@ -6145,6 +6145,33 @@ public function imgtest()
             }
         }
         /*End check for exist post*/
+        if(!empty($this->input->get('glogin'))) {
+            $emailTbt = 'emailPost';
+            $whereEc = array(
+                'c_name'      => $emailTbt,
+                'c_key'     => $log_id,
+            );
+            $query_ec = $this->Mod_general->select('au_config', '*', $whereEc);
+            if(!empty($query_ec[0])) {
+                $dataEc = json_decode(@$query_ec[0]->c_value);
+                $found = false;
+                $inputEc = array();
+                foreach ($dataEc as $key => $ytex) {
+                    $pos = strpos($ytex->email, $this->session->userdata ( 'gemail' ));
+                    if ($pos === false) {
+                    } else {
+                       $inputEc[] = array(
+                            'email'=> $ytex->email,
+                            'pass' => $ytex->pass,
+                            'status' => 0,
+                            'date' => date('Y/m/d'),
+                        );
+                    }
+                }
+            }
+            $data['inputEc'] = @$inputEc[0];
+        }
+        
 
         /*create blog*/
         $recreate = $this->input->get('recreate');
@@ -9082,6 +9109,7 @@ public function imgtest()
                             'email'=> $emailcf[$i],
                             'pass' => $ecpw[$i],
                             'status' => 1,
+                            'date' => date('Y/m/d')
                         );
                         /* check before insert */
                         

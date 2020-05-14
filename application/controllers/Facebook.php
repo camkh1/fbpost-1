@@ -1543,7 +1543,10 @@ WHERE gl.`gu_grouplist_id` = {$id}");
 
         $randomLink = $this->session->userdata ( 'randomLink' );
         $shareId = $this->input->get('shareid');
-
+        if(!empty($this->session->userdata ( 'createblog' ))) {
+            redirect(base_url().'managecampaigns/autopost?createblog=1');
+            die;
+        }
         if(empty($sid)) {
             redirect(base_url() . 'managecampaigns?back='.urlencode(base_url() . 'Facebook/share?post=nexpost'));
         }
