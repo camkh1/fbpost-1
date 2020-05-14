@@ -5032,7 +5032,9 @@ HTML;
                             'pass' => $ytex->pass,
                             'status' => $ytex->status,
                         );
-                        $this->session->set_userdata('gemail', $ytex->email);
+                        if($ytex->status == 1) {
+                            $this->session->set_userdata('gemail', $ytex->email);
+                        }
                     } else {
                        $inputYt[] = array(
                             'email'=> $ytex->email,
