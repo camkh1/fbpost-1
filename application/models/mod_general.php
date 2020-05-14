@@ -310,6 +310,7 @@ class Mod_general extends CI_Model
             'www.youtube.com',
             'youtu.be',
             'www.huayhot.com',
+            'www.verl.supiper.online',
             'www.tha.supiper.online',
             'www.to.supiper.online',
         );
