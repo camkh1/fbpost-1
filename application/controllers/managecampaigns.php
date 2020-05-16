@@ -7042,7 +7042,7 @@ public function imgtest()
                         'https://board.postjung.com/',
                         'http://huaythai.me/',
                         'http://www.huaythaitoday.com/',
-                        'http://www.huayhot.com/',
+                        //'http://www.huayhot.com/',
                         'https://www.tha.supiper.online/',
                     );
                     $k = array_rand($siteUrl);
@@ -7122,7 +7122,7 @@ public function imgtest()
 
                     $RanChoose = array(
                         'site',
-                        'yt',
+                        //'yt',
                         'mysite',
                     );
                     $l = array_rand($RanChoose);
