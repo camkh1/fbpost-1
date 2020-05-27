@@ -7042,7 +7042,7 @@ public function imgtest()
                         'https://board.postjung.com/',
                         'http://huaythai.me/',
                         'http://www.huaythaitoday.com/',
-                        //'http://www.huayhot.com/',
+                        'http://www.huayhot.com/',
                         'https://www.tha.supiper.online/',
                     );
                     $k = array_rand($siteUrl);
@@ -7122,7 +7122,7 @@ public function imgtest()
 
                     $RanChoose = array(
                         'site',
-                        //'yt',
+                        'yt',
                         'mysite',
                     );
                     $l = array_rand($RanChoose);
@@ -7594,7 +7594,7 @@ public function imgtest()
                 /*if progress post exist*/
                 $sid = $this->session->userdata ( 'sid' );
                 if($this->session->userdata('post_only')) {
-                    echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=yt";},‭600000‬ );</script>';
+                    echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=yt";},‭3600000‬ );</script>';
                     exit();
                 } else {
                     $whereFb = array(
