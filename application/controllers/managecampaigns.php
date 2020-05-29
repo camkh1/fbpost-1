@@ -2596,7 +2596,7 @@ class Managecampaigns extends CI_Controller {
                 }
             }
             if(!empty($post_next)) {
-                echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/yturl?pid='.$post_next.'&action=postblog&autopost=1";},300 );</script>';
+                echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/yturl?pid='.$post_next.'&action=postblog&autopost=1";},‭900000‬ );</script>';
                 exit();
             }
         }
@@ -7123,7 +7123,7 @@ public function imgtest()
                     $RanChoose = array(
                         'site',
                         'yt',
-                        'mysite',
+                        //'mysite',
                     );
                     $l = array_rand($RanChoose);
                     $getChoose = $RanChoose[$l];
