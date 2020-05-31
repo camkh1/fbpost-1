@@ -2602,26 +2602,27 @@ class Managecampaigns extends CI_Controller {
                 }
             }
             if(!empty($post_next)) {
-                if($this->session->userdata('p_id') != $post_next) {
-                    if(empty($this->session->userdata('p_time'))) {
-                        $this->session->set_userdata('p_time', strtotime("now"));
-                        $this->session->set_userdata('p_id', $post_next);
-                    }
-                }
-                if(!empty($this->session->userdata('p_time'))) {
-                    echo $this->session->userdata('p_time');
-                    $todaysdate = date('Y/m/d H:i:s', strtotime('-30 minutes'));
-                    //$mydate=$checkTimeShare[0]->shp_date;
-                    if (strtotime($todaysdate)>=$this->session->userdata('p_time'))
-                    {
-                        echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/yturl?pid='.$post_next.'&action=postblog&autopost=1";},‭300‬ );</script>';
+                echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/yturl?pid='.$post_next.'&action=postblog&autopost=1";},‭300‬ );</script>';
                         exit();
-                        //true;
-                        //redirect(base_url().'managecampaigns/postauto?pid='.$pid.'&bid=' . $bid . '&action=generate&blink=1&autopost=1');
-                    }
+                // if($this->session->userdata('p_id') != $post_next) {
+                //     if(empty($this->session->userdata('p_time'))) {
+                //         $this->session->set_userdata('p_time', strtotime("now"));
+                //         $this->session->set_userdata('p_id', $post_next);
+                //     }
+                // }
+                // if(!empty($this->session->userdata('p_time'))) {
+                //     echo $this->session->userdata('p_time');
+                //     $todaysdate = date('Y/m/d H:i:s', strtotime('-30 minutes'));
+                //     //$mydate=$checkTimeShare[0]->shp_date;
+                //     if (strtotime($todaysdate)>=$this->session->userdata('p_time'))
+                //     {
+                //         echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/yturl?pid='.$post_next.'&action=postblog&autopost=1";},‭300‬ );</script>';
+                //         exit();
+                //         //true;
+                //         //redirect(base_url().'managecampaigns/postauto?pid='.$pid.'&bid=' . $bid . '&action=generate&blink=1&autopost=1');
+                //     }
                     
-                }
-                die;
+                // }
             }
         }
         /*End Post all post*/
