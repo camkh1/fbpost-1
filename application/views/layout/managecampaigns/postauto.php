@@ -7,7 +7,7 @@
     .khmer {font-family: 'Hanuman', serif;font-size: 30px}
 </style>
 <link href="https://fonts.googleapis.com/css?family=Koulen" rel="stylesheet"> 
-<meta http-equiv="refresh" content="60"/>
+<!-- <meta http-equiv="refresh" content="60"/> -->
 <div style="display:none;text-align:center;font-size:20px;color:white" id="blockuis">
     <div id="loaderimg" class=""><img align="middle" valign="middle" src="http://2.bp.blogspot.com/-_nbwr74fDyA/VaECRPkJ9HI/AAAAAAAAKdI/LBRKIEwbVUM/s1600/splash-loader.gif"/>
     </div>
@@ -140,6 +140,7 @@ $backto = urlencode($backto);
         }
         <?php if(!empty($this->input->get('action'))):?>
             <?php if($this->input->get('action') =='generate'):?>
+                <?php if($this->input->get('post') != 'bymanual'):?>
                 var timeleft = 10;
                 var downloadTimer = setInterval(function(){
                   //document.getElementById("progressBar").value = 10 - timeleft;
@@ -149,6 +150,7 @@ $backto = urlencode($backto);
                     postToBlogAds();
                   }
                 }, 1000);
+                <?php endif;?>
             <?php endif;?>
             <?php if($this->input->get('action') =='bloglink'):?>
                 var timeleft = 10;
@@ -157,7 +159,7 @@ $backto = urlencode($backto);
                   timeleft -= 1;
                   if(timeleft <= 0) {
                     clearInterval(downloadTimer);
-                    postToBlogLink();
+                    //postToBlogLink();
                   }
                 }, 1000);
             <?php endif;?>
@@ -217,12 +219,18 @@ $backto = urlencode($backto);
                                     <form class="form-horizontal row-border" id="mainblog" method="post">
                                         <div class="form-group">
                                             <div class="col-md-12">
-                                                <input id="btitle" type="text" name="btitle" class="form-control" style="width: 100%" placeholder="Channel ID" value="<?php echo !empty($bTitle) ? $bTitle : '';?> <?php if($this->input->get('action') == 'bloglink'):?> -blid-<?php echo $blogLinkID;?><?php endif;?>" required />
+                                                <input id="btitle" onClick="copyText(this);" type="text" name="btitle" class="form-control" style="width: 100%" placeholder="Channel ID" value="<?php echo !empty($bTitle) ? $bTitle : '';?> <?php if($this->input->get('action') == 'bloglink'):?> -blid-<?php echo $blogLinkID;?><?php endif;?>" required />
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <div class="col-md-12">
-                                                <textarea class="form-control" id="getcontent"><?php if($this->input->get('action') == 'generate'):?>&lt;img class=&quot;thumbnail noi&quot; style=&quot;text-align:center&quot; src=&quot;<?php echo @$image;?>&quot;/&gt;&lt;!--more--&gt;&lt;div&gt;&lt;b&gt;<?php echo @$bTitle;?>&lt;/b&gt;&lt;/div&gt;&lt;div class=&quot;wrapper&quot;&gt;&lt;div class=&quot;small&quot;&gt;&lt;p&gt;<?php echo trim(@$bContent);?>&lt;/p&gt;&lt;/div&gt; &lt;a href=&quot;#&quot; class=&quot;readmore&quot;&gt;... Click to read more&lt;/a&gt;&lt;/div&gt;&lt;div style=&quot;text-align: center;&quot;&gt;&lt;script async src=&quot;//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js&quot; &gt;&lt;/script&gt;&lt;script&gt;document.write(inSide);(adsbygoogle = window.adsbygoogle || []).push({});&lt;/script&gt;&lt;/div&gt;&lt;div&gt;Others news:&lt;/div&gt;&lt;iframe width=&quot;100%&quot; height=&quot;280&quot; src=&quot;https://www.youtube.com/embed/<?php echo @$vid;?>&quot; frameborder=&quot;0&quot; allow=&quot;autoplay; encrypted-media&quot; allowfullscreen&gt;&lt;/iframe&gt;&lt;div style=&quot;text-align: center;&quot;&gt;&lt;script async src=&quot;//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js&quot; &gt;&lt;/script&gt;&lt;script&gt;document.write(inSide);(adsbygoogle = window.adsbygoogle || []).push({});&lt;/script&gt;&lt;/div&gt;<?php endif;?><?php if($this->input->get('action') == 'bloglink'):?>&lt;script&gt;function mbtlist(json){for(var i=0;i&lt;json.feed.entry.length;i++){ListConten=json.feed.entry[i].content.$t;document.write(ListConten);}}&lt;/script&gt;&lt;script&gt;var bgimage = &quot;<?php echo @$image;?>&quot;,main_link = &quot;<?php echo @$mainLink;?>&quot;,uid = &quot;<?php echo @$log_ids;?>&quot;;&lt;/script&gt;&lt;img class=&quot;thumbnail noi&quot; style=&quot;text-align:center;display:none;&quot; src=&quot;<?php echo @$image;?>&quot;/&gt;&lt;center&gt;&lt;script type=&quot;text/javascript&quot; src=&quot;https://10clblogh.blogspot.com/feeds/posts/default/-/getplay?max-results=1&amp;amp;alt=json-in-script&amp;amp;callback=mbtlist&quot;&gt;&lt;/script&gt;&lt;/center&gt;<?php endif;?></textarea>
+                                                <textarea onClick="copyText(this);" class="form-control" id="getcontent"><?php if($this->input->get('action') == 'generate'):?>&lt;img class=&quot;thumbnail noi&quot; style=&quot;text-align:center&quot; src=&quot;<?php echo @$image;?>&quot;/&gt;&lt;!--more--&gt;&lt;div&gt;&lt;b&gt;<?php echo @$bTitle;?>&lt;/b&gt;&lt;/div&gt;&lt;div class=&quot;wrapper&quot;&gt;&lt;div class=&quot;small&quot;&gt;&lt;p&gt;<?php echo trim(@$bContent);?>&lt;/p&gt;&lt;/div&gt; &lt;a href=&quot;#&quot; class=&quot;readmore&quot;&gt;... Click to read more&lt;/a&gt;&lt;/div&gt;&lt;div style=&quot;text-align: center;&quot;&gt;&lt;script async src=&quot;//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js&quot; &gt;&lt;/script&gt;&lt;script&gt;document.write(inSide);(adsbygoogle = window.adsbygoogle || []).push({});&lt;/script&gt;&lt;/div&gt;&lt;div&gt;Others news:&lt;/div&gt;&lt;iframe width=&quot;100%&quot; height=&quot;280&quot; src=&quot;https://www.youtube.com/embed/<?php echo @$vid;?>&quot; frameborder=&quot;0&quot; allow=&quot;autoplay; encrypted-media&quot; allowfullscreen&gt;&lt;/iframe&gt;&lt;div style=&quot;text-align: center;&quot;&gt;&lt;script async src=&quot;//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js&quot; &gt;&lt;/script&gt;&lt;script&gt;document.write(inSide);(adsbygoogle = window.adsbygoogle || []).push({});&lt;/script&gt;&lt;/div&gt;<?php endif;?><?php if($this->input->get('action') == 'bloglink'):?>&lt;script&gt;function mbtlist(json){for(var i=0;i&lt;json.feed.entry.length;i++){ListConten=json.feed.entry[i].content.$t;document.write(ListConten);}}&lt;/script&gt;&lt;script&gt;var bgimage = &quot;<?php echo @$image;?>&quot;,main_link = &quot;<?php echo @$mainLink;?>&quot;,uid = &quot;<?php echo @$log_ids;?>&quot;;&lt;/script&gt;&lt;img class=&quot;thumbnail noi&quot; style=&quot;text-align:center;display:none;&quot; src=&quot;<?php echo @$image;?>&quot;/&gt;&lt;center&gt;&lt;script type=&quot;text/javascript&quot; src=&quot;https://10clblogh.blogspot.com/feeds/posts/default/-/getplay?max-results=1&amp;amp;alt=json-in-script&amp;amp;callback=mbtlist&quot;&gt;&lt;/script&gt;&lt;/center&gt;<?php endif;?></textarea>
+
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-md-12">
+                                                <input id="btblink" type="text" name="btitle" class="form-control" style="width: 100%" placeholder="blog Link" onkeyup="setMLink(this);" value="" data-pid="<?php echo $p_id;?>" />
                                             </div>
                                         </div>
                                     </form>
@@ -252,6 +260,37 @@ $backto = urlencode($backto);
 
     </div>
     <script>
+function setMLink(e) {
+    var mlink = $(e).val();
+    var pid = $(e).attr('data-pid');
+    if(mlink) {
+        <?php if($this->input->get('action') =='bloglink'):?>
+            $.get("<?php echo base_url();?>managecampaigns/postauto?pid="+pid+"&bid=&action=nextpost&blog_link_id=&linkbloglink="+encodeURI(mlink), function(data, status){
+                alert("Status: " + status);
+            });
+        <?php endif;?>
+        <?php if($this->input->get('action') =='generate'):?>
+            $.get("<?php echo base_url();?>managecampaigns/postauto?pid="+pid+"&bid=&action=generate&blog_link_id=&addbloglink="+mlink, function(data, status){
+                alert("Status: " + status);
+            });
+        <?php endif;?>
+    }
+}
+function copyText(e) {
+  e.select();
+  document.execCommand('copy');
+    var n = noty({
+        text: 'copyed',
+        type: 'success',
+        dismissQueue: false,
+        layout: 'top',
+        theme: 'defaultTheme'
+    });
+
+    setTimeout(function () {
+        $.noty.closeAll();
+    }, 1000);
+}
         $( document ).ready(function() {
             $("input[name=randomLink]").click(function(){
                 var values = $('#randomLink').serialize();

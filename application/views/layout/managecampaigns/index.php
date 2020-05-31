@@ -300,11 +300,13 @@ function parse_query_string(query) {
     	$content = json_decode($value->p_conent);
     	$getLink = $content->link;
     	$picture = @$content->picture;
+    	$uploaded = true;
     	if (!@preg_match('/http/', @$picture)):
     		preg_match("/^(?:http(?:s)?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:(?:watch)?\?(?:.*&)?v(?:i)?=|(?:embed|v|vi|user)\/))([^\?&\"'>]+)/", $getLink, $matches);
             if (!empty($matches[1])):
                 $picture = (!empty($matches[1]) ? $matches[1] : '');
                 $picture = 'https://i.ytimg.com/vi/'.$picture.'/hqdefault.jpg';
+                $uploaded = false;
             endif;
     	endif;
     	$glink = $content->link;
@@ -313,6 +315,8 @@ function parse_query_string(query) {
         $uniq_id = substr($str, 0, 9);
         //$link = $glink . '?s=' . $uniq_id;
         $link = $glink;
+        $mainlink = $content->mainlink;
+        $message = $content->message;
         $UserTable = new Mod_general ();
     	$getBrowser = $UserTable->getBrowser()['name'];
     	if($getBrowser=='Mozilla Firefox'){
@@ -387,12 +391,15 @@ function parse_query_string(query) {
 												<li><a
 												href="<?php echo base_url(); ?>facebook/shareation?post=getpost&pid=<?php echo $value->{Tbl_posts::id}; ?>"><i class="icon-share"></i> Share now</a></li>
 											<?php endif;?>
-											<li><a onclick="getcode('<?php echo $value->{Tbl_posts::name};?>\n <?php echo @$link;?>');" href="javascript:void(0);"><i class="icon-share"></i> Get Link</a></li>
+											<li><a onclick="getcode('<?php echo $value->{Tbl_posts::name};?>\n <?php echo @$link;?>');" href="javascript:void(0);"><i class="icon-pencil"></i> Get Link</a></li>
 											<?php
 											$parse = parse_url($glink);
+											//$bContent = preg_replace('/\s+/', '<sp>', $message);
+                                    		$bContent = str_replace('/\n/g', '<br>', $message);
 		        							if (in_array(@$parse['host'], $siteUrl)):?>
 											<li><a
-												href="<?php echo base_url(); ?>managecampaigns/yturl.html?pid=<?php echo $value->{Tbl_posts::id}; ?>&action=postblog"><i class="icon-pencil"></i> Repost</a></li>
+												href="<?php echo base_url(); ?>managecampaigns/yturl.html?pid=<?php echo $value->{Tbl_posts::id}; ?>&action=postblog"><i class="icon-pencil"></i> Repost auto</a></li>
+												<li><a onclick="postManual(this);" href="javascript:void(0);" data-title="<?php echo $value->{Tbl_posts::name};?>" data-pid="<?php echo $value->{Tbl_posts::id}; ?>" data-link="<?php echo $link;?>" data-mlink="<?php echo @$mainlink;?>" data-upoaded="<?php echo $uploaded;?>" data-message="<?php echo $bContent;?>"><i class="icon-pencil"></i> Repost manually</a></li>
 											<?php endif;?>
 											<li><a
 												href="<?php echo base_url(); ?>managecampaigns/add?id=<?php echo $value->{Tbl_posts::id}; ?>"><i class="icon-pencil"></i> Edit</a></li>
@@ -510,6 +517,33 @@ function getcode(code) {
 		$('#exampleModal').modal('show');
 	}
 }
+function postManual(e) {
+	//$(e).text('there');
+	var upoaded = $(e).attr('data-upoaded');
+	var mlink = $(e).attr('data-mlink');
+	var link = $(e).attr('data-link');
+	var title = $(e).attr('data-title');
+	var pid = $(e).attr('data-pid');
+	var message = $(e).attr('data-message');
+	message = message.replace(/\\/g, '');
+	if(!mlink && upoaded) {
+		var setTitle = '<div class="form-group"><input id="post_'+pid+'" class="form-control" value="'+title+'" onClick="copyText(this);"/></div>';
+		var settext = '<div class="form-group"><textarea id="text_'+pid+'" class="form-control" id="codetext" onclick="copyText(this);">'+message+'</textarea></div>';
+		var setMainLink = '<div class="form-group"><input data-pid="'+pid+'" onkeyup="setMLink(this);" id="mlink_'+pid+'" class="form-control" value="" placeholder="Set main link here" /></div>';
+		$("#inform").html(setTitle+settext+setMainLink);
+		$("#codetext").hide();
+		$('#exampleModal').modal('show');
+	}
+}
+function setMLink(e) {
+	var mlink = $(e).val();
+	var pid = $(e).attr('data-pid');
+	if(mlink) {
+		$.get("<?php echo base_url();?>managecampaigns/postauto?pid="+pid+"&bid=&action=generate&blog_link_id=&addbloglink="+mlink, function(data, status){
+			alert("Status: " + status);
+		});
+	}
+}
 function copyText(e) {
   e.select();
   document.execCommand('copy');
@@ -535,8 +569,8 @@ function copyText(e) {
       </div>
       <div class="modal-body">
         <form>
+        	<div id="inform"></div>
           <div class="form-group">
-            <label for="message-text" class="control-label">code:</label>
             <textarea class="form-control" id="codetext" onClick="copyText(this);"></textarea>
           </div>
         </form>

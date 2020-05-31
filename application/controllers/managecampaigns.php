@@ -1583,7 +1583,7 @@ class Managecampaigns extends CI_Controller {
         $post_by_manaul = false;
         if(!empty($this->input->get('action'))) {
             if($this->input->get('action') == 'postblog') {
-                echo '<meta http-equiv="refresh" content="30">';
+                echo '<meta http-equiv="refresh" content="‭1850‬">';
                 if(!empty($this->session->userdata('access_token'))) {
                     $this->load->library('google_api');
                     $client = new Google_Client();                  
@@ -1896,7 +1896,7 @@ class Managecampaigns extends CI_Controller {
                                                 $p_id = $this->input->get('pid');
                                                 if(count($postsLoop)>2) {
                                                    //echo $showHTHM;
-                                                    echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/postauto?pid='.$p_id.'&bid=' . $bid . '&action=generate&blink='.$blink.'&autopost='.$autopost.'&blog_link_id=";}, 30 );</script>'; 
+                                                    echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/postauto?pid='.$p_id.'&bid=' . $bid . '&action=generate&blink='.$blink.'&autopost='.$autopost.'&blog_link_id=&post=bymanual";}, 30 );</script>'; 
                                                     die;
                                                     echo '<div style"text-align:center;" class="khmer">សូមមេត្តារង់ចាំ60វិនាទីសិន</div>';
                                                     sleep(60);
@@ -1904,8 +1904,11 @@ class Managecampaigns extends CI_Controller {
                                                     //http://localhost/autopost/facebook/shareation?post=getpost&pid=14502
                                                     exit();
                                                 } else {
-                                                    echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'facebook/shareation?post=getpost&pid='.$p_id.'&waits=5";}, 30 );</script>';
+                                                    echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/postauto?pid='.$p_id.'&bid=' . $bid . '&action=generate&blink='.$blink.'&autopost='.$autopost.'&blog_link_id=&post=bymanual";}, 30 );</script>'; 
+                                                    //echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/yturl?pid='.$p_id.'&action=postblog&autopost=1";},‭800000‬ );</script>';
                                                     die;
+                                                    //echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'facebook/shareation?post=getpost&pid='.$p_id.'&waits=5";}, 30 );</script>';
+                                                    //die;
                                                 }
 
 
@@ -2481,7 +2484,7 @@ class Managecampaigns extends CI_Controller {
 
             $postAto = $this->Mod_general->getActionPost();
             if(!empty($DataBlogLink['error'])) {
-                // echo '<div style="text-align:center;color:red;" class="khmer">ដោយមានបញ្ហា សូមមេត្តារង់ចាំ ៣០ វិនាទីសិន កុំបិទផ្ទាំងនេះ</div>';
+                //echo '<div style="text-align:center;color:red;" class="khmer">ដោយមានបញ្ហា សូមមេត្តារង់ចាំ ៣០ វិនាទីសិន កុំបិទផ្ទាំងនេះ</div>';
                 // sleep(30);
                 // echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'facebook/shareation?post=getpost&pid='.$pid.'";}, 1 );</script>'; 
 
@@ -2490,6 +2493,9 @@ class Managecampaigns extends CI_Controller {
                     //echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/postauto?pid='.$pid.'&bid=' . $blogRand . '&action=generate&blink='.$blink.'&autopost='.$postAto.'&blog_link_id='.$blogRand.'";}, 30 );</script>'; 
                     echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/postauto?pid='.$pid.'&bid=' . $blogRand . '&action=bloglink&autopost=1&blog_link_id='.$blogRand.'";}, 30 );</script>';
                     exit();
+                } else {
+                    echo '<script language="javascript" type="text/javascript">var times=1000*60*30;window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/yturl?pid='.$pid.'&action=postblog&autopost=1";},times );</script>';
+                        exit();
                 }
             } else {
                 $whereBLId = array(
@@ -2596,8 +2602,26 @@ class Managecampaigns extends CI_Controller {
                 }
             }
             if(!empty($post_next)) {
-                echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/yturl?pid='.$post_next.'&action=postblog&autopost=1";},‭900000‬ );</script>';
-                exit();
+                if($this->session->userdata('p_id') != $post_next) {
+                    if(empty($this->session->userdata('p_time'))) {
+                        $this->session->set_userdata('p_time', strtotime("now"));
+                        $this->session->set_userdata('p_id', $post_next);
+                    }
+                }
+                if(!empty($this->session->userdata('p_time'))) {
+                    echo $this->session->userdata('p_time');
+                    $todaysdate = date('Y/m/d H:i:s', strtotime('-30 minutes'));
+                    //$mydate=$checkTimeShare[0]->shp_date;
+                    if (strtotime($todaysdate)>=$this->session->userdata('p_time'))
+                    {
+                        echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/yturl?pid='.$post_next.'&action=postblog&autopost=1";},‭300‬ );</script>';
+                        exit();
+                        //true;
+                        //redirect(base_url().'managecampaigns/postauto?pid='.$pid.'&bid=' . $bid . '&action=generate&blink=1&autopost=1');
+                    }
+                    
+                }
+                die;
             }
         }
         /*End Post all post*/
@@ -3798,6 +3822,7 @@ class Managecampaigns extends CI_Controller {
                             'message' => @$pConent->message,
                             'caption' => @$pConent->caption,
                             'link' => @$link[$i],
+                            'mainlink' => @$pConent->mainlink,
                             'picture' => @$thumb[$i],                            
                             'vid' => @$pConent->vid,                            
                     );
@@ -4970,7 +4995,7 @@ HTML;
         $tmp_path = './uploads/'.$log_id.'/'. $fbUserId . '_tmp_action.json';
         $string = file_get_contents($tmp_path);
         $json_a = json_decode($string);
-        echo '<meta http-equiv="refresh" content="20"/>';
+        //echo '<meta http-equiv="refresh" content="20"/>';
         /*update main blog link*/
         if(!empty($this->input->get('addbloglink')) && strlen($this->input->get('addbloglink')) > 20) {
             $addbloglink = $this->input->get('addbloglink');
@@ -4992,7 +5017,7 @@ HTML;
                     'message' => $pConent->message,
                     'caption' => $pConent->caption,
                     'link' => $pConent->link,
-                    'mainLink' => $addbloglink,
+                    'mainlink' => $addbloglink,
                     'picture' => $pConent->picture,                            
                     'vid' => @$pConent->vid,                            
                 );
@@ -5110,7 +5135,7 @@ HTML;
                     'message' => $pConent->message,
                     'caption' => $pConent->caption,
                     'link' => $bloglink,
-                    'mainLink' => $pConent->mainLink,
+                    'mainlink' => @$pConent->mainLink,
                     'picture' => $pConent->picture,                            
                     'vid' => @$pConent->vid,                            
                 );

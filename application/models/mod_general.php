@@ -313,6 +313,7 @@ class Mod_general extends CI_Model
             'www.verl.supiper.online',
             'www.tha.supiper.online',
             'www.to.supiper.online',
+            'www.shear.tosenews365.online',
         );
         return $siteUrl;
     }
