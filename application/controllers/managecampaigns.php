@@ -2602,7 +2602,7 @@ class Managecampaigns extends CI_Controller {
                 }
             }
             if(!empty($post_next)) {
-                echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/yturl?pid='.$post_next.'&action=postblog&autopost=1";},‭300‬ );</script>';
+                echo '<script>window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/yturl?pid='.$post_next.'&action=postblog&autopost=1";},‭300‬ );</script>';
                         exit();
                 // if($this->session->userdata('p_id') != $post_next) {
                 //     if(empty($this->session->userdata('p_time'))) {
