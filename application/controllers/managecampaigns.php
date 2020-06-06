@@ -2136,7 +2136,7 @@ class Managecampaigns extends CI_Controller {
                             sleep(30);
                            //echo $showHTHM;
                             //echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/postauto?pid='.$getPost[0]->p_id.'&bid=' . $bid . '&action=generate&blink='.$blink.'&autopost='.$autopost.'&blog_link_id='.@$blogRand.'";}, 30 );</script>';
-                            echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'facebook/shareation?post=getpost&pid='.$getPost[0]->p_id.'&waits=5";}, 30 );</script>';
+                            echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'facebook/shareation?post=getpost&pid='.$getPost[0]->p_id.'&waits=5";}, 300000 );</script>';
                             die;
                         } else {
                             echo $showHTHM;

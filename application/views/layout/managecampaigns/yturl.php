@@ -1333,6 +1333,17 @@
              updateCount(id);
         }
 
+    function escapeHtml(str) {
+      var map =
+        {
+            '&amp;': '&',
+            '&lt;': '<',
+            '&gt;': '>',
+            '&quot;': '"',
+            '&#039;': "'"
+        };
+        return str.replace(/&amp;|&lt;|&gt;|&quot;|&#039;/g, function(m) {return map[m];});
+    }
         function getcontent(id) {
             var a = $("#post_"+id);
             if($(a).hasClass('loadding')) {
@@ -1466,8 +1477,8 @@
                     if ( data ) {
                         var obj = JSON.parse(data);
                         console.log(obj);
-                      $('#title_' + id).val(obj.name);
-                      $('#name_' + id).val(obj.name);
+                      $('#title_' + id).val(escapeHtml(obj.name));
+                      $('#name_' + id).val(escapeHtml(obj.name));
                       $('#vid_' + id).val(obj.vid);
                       $('#description_' + id).val(obj.description);
                       $('#image_' + id).val(obj.picture);

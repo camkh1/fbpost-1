@@ -101,7 +101,10 @@
                         $user = $this->session->userdata('email');
                         echo @$user;?></span> <i class="icon-caret-down small"></i> </a>
                 <ul class="dropdown-menu">
-                    <li> <a href="<?php echo base_url(); ?>licence"><i class="icon-key"></i> Licence</a> </li>                     
+                    <li> <a href="<?php echo base_url(); ?>licence"><i class="icon-key"></i> Licence</a> </li>
+                    <?php if ($this->session->userdata('access_token')):?>
+                    <li> <a href="<?php echo base_url(); ?>licence"><i class="icon-key"></i> Licence</a> </li>
+                    <?php endif;?>                   
                     <li><a href="<?php echo base_url(); ?>home/logout"><i class="icon-off"></i> Log Out</a></li>
                 </ul>
             </li>

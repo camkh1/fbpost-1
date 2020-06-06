@@ -3516,6 +3516,7 @@ class Getcontent extends CI_Controller
                 $content = preg_replace( '/(<[^>]+) data-orig-file=".*?"/i', "$1", $content );
                 $content = preg_replace( '/(<[^>]+) data-permalink=".*?"/i', "$1", $content );
                 $content = str_replace('--Advertisement--', '', $content);
+                $obj->title = @htmlspecialchars_decode($html->find ( 'meta[property=og:title]', 0 )->content); 
                 if(!empty($oldurl)) {
                     $dataA = @$html->find ( '#main .post', 0 );
                     $checked = @$html->find ( '#Blog1 .youtube_link', 0 );
@@ -3536,7 +3537,7 @@ class Getcontent extends CI_Controller
                         $iframe = @$html->find ( '#Blog1 iframe', 0 )->src;
                         if(!empty($iframe)) {
                             $html1 = file_get_html ( $iframe );
-                            $obj->title = $html1->find ( 'title', 0 )->innertext;
+                            $obj->title = htmlspecialchars_decode($html1->find ( 'title', 0 )->innertext);
                             $found = true;
                             //$obj->vid = $this->mod_general->get_video_id($iframe)['vid'];
                         }
@@ -3544,7 +3545,7 @@ class Getcontent extends CI_Controller
                     if (!empty($checked) && empty($found)) {
                         $iframe = @$checked->href;
                         $html1 = file_get_html ( $iframe );
-                        $obj->title = @$html1->find ( 'meta[property=og:title]', 0 )->content; 
+                        $obj->title = @htmlspecialchars_decode($html1->find ( 'meta[property=og:title]', 0 )->content); 
                         $found = true;
                         //$title = $html1->find ( 'tit.youtube_linkle', 0 )->innertext;
                         //$obj->vid = $this->mod_general->get_video_id($iframe)['vid'];
@@ -3553,7 +3554,7 @@ class Getcontent extends CI_Controller
                         $json = $matches[0][0];
                         $jsonArr = explode('"', $json);
                         $html1 = file_get_html ( 'https://www.youtube.com/watch?v='.$jsonArr[11] );
-                        $title = @$html1->find ( 'meta[property=og:title]', 0 )->content;
+                        $title = @htmlspecialchars_decode($html1->find ( 'meta[property=og:title]', 0 )->content);
                         $found = true; 
                         //$title = $html1->find ( 'tit.youtube_linkle', 0 )->innertext;
                         //$obj->vid = $jsonArr[11];
@@ -3561,10 +3562,11 @@ class Getcontent extends CI_Controller
                     if (preg_match('%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/\s]{11})%i', $dataA, $match) && empty($found)) {
                         $obj->vid = $match[1];
                         $html1 = file_get_html ( 'https://www.youtube.com/watch?v='.$obj->vid );
-                        $obj->title = @$html1->find ( 'meta[property=og:title]', 0 )->content; 
+                        $obj->title = @htmlspecialchars_decode($html1->find ( 'meta[property=og:title]', 0 )->content); 
                         $found = true;
                     }
                 }
+                $obj->thumb = $this->mod_general->resize_image($obj->thumb,0);
                 $obj->vid = '';
                 $obj->conent = $content;
                 $obj->fromsite = $parse['host'];
