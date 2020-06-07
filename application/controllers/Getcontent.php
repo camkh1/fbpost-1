@@ -917,6 +917,41 @@ class Getcontent extends CI_Controller
                 $obj->site = 'site';
                 return $obj;
                 break;
+            case 'www.thaismilevariety.com':
+                /*get label*/
+                foreach($html->find('.seed-social') as $item) {
+                    $item->outertext = '';
+                }foreach($html->find('.td-a-rec') as $item) {
+                    $item->outertext = '';
+                }
+                $html->save();
+                $label = $html->find('a.entry-crumb',1)->plaintext;
+                switch ($label) {
+                    case 'ข่าวสังคม-โซเชียล':
+                        $obj->label = 'ข่าว,ข่าวโซเชียล';
+                        break;
+                    case 'ข่าวบันเทิง':
+                        $obj->label = 'ข่าว,ข่าวบันเทิง';
+                        break;  
+                    
+                    default:
+                        $obj->label = $label;
+                        break;
+                }
+                /*End get label*/
+                $content = @$html->find ( 'article .td-post-content', 0 )->innertext;
+
+                $content = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $content);
+                $content = preg_replace('/<ins\b[^>]*>(.*?)<\/ins>/is', '<div class="setAds"></div>', $content);
+                $content = preg_replace('/<!-- SiamTopic - Responsive -->/is', '', $content);
+                $content = preg_replace("/<a(.*?)>/", "<a$1 target=\"_blank\">", $content);
+                $obj->vid = '';
+
+                $obj->conent = $content;
+                $obj->fromsite = $parse['host'];
+                $obj->site = 'site';
+                return $obj;
+                break;
             case '108resources.com':
                 /*get label*/
                 $label = [];

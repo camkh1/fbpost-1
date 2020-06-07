@@ -8596,6 +8596,7 @@ public function imgtest()
             $blogAds    = trim(@$this->input->post('bads'));
             $blogAdsSlot    = trim(@$this->input->post('bslot'));
             $blogAdsUrl    = trim(@$this->input->post('burl'));
+            $btype    = trim(@$this->input->post('btype'));
             if (!empty($blogID)) {
                 switch ($blogType) {
                     case 'blog_linkA':
@@ -8636,6 +8637,7 @@ public function imgtest()
                                 'bads' => $blogAds,
                                 'bslot' => $blogAdsSlot,
                                 'burl' => $blogAdsUrl,
+                                'blogtype' => $btype,
                                 'status' => 1,
                                 'date' => date('Y-m-d H:i:s')
                             );
@@ -8658,6 +8660,7 @@ public function imgtest()
                                         'bads' => @$bvalue->bads,
                                         'bslot' => @$bvalue->bslot,
                                         'burl' => @$bvalue->burl,
+                                        'blogtype' => @$bvalue->btype,
                                         'status' => $bvalue->status,
                                         'date' => $bvalue->date
                                     );
@@ -8672,6 +8675,7 @@ public function imgtest()
                                     'bads' => $blogAds,
                                     'bslot' => $blogAdsSlot,
                                     'burl' => $blogAdsUrl,
+                                    'blogtype' => $btype,
                                     'status' => 1,
                                     'date' => date('Y-m-d H:i:s')
                                 );
@@ -8691,6 +8695,7 @@ public function imgtest()
                                     'bads' => $blogAds,
                                     'bslot' => $blogAdsSlot,
                                     'burl' => $blogAdsUrl,
+                                    'blogtype' => $btype,
                                     'status' => 1,
                                     'date' => date('Y-m-d H:i:s')
                                 );
