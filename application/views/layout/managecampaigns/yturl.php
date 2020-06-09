@@ -1369,7 +1369,7 @@
                                //$('#description_link_' + id).data("wysihtml5").editor.setValue(obj.content[0].content);
                                if(obj.content[0].content != '') {
                                     var getText = $('#description_link_' + id).data("wysihtml5").editor.getValue();
-                                    $('#description_link_' + id).data("wysihtml5").editor.setValue('<div style="height:50px;overflow-y:auto;background:#eee;">'+obj.content[0].title + '\n'+obj.content[0].content + '</div>\n\n' + getText);
+                                    $('#description_link_' + id).data("wysihtml5").editor.setValue('<div style="height:50px;overflow-y:auto;background:#eee;"><b>Advertising:</b>\n\n<br/>'+obj.content[0].title + '\n'+obj.content[0].content + '</div>\n\n</br></br>' + getText);
                                } 
                                
                                var a = $("#post_"+id);
