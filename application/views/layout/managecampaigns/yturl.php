@@ -1363,10 +1363,15 @@
                             var obj = JSON.parse(data);                 
                             if(!obj.error) {
                                 if(!obj.content[0].title) {
-                                    //countdown(1, divTimver,1);
+                                    countdown(1, divTimver,1);
                                 }
-                               $('#title_link_' + id).val(obj.content[0].title);
-                               $('#description_link_' + id).data("wysihtml5").editor.setValue(obj.content[0].content);
+                               //$('#title_link_' + id).val(obj.content[0].title);
+                               //$('#description_link_' + id).data("wysihtml5").editor.setValue(obj.content[0].content);
+                               if(obj.content[0].content != '') {
+                                    var getText = $('#description_link_' + id).data("wysihtml5").editor.getValue();
+                                    $('#description_link_' + id).data("wysihtml5").editor.setValue('<div style="height:50px;overflow-y:auto;background:#eee;">'+obj.content[0].title + '\n'+obj.content[0].content + '</div>\n\n' + getText);
+                               } 
+                               
                                var a = $("#post_"+id);
                                 if($(a).hasClass('loadding')) {
                                     $(a).removeClass('loadding');
@@ -1476,7 +1481,6 @@
                   .done(function(data) {
                     if ( data ) {
                         var obj = JSON.parse(data);
-                        console.log(obj);
                       $('#title_' + id).val(escapeHtml(obj.name));
                       $('#name_' + id).val(escapeHtml(obj.name));
                       $('#vid_' + id).val(obj.vid);
@@ -1485,7 +1489,7 @@
                       $('#show_' + id).attr("src",obj.picture);
                       if(obj.from != 'site') {
                         <?php if($userrole):?>
-                            //getcontent(id.replace("link_", ""));
+                            getcontent(id.replace("link_", ""));
                             window.setTimeout(function () {
                                 Apps.unblockUI($("#post_"+sid));
                                 noty({
@@ -1511,6 +1515,9 @@
                             $('#post_' + sid + ' .set_balel').val('lottery-video');
                       }
                       if(obj.from == 'site') {
+                        <?php if($userrole):?>
+                            getcontent(id.replace("link_", ""));
+                        <?php endif;?>
                         $('#post_' + sid + ' .set_balel').val(obj.label);
                         //$('#post_' + sid + ' .setPrefix').val('#ชอบก็ไลค์ #ใช่ก็แชร์');
                         $('#post_' + sid + ' .smpoststyle[value=tnews]').prop('checked', true);
@@ -1563,7 +1570,7 @@
                     $(timer).html("Has Ended");
                     var sid = $(timer).closest(".optionBox");
                     if($(sid).hasClass('loadding')) {
-                        //getcontent($(sid).attr('data-postid'));
+                        getcontent($(sid).attr('data-postid'));
                     } 
                 }
             }, 1000);

@@ -1888,6 +1888,16 @@ class Managecampaigns extends CI_Controller {
 // var_dump($gLabels);
 // var_dump($bid);
 // die;
+                                        /*Check blog detail*/
+                                        $where_blog = array(
+                                            'c_name'      => 'blogger_id',
+                                            'c_key'     => $log_id,
+                                        );
+                                        $query_blog_exist = $this->Mod_general->select('au_config', '*', $where_blog);
+                                        if (!empty($query_blog_exist[0])) {
+                                            $gbloglist = json_decode($query_blog_exist[0]->c_value);
+                                        }
+                                        /*End Check blog detail*/
                                             $blogData = $this->postToBlogger($bid, $vid, $title,$image,$message,$main_post_style,@$pOption->label,$getPost[0]);
                                             //$blogData['error'] = true;
                                             if(!empty($blogData['error'])) {
@@ -9826,7 +9836,7 @@ function makeRequests($service) {
 
         require_once(APPPATH.'controllers/Splogr.php');
         $aObj = new Splogr(); 
-        $enContent = $aObj->fromAlibaba('https://www.alibaba.com/product-detail/Portable-mini-laser-cutter-tempered-glass_60799139180.html');
+        $enContent = $aObj->fromAlibaba('https://www.alibaba.com/trade/search?fsb=y&IndexArea=product_en&CatId=&SearchText=PVC+Electric&isPremium=y');
         echo $enContent;
         die;
     }

@@ -60,12 +60,12 @@ class Splogr extends CI_Controller
         $getJsonArray = array();
         $error = array('error'=> 1); 
         $getJsonArray = array('error'=> 1,'content'=> 'not config');
-        if(!empty($get)) {
-            return $getJsonArray;
-        } else {
-            echo json_encode($getJsonArray);
-        }
-        die;
+        // if(!empty($get)) {
+        //     return $getJsonArray;
+        // } else {
+        //     echo json_encode($getJsonArray);
+        // }
+        // die;
         $actions = $this->uri->segment(3);
         $log_id = $this->session->userdata ('user_id');
         /*check link*/
@@ -99,7 +99,7 @@ class Splogr extends CI_Controller
             }
             $sp_post = json_decode($nextLink[0]->sp_post);
             //$contentJson = $this->getconents($nextLink[0]->link);
-            $getContent = array('title'=>$sp_post->title,'content'=>$sp_post->summary . '<br/> from: '.$nextLink[0]->link);
+            $getContent = array('title'=>$sp_post->title,'content'=>$sp_post->summary . '<br/> from: '.$nextLink[0]->link,'site'=>$site_url);
             $contentJson[] = $getContent;
              if(!empty($contentJson)) {
                 $error = array('error'=> 0); 
@@ -325,7 +325,8 @@ class Splogr extends CI_Controller
             }
         }
         $contentJson = [];
-        $getContent = array('title'=>$title,'content'=>$pricewrap . '<br/>'.$dooverview.'<br/> from: '.$site_url);
+        //$getContent = array('title'=>$title,'content'=>$pricewrap . '<br/>'.$dooverview.'<br/> from: '.$site_url);
+        $getContent = array('title'=>$title,'content'=>$pricewrap,'site'=>$site_url);
         $contentJson[] = $getContent;
         $error = array('error'=> 0); 
         $setContent = array('content'=> $contentJson); 
