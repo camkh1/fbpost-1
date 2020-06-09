@@ -9836,7 +9836,7 @@ function makeRequests($service) {
 
         require_once(APPPATH.'controllers/Splogr.php');
         $aObj = new Splogr(); 
-        $enContent = $aObj->fromAlibaba('https://www.alibaba.com/trade/search?fsb=y&IndexArea=product_en&CatId=&SearchText=PVC+Electric&isPremium=y');
+        $enContent = $aObj->fromAlibaba('https://www.alibaba.com/premium/PVC_Electric/CID141903/1.html');
         echo $enContent;
         die;
     }
