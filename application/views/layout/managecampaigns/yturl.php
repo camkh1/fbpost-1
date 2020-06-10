@@ -1082,6 +1082,7 @@
                                 $("#s2id_ppause").find(".select2-chosen").html(ppausetxt);  
 
                                 $("input[name=random][value="+json.randomGroup+"]").prop('checked', true);
+                                $("input[name=pprogress]").prop('checked', json.pprogress);
                             }
                         }
                     });

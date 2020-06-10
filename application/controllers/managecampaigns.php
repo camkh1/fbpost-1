@@ -1385,6 +1385,7 @@ class Managecampaigns extends CI_Controller {
                         'featurePosts' => @$featurePosts,
                         'gemail' => $this->session->userdata ( 'gemail' ),
                         'label' => $labels,
+                        'pprogress' => $pprogress,
                     );
                     /*save tmp data post*/
                     if($saveTmp) {
@@ -1888,16 +1889,7 @@ class Managecampaigns extends CI_Controller {
 // var_dump($gLabels);
 // var_dump($bid);
 // die;
-                                        /*Check blog detail*/
-                                        $where_blog = array(
-                                            'c_name'      => 'blogger_id',
-                                            'c_key'     => $log_id,
-                                        );
-                                        $query_blog_exist = $this->Mod_general->select('au_config', '*', $where_blog);
-                                        if (!empty($query_blog_exist[0])) {
-                                            $gbloglist = json_decode($query_blog_exist[0]->c_value);
-                                        }
-                                        /*End Check blog detail*/
+                                        
                                             $blogData = $this->postToBlogger($bid, $vid, $title,$image,$message,$main_post_style,@$pOption->label,$getPost[0]);
                                             //$blogData['error'] = true;
                                             if(!empty($blogData['error'])) {
@@ -3301,16 +3293,37 @@ class Managecampaigns extends CI_Controller {
         $service = new Google_Service_Blogger($client);
         $posts   = new Google_Service_Blogger_Post();
 
+        /*Check blog detail*/
+        $where_blog = array(
+            'c_name'      => 'blogger_id',
+            'c_key'     => $log_id,
+        );
+        $query_blog_exist = $this->Mod_general->select('au_config', '*', $where_blog);
+        $gBlogType = '';
+        if (!empty($query_blog_exist[0])) {
+            $gbloglist = json_decode($query_blog_exist[0]->c_value);
+            foreach ($gbloglist as $key => $bvalue) {
+                $pos = strpos($bvalue->bid, $bid);
+                if ($pos === false) {
+                } else {
+                    $gBlogType = $bvalue;
+                }
+            }
+        }
+        /*End Check blog detail*/
         $strTime = strtotime(date("Y-m-d H:i:s"));
         $dataContent          = new stdClass();
         //$lineButton = '<center><div class="line-it-button" data-lang="en" data-type="friend" data-lineid="0888250488" data-count="true" data-home="true" style="display: none;"></div> <img src="https://3.bp.blogspot.com/-IDEnasS2NeM/Xbpa6kTL_dI/AAAAAAAAnOE/71KpKu86xW4TiGKcCp1YstZy3Ol94f7zACNcBGAsYHQ/s1600/Line-button-thai.png" style="width:100%;height:auto;"/><script src="https://d.line-scdn.net/r/web/social-plugin/js/thirdparty/loader.min.js" async="async" defer="defer"></script></center>';
         $lineButton = '';
-        $adSenseCode = "<div style=\"text-align: center;\"><script async src=\"//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js\"></script><script>if(typeof startin!=='undefined'){document.write(setCode);} if(typeof startin==='undefined'){document.write(inSide);(adsbygoogle=window.adsbygoogle||[]).push({});}</script></div>";
+        if($gBlogType->blogtype == 'amp') {
+            $adSenseCode = "<div style=\"text-align: center;\"><amp-ad layout=\"fixed\" width=\"336\" height=\"280\" type=\"adsense\" data-ad-client=\"ca-pub-$gBlogType->bads\" data-ad-slot=\"$gBlogType->bslot\"></amp-ad></div>";
+        } else {
+            $adSenseCode = "<div style=\"text-align: center;\"><script async src=\"//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js\"></script><script>if(typeof startin!=='undefined'){document.write(setCode);} if(typeof startin==='undefined'){document.write(inSide);(adsbygoogle=window.adsbygoogle||[]).push({});}</script></div>";
+        }
         $adSenseCode = trim_slashes($adSenseCode);
         if (preg_match('/youtube/', $pConent->link)) {
             $blink = 1;
         }
-        
         switch ($blink) {
             case '2':
                 $dataMeta = array(
@@ -3418,7 +3431,6 @@ class Managecampaigns extends CI_Controller {
         }
         $bodytext = str_replace("<br />", "\n", $bodytext);
         $title = (string) $title;
-        
         $dataContent->setdate = false;        
         $dataContent->editpost = false;
         $dataContent->pid      = 0;
@@ -8670,7 +8682,7 @@ public function imgtest()
                                         'bads' => @$bvalue->bads,
                                         'bslot' => @$bvalue->bslot,
                                         'burl' => @$bvalue->burl,
-                                        'blogtype' => @$bvalue->btype,
+                                        'blogtype' => @$bvalue->blogtype,
                                         'status' => $bvalue->status,
                                         'date' => $bvalue->date
                                     );
