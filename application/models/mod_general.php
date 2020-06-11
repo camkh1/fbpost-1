@@ -315,6 +315,8 @@ class Mod_general extends CI_Model
             'www.to.supiper.online',
             'www.visit.seepiper.online',
             'www.shear.tosenews365.online',
+            'www.thare.freshtimes.online',
+            'www.see.trueinewslike.online',
         );
         return $siteUrl;
     }

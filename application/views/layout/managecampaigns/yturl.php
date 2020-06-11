@@ -1482,6 +1482,9 @@
                   .done(function(data) {
                     if ( data ) {
                         var obj = JSON.parse(data);
+                        if(obj.name == 'YouTube' || obj.name =='') {
+                            getLink(e);
+                        }
                       $('#title_' + id).val(escapeHtml(obj.name));
                       $('#name_' + id).val(escapeHtml(obj.name));
                       $('#vid_' + id).val(obj.vid);
