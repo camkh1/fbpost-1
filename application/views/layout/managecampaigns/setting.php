@@ -195,6 +195,12 @@ $btemplate = "D:&bsol;&bsol;PROGRAM&bsol;&bsol;templates&bsol;&bsol;";
                                                 </div>
                                             </div>
                                             <div class="form-group">
+                                                <label class="col-md-3 control-label">Yengo:</label>
+                                                <div class="col-md-9">
+                                                    <input type="text" name="yengo" class="form-control" value="<?php echo @$this->input->get('yengo');?>"/>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
                                                 <div class="col-md-12">
                                                     <input name="submit" type="submit" value="Add" class="btn btn-primary pull-right" />
                                                 </div>
@@ -237,7 +243,7 @@ $btemplate = "D:&bsol;&bsol;PROGRAM&bsol;&bsol;templates&bsol;&bsol;";
                                             <td><span class="label label-success"><?php echo $value->status;?></span></td>
                                             <td>
                                                 <ul class="table-controls">
-                                                    <li><a href="<?php echo base_url();?>managecampaigns/setting?blog_post=1&bid=<?php echo @$value->bid;?>&title=<?php echo $value->title;?>&ads=<?php echo @$value->bads;?>&sl=<?php echo @$value->bslot;?>&url=<?php echo @$value->burl;?>&type=<?php echo @$value->blogtype;?>" class="bs-tooltip" title="" data-original-title="Edit"><i class="icon-pencil"></i></a> </li>
+                                                    <li><a href="<?php echo base_url();?>managecampaigns/setting?blog_post=1&bid=<?php echo @$value->bid;?>&title=<?php echo $value->title;?>&ads=<?php echo @$value->bads;?>&sl=<?php echo @$value->bslot;?>&url=<?php echo @$value->burl;?>&type=<?php echo @$value->blogtype;?>&yengo=<?php echo @$value->yengo;?>" class="bs-tooltip" title="" data-original-title="Edit"><i class="icon-pencil"></i></a> </li>
                                                     <li><a href="<?php echo base_url();?>managecampaigns/setting?del=<?php echo $value->bid;?>&type=blogger_id" class="bs-tooltip" title="" data-original-title="Delete"><i class="icon-trash" style="color: red"></i></a> </li>
                                                 </ul>
                                             </td>

@@ -861,6 +861,21 @@ class Getcontent extends CI_Controller
                 $obj->site = 'site';
                 return $obj;
                 break;
+            case 'www.teededdee.com':
+                /*get label*/
+                $obj->label = $html->find('.entry-crumbs a.entry-crumb',1)->plaintext;
+                /*End get label*/
+                $content = @$html->find ( '.td-ss-main-content .td-post-content', 0 )->innertext;
+                $content = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $content);
+                $content = preg_replace('/<ins\b[^>]*>(.*?)<\/ins>/is', '<div class="setAds"></div>', $content);
+                $content = preg_replace('/<!-- SiamTopic - Responsive -->/is', '', $content);
+                $content = preg_replace("/<a(.*?)>/", "<a$1 target=\"_blank\">", $content);
+                $obj->vid = '';
+                $obj->conent = $content;
+                $obj->fromsite = $parse['host'];
+                $obj->site = 'site';
+                return $obj;
+                break;
             case 'jarm.com':
             echo $html;
                 // foreach($html->find('.line_view') as $item) {

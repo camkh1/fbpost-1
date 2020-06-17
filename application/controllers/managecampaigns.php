@@ -3315,10 +3315,15 @@ class Managecampaigns extends CI_Controller {
         $dataContent          = new stdClass();
         //$lineButton = '<center><div class="line-it-button" data-lang="en" data-type="friend" data-lineid="0888250488" data-count="true" data-home="true" style="display: none;"></div> <img src="https://3.bp.blogspot.com/-IDEnasS2NeM/Xbpa6kTL_dI/AAAAAAAAnOE/71KpKu86xW4TiGKcCp1YstZy3Ol94f7zACNcBGAsYHQ/s1600/Line-button-thai.png" style="width:100%;height:auto;"/><script src="https://d.line-scdn.net/r/web/social-plugin/js/thirdparty/loader.min.js" async="async" defer="defer"></script></center>';
         $lineButton = '';
-        if($gBlogType->blogtype == 'amp') {
-            $adSenseCode = "<div style=\"text-align: center;\"><amp-ad layout=\"fixed\" width=\"336\" height=\"280\" type=\"adsense\" data-ad-client=\"ca-pub-$gBlogType->bads\" data-ad-slot=\"$gBlogType->bslot\"></amp-ad></div>";
+        if(!empty($gBlogType->yengo)) {
+            $yengo = "<center><script charset=\"utf-8\" src=\"//code.yengo.com/data/$gBlogType->yengo.js\"></script></center>";
         } else {
-            $adSenseCode = "<div style=\"text-align: center;\"><script async src=\"//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js\"></script><script>if(typeof startin!=='undefined'){document.write(setCode);} if(typeof startin==='undefined'){document.write(inSide);(adsbygoogle=window.adsbygoogle||[]).push({});}</script></div>";
+            $yengo = '';
+        }
+        if($gBlogType->blogtype == 'amp') {
+            $adSenseCode = "<div style=\"text-align: center;\"><amp-ad layout=\"fixed\" width=\"336\" height=\"280\" type=\"adsense\" data-ad-client=\"ca-pub-$gBlogType->bads\" data-ad-slot=\"$gBlogType->bslot\"></amp-ad></div>$yengo";
+        } else {
+            $adSenseCode = "<div style=\"text-align: center;\"><script async src=\"//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js\"></script><script>if(typeof startin!=='undefined'){document.write(setCode);} if(typeof startin==='undefined'){document.write(inSide);(adsbygoogle=window.adsbygoogle||[]).push({});}</script></div>$yengo";
         }
         $adSenseCode = trim_slashes($adSenseCode);
         if (preg_match('/youtube/', $pConent->link)) {
@@ -8618,6 +8623,7 @@ public function imgtest()
             $blogAds    = trim(@$this->input->post('bads'));
             $blogAdsSlot    = trim(@$this->input->post('bslot'));
             $blogAdsUrl    = trim(@$this->input->post('burl'));
+            $yengo    = trim(@$this->input->post('yengo'));
             $btype    = trim(@$this->input->post('btype'));
             if (!empty($blogID)) {
                 switch ($blogType) {
@@ -8659,6 +8665,7 @@ public function imgtest()
                                 'bads' => $blogAds,
                                 'bslot' => $blogAdsSlot,
                                 'burl' => $blogAdsUrl,
+                                'yengo' => $yengo,
                                 'blogtype' => $btype,
                                 'status' => 1,
                                 'date' => date('Y-m-d H:i:s')
@@ -8682,6 +8689,7 @@ public function imgtest()
                                         'bads' => @$bvalue->bads,
                                         'bslot' => @$bvalue->bslot,
                                         'burl' => @$bvalue->burl,
+                                        'yengo' => @$bvalue->yengo,
                                         'blogtype' => @$bvalue->blogtype,
                                         'status' => $bvalue->status,
                                         'date' => $bvalue->date
@@ -8698,6 +8706,7 @@ public function imgtest()
                                     'bslot' => $blogAdsSlot,
                                     'burl' => $blogAdsUrl,
                                     'blogtype' => $btype,
+                                    'yengo' => $yengo,
                                     'status' => 1,
                                     'date' => date('Y-m-d H:i:s')
                                 );
@@ -8718,6 +8727,7 @@ public function imgtest()
                                     'bslot' => $blogAdsSlot,
                                     'burl' => $blogAdsUrl,
                                     'blogtype' => $btype,
+                                    'yengo' => $yengo,
                                     'status' => 1,
                                     'date' => date('Y-m-d H:i:s')
                                 );
