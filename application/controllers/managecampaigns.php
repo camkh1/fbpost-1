@@ -2271,6 +2271,32 @@ class Managecampaigns extends CI_Controller {
         /*End get blog link from database*/
         return $blogRand;
     }
+    public function getMainBlog()
+    {
+        /*get blog link from database*/
+        $guid = $this->session->userdata ('guid');
+        $where_blog = array(
+            'c_name'      => 'blogger_id',
+            'c_key'     => $log_id,
+        );
+        $data['bloglist'] = false;
+        $query_blog_exist = $this->Mod_general->select('au_config', '*', $where_blog);
+        if (!empty($query_blog_exist[0])) {
+            $big = array();
+            foreach ($query_blog_exist as $key => $blog) {
+                $dataJon = json_decode($blog->meta_value);
+                $big[] = $blog->object_id;                              
+            }
+            if(!empty($big)) {
+                $k = array_rand($big);
+                $blogRand = $big[$k];
+            }
+        } else {
+            $blogRand = false;
+        }
+        /*End get blog link from database*/
+        return $blogRand;
+    }
 
     public function blogData()
     {
@@ -3280,6 +3306,13 @@ class Managecampaigns extends CI_Controller {
 
     public function postToBlogger($bid, $vid, $title,$image,$conent='',$blink,$label='',$allData='')
     {
+        /*set to Randdom blog to post*/
+        $RandomBlog = true;
+        if(!empty($RandomBlog)) { 
+            $bid = $this->getMainBlog();
+        }
+        var_dump($bid);
+        die;
         $log_id = $this->session->userdata ( 'user_id' );
         $pConent = json_decode($allData->p_conent);
         $pOption = json_decode($allData->p_schedule);
