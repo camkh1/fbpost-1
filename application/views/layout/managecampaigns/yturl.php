@@ -1366,7 +1366,7 @@
                                 if(!obj.content[0].title) {
                                     countdown(1, divTimver,1);
                                 }
-                               //$('#title_link_' + id).val(obj.content[0].title);
+                               $('#title_link_' + id).val(obj.content[0].title);
                                //$('#description_link_' + id).data("wysihtml5").editor.setValue(obj.content[0].content);
                                if(obj.content[0].content != '') {
                                     var getText = $('#description_link_' + id).data("wysihtml5").editor.getValue();

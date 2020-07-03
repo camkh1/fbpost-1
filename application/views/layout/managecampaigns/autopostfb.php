@@ -147,7 +147,7 @@ $fb_user_id = $this->session->userdata ( 'fb_user_id' );
     if(empty($pause)):?>
         <script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "<?php echo base_url();?>managecampaigns/autopostfb?action=yt&post_only=1";},10);</script>
     <?php exit(); else:?>
-        <script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "<?php echo base_url();?>managecampaigns/autopostfb?action=yt&post_only=1";},1000*60*30);</script>
+        <script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "<?php echo base_url();?>managecampaigns/autopostfb?action=yt&post_only=1";},1000*60*50);</script>
     <?php exit(); endif;?>
 <?php endif;?>
                 <form class="form-horizontal row-border" method="post">

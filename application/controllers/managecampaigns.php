@@ -454,7 +454,13 @@ class Managecampaigns extends CI_Controller {
                             'featurePosts' => @$pOption->featurePosts,
                             'gemail' => $this->session->userdata ( 'gemail' ),
                             'label' => @$pOption->label,
+                            'post_date'      => date('Y-m-d H:i:s'),
                         );
+                        /*save tmp data post*/
+                        $tmp_path = './uploads/'.$log_id.'/';
+                        $file_tmp_name = $fbUserId . '_tmp_action.json';
+                        $this->json($tmp_path,$file_tmp_name, $schedule);
+                        /*End save tmp data post*/
 
                         $updateLink = array('p_id' => $pid);
                         $content = array (
@@ -1386,6 +1392,7 @@ class Managecampaigns extends CI_Controller {
                         'gemail' => $this->session->userdata ( 'gemail' ),
                         'label' => $labels,
                         'pprogress' => $pprogress,
+                        'post_date'      => date('Y-m-d H:i:s'),
                     );
                     /*save tmp data post*/
                     if($saveTmp) {
@@ -1584,7 +1591,7 @@ class Managecampaigns extends CI_Controller {
         $post_by_manaul = false;
         if(!empty($this->input->get('action'))) {
             if($this->input->get('action') == 'postblog') {
-                echo '<meta http-equiv="refresh" content="‭1850‬">';
+                echo '<meta http-equiv="refresh" content="‭30‬">';
                 if(!empty($this->session->userdata('access_token'))) {
                     $this->load->library('google_api');
                     $client = new Google_Client();                  
@@ -1658,7 +1665,6 @@ class Managecampaigns extends CI_Controller {
                     'p_id' => $pid,
                 );
                 $getPost = $this->Mod_general->select ( Tbl_posts::tblName, '*', $wPost );
-
                 if(!empty($getPost[0])) {
                     $pConent = json_decode($getPost[0]->p_conent);
                     $pOption = json_decode($getPost[0]->p_schedule);
@@ -1885,7 +1891,8 @@ class Managecampaigns extends CI_Controller {
                                         } else {
                                             $message = nl2br(html_entity_decode(htmlspecialchars_decode(@$pConent->message)));  
                                         }
-// echo $getPost[0]->p_name;
+
+// var_dump($message);
 // var_dump($gLabels);
 // var_dump($bid);
 // die;
@@ -2273,6 +2280,7 @@ class Managecampaigns extends CI_Controller {
     }
     public function getMainBlog()
     {
+         $log_id = $this->session->userdata ('user_id');
         /*get blog link from database*/
         $guid = $this->session->userdata ('guid');
         $where_blog = array(
@@ -2281,11 +2289,11 @@ class Managecampaigns extends CI_Controller {
         );
         $data['bloglist'] = false;
         $query_blog_exist = $this->Mod_general->select('au_config', '*', $where_blog);
+        $big = array();
         if (!empty($query_blog_exist[0])) {
-            $big = array();
-            foreach ($query_blog_exist as $key => $blog) {
-                $dataJon = json_decode($blog->meta_value);
-                $big[] = $blog->object_id;                              
+            $gbloglist = json_decode($query_blog_exist[0]->c_value);
+            foreach ($gbloglist as $key => $blog) {
+                $big[] = $blog->bid;                              
             }
             if(!empty($big)) {
                 $k = array_rand($big);
@@ -3311,8 +3319,6 @@ class Managecampaigns extends CI_Controller {
         if(!empty($RandomBlog)) { 
             $bid = $this->getMainBlog();
         }
-        var_dump($bid);
-        die;
         $log_id = $this->session->userdata ( 'user_id' );
         $pConent = json_decode($allData->p_conent);
         $pOption = json_decode($allData->p_schedule);
@@ -7071,7 +7077,15 @@ public function imgtest()
                         'foldlink' => $json_a->foldlink,
                         'gemail' => $json_a->gemail,
                         'label' => 'news',
+                        'post_date'      => date('Y-m-d H:i:s'),
                     );
+
+                    /*save tmp data post*/
+                    $target_dir = './uploads/image/';
+                    $tmp_path = './uploads/'.$log_id.'/';
+                    $file_tmp_name = $fbUserId . '_tmp_action.json';
+                    $this->json($tmp_path,$file_tmp_name, $schedule);
+                    /*End save tmp data post*/
 
                     $content = array (
                             'name' => @htmlentities(htmlspecialchars(str_replace(' - YouTube', '', $getContent['name']))),
@@ -7209,7 +7223,7 @@ public function imgtest()
 
                     $RanChoose = array(
                         'site',
-                        'yt',
+                        //'yt',
                         //'mysite',
                     );
                     $l = array_rand($RanChoose);
@@ -7346,7 +7360,15 @@ public function imgtest()
                         'foldlink' => 1,
                         'gemail' => $json_a->gemail,
                         'label' => 'news',
+                        'post_date'      => date('Y-m-d H:i:s'),
                     );
+
+                    /*save tmp data post*/
+                    $target_dir = './uploads/image/';
+                    $tmp_path = './uploads/'.$log_id.'/';
+                    $file_tmp_name = $fbUserId . '_tmp_action.json';
+                    $this->json($tmp_path,$file_tmp_name, $schedule);
+                    /*End save tmp data post*/
 
                     require_once(APPPATH.'controllers/Getcontent.php');
                     $aObj = new Getcontent(); 
@@ -8153,7 +8175,9 @@ public function imgtest()
                 'foldlink' => 0,
                 'gemail' => $json_a->gemail,
                 'label' => @$labels,
+                'post_date'      => date('Y-m-d H:i:s'),
             );
+            /*save tmp data post*/
             require_once(APPPATH.'controllers/Splogr.php');
             $aObj = new Splogr();  
             $i = 0;
@@ -8283,7 +8307,14 @@ public function imgtest()
                         'foldlink' => 0,
                         'gemail' => $this->session->userdata ( 'gemail' ),
                         'label' => @$labels,
+                        'post_date'      => date('Y-m-d H:i:s'),
                     );
+                    /*save tmp data post*/
+                    $tmp_path = './uploads/'.$log_id.'/';
+                    $file_tmp_name = $fbUserId . '_tmp_action.json';
+                    $this->json($tmp_path,$file_tmp_name, $schedule);
+                    /*End save tmp data post*/
+
                     /*check for exist video in old link*/
                     $whExist = array (
                         'user_id' => $log_id,
@@ -8328,7 +8359,15 @@ public function imgtest()
                             'foldlink' => 0,
                             'gemail' => $this->session->userdata ( 'gemail' ),
                             'label' => @$labels,
+                            'post_date'      => date('Y-m-d H:i:s'),
                         );
+                        /*save tmp data post*/
+                        $tmp_path = './uploads/'.$log_id.'/';
+                        $file_tmp_name = $fbUserId . '_tmp_action.json';
+                        $this->json($tmp_path,$file_tmp_name, $schedule);
+                        /*End save tmp data post*/
+
+
                         $content = array (
                             'name' => @htmlentities(htmlspecialchars(str_replace(' - YouTube', '', $contents["content"][0]["title"]))),
                             'message' => @htmlentities(htmlspecialchars(addslashes($txt))),
