@@ -4455,7 +4455,7 @@ HTML;
         $obj = new stdClass();
         $obj->description = @$html->find ( 'meta[property=og:description]', 0 )->content;
         $obj->conent = @$html->find ( 'meta[property=og:description]', 0 )->content;
-        $title = @$html->find ( 'meta[property=og:title]', 0 )->content;                
+        $title = @$html->find ( 'meta[name=title]', 0 )->content;                
         $title1 = @$html->find ( '.post-title', 0 )->innertext;
         if (!$title) {
             $title = $html->find ( '.post-title a', 0 )->innertext;
