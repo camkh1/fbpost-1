@@ -455,6 +455,7 @@ class Managecampaigns extends CI_Controller {
                             'gemail' => $this->session->userdata ( 'gemail' ),
                             'label' => @$pOption->label,
                             'post_date'      => date('Y-m-d H:i:s'),
+                            'pprogress' => $pOption->pprogress,
                         );
                         /*save tmp data post*/
                         $tmp_path = './uploads/'.$log_id.'/';
@@ -841,6 +842,8 @@ class Managecampaigns extends CI_Controller {
                 'featurePosts' => @$json_a->featurePosts,
                 'gemail' => $json_a->gemail,
                 'label' => @$json_a->label,
+                'post_date'      => date('Y-m-d H:i:s'),
+                'pprogress' => $json_a->pprogress,
             );
             $p_progress = 1; 
 
@@ -2913,6 +2916,8 @@ class Managecampaigns extends CI_Controller {
                         'featurePosts' => @$pOption->featurePosts,
                         'gemail' => $this->session->userdata ( 'gemail' ),
                         'label' => 'lotto',
+                        'post_date'      => date('Y-m-d H:i:s'),
+                        'pprogress' => $pOption->pprogress,
                     );
 
                     if($this->session->userdata('post_only')) {
@@ -3199,6 +3204,8 @@ class Managecampaigns extends CI_Controller {
                             'featurePosts' => @$pOption->featurePosts,
                             'gemail' => $this->session->userdata ( 'gemail' ),
                             'label' => @$pOption->label,
+                            'post_date'      => date('Y-m-d H:i:s'),
+                            'pprogress' => @$pOption->pprogress,
                         );
 
                         $dataPostInstert = array (
@@ -3881,6 +3888,8 @@ class Managecampaigns extends CI_Controller {
                         'foldlink' => @$pSchedule->foldlink,
                         'gemail' => $this->session->userdata ( 'gemail' ),
                         'label' => @$pSchedule->label,
+                        'post_date'      => date('Y-m-d H:i:s'),
+                        'pprogress' => @$pSchedule->pprogress,
                     );
 
 
@@ -5277,6 +5286,8 @@ HTML;
                 'foldlink' => $json_a->foldlink,
                 'gemail' => $json_a->gemail,
                 'label' => 'lotto',
+                'post_date'      => date('Y-m-d H:i:s'),
+                'pprogress' => @$json_a->pprogress,
             );
 
 
@@ -5457,6 +5468,8 @@ HTML;
                                     'foldlink' => 1,
                                     'gemail' => $this->session->userdata ( 'gemail' ),
                                     'label' => 'lotto',
+                                    'post_date'      => date('Y-m-d H:i:s'),
+                                    'pprogress' => @$json_a->pprogress,
                                 );
                                 $content = array (
                                     'name' => @htmlentities(htmlspecialchars(str_replace(' - YouTube', '', $contents["content"][0]["title"]))),
@@ -6595,15 +6608,27 @@ public function imgtest()
                 $siteUrl = $this->Mod_general->checkSiteLinkStatus();
 
 
-                $tablejoin = array('share_history'=>'share_history.title != post.p_name');
-                $getPost = $this->Mod_general->join('post', $tablejoin, $fields = '*', $where_pro,"RAND()",'p_name');
-                //$getPost = $this->Mod_general->select('post', '*', $where_pro,"RAND()");
+                //$tablejoin = array('share_history'=>'share_history.title != post.p_name');
+                //$getPost = $this->Mod_general->join('post', $tablejoin, $fields = '*', $where_pro,"RAND()",'p_name');
+                $getPost = $this->Mod_general->select('post', '*', $where_pro,"RAND()");
                 if(!empty($getPost[0])) {
                     foreach ($getPost as $gvalue) {
                         $pid = $gvalue->p_id;
                         $pConent = json_decode($gvalue->p_conent);
                         $pSchedule = json_decode($gvalue->p_schedule);
                         $gLabel = @$pSchedule->label;
+
+                        /*check duplicate post*/
+                        $where_sh = array(
+                            'title' => $gvalue->p_name,
+                            'uid ' => $sid,
+                        );
+                        $getShPost = $this->Mod_general->select('share_history', '*', $where_sh,"RAND()");
+                        /*End check duplicate post*/
+                        $isNoDup = false;
+                        if(empty($getShPost[0])) {
+                            $isNoDup = true;
+                        }
 
                         /*Clean post if no link*/
                         if(empty($pConent->link)) {
@@ -6685,7 +6710,9 @@ public function imgtest()
                             if (!in_array(@$parse['host'], $siteUrl)) {
                                 if(empty($checkExistP[0])) {
                                     if(!empty($isCanPost)) {
-                                        $dataJsons[] = $gvalue;
+                                        if(!empty($isNoDup)) {
+                                            $dataJsons[] = $gvalue;
+                                        }
                                     }
                                 }
                             }
@@ -7078,6 +7105,7 @@ public function imgtest()
                         'gemail' => $json_a->gemail,
                         'label' => 'news',
                         'post_date'      => date('Y-m-d H:i:s'),
+                        'pprogress' => $json_a->pprogress,
                     );
 
                     /*save tmp data post*/
@@ -7361,6 +7389,7 @@ public function imgtest()
                         'gemail' => $json_a->gemail,
                         'label' => 'news',
                         'post_date'      => date('Y-m-d H:i:s'),
+                        'pprogress' => $json_a->pprogress,
                     );
 
                     /*save tmp data post*/
@@ -8176,6 +8205,7 @@ public function imgtest()
                 'gemail' => $json_a->gemail,
                 'label' => @$labels,
                 'post_date'      => date('Y-m-d H:i:s'),
+                'pprogress' => $json_a->pprogress,
             );
             /*save tmp data post*/
             require_once(APPPATH.'controllers/Splogr.php');
@@ -8308,6 +8338,7 @@ public function imgtest()
                         'gemail' => $this->session->userdata ( 'gemail' ),
                         'label' => @$labels,
                         'post_date'      => date('Y-m-d H:i:s'),
+                        'pprogress' => $json_a->pprogress,
                     );
                     /*save tmp data post*/
                     $tmp_path = './uploads/'.$log_id.'/';
@@ -8360,6 +8391,7 @@ public function imgtest()
                             'gemail' => $this->session->userdata ( 'gemail' ),
                             'label' => @$labels,
                             'post_date'      => date('Y-m-d H:i:s'),
+                            'pprogress' => $json_a->pprogress,
                         );
                         /*save tmp data post*/
                         $tmp_path = './uploads/'.$log_id.'/';
