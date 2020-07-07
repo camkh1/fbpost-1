@@ -2466,7 +2466,7 @@ class Managecampaigns extends CI_Controller {
             $showHTHM = '<link href="https://fonts.googleapis.com/css?family=Hanuman" rel="stylesheet"><style>.khmer{font-size:20px;padding:40px;font-family: Hanuman, serif!important;font-size: 30px;color: #fff;text-shadow: -1px -1px 1px rgba(255,255,255,.1), 1px 1px 1px rgba(0,0,0,.5);}</style><div style="background-repeat: no-repeat;background-attachment: fixed;position:absolute;top:0;bottom:0;left:0;right:0;background-size: cover; background:url('.$imgRand.'); center center no-repeat; background-size: 100%;"><div style="background: rgba(255, 255, 255, 0.38);text-align:center;font-size:20px;padding:40px;font-family: Hanuman, serif!important;font-size: 30px;color: #fff;text-shadow: -1px -1px 1px rgba(255,255,255,.1), 1px 1px 1px rgba(0,0,0,.5);">សូមមេត្តារង់ចាំ<br/>Please wait...<br/><table align="center" class="table table-hover table-striped table-bordered table-highlight-head"> <tbody> <tr> <td align="left" valign="middle">Post</td><td align="left" valign="middle">1</td></tr><tr> <td align="left" valign="middle">Post ID: </td><td align="left" valign="middle">'.$getPost[0]->p_id.'</td></tr><tr> <td align="left" valign="middle">ប៉ុស្តិ៍ជាលើកទី: </td><td align="left" valign="middle">0</td></tr><tr> <td align="left" valign="middle">ប្រើអ៊ីម៉ែល: </td><td align="left" valign="middle">'.@$pOption->gemail.'</td></tr><tr> <td align="left" valign="middle">Main Blog ID: </td><td align="left" valign="middle"><a class="K3JSBVB-i-F" target="_blank" href="https://www.blogger.com/blogger.g?blogID='.@$bid.'">'.@$bid.'</a></td></tr><tr> <td align="left" valign="middle">Blog Link ID: </td><td align="left" valign="middle"><a class="K3JSBVB-i-F" target="_blank" href="https://www.blogger.com/blogger.g?blogID='.@$blogRand.'">'.@$blogRand.'</a></td></tr></tbody></table></div></div>';
             echo $showHTHM;
             /*End Show to Detail in view*/
-            $showAds = '<center><script type="text/javascript" src="https://10clblogh.blogspot.com/feeds/posts/default/-/getplay?max-results=1&amp;alt=json-in-script&amp;callback=mbtlist"></script></center>';
+            $showAds = '<center><script>function mbtlist(cods){for(var i=0;i<cods.feed.entry.length;i++){ListConten=cods.feed.entry[i].content.$t;document.write(ListConten);}}</script><script type="text/javascript" src="https://10clblogh.blogspot.com/feeds/posts/default/-/getplay?max-results=1&amp;alt=json-in-script&amp;callback=mbtlist"></script></center>';
             if($main_post_style == 'tnews') {
                 if($this->Mod_general->userrole('uid')) {
                     $conent = nl2br(html_entity_decode(htmlspecialchars_decode($pConent->message)));
@@ -4464,15 +4464,18 @@ HTML;
         $obj = new stdClass();
         $obj->description = @$html->find ( 'meta[property=og:description]', 0 )->content;
         $obj->conent = @$html->find ( 'meta[property=og:description]', 0 )->content;
-        $title = @$html->find ( 'meta[name=title]', 0 )->content;                
-        $title1 = @$html->find ( '.post-title', 0 )->innertext;
-        if (!$title) {
-            $title = $html->find ( '.post-title a', 0 )->innertext;
-        } elseif ($title1) {
-            $title = $html->find ( '.post-title', 0 )->innertext;
-        } else {
-            $title = $html->find ( 'title', 0 )->innertext;
-        }
+        $title = @$html->find ( 'meta[name=title]', 0 )->content;   
+        // echo $title;             
+        // $title1 = @$html->find ( '.post-title', 0 )->innertext;
+        // if (empty($title) || $title == 'YouTube') {
+        //     $title = $html->find ( '.post-title a', 0 )->innertext;
+        // } elseif (empty($title1) || $title1 == 'YouTube') {
+        //     $title = $html->find ( '.post-title', 0 )->innertext;
+        // } else {
+        //     $title = $html->find ( 'title', 0 )->innertext;
+        // }
+        // echo $title;
+        // die;
         $obj->title = $title;
         $og_image = @$html->find ( 'meta [property=og:image]', 0 )->content;
         $image_src = @$html->find ( 'link [rel=image_src]', 0 )->href;
