@@ -2663,8 +2663,18 @@ class Managecampaigns extends CI_Controller {
                 //     }
                     
                 // }
+            } else {
+                if(empty($post_all)) {
+                    $runpost  = '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/index";}, 30 );</script>';
+                    echo $runpost;
+                    exit();
+                } else {
+                    $runpost  = '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=posttoblog&pause=1";}, 30 );</script>';
+                    echo $runpost;
+                    die;
+                }
             }
-        }
+        } 
         /*End Post all post*/
 
         $postauto = $this->session->userdata ( 'postauto' );
