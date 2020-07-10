@@ -439,10 +439,10 @@
                                                 <span class="label label-primary khmer" style="font-size: 16px"><label><input type="checkbox" value="" id="getDataAll"/> យកតាមជម្រើសចាស់  </label></span>
                                             </div>
                                             <div class="col-md-12">
-                                                <label class="control-label">
+                                                <label class="control-label">Random Blogs
                                                     Select Blog post to:
                                                 </label>
-                                                <select name="blogpost" id="blogpost" class="required select2 full-width-fix" required>
+                                                <select name="blogpost" id="blogpost" class="select2 full-width-fix">
                                                     <option value="">Select Blog post</option>
                                                     <?php foreach ($bloglist as $blog): ?>
                                                     <option value="<?php echo $blog->bid;?>"><?php echo $blog->bid;?> || <?php echo $blog->title;?></option>
@@ -450,8 +450,21 @@
                                                 </select>
                                             </div> 
                                         </div>
+                                        <!-- <div class="form-group chekimg">
+                                            <div class="col-md-6">
+                                                <label class="radio-inline">
+                                                    <input type="checkbox" value="1" name="bbrandom" checked />
+                                                    <i class="subtopmenu hangmeas khmer"> Random Blogs</i>
+                                                </label>   
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="radio-inline">
+                                                    <input type="text" name="setbbpost"  />
+                                                </label>   
+                                            </div>
+                                        </div> -->
 
-
+Random Blogs
                                         <label class="control-label">
                                             Social Account to Post:
                                         </label>
@@ -695,7 +708,8 @@
                                                     <i class="subtopmenu hangmeas khmer">Post progross?</i>
                                                 </label>   
                                             </div>
-                                        </div>                                       
+                                        </div> 
+                                                                              
 
                                     </div>
                                 </div>
@@ -1029,9 +1043,9 @@
                             if(json) {
                                 if(json.blogid != '') {
                                     /*set blog id*/
-                                   $("#blogpost").val(json.blogid); 
-                                   var blogpostxt = $( "#blogpost option:selected" ).text();
-                                   $("#s2id_blogpost").find(".select2-chosen").html(blogpostxt);
+                                   //$("#blogpost").val(json.blogid); 
+                                   //var blogpostxt = $( "#blogpost option:selected" ).text();
+                                   //$("#s2id_blogpost").find(".select2-chosen").html(blogpostxt);
                                 }
                                 if(json.account_group_type != '') {
                                     $("#togroup").val(json.account_group_type); 

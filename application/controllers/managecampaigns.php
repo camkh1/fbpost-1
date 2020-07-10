@@ -1273,6 +1273,7 @@ class Managecampaigns extends CI_Controller {
             $saddtxt = @$this->input->post ( 'saddtxt' );
             $label = @$this->input->post ( 'label' );
             $pprogress = @$this->input->post ( 'pprogress' );
+            $bbrandom = @$this->input->post ( 'bbrandom' );
 
 
             if(!empty($post_all)) {
@@ -1396,13 +1397,16 @@ class Managecampaigns extends CI_Controller {
                         'label' => $labels,
                         'pprogress' => $pprogress,
                         'post_date'      => date('Y-m-d H:i:s'),
+                        'brandom'      => @$bbrandom,
                     );
                     /*save tmp data post*/
-                    if($saveTmp) {
-                        $target_dir = './uploads/image/';
-                        $tmp_path = './uploads/'.$log_id.'/';
-                        $file_tmp_name = $fbuids . '_tmp_action.json';
-                        $this->json($tmp_path,$file_tmp_name, $schedule);
+                    if($bbrandom) {
+                        if($saveTmp) {
+                            $target_dir = './uploads/image/';
+                            $tmp_path = './uploads/'.$log_id.'/';
+                            $file_tmp_name = $fbuids . '_tmp_action.json';
+                            $this->json($tmp_path,$file_tmp_name, $schedule);
+                        }
                     }
                     /*End save tmp data post*/
                     /*upload image*/
@@ -2281,32 +2285,47 @@ class Managecampaigns extends CI_Controller {
         /*End get blog link from database*/
         return $blogRand;
     }
-    public function getMainBlog()
+    public function getMainBlog($data = '')
     {
          $log_id = $this->session->userdata ('user_id');
-        /*get blog link from database*/
-        $guid = $this->session->userdata ('guid');
-        $where_blog = array(
-            'c_name'      => 'blogger_id',
-            'c_key'     => $log_id,
-        );
-        $data['bloglist'] = false;
-        $query_blog_exist = $this->Mod_general->select('au_config', '*', $where_blog);
-        $big = array();
-        if (!empty($query_blog_exist[0])) {
-            $gbloglist = json_decode($query_blog_exist[0]->c_value);
-            foreach ($gbloglist as $key => $blog) {
-                $big[] = $blog->bid;                              
+         if(empty($data)) {
+            /*get blog link from database*/
+            $guid = $this->session->userdata ('guid');
+            $where_blog = array(
+                'c_name'      => 'blogger_id',
+                'c_key'     => $log_id,
+            );
+            $data['bloglist'] = false;
+            $query_blog_exist = $this->Mod_general->select('au_config', '*', $where_blog);
+            $big = array();
+            if (!empty($query_blog_exist[0])) {
+                $gbloglist = json_decode($query_blog_exist[0]->c_value);
+                foreach ($gbloglist as $key => $blog) {
+                    $big[] = $blog->bid;                              
+                }
+                if(!empty($big)) {
+                    $k = array_rand($big);
+                    $blogRand = $big[$k];
+                }
+            } else {
+                $blogRand = false;
             }
+            /*End get blog link from database*/
+        } else {
+            $big = array(
+                '6032900210433004979',
+                '8940251921255484740',
+                '8109097892209356494',
+                '8652903325476264243',
+            );
             if(!empty($big)) {
                 $k = array_rand($big);
                 $blogRand = $big[$k];
+            } else {
+                $blogRand = false;
             }
-        } else {
-            $blogRand = false;
         }
-        /*End get blog link from database*/
-        return $blogRand;
+        return @$blogRand;
     }
 
     public function blogData()
@@ -3331,14 +3350,22 @@ class Managecampaigns extends CI_Controller {
 
     public function postToBlogger($bid, $vid, $title,$image,$conent='',$blink,$label='',$allData='')
     {
-        /*set to Randdom blog to post*/
-        $RandomBlog = true;
-        if(!empty($RandomBlog)) { 
-            $bid = $this->getMainBlog();
-        }
+        
         $log_id = $this->session->userdata ( 'user_id' );
         $pConent = json_decode($allData->p_conent);
         $pOption = json_decode($allData->p_schedule);
+
+        /*set to Randdom blog to post*/
+        $RandomBlog = @$pOption->blogid;
+
+        if(empty($RandomBlog)) { 
+            $bid = $this->getMainBlog();
+        } else {
+            $bid = @$pOption->blogid;
+            //$bid = $this->getMainBlog(1);
+        }
+        /*End set to Randdom blog to post*/
+
         /*prepare post*/
         $conent = str_replace('&gt;', '>', $conent);
         $conent = str_replace('&lt;', '<', $conent);
