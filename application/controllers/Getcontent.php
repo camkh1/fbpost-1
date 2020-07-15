@@ -524,6 +524,9 @@ class Getcontent extends CI_Controller
                 }
             }
         }
+        if (preg_match ( '/เลขเด็ด/', $url )) {
+            $url = str_replace('เลขเด็ด', 'xn--22c0ba9d0gc4c', $url);
+        }
         $html = file_get_html ( $url );
         $obj = new stdClass();
         $obj->description = '';

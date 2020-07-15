@@ -2295,7 +2295,6 @@ class Managecampaigns extends CI_Controller {
                 'c_name'      => 'blogger_id',
                 'c_key'     => $log_id,
             );
-            $data['bloglist'] = false;
             $query_blog_exist = $this->Mod_general->select('au_config', '*', $where_blog);
             $big = array();
             if (!empty($query_blog_exist[0])) {

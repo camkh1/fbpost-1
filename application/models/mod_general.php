@@ -317,6 +317,7 @@ class Mod_general extends CI_Model
             'www.shear.tosenews365.online',
             'www.thare.freshtimes.online',
             'www.see.trueinewslike.online',
+            'www.xn--22c0ba9d0gc4c.news',
         );
         return $siteUrl;
     }
