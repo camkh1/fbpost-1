@@ -6706,7 +6706,7 @@ public function imgtest()
                         } else {
                            $isCanPost = true; 
                         }
-
+                        $isCanPost = true;
                         /*Check share exist*/
                         $where_so = array (
                             'p_id' => $pid,
