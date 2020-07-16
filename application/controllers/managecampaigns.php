@@ -7206,17 +7206,17 @@ public function imgtest()
                         'https://www.mumkhao.com/',
                         'https://www.xn--42c2dgos8bxc2dtcg.com/',
                         'https://board.postjung.com/',
-                        'https://board.postjung.com/',
-                        'https://board.postjung.com/',
-                        'http://huaythai.me/',
-                        'http://www.huaythaitoday.com/',
-                        'http://www.huayhot.com/',
+                        //'http://huaythai.me/',
+                        //'http://www.huaythaitoday.com/',
+                        //'http://www.huayhot.com/',
                         'https://www.tha.supiper.online/',
+                        'http://www.tdaily.us/',
                     );
                     $k = array_rand($siteUrl);
                     $getSiteUrl = $siteUrl[$k];
                     //$getSiteUrl = 'http://www.huaythaitoday.com/';
                     $content = $aObj->getLinkFromSite($getSiteUrl);
+                    die;
                     echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=site";}, 3000 );</script>';
                 }
                 /*End get link from DB*/
