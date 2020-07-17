@@ -1400,11 +1400,13 @@ class Managecampaigns extends CI_Controller {
                         'brandom'      => @$bbrandom,
                     );
                     /*save tmp data post*/
-                    if($saveTmp) {
-                        $target_dir = './uploads/image/';
-                        $tmp_path = './uploads/'.$log_id.'/';
-                        $file_tmp_name = $fbuids . '_tmp_action.json';
-                        $this->json($tmp_path,$file_tmp_name, $schedule);
+                    if(empty($from_old_link)) {
+                        if($saveTmp) {
+                            $target_dir = './uploads/image/';
+                            $tmp_path = './uploads/'.$log_id.'/';
+                            $file_tmp_name = $fbuids . '_tmp_action.json';
+                            $this->json($tmp_path,$file_tmp_name, $schedule);
+                        }
                     }
                     /*End save tmp data post*/
                     /*upload image*/
