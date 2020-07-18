@@ -7290,7 +7290,7 @@ public function imgtest()
 
                     $RanChoose = array(
                         'site',
-                        //'yt',
+                        'yt',
                         //'mysite',
                     );
                     $l = array_rand($RanChoose);
