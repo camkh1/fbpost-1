@@ -2300,7 +2300,9 @@ class Managecampaigns extends CI_Controller {
             if (!empty($query_blog_exist[0])) {
                 $gbloglist = json_decode($query_blog_exist[0]->c_value);
                 foreach ($gbloglist as $key => $blog) {
-                    $big[] = $blog->bid;                              
+                    if($blog->post_type == 'p_random') {
+                        $big[] = $blog->bid;
+                    }                        
                 }
                 if(!empty($big)) {
                     $k = array_rand($big);
@@ -8768,6 +8770,7 @@ public function imgtest()
             $blogAdsUrl    = trim(@$this->input->post('burl'));
             $yengo    = trim(@$this->input->post('yengo'));
             $btype    = trim(@$this->input->post('btype'));
+            $post_type    = trim(@$this->input->post('blog_set_type'));
             if (!empty($blogID)) {
                 switch ($blogType) {
                     case 'blog_linkA':
@@ -8810,6 +8813,7 @@ public function imgtest()
                                 'burl' => $blogAdsUrl,
                                 'yengo' => $yengo,
                                 'blogtype' => $btype,
+                                'post_type' => $post_type,
                                 'status' => 1,
                                 'date' => date('Y-m-d H:i:s')
                             );
@@ -8834,6 +8838,7 @@ public function imgtest()
                                         'burl' => @$bvalue->burl,
                                         'yengo' => @$bvalue->yengo,
                                         'blogtype' => @$bvalue->blogtype,
+                                        'post_type' => @$bvalue->post_type,
                                         'status' => $bvalue->status,
                                         'date' => $bvalue->date
                                     );
@@ -8849,6 +8854,7 @@ public function imgtest()
                                     'bslot' => $blogAdsSlot,
                                     'burl' => $blogAdsUrl,
                                     'blogtype' => $btype,
+                                    'post_type' => @$post_type,
                                     'yengo' => $yengo,
                                     'status' => 1,
                                     'date' => date('Y-m-d H:i:s')
@@ -8870,6 +8876,7 @@ public function imgtest()
                                     'bslot' => $blogAdsSlot,
                                     'burl' => $blogAdsUrl,
                                     'blogtype' => $btype,
+                                    'post_type' => @$post_type,
                                     'yengo' => $yengo,
                                     'status' => 1,
                                     'date' => date('Y-m-d H:i:s')

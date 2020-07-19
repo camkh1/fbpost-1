@@ -156,13 +156,22 @@ $btemplate = "D:&bsol;&bsol;PROGRAM&bsol;&bsol;templates&bsol;&bsol;";
                                         </div>
                                         <div class="widget-content">
                                             <div class="form-group">
-                                                <label class="col-md-3 control-label"> ប្រភេទប្លុក / Blog type</label>
-                                                <div class="col-md-9">
+                                                <label class="col-md-6 control-label"> ប្រភេទប្លុក / Blog type</label>
+                                                <div class="col-md-6">
                                                     <select name="blogtype" class="select2" style="width: 100%" required>
                                                         <option value="" selected>Select Type one</option>
                                                         <option value="blogger_id" <?php echo (@$this->input->get('blog_post') == 1 ? 'selected' :'');?>>Blogs Post</option>
                                                         <option value="blog_linkA">blog link</option>
                                                         <option value="blog_link">blog random link</option>
+                                                    </select>             
+                                                </div>                                   
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-md-6 control-label"> Post Type</label>
+                                                <div class="col-md-6">
+                                                    <select name="blog_set_type" class="select2" style="width: 100%">
+                                                        <option <?php echo (@$this->input->get('p_type') == 'p_manual' ? 'selected' :'');?> value="p_manual">Post Manual</option>
+                                                        <option <?php echo (@$this->input->get('p_type') == 'p_random' ? 'selected' :'');?> value="p_random">Post random</option>
                                                     </select>             
                                                 </div>                                   
                                             </div>
@@ -243,7 +252,7 @@ $btemplate = "D:&bsol;&bsol;PROGRAM&bsol;&bsol;templates&bsol;&bsol;";
                                             <td><span class="label label-success"><?php echo $value->status;?></span></td>
                                             <td>
                                                 <ul class="table-controls">
-                                                    <li><a href="<?php echo base_url();?>managecampaigns/setting?blog_post=1&bid=<?php echo @$value->bid;?>&title=<?php echo $value->title;?>&ads=<?php echo @$value->bads;?>&sl=<?php echo @$value->bslot;?>&url=<?php echo @$value->burl;?>&type=<?php echo @$value->blogtype;?>&yengo=<?php echo @$value->yengo;?>" class="bs-tooltip" title="" data-original-title="Edit"><i class="icon-pencil"></i></a> </li>
+                                                    <li><a href="<?php echo base_url();?>managecampaigns/setting?blog_post=1&bid=<?php echo @$value->bid;?>&title=<?php echo $value->title;?>&ads=<?php echo @$value->bads;?>&sl=<?php echo @$value->bslot;?>&url=<?php echo @$value->burl;?>&type=<?php echo @$value->blogtype;?>&yengo=<?php echo @$value->yengo;?>&p_type=<?php echo @$value->post_type;?>" class="bs-tooltip" title="" data-original-title="Edit"><i class="icon-pencil"></i></a> </li>
                                                     <li><a href="<?php echo base_url();?>managecampaigns/setting?del=<?php echo $value->bid;?>&type=blogger_id" class="bs-tooltip" title="" data-original-title="Delete"><i class="icon-trash" style="color: red"></i></a> </li>
                                                 </ul>
                                             </td>
