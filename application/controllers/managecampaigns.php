@@ -1960,6 +1960,10 @@ class Managecampaigns extends CI_Controller {
                                     /*blog link*/
 
                                     if(!empty($link)) {
+                                        if(!empty($featurePosts)) {
+                                            echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns";}, 30 );</script>';
+                                            die();
+                                        }
                                         if(!empty($blink) && $blink == 1) {
 
                                             /*check ads from site*/
@@ -3509,7 +3513,7 @@ class Managecampaigns extends CI_Controller {
                     $thaiText = '';
                     $EngTitle = '';
                 }
-                $bodytext = '<img class="thumbnail noi" style="text-align:center" src="'.$image.'"/><!--more--><div><b>'.$addTitle.'</b></div><div class="wrapper"><div class="small">'.$thaiText.'<b>'.$EngTitle.'</b><p>'.$conent.'</p></div> <a href="#" class="readmore">... Click to read more</a></div><div id="comehere"></div>'.$adSenseCode.'<div>Others news:</div><iframe width="100%" height="280" src="https://www.youtube.com/embed/'.$vid.'" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>'.$adSenseCode.$lineButton;
+                $bodytext = '<img class="thumbnail noi" style="text-align:center" src="'.$image.'"/><!--more--><div><b>'.$addTitle.'</b></div><div class="wrapper"><div class="small">'.$thaiText.'<b>'.$EngTitle.'</b><p>'.$conent.'</p></div> <a href="#" class="readmore">... Click to read more</a></div><div id="comehere"></div>'.$adSenseCode.'<div id="other_news">Others news:</div><iframe width="100%" height="280" src="https://www.youtube.com/embed/'.$vid.'" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>'.$adSenseCode.$lineButton;
                 $dataMeta = array(
                     'title' => $allData->p_name,
                     'image' => $image,
