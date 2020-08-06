@@ -271,7 +271,7 @@ $btemplate = "D:&bsol;&bsol;PROGRAM&bsol;&bsol;templates&bsol;&bsol;";
                 <div class="row">
                     <div class="col-md-6">
                         <!-- blog link -->
-                        <div class="widget box widget-closed" id="blogLink">
+                        <div class="widget box" id="blogLink">
                             <div class="widget-header">
                                 <h4><i class="icon-reorder"></i> Blog Link</h4>
                                 <div class="toolbar no-padding">

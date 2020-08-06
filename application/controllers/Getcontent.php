@@ -575,7 +575,8 @@ $link =  $desc->find('a', 0)->href;
         $html = file_get_html ( $url );
         $obj = new stdClass();
         $obj->description = '';
-        $obj->title = @$html->find ( 'title', 0 )->innertext;
+        //$obj->title = @$html->find ( 'title', 0 )->innertext;
+        $obj->title = @$html->find ( 'meta[property=og:title]', 0 )->content;
         $og_image = @$html->find ( 'meta [property=og:image]', 0 )->content;
         $image_src = @$html->find ( 'link [rel=image_src]', 0 )->href;
         if (! empty ( $image_src )) {
@@ -3777,7 +3778,9 @@ $link =  $desc->find('a', 0)->href;
                     $iframeCheck = @$html->find ( '#Blog1 iframe', 0 );
                     $iframeCheckH2 = @$html->find ( '#Blog1 h2', 0 );
                     $regex = '~var customcode = ({(.*?)(?=};)};)~';
+
                     preg_match_all($regex, $dataA, $matches);
+
                     if(!empty($matches[0][0])) {
                         $json = $matches[0][0];
                         $jsonArr = explode('"', $json);
@@ -3794,11 +3797,13 @@ $link =  $desc->find('a', 0)->href;
                     } else if(!empty($iframeCheck)) {
                         $iframe = @$html->find ( '#Blog1 iframe', 0 )->src;
                         $html1 = file_get_html ( $iframe );
-                        $obj->title = $html1->find ( 'title', 0 )->innertext;
+                        $obj->title = @$html1->find ( 'meta[property=og:title]', 0 )->content; 
                         $obj->vid = $iframe;
                     } else {
+                        //$obj->title = $html->find ( 'title', 0 )->innertext;
                         $obj->title = @$html->find ( 'meta[property=og:title]', 0 )->content; 
                     }
+
                     $obj->conent = '';
                     $obj->fromsite = '';
                     $obj->site = 'old';

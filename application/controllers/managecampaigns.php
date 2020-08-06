@@ -456,6 +456,7 @@ class Managecampaigns extends CI_Controller {
                             'label' => @$pOption->label,
                             'post_date'      => date('Y-m-d H:i:s'),
                             'pprogress' => $pOption->pprogress,
+                            'ia' => 0,
                         );
                         /*save tmp data post*/
                         $tmp_path = './uploads/'.$log_id.'/';
@@ -844,6 +845,7 @@ class Managecampaigns extends CI_Controller {
                 'label' => @$json_a->label,
                 'post_date'      => date('Y-m-d H:i:s'),
                 'pprogress' => $json_a->pprogress,
+                'ia' => 0,
             );
             $p_progress = 1; 
 
@@ -1398,6 +1400,7 @@ class Managecampaigns extends CI_Controller {
                         'pprogress' => $pprogress,
                         'post_date'      => date('Y-m-d H:i:s'),
                         'brandom'      => @$bbrandom,
+                        'ia'      => 0,
                     );
                     /*save tmp data post*/
                     if(empty($from_old_link)) {
@@ -2952,6 +2955,7 @@ class Managecampaigns extends CI_Controller {
                         'label' => 'lotto',
                         'post_date'      => date('Y-m-d H:i:s'),
                         'pprogress' => $pOption->pprogress,
+                        'ia' => 0,
                     );
 
                     if($this->session->userdata('post_only')) {
@@ -3240,6 +3244,7 @@ class Managecampaigns extends CI_Controller {
                             'label' => @$pOption->label,
                             'post_date'      => date('Y-m-d H:i:s'),
                             'pprogress' => @$pOption->pprogress,
+                            'ia' => 0,
                         );
 
                         $dataPostInstert = array (
@@ -3932,6 +3937,7 @@ class Managecampaigns extends CI_Controller {
                         'label' => @$pSchedule->label,
                         'post_date'      => date('Y-m-d H:i:s'),
                         'pprogress' => @$pSchedule->pprogress,
+                        'ia' => 0,
                     );
 
 
@@ -5333,6 +5339,7 @@ HTML;
                 'label' => 'lotto',
                 'post_date'      => date('Y-m-d H:i:s'),
                 'pprogress' => @$json_a->pprogress,
+                'ia' => 0,
             );
 
 
@@ -5515,6 +5522,7 @@ HTML;
                                     'label' => 'lotto',
                                     'post_date'      => date('Y-m-d H:i:s'),
                                     'pprogress' => @$json_a->pprogress,
+                                    'ia' => 0,
                                 );
                                 $content = array (
                                     'name' => @htmlentities(htmlspecialchars(str_replace(' - YouTube', '', $contents["content"][0]["title"]))),
@@ -7151,6 +7159,7 @@ public function imgtest()
                         'label' => 'news',
                         'post_date'      => date('Y-m-d H:i:s'),
                         'pprogress' => $json_a->pprogress,
+                        'ia' => 0,
                     );
 
                     /*save tmp data post*/
@@ -7212,9 +7221,9 @@ public function imgtest()
                         'https://www.mumkhao.com/',
                         'https://www.xn--42c2dgos8bxc2dtcg.com/',
                         'https://board.postjung.com/',
-                        //'http://huaythai.me/',
-                        //'http://www.huaythaitoday.com/',
-                        //'http://www.huayhot.com/',
+                        'http://huaythai.me/',
+                        'http://www.huaythaitoday.com/',
+                        'http://www.huayhot.com/',
                         'https://www.tha.supiper.online/',
                         'http://www.tdaily.us/',
                     );
@@ -7435,6 +7444,7 @@ public function imgtest()
                         'label' => 'news',
                         'post_date'      => date('Y-m-d H:i:s'),
                         'pprogress' => $json_a->pprogress,
+                        'ia' => 0,
                     );
 
                     /*save tmp data post*/
@@ -7534,6 +7544,183 @@ public function imgtest()
                                     }
                                     /*End if found*/
                                 }
+                            }
+                        }
+                    }
+                }
+                die;
+                break;
+            case 'myoldsite':
+                echo '<meta http-equiv="refresh" content="30">';
+                $setBack = $this->input->get('index');
+                if(!empty($setBack)) {
+                    $setURl = base_url().'managecampaigns';
+                } else {
+                    $setURl = base_url().'managecampaigns/autopostfb?action=posttoblog&pause=1';
+                }
+                $this->session->set_userdata('backto', $setURl);
+                $amoung = $this->amung('8kkzhab57v',1,true);
+                $getUrl = $amoung->pages;
+                //$getUrl = array_unique($getUrl);
+                ksort($getUrl);
+                if(!empty($getUrl)) {
+                    // require_once(APPPATH.'controllers/Getcontent.php');
+                    // $aObj = new Getcontent(); 
+                    $fbUserId = $this->session->userdata('fb_user_id');
+                    $tmp_path = './uploads/'.$log_id.'/'. $fbUserId . '_tmp_action.json';
+                    $string = file_get_contents($tmp_path);
+                    $json_a = json_decode($string);
+                    $schedule = array (                    
+                        'start_date' => $json_a->start_date,
+                        'start_time' => $json_a->start_time,
+                        'end_date' => $json_a->end_date,
+                        'end_time' => $json_a->end_time,
+                        'loop' => $json_a->loop,
+                        'loop_every' => $json_a->loop_every,
+                        'loop_on' => $json_a->loop_on,
+                        'wait_group' => $json_a->wait_group,
+                        'wait_post' => $json_a->wait_post,
+                        'randomGroup' => $json_a->randomGroup,
+                        'prefix_title' => $json_a->prefix_title,
+                        'suffix_title' => $json_a->suffix_title,
+                        'short_link' => $json_a->short_link,
+                        'check_image' => $json_a->check_image,
+                        'imgcolor' => $json_a->imgcolor,
+                        'btnplayer' => $json_a->btnplayer,
+                        'playerstyle' => $json_a->playerstyle,
+                        'random_link' => $json_a->random_link,
+                        'share_type' => $json_a->share_type,
+                        'share_schedule' => $json_a->share_schedule,
+                        'account_group_type' => $json_a->account_group_type,
+                        'txtadd' => $json_a->txtadd,
+                        'blogid' => $json_a->blogid,
+                        'blogLink' => $json_a->blogLink,
+                        'main_post_style' => 'tnews',
+                        'userAgent' => $json_a->userAgent,
+                        'checkImage' => $json_a->checkImage,
+                        'ptype' => $json_a->ptype,
+                        'img_rotate' => $json_a->img_rotate,
+                        'filter_contrast' => $json_a->filter_contrast,
+                        'filter_brightness' => $json_a->filter_brightness,
+                        'post_by_manaul' => $json_a->post_by_manaul,
+                        'foldlink' => 1,
+                        'gemail' => $json_a->gemail,
+                        'label' => 'news',
+                        'post_date'      => date('Y-m-d H:i:s'),
+                        'pprogress' => $json_a->pprogress,
+                        'ia' => 0,
+                    );
+
+                    /*save tmp data post*/
+                    $target_dir = './uploads/image/';
+                    $tmp_path = './uploads/'.$log_id.'/';
+                    $file_tmp_name = $fbUserId . '_tmp_action.json';
+                    $this->json($tmp_path,$file_tmp_name, $schedule);
+                    /*End save tmp data post*/
+
+                    require_once(APPPATH.'controllers/Getcontent.php');
+                    $aObj = new Getcontent(); 
+                    $urlArr = array();
+                    foreach ($getUrl as $key => $gurl) {
+                        $urlAr = str_replace('?m=1', '', $gurl->url);
+
+                        $urlArr[$urlAr][] = $urlAr;
+                        
+                    }
+                    arsort($urlArr);
+
+                    if(!empty($urlArr)) {
+                        foreach ($urlArr as $key => $dlink) {
+                            if(count($dlink) > 9) {
+                                 /*get top link */
+                                $url = $key;
+                                $title = '';
+                                if (!preg_match('/burma/', $title)) {
+                                    $wSare = array('title'=>$title,'uid' => $log_id);
+                                    $SharedPost = $this->Mod_general->select ( 'share_history', '*', $wSare );
+                                    /*End check post that shared*/
+                                    if(empty($SharedPost[0])) {
+                                        $oldUrl = $aObj->getMyOldLink($url);
+                                        //$content = $aObj->getConentFromSite($url,1);
+                                        if(!empty($oldUrl)) {
+                                            /*preparepost*/
+                                            $content = array (
+                                                'name' => @htmlentities(htmlspecialchars(str_replace(' - YouTube', '', trim (@$title )))),
+                                                'message' => @htmlentities(htmlspecialchars(addslashes(trim ( @$title )))),
+                                                'caption' => '',
+                                                'link' => @$oldUrl['url'],
+                                                'mainlink' => $oldUrl['url'],
+                                                'picture' => @$oldUrl['image'],                            
+                                                'vid' => '',                          
+                                            );
+                                            /*End preparepost*/
+                                            $p_progress = 1;
+                                            $dataPostInstert = array (
+                                                Tbl_posts::name => trim (@$title ),
+                                                Tbl_posts::conent => json_encode($content),
+                                                Tbl_posts::p_date => date('Y-m-d H:i:s'),
+                                                Tbl_posts::schedule => json_encode($schedule),
+                                                Tbl_posts::user => $sid,
+                                                'user_id' => $log_id,
+                                                Tbl_posts::post_to => 0,
+                                                'p_status' => 1,
+                                                'p_progress' => $p_progress,
+                                                Tbl_posts::type => 'Facebook' 
+                                            );
+                                            //$AddToPost = $this->Mod_general->insert ( Tbl_posts::tblName, $dataPostInstert );
+                                            if(!empty($AddToPost)) {
+                                                //echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/yturl?pid='.$AddToPost.'&action=postblog&autopost=1";},0 );</script>';
+                                                exit();
+                                            }
+                                            break;
+                                        }
+                                    } else {
+                                        /*if found*/
+                                        // foreach ($SharedPost as $key => $linkShred) {
+                                        //     # code...
+                                        // }
+                                        $wU = array('is_online'=>1,'user_id' => $log_id);
+                                        $User = $this->Mod_general->select ( 'users', '*', $wU );
+                                        if(count($SharedPost) < count($User)) {
+                                            $oldUrl = $aObj->getMyOldLink($url);
+                                            //$content = $aObj->getConentFromSite($url,1);
+                                            if(!empty($oldUrl)) {
+                                                /*preparepost*/
+                                                $content = array (
+                                                    'name' => @htmlentities(htmlspecialchars(str_replace(' - YouTube', '', trim (@$title )))),
+                                                    'message' => @htmlentities(htmlspecialchars(addslashes(trim ( @$title )))),
+                                                    'caption' => '',
+                                                    'link' => @$oldUrl['url'],
+                                                    'mainlink' => $oldUrl['url'],
+                                                    'picture' => @$oldUrl['image'],                            
+                                                    'vid' => '',                          
+                                                );
+                                                /*End preparepost*/
+                                                $p_progress = 1;
+                                                $dataPostInstert = array (
+                                                    Tbl_posts::name => trim (@$title ),
+                                                    Tbl_posts::conent => json_encode($content),
+                                                    Tbl_posts::p_date => date('Y-m-d H:i:s'),
+                                                    Tbl_posts::schedule => json_encode($schedule),
+                                                    Tbl_posts::user => $sid,
+                                                    'user_id' => $log_id,
+                                                    Tbl_posts::post_to => 0,
+                                                    'p_status' => 1,
+                                                    'p_progress' => $p_progress,
+                                                    Tbl_posts::type => 'Facebook' 
+                                                );
+                                                $AddToPost = $this->Mod_general->insert ( Tbl_posts::tblName, $dataPostInstert );
+                                                if(!empty($AddToPost)) {
+                                                    echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/yturl?pid='.$AddToPost.'&action=postblog&autopost=1";},0 );</script>';
+                                                    exit();
+                                                }
+                                                break;
+                                            }
+                                        }
+                                        /*End if found*/
+                                    }
+                                }
+                                /*End get top link */
                             }
                         }
                     }
@@ -8251,6 +8438,7 @@ public function imgtest()
                 'label' => @$labels,
                 'post_date'      => date('Y-m-d H:i:s'),
                 'pprogress' => $json_a->pprogress,
+                'ia' => 0,
             );
             /*save tmp data post*/
             require_once(APPPATH.'controllers/Splogr.php');
@@ -8384,6 +8572,7 @@ public function imgtest()
                         'label' => @$labels,
                         'post_date'      => date('Y-m-d H:i:s'),
                         'pprogress' => $json_a->pprogress,
+                        'ia' => 0,
                     );
                     /*save tmp data post*/
                     $tmp_path = './uploads/'.$log_id.'/';
@@ -8437,6 +8626,7 @@ public function imgtest()
                             'label' => @$labels,
                             'post_date'      => date('Y-m-d H:i:s'),
                             'pprogress' => $json_a->pprogress,
+                            'ia' => 0,
                         );
                         /*save tmp data post*/
                         $tmp_path = './uploads/'.$log_id.'/';
