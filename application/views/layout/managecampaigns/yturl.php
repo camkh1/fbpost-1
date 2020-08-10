@@ -436,7 +436,7 @@
 
                                         <div class="form-group">
                                             <div class="col-md-12">
-                                                <span class="label label-primary khmer" style="font-size: 16px"><label><input type="checkbox" value="" id="getDataAll"/> យកតាមជម្រើសចាស់  </label></span>
+                                                <span class="label label-primary khmer" style="font-size: 16px"><label><input type="checkbox" value="" id="getDataAll"/> យកតាមជម្រើសចាស់  </label></span>&nbsp;<span class="label label-primary khmer" style="font-size: 16px"><label><input type="checkbox" value="1" name="savetmp" checked /> Save ជម្រើសចាស់  </label></span>
                                             </div>
                                             <div class="col-md-12">
                                                 <label class="control-label">Random Blogs

@@ -1276,6 +1276,7 @@ class Managecampaigns extends CI_Controller {
             $label = @$this->input->post ( 'label' );
             $pprogress = @$this->input->post ( 'pprogress' );
             $bbrandom = @$this->input->post ( 'bbrandom' );
+            $savetmps = @$this->input->post ( 'savetmp' );
 
 
             if(!empty($post_all)) {
@@ -1403,12 +1404,14 @@ class Managecampaigns extends CI_Controller {
                         'ia'      => 0,
                     );
                     /*save tmp data post*/
-                    if(empty($from_old_link)) {
-                        if($saveTmp) {
-                            $target_dir = './uploads/image/';
-                            $tmp_path = './uploads/'.$log_id.'/';
-                            $file_tmp_name = $fbuids . '_tmp_action.json';
-                            $this->json($tmp_path,$file_tmp_name, $schedule);
+                    if(!empty($savetmps)) {
+                        if(empty($from_old_link)) {
+                            if($saveTmp) {
+                                $target_dir = './uploads/image/';
+                                $tmp_path = './uploads/'.$log_id.'/';
+                                $file_tmp_name = $fbuids . '_tmp_action.json';
+                                $this->json($tmp_path,$file_tmp_name, $schedule);
+                            }
                         }
                     }
                     /*End save tmp data post*/
