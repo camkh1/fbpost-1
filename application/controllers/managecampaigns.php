@@ -1937,7 +1937,7 @@ class Managecampaigns extends CI_Controller {
                                                 // echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/postauto?pid='.$p_id.'&bid=' . $bid . '&action=generate&blink='.$blink.'&autopost='.$autopost.'&blog_link_id=";}, 30 );</script>';
                                                 // exit();
                                             }
-                                            $link = @$blogData->url;
+                                            $link = @str_replace('http', 'https', $blogData->url);
                                             /*update post*/
                                             if(!empty($link)) {
                                                 $updateMainLink = array('p_id' => $pid);
@@ -2251,11 +2251,22 @@ class Managecampaigns extends CI_Controller {
         $this->load->view ( 'managecampaigns/yturl', $data );
     }
 
-    public function getBlogLink()
+    public function getBlogLink($bid = '')
     {
         /*get blog link from database*/
         $guid = $this->session->userdata ('guid');
         $blogLinkType = 'blog_linkA';
+        if(!empty($bid)) {
+            $whereLinkA = array(
+                'object_id'      => $bid,
+                'meta_key'      => $blogLinkType . '_'. $guid,
+            );
+            $queryLinkData = $this->Mod_general->select('meta', '*', $whereLinkA);
+            if (!empty($queryLinkData[0])) {
+                return $queryLinkData[0];
+            }
+            die;
+        }
         $whereLinkA = array(
             'meta_key'      => $blogLinkType . '_'. $guid,
         );
@@ -2567,20 +2578,22 @@ class Managecampaigns extends CI_Controller {
                         exit();
                 }
             } else {
+                $blogBL = $big = $this->getBlogLink($blogRand);
                 $whereBLId = array(
                     'object_id' => $blogRand
                 );
                 $dataBlink = array(
                     'status'=>1,
                     'post'=> date('Y-m-d'),
-                    'date'=> date('Y-m-d')
+                    'date'=> date('Y-m-d'),
+                    'changeurl'=> @$blogBL->changeurl
                 );
                 $data_blog = array(
                     'meta_value'     => json_encode($dataBlink),
                 );
                 $lastID = $this->Mod_general->update('meta', $data_blog,$whereBLId);
             }
-            $link = $DataBlogLink->url;
+            $link = @str_replace('http', 'https', $DataBlogLink->url);
             /*update post*/
             if(!empty($link) && !preg_match('/youtu/', $pConent->mainlink)) {
                 $whereUp = array('p_id' => $pid);
@@ -6484,12 +6497,14 @@ public function imgtest()
                     );
                     $queryLinkData = $this->Mod_general->select('meta', '*', $whereLinkA);
                     /* check before insert */
-                    $dataBlink = array(
-                        'status'=>1,
-                        'post'=> date('Y-m-d', strtotime('-5 days', strtotime(date('Y-m-d')))),
-                        'date'=> date('Y-m-d')
-                    );
+                    
                     if (empty($queryLinkData[0])) {
+                        $dataBlink = array(
+                            'status'=>1,
+                            'post'=> date('Y-m-d', strtotime('-5 days', strtotime(date('Y-m-d')))),
+                            'date'=> date('Y-m-d'),
+                            'changeurl'=> date('Y-m-d')
+                        );
                         $data_blog = array(
                             'meta_key'      => $blogType . '_'. $guid,
                             'object_id'      => $blogID,
@@ -6497,6 +6512,12 @@ public function imgtest()
                         );
                         $lastID = $this->Mod_general->insert('meta', $data_blog);
                     } else {
+                        $dataBlink = array(
+                            'status'=>1,
+                            'post'=> date('Y-m-d', strtotime('-5 days', strtotime(date('Y-m-d')))),
+                            'date'=> date('Y-m-d'),
+                            'changeurl'=> @$queryLinkData[0]->changeurl
+                        );
                         $data_blog = array(
                             'meta_key'      => $blogType . '_'. $guid,
                             'object_id'      => $blogID,
@@ -9436,6 +9457,7 @@ public function imgtest()
             $bLinkTitle = trim($this->input->get('title'));
             $bLinkID    = trim($this->input->get('bid'));
             $status    = trim($this->input->get('status'));
+            $bchangeurl    = trim($this->input->get('changeurl'));
             $blogLinkType = 'blog_linkA';
             $jsondata = array();
             if (!empty($bLinkID)) {
@@ -9447,7 +9469,8 @@ public function imgtest()
                 if (empty($queryLinkData[0])) {
                     $dataBlink = array(
                         'status'=>1,
-                        'date'=> date('Y-m-d')
+                        'date'=> date('Y-m-d'),
+                        'changeurl'=> date('Y-m-d'),
                     );
                     $data_blog = array(
                         'meta_key'      => $blogLinkType . '_'. $guid,
@@ -9462,6 +9485,7 @@ public function imgtest()
                     $dataBlink = array(
                         'status'=>1,
                         'post'=> date('Y-m-d'),
+                        'changeurl'=> date('Y-m-d'),
                         'date'=> date('Y-m-d')
                     );
                     $data_blog = array(

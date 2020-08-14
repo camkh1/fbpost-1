@@ -391,7 +391,7 @@ function parse_query_string(query) {
 												<li><a
 												href="<?php echo base_url(); ?>facebook/shareation?post=getpost&pid=<?php echo $value->{Tbl_posts::id}; ?>"><i class="icon-share"></i> Share now</a></li>
 											<?php endif;?>
-											<li><a onclick="getcode('<?php echo $value->{Tbl_posts::name};?>\n <?php echo @$link;?>');" href="javascript:void(0);"><i class="icon-pencil"></i> Get Link</a></li>
+											<li><a data-title="<?php echo $value->{Tbl_posts::name};?>" data-mlink="<?php echo @$mainlink;?>" data-img="<?php echo $content->picture; ?>" data-link="<?php echo @$link;?>" onclick="getcode(this);" href="javascript:void(0);"><i class="icon-pencil"></i> Get Link</a></li>
 											<?php
 											$parse = parse_url($glink);
 											//$bContent = preg_replace('/\s+/', '<sp>', $message);
@@ -510,12 +510,20 @@ function parse_query_string(query) {
             generate('notification');
             generate('success');
         }
-function getcode(code) {
-	if(code) {
-		var dataUser = code;
-		$("#codetext").html(dataUser);
-		$('#exampleModal').modal('show');
-	}
+function getcode(e) {
+	var mlink = $(e).attr('data-mlink');
+	var link = $(e).attr('data-link');
+	var title = $(e).attr('data-title');
+	var img = $(e).attr('data-img');
+	var setHTml = '<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0"><tr><td id="bgimage" colspan="3" style="background:#000000;height: 280px;overflow: hidden;background: no-repeat center center;background-size: cover; background: #000 center center no-repeat; background-size: 100%;border: 1px solid #000;background-image:url('+img+');"><a id="main_link" href="'+mlink+'" target="_top" rel="nofollow" style="display:block;height:280px;width:100%; text-align:center; background:url(https://3.bp.blogspot.com/-3ii7X_88VLs/XEs-4wFXMXI/AAAAAAAAiaw/d_ldK-ae830UCGsyOl0oEqqwDQwd_TqEACLcBGAs/s90/youtube-play-button-transparent-png-15.png) no-repeat center center;">&nbsp;</a></td></tr><tr><td style="background:#000 url(https://2.bp.blogspot.com/-Z_lYNnmixpM/XEs6o1hpTUI/AAAAAAAAiak/uPb1Usu-F-YvHx6ivxnqc1uSTIAkLIcxwCLcBGAs/s1600/l.png) no-repeat bottom left; height:39px; width:237px;margin:0;padding:0;"><a id="main_link_a" href="'+mlink+'" target="_top" rel="nofollow" style="display:block;height:39px;width:100%;">&nbsp;</a></td><td style="background:#000 url(https://1.bp.blogspot.com/-9nWJSQ3HKJs/XEs6o7cUv2I/AAAAAAAAiag/sAiHoM-9hKUOezozem6GvxshCyAMp_n_QCLcBGAs/s1600/c.png) repeat-x bottom center; height:39px;margin:0;padding:0;">&nbsp;</td><td style="background:#000 url(https://2.bp.blogspot.com/-RmcnX0Ej1r4/XEs6o-Fjn9I/AAAAAAAAiac/j50SWsyrs8sA5C8AXotVUG7ESm1waKxPACLcBGAs/s1600/r.png) no-repeat bottom right; height:39px; width:151px;margin:0;padding:0;">&nbsp;</td></tr></table><meta content="'+img+'" property="og:image"/><img class="thumbnail noi" style="text-align:center; display:none;" src="'+img+'"/><h2>'+title+'</h2>';
+	console.log(setHTml);
+	$("#codetext").html(setHTml);
+	$('#exampleModal').modal('show');
+	// if(code) {
+	// 	var dataUser = code;
+	// 	$("#codetext").html(dataUser);
+	// 	$('#exampleModal').modal('show');
+	// }
 }
 function postManual(e) {
 	//$(e).text('there');
