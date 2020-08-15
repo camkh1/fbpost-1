@@ -1181,7 +1181,7 @@ $link =  $desc->find('a', 0)->href;
                 $obj->site = 'site';
                 return $obj;
                 break;
-            case 'deemindplus.com':
+            case 'www.deemindplus.com':
                 /*get label*/
                 $label = $html->find('.cat-links a',0)->plaintext;
                 $obj->label = $label;
@@ -1191,6 +1191,9 @@ $link =  $desc->find('a', 0)->href;
                     $item->outertext = '';
                 }
                 foreach($html->find('.robots-nocontent') as $item) {
+                    $item->outertext = '';
+                }
+                foreach($html->find('.code-block') as $item) {
                     $item->outertext = '';
                 }
                 $html->save();
@@ -1209,32 +1212,33 @@ $link =  $desc->find('a', 0)->href;
                 $content = preg_replace( '/(<[^>]+) data-image-description class=".*?"/i', "$1", $content );
                 $content = preg_replace( '/(<[^>]+) data-orig-file=".*?"/i', "$1", $content );
                 $content = preg_replace( '/(<[^>]+) data-permalink=".*?"/i', "$1", $content );
+
                 $regex = '/< *img[^>]*src *= *["\']?([^"\']*)/';
-                preg_match_all( $regex, $content, $matches );
-                $ImgSrc = array_pop($matches);
-                // reversing the matches array
-                if(!empty($ImgSrc)) {
-                    foreach ($ImgSrc as $image) {
-                        $imagedd = strtok($image, "?");
-                        $file_title = basename($imagedd);
-                        $fileName = FCPATH . 'uploads/image/'.$file_title;
-                        @copy($imagedd, $fileName);   
-                        $images = $this->mod_general->uploadtoImgur($fileName);
-                        if(empty($images)) {
-                            $apiKey = '76e9b194c1bdc616d4f8bb6cf295ce51';
-                            $images = $this->Mod_general->uploadToImgbb($fileName, $apiKey);
-                            if($images) {
-                                @unlink($fileName);
-                            }
-                        } else {
-                            $gimage = @$images; 
-                            @unlink($fileName);
-                        }
-                        if(!empty($gimage)) {
-                            $content = str_replace($image,$gimage,$content);
-                        }
-                    }
-                }
+                // preg_match_all( $regex, $content, $matches );
+                // $ImgSrc = array_pop($matches);
+                // // reversing the matches array
+                // if(!empty($ImgSrc)) {
+                //     foreach ($ImgSrc as $image) {
+                //         $imagedd = strtok($image, "?");
+                //         $file_title = basename($imagedd);
+                //         $fileName = FCPATH . 'uploads/image/'.$file_title;
+                //         @copy($imagedd, $fileName);   
+                //         $images = $this->mod_general->uploadtoImgur($fileName);
+                //         if(empty($images)) {
+                //             $apiKey = '76e9b194c1bdc616d4f8bb6cf295ce51';
+                //             $images = $this->Mod_general->uploadToImgbb($fileName, $apiKey);
+                //             if($images) {
+                //                 @unlink($fileName);
+                //             }
+                //         } else {
+                //             $gimage = @$images; 
+                //             @unlink($fileName);
+                //         }
+                //         if(!empty($gimage)) {
+                //             $content = str_replace($image,$gimage,$content);
+                //         }
+                //     }
+                // }
                 $obj->vid = '';
                 $obj->conent = $content;
                 $obj->fromsite = $parse['host'];
