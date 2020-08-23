@@ -7243,13 +7243,13 @@ public function imgtest()
                         'https://www.siamvariety.com/',
                         'https://www.dailyliveexpress.com/',
                         'https://www.mumkhao.com/',
-                        //'https://www.xn--42c2dgos8bxc2dtcg.com/',
+                        'https://www.xn--42c2dgos8bxc2dtcg.com/',
                         'https://board.postjung.com/',
-                        //'http://huaythai.me/',
-                        //'http://www.huaythaitoday.com/',
-                        //'http://www.huayhot.com/',
-                        //'https://www.tha.supiper.online/',
-                        //'http://www.tdaily.us/',
+                        'http://huaythai.me/',
+                        'http://www.huaythaitoday.com/',
+                        'http://www.huayhot.com/',
+                        'https://www.tha.supiper.online/',
+                        'http://www.tdaily.us/',
                     );
                     $k = array_rand($siteUrl);
                     $getSiteUrl = $siteUrl[$k];
