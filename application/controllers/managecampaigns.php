@@ -3473,11 +3473,11 @@ class Managecampaigns extends CI_Controller {
                     $adsense = $adSenseCode;
                     preg_match_all($pattern, $setConents, $matches);
                     $i=0;
-                    foreach ($matches[0] as $value) {
-                        $i++;
-                        $adsense = "<div style=\"text-align: center;\"><script>document.write(inSide$i);</script></div>";
-                        $txt = str_replace($value, $adsense, $setConents);
-                    }
+                    // foreach ($matches[0] as $value) {
+                    //     $i++;
+                    //     $adsense = "<div style=\"text-align: center;\"><script>document.write(inSide$i);</script></div>";
+                    //     $txt = str_replace($value, $adsense, $setConents);
+                    // }
                     if(empty($txt)) {
                         $txt = $setConents;
                     }
