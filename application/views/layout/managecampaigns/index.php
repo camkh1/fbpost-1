@@ -296,11 +296,16 @@ function parse_query_string(query) {
     <?php
     if(!empty($socialList)):
     $Mod_general = new Mod_general ();
+    $prefix = "ลุ้นจะให้โชคใหมงวดนี้พิมพ์ OK 👌👌|👉👉พิม36 ค่ะ|แม้นเลข 19 ก่อนไปดูเลข|ขอสติ๊กเกอร์คนละตัว👇|อยากได้กด 48 มาครับ⏰|งวดนี้มาแล้วกด(24)ก่อนไปดูเลข👇|กด( สาธุ)ก่อนไปดู|พิมพ์ 67 แทนขอบคุณ|ไครเอาพิมพ์​ (รอ)มา ดูเลย |กด41ดูเลย👇👇|งวดนี้มาแล้วกด(33)ก่อนไปดูเลข👇|พิม 21 เข้าดูเลย👇👇👇|งวดนี้มาแล้วกด 39 ก่อนไปดูเลข|ห้ามลืมกด 11 ไปดูเลย|ห้ามลืมกด 81ไปดูเลย| ห้ามลืมกด 88 ไปดูเลย|กด '78' เข้าดูเลย👇|กด 55 เข้าดูเลย👇";
      foreach ($socialList as $value):
     	$content = json_decode($value->p_conent);
     	$getLink = $content->link;
     	$picture = @$content->picture;
     	$uploaded = true;
+
+    	$prefixArr = explode('|', $prefix);
+        $preTitle = $prefixArr[mt_rand(0, count($prefixArr) - 1)];
+
     	if (!@preg_match('/http/', @$picture)):
     		preg_match("/^(?:http(?:s)?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:(?:watch)?\?(?:.*&)?v(?:i)?=|(?:embed|v|vi|user)\/))([^\?&\"'>]+)/", $getLink, $matches);
             if (!empty($matches[1])):
@@ -363,7 +368,7 @@ function parse_query_string(query) {
 							        }
 						                    //$link = get_bitly_short_url( $link, BITLY_USERNAME, BITLY_API_KEY );
         									?>
-        									<textarea style="height: 25px;margin-bottom: 3px" id="copy-text" type="text" name="glink" class="form-control" onClick="copyText(this);"><?php echo $value->{Tbl_posts::name}.'&#13;&#10;#กดแชร์ 👉 กด 85 ขอให้โชคดี ขอให้รวยๆๆ🙏🙏🙏';?> <?php echo @$link;?></textarea>
+        									<textarea style="height: 25px;margin-bottom: 3px" id="copy-text" type="text" name="glink" class="form-control" onClick="copyText(this);"><?php echo $value->{Tbl_posts::name}.'<br/>' . $preTitle;?> <?php echo @$link;?></textarea>
         									<textarea style="height: 25px;" id="copy-text" type="text" name="glink" class="form-control" onClick="copyText(this);"><?php echo $value->{Tbl_posts::name};?><br/><?php echo @$mainlink;?><a href="<?php echo $link;?>"><img style="border:1px solid #000;display: none;" src="<?php echo $content->picture; ?>" alt="" class="wp-image-45"/></a><link href="<?php echo @$picture; ?>" rel="image_src"/><meta content="<?php echo @$picture; ?>" property="og:image"/></textarea>
         <?php if ($value->{Tbl_posts::status} == 1) { ?>
                                                 <span

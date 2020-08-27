@@ -3432,7 +3432,7 @@ class Managecampaigns extends CI_Controller {
         if($gBlogType->blogtype == 'amp') {
             $adSenseCode = "<div style=\"text-align: center;\"><amp-ad layout=\"fixed\" width=\"336\" height=\"280\" type=\"adsense\" data-ad-client=\"ca-pub-$gBlogType->bads\" data-ad-slot=\"$gBlogType->bslot\"></amp-ad></div>$yengo";
         } else {
-            $adSenseCode = "<div style=\"text-align: center;\"><script async src=\"//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js\"></script><script>if(typeof startin!=='undefined'){document.write(setCode);} if(typeof startin==='undefined'){document.write(inSide);(adsbygoogle=window.adsbygoogle||[]).push({});}</script></div>$yengo";
+            $adSenseCode = "<div style=\"text-align: center;\"><script>document.write(inSide);</script></div>$yengo";
         }
         $adSenseCode = trim_slashes($adSenseCode);
         if (preg_match('/youtube/', $pConent->link)) {
@@ -3472,7 +3472,10 @@ class Managecampaigns extends CI_Controller {
                     $pattern = "|(<div class=\"setAdsSection\">.*?<\/div>)|";
                     $adsense = $adSenseCode;
                     preg_match_all($pattern, $setConents, $matches);
+                    $i=0;
                     foreach ($matches[0] as $value) {
+                        $i++;
+                        $adsense = "<div style=\"text-align: center;\"><script>document.write(inSide$i);</script></div>";
                         $txt = str_replace($value, $adsense, $setConents);
                     }
                     if(empty($txt)) {
