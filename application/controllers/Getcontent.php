@@ -616,6 +616,7 @@ $link =  $desc->find('a', 0)->href;
                 $content = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $content);
                 $content = preg_replace('/<ins\b[^>]*>(.*?)<\/ins>/is', '<div class="setAds"></div>', $content);
                 $content = preg_replace("/<a(.*?)>/", "<a$1 target=\"_blank\">", $content);
+                $content = str_replace("facebook.com/groups/websiamplaza", "facebook.com/groups/2114780255405136", $content);
                 
                 // $regex = '/< *img[^>]*src *= *["\']?([^"\']*)/';
                 // preg_match_all( $regex, $content, $matches );
@@ -2398,6 +2399,31 @@ $link =  $desc->find('a', 0)->href;
                 //         }
                 //     }
                 // }
+                $obj->vid = '';
+                $obj->conent = $content;
+                $obj->fromsite = $parse['host'];
+                $obj->site = 'site';
+                return $obj;
+                break;
+            case 'chikng.com':
+                // foreach($html->find('.post .post-meta a') as $item) {
+                //     $item->outertext = '';
+                // }
+                /*get label*/
+                 $label = @$html->find ( '.post .post-meta a', 0 )->plaintext;
+                 if($label == 'เลขเด็ด') {
+                    $label = 'เสี่ยงดวง - หวย';
+                 }
+                 $obj->label = $label;
+
+                /*End get label*/
+
+                $obj->title = @$html->find ( '.post .entry h2.has-text-align-center', 0 )->innertext;;
+                //$html->save();
+                $content = @$html->find ( '.post .entry', 0 )->innertext;
+                $content = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $content);
+                $content = preg_replace('/<ins\b[^>]*>(.*?)<\/ins>/is', '<div class="setAds"></div>', $content);
+                $content = preg_replace("/<a(.*?)>/", "<a$1 target=\"_blank\">", $content);
                 $obj->vid = '';
                 $obj->conent = $content;
                 $obj->fromsite = $parse['host'];
