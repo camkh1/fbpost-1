@@ -5025,12 +5025,12 @@ HTML;
                 $dataContent->publishedAt    = $ytArr['snippet']['publishedAt'];
 
                 $ago = new DateTime($ytArr['snippet']['publishedAt']);
-                $twoDaysAgo = new DateTime(date('Y-m-d', strtotime('-1 days')));
-                $dateModify = new DateTime(date('Y-m-d', strtotime($ytArr['snippet']['publishedAt'])));
+                $twoDaysAgo = new DateTime(date('Y-m', strtotime("now")));
+                $dateModify = new DateTime(date('Y-m', strtotime($ytArr['snippet']['publishedAt'])));
                 //echo $ytArr['snippet']['publishedAt'];
 
                 /*if video date is >= before yesterday*/
-                if($dateModify >= $twoDaysAgo) { 
+                if($dateModify == $twoDaysAgo) { 
                     if($ytArr['snippet']['liveBroadcastContent'] != 'upcoming') {
                         $dataTy[] = $dataContent;
                         /*check data exist*/
@@ -7243,15 +7243,14 @@ public function imgtest()
                     $siteUrl = array(
                         'https://www.siamnews.com/',
                         'https://www.siamstreet.com/',
-                        'https://www.siamvariety.com/',
                         'https://www.dailyliveexpress.com/',
                         'https://www.mumkhao.com/',
                         'https://www.xn--42c2dgos8bxc2dtcg.com/',
                         'https://board.postjung.com/',
                         'http://huaythai.me/',
-                        'http://www.huaythaitoday.com/',
-                        'http://www.huayhot.com/',
-                        'https://www.tha.supiper.online/',
+                        'https://www.susee.supipernews.com/',
+                        //'http://www.huayhot.com/',
+                        'www.susee.supipernews.com/',
                         'http://www.tdaily.us/',
                     );
                     $k = array_rand($siteUrl);

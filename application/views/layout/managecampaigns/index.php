@@ -368,7 +368,7 @@ function parse_query_string(query) {
 							        }
 						                    //$link = get_bitly_short_url( $link, BITLY_USERNAME, BITLY_API_KEY );
         									?>
-        									<textarea style="height: 25px;margin-bottom: 3px" id="copy-text" type="text" name="glink" class="form-control" onClick="copyText(this);"><?php echo $value->{Tbl_posts::name}.'<br/>' . $preTitle;?> <?php echo @$link;?></textarea>
+        									<textarea style="height: 25px;margin-bottom: 3px" id="copy-text" type="text" name="glink" class="form-control" onClick="copyText(this);"><?php echo $value->{Tbl_posts::name}.' ' . $preTitle;?> <?php echo @$link;?></textarea>
         									<textarea style="height: 25px;" id="copy-text" type="text" name="glink" class="form-control" onClick="copyText(this);"><?php echo $value->{Tbl_posts::name};?><br/><?php echo @$mainlink;?><a href="<?php echo $link;?>"><img style="border:1px solid #000;display: none;" src="<?php echo $content->picture; ?>" alt="" class="wp-image-45"/></a><link href="<?php echo @$picture; ?>" rel="image_src"/><meta content="<?php echo @$picture; ?>" property="og:image"/></textarea>
         <?php if ($value->{Tbl_posts::status} == 1) { ?>
                                                 <span

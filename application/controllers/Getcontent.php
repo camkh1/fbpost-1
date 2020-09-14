@@ -358,10 +358,10 @@ class Getcontent extends CI_Controller
                     }
                 }
                 break;
-            case 'www.tha.supiper.online':
+            case 'www.susee.supipernews.com':
                 //$html = file_get_html ( $url );
                 $this->session->set_userdata('post_all', 1);
-                $url = 'http://www.blogger.com/feeds/7382768133557108133/posts/default?max-results=10';
+                $url = 'http://www.blogger.com/feeds/223969614858217340/posts/default?max-results=10';
                 $id1 = simplexml_load_file($url);
                 $sectionA = $id1->entry;
                 shuffle($sectionA);
