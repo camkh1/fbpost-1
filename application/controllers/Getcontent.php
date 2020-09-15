@@ -167,7 +167,7 @@ class Getcontent extends CI_Controller
                 }
                 break;
             case 'www.siamtopic.com':
-                $html = file_get_html ( 'https://www.siamtopic.com/news/archive.php' );
+                $html = file_get_html ( 'https://www.siamtopic.com/archive.php' );
                 $sectionA = $html->find('#main .news-lay-3',0);
                 $article = $sectionA->find('article');
                 shuffle($article);
