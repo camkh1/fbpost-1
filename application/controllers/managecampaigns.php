@@ -1685,7 +1685,7 @@ class Managecampaigns extends CI_Controller {
                     /*check duplicate post*/
                     $wDPost = array (
                         'user_id' => $log_id,
-                        'p_id' => $getPost[0]->p_name,
+                        'p_name' => $getPost[0]->p_name,
                         'p_id !=' => $pid,
                     );
                     $getDPost = $this->Mod_general->select ( Tbl_posts::tblName, '*', $wDPost );
