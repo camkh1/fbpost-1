@@ -1681,6 +1681,28 @@ class Managecampaigns extends CI_Controller {
                 if(!empty($getPost[0])) {
                     $pConent = json_decode($getPost[0]->p_conent);
                     $pOption = json_decode($getPost[0]->p_schedule);
+
+                    /*check duplicate post*/
+                    $wDPost = array (
+                        'user_id' => $log_id,
+                        'p_id' => $getPost[0]->p_name,
+                        'p_id !=' => $pid,
+                    );
+                    $getDPost = $this->Mod_general->select ( Tbl_posts::tblName, '*', $wDPost );
+                    if(!empty($getDPost[0])) {
+                        $this->Mod_general->delete ( Tbl_posts::tblName, array (
+                            Tbl_posts::id => $getDPost[0]->p_id 
+                        ) );
+                        @$this->Mod_general->delete ( 'meta', array (
+                                'object_id' => $getDPost[0]->p_id, 
+                                'meta_name' => 'post_progress', 
+                        ) );
+                        redirect(base_url().'managecampaigns');
+                        die;
+                    }
+                    /*End check duplicate post*/
+
+
                     $bid = @$pOption->blogid;
                     $main_post_style = @$pOption->main_post_style;
                     $featurePosts = @$pOption->featurePosts;

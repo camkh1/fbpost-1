@@ -133,11 +133,11 @@ var otherOnline = [
 {"name":"Kro","online":"jdvs42otvr"},
 {"name":"Dv","online":"ie6aail4u0"},
 {"name":"Dn","online":"kt8fsih7wc"},
-// {"name":"17","online":"uz46982ien"},
-// {"name":"18","online":"zvlonkdtyz"},
-// {"name":"19","online":"xmjtx48ybs"},
-// {"name":"News 1","online":"186p1xd648"},
-// {"name":"News 2","online":"1pmflfi2ac"},
+{"name":"17","online":"ajhapu0kym03"},
+{"name":"18","online":"4ezsvqk1qnk6"},
+{"name":"19","online":"4ezsvqk1qn6"},
+{"name":"News 1","online":"4ezsvqk1qlln"},
+{"name":"News 2","online":"497nz1rhglv"},
 // {"name":"Sandy","online":"wseq7gnntu"},
 ];
 var items = ["FF5647","FF3CAE","EA49FF","5D5BFF","62C0FF","00E08A","00E309","FF8537","FF000F","FD0044","E9A100","7CBA00","40C200","FE3EFF","C78FFF","72D8FF","007F23","00C61A","157200","3A6F00","647A00","D7D900","E37A00","DC3A00","DD0017","DD0067","C2008B","740057","940052","A1001C","9C1400","9D4A00","845D00","5E6400"];
