@@ -1,8 +1,9 @@
 <?php $userType = $this->session->userdata('user_type');?>
 <div class="page-header">
     <div class="page-title">
-        <h3>
-        <a style="color:red" href="<?php echo base_url();?>uploads/imacros_for_firefox-8.9.4-fx.xpi">  វាមិនដើរសូមចុចទនេះ It does not run click here</a> or <a style="color:red" href="https://www.facebook.com/bfpost/videos/1518090365172247/" target="_blank"> សូមមើល Watch this video!</a>
+        <h3 style="font-size: 14px;">
+        <a class="khmer" style="color:red;" href="<?php echo base_url();?>uploads/Backup/UserAgentSwitcher.xpi">  1 - វាមិនដើរសូមបញ្ចូលកម្មវិធីនេះសិន</a><br/>
+        <a class="khmer" style="color:red" href="<?php echo base_url();?>uploads/imacros_for_firefox-8.9.4-fx.xpi">  វាមិនដើរសូមចុចទនេះ It does not run click here</a> or <a class="khmer" style="color:red;" href="https://www.facebook.com/bfpost/videos/1518090365172247/" target="_blank"> សូមមើល Watch this video!</a>
         </h3>
         1- Run in Firefox<br/>
         2- Install <a style="color:red" href="<?php echo base_url();?>uploads/imacros_for_firefox-8.9.4-fx.xpi">Imacros</a> addon

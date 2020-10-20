@@ -122,7 +122,7 @@ var otherOnline = [
 {"name":"02","online":"7xgcsyqfrn"},
 {"name":"03","online":"1do02f6jry"},
 {"name":"04","online":"ajhapu0kye03"},
-{"name":"06","online":"1do02c6jry"},
+{"name":"L","online":"m7vjqnte43"},
 {"name":"07","online":"ajhapu0kyg01"},
 {"name":"BB","online":"h789n7ch1l"},
 {"name":"08","online":"aotv7pag9a"},
