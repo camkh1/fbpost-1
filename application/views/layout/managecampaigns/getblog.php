@@ -65,11 +65,26 @@
             $("#singerimageFist").val(e);
             $("#imageviewFist").html('<img style="width:100%;height:55px;" src="' + e + '"/>');
         }
+
+        function arrUnique(arr) {
+            var cleaned = [];
+            arr.forEach(function(itm) {
+                var unique = true;
+                cleaned.forEach(function(itm2) {
+                    if (_.isEqual(itm, itm2)) unique = false;
+                });
+                if (unique)  cleaned.push(itm);
+            });
+            return cleaned;
+        }
+
         $(document).ready(function() {
             $("#getImacrosID").click(function() {
                 var gemil = "<?php echo $this->session->userdata ('gemail');?>";
                 var bIDs = $('#iMacrosid').val();
-                var obj = JSON.parse(bIDs);
+                var objs = JSON.parse(bIDs);
+                var obj = arrUnique(objs);
+                //var obj = JSON.parse(bIDs);
                 var dataUser = "";
                 if(gemil != obj[0].gemail) {
                     $("#gemila").html(gemil);

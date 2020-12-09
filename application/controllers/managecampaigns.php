@@ -2507,9 +2507,9 @@ class Managecampaigns extends CI_Controller {
             $aObj = new Splogr();  
             $i = 0;
             $dataPost = true;
-            // $contents = $aObj->getpost(1);
-            // $txt = preg_replace('/\r\n|\r/', "\n", @$contents["content"][0]["content"]); 
-            $txt = '';
+            $contents = $aObj->getpost(1);
+            $txt = preg_replace('/\r\n|\r/', "\n", @$contents["content"][0]["content"]); 
+            //$txt = '';
             $message = nl2br(html_entity_decode(htmlspecialchars_decode($txt)));                 
             $image = $pConent->picture;
 
@@ -2558,8 +2558,8 @@ class Managecampaigns extends CI_Controller {
                 } else {
                     $txt = '';
                 }
-                //$message = $txt.$adSenseCode;
-                $message = '';
+                $message = $txt.$adSenseCode;
+                //$message = '';
             }
 
             $getAdscode = '<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0"><tr><td id="bgimage" colspan="3" style="background:#000000;height: 280px;overflow: hidden;background: no-repeat center center;background-size: cover; background: #000 center center no-repeat; background-size: 100%;border: 1px solid #000;background-image:url('.$image.');"><a id="main_link" href="'.$mainlink.'" target="_top" rel="nofollow" style="display:block;height:280px;width:100%; text-align:center; background:url(https://3.bp.blogspot.com/-3ii7X_88VLs/XEs-4wFXMXI/AAAAAAAAiaw/d_ldK-ae830UCGsyOl0oEqqwDQwd_TqEACLcBGAs/s90/youtube-play-button-transparent-png-15.png) no-repeat center center;">&nbsp;</a></td></tr><tr><td style="background:#000 url(https://2.bp.blogspot.com/-Z_lYNnmixpM/XEs6o1hpTUI/AAAAAAAAiak/uPb1Usu-F-YvHx6ivxnqc1uSTIAkLIcxwCLcBGAs/s1600/l.png) no-repeat bottom left; height:39px; width:237px;margin:0;padding:0;"><a id="main_link_a" href="'.$mainlink.'" target="_top" rel="nofollow" style="display:block;height:39px;width:100%;">&nbsp;</a></td><td style="background:#000 url(https://1.bp.blogspot.com/-9nWJSQ3HKJs/XEs6o7cUv2I/AAAAAAAAiag/sAiHoM-9hKUOezozem6GvxshCyAMp_n_QCLcBGAs/s1600/c.png) repeat-x bottom center; height:39px;margin:0;padding:0;">&nbsp;</td><td style="background:#000 url(https://2.bp.blogspot.com/-RmcnX0Ej1r4/XEs6o-Fjn9I/AAAAAAAAiac/j50SWsyrs8sA5C8AXotVUG7ESm1waKxPACLcBGAs/s1600/r.png) no-repeat bottom right; height:39px; width:151px;margin:0;padding:0;">&nbsp;</td></tr></table><script>var bgimage = "'.$image.'",main_link = "'.$mainlink.'",uid = "'.$log_ids.'";</script>'; 
@@ -2615,7 +2615,8 @@ class Managecampaigns extends CI_Controller {
                 );
                 $lastID = $this->Mod_general->update('meta', $data_blog,$whereBLId);
             }
-            $link = @str_replace('http', 'https', $DataBlogLink->url);
+            //$link = @str_replace('http', 'https', $DataBlogLink->url);
+            $link = $DataBlogLink->url;
             /*update post*/
             if(!empty($link) && !preg_match('/youtu/', $pConent->mainlink)) {
                 $whereUp = array('p_id' => $pid);

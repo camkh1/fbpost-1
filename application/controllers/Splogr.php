@@ -79,7 +79,7 @@ class Splogr extends CI_Controller
             $link = $nextLink[0]->link;
             if(preg_match('/alibaba.com/', $link)){
                 if(strpos($link, "http://") === false) {
-                    $link = 'http:'.$link;
+                    $link = 'https:'.$link;
                 }
                 $getJsonArray = $this->fromAlibaba($link,$get);
                 $wherelink = array(
@@ -89,7 +89,7 @@ class Splogr extends CI_Controller
                 );
                 $updateLink = array('status' => 1);
                 @$this->Mod_general->update ('splogr', $updateLink, $wherelink);
-                $getJsonArray = $this->limit_text($getJsonArray,100);
+                $getJsonArray = $this->limit_text($getJsonArray,300);
                 if($get == 1) {
                     return $getJsonArray;
                 } else {
@@ -99,16 +99,16 @@ class Splogr extends CI_Controller
             }
             $sp_post = json_decode($nextLink[0]->sp_post);
             //$contentJson = $this->getconents($nextLink[0]->link);
-            $getContent = array('title'=>$sp_post->title,'content'=>$sp_post->summary . '<br/> from: '.$nextLink[0]->link,'site'=>$site_url);
+            $getContent = array('title'=>$sp_post->title,'content'=>$sp_post->summary . '<br/> from: '.$nextLink[0]->link,'site'=>@$site_url);
             $contentJson[] = $getContent;
              if(!empty($contentJson)) {
                 $error = array('error'=> 0); 
                 $setContent = array('content'=> $contentJson); 
                 $getJsonArray = array_merge($error,$setContent);
             } else {
-                $getJsonArray = $this->get_from_site_id('https://www.alibaba.com/premium/laser_machines/1.html',$get);
+                $getJsonArray = $this->get_from_site_id('https://ezinearticles.com/?cat=Real-Estate',$get);
                 if(empty($getJsonArray)) {
-                    $getJsonArray = $this->get_from_site_id('https://www.alibaba.com/premium/laser_machines/2.html',$get);
+                    $getJsonArray = $this->get_from_site_id('https://ezinearticles.com/?cat=Real-Estate',$get);
                 }
                 $getJsonArray = $this->limit_text($getJsonArray,100);
                 if($get == 1) {
@@ -143,6 +143,7 @@ class Splogr extends CI_Controller
             );
             $curLink = $this->Mod_general->select ('splogr', 'link', $where_cur,'rand()','',1 );
             if(!empty($curLink[0])) {
+
                 $code = $this->get_from_site_id($curLink[0]->link);
                 //redirect(base_url() . 'splogr/getpost');
                 $this->getpost($get);
@@ -162,11 +163,11 @@ class Splogr extends CI_Controller
 
     public function limit_text($text, $limit)
     {
-        if (str_word_count($text, 0) > $limit) {
-              $words = str_word_count($text, 2);
-              $pos = array_keys($words);
-              $text = substr($text, 0, $pos[$limit]) . '...';
-          }
+        // if (str_word_count($text, 1) > $limit) {
+        //       $words = str_word_count($text, 2);
+        //       $pos = array_keys($words);
+        //       $text = substr($text, 0, $pos[$limit]) . '...';
+        //   }
           return $text;
     }
     function get_from_site_id($site_url = '', $get = '') {
@@ -311,6 +312,11 @@ class Splogr extends CI_Controller
         $this->load->library('html_dom');  
         $html = file_get_html($site_url);      
         $title = @$html->find ( 'h1.ma-title', 0 )->innertext;
+        if(empty($title)) {
+           $title = @$html->find ( 'meta [og:title]', 0 )->content; 
+        }
+        echo  $html;
+        die;
         $og_image = @$html->find ( 'meta [property=og:image]', 0 )->content;
         $pricewrap = @$html->find ( '.ma-price-wrap', 0 )->innertext;
         $pricewrap = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $pricewrap);
