@@ -315,7 +315,7 @@ class Splogr extends CI_Controller
         if(empty($title)) {
            $title = @$html->find ( 'meta [og:title]', 0 )->content; 
         }
-        echo  $html;
+        echo $title;
         die;
         $og_image = @$html->find ( 'meta [property=og:image]', 0 )->content;
         $pricewrap = @$html->find ( '.ma-price-wrap', 0 )->innertext;
