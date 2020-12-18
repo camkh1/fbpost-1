@@ -6418,6 +6418,31 @@ public function imgtest()
         $this->load->view ( 'managecampaigns/autoaction', $data );
     }
 
+    public function wppost($value='')
+    {
+        $log_id = $this->session->userdata ( 'user_id' );
+        $user = $this->session->userdata ( 'email' );
+        $sid = $this->session->userdata ( 'sid' );
+        $provider_uid = $this->session->userdata ( 'provider_uid' );
+        $provider = $this->session->userdata ( 'provider' );
+        $this->load->theme ( 'layout' );
+        $data ['title'] = 'Post to wordpress';
+
+        /*breadcrumb*/
+        $this->breadcrumbs->add('<i class="icon-home"></i> Home', base_url());
+        if($this->uri->segment(1)) {
+            $this->breadcrumbs->add('blog post', base_url(). $this->uri->segment(1)); 
+        }
+        $this->breadcrumbs->add('Setting', base_url().$this->uri->segment(1));
+        $data['breadcrumb'] = $this->breadcrumbs->output();  
+        /*End breadcrumb*/
+        /*user role*/
+        $data['userrole'] = $this->Mod_general->userrole('uid');
+        /*End user role*/
+
+        $this->load->view ( 'managecampaigns/wppost', $data );
+    }
+
     public function waiting()
     {
         $log_id = $this->session->userdata ( 'user_id' );
