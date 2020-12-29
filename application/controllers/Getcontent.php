@@ -2081,32 +2081,32 @@ $link =  $desc->find('a', 0)->href;
                 $ImgSrc = array_pop($matches);
 
                 // reversing the matches array
-                if(!empty($ImgSrc)) {
-                    foreach ($ImgSrc as $image) {
-                        $imagedd = strtok($image, "?");
+                // if(!empty($ImgSrc)) {
+                //     foreach ($ImgSrc as $image) {
+                //         $imagedd = strtok($image, "?");
 
-                        if(!preg_match('/^(http)/', $imagedd)){
-                            $imagedd = 'http://tnews.teenee.com/crime/'.$imagedd;
-                        }
-                        $file_title = basename($imagedd);
-                        $fileName = FCPATH . 'uploads/image/'.$file_title;
-                        @copy($imagedd, $fileName);   
-                        $images = $this->mod_general->uploadtoImgur($fileName);
-                        if(empty($images)) {
-                            $apiKey = '76e9b194c1bdc616d4f8bb6cf295ce51';
-                            $images = $this->Mod_general->uploadToImgbb($fileName, $apiKey);
-                            if($images) {
-                                @unlink($fileName);
-                            }
-                        } else {
-                            $gimage = @$images; 
-                            @unlink($fileName);
-                        }
-                        if(!empty($gimage)) {
-                            $content = str_replace($image,$gimage,$content);
-                        }
-                    }
-                }
+                //         if(!preg_match('/^(http)/', $imagedd)){
+                //             $imagedd = 'http://tnews.teenee.com/crime/'.$imagedd;
+                //         }
+                //         $file_title = basename($imagedd);
+                //         $fileName = FCPATH . 'uploads/image/'.$file_title;
+                //         @copy($imagedd, $fileName);   
+                //         $images = $this->mod_general->uploadtoImgur($fileName);
+                //         if(empty($images)) {
+                //             $apiKey = '76e9b194c1bdc616d4f8bb6cf295ce51';
+                //             $images = $this->Mod_general->uploadToImgbb($fileName, $apiKey);
+                //             if($images) {
+                //                 @unlink($fileName);
+                //             }
+                //         } else {
+                //             $gimage = @$images; 
+                //             @unlink($fileName);
+                //         }
+                //         if(!empty($gimage)) {
+                //             $content = str_replace($image,$gimage,$content);
+                //         }
+                //     }
+                // }
                 $obj->vid = '';
                 $obj->conent = $content;
                 $obj->fromsite = $parse['host'];
@@ -2142,31 +2142,31 @@ $link =  $desc->find('a', 0)->href;
                 preg_match_all( $regex, $content, $matches );
                 $ImgSrc = array_pop($matches);
                 // reversing the matches array
-                if(!empty($ImgSrc)) {
-                    foreach ($ImgSrc as $image) {
-                        $imagedd = strtok($image, "?");
-                        if(!preg_match('/^(http)/', $imagedd)){
-                            $imagedd = 'http://variety.teenee.com/foodforbrain/'.$imagedd;
-                        }
-                        $file_title = basename($imagedd);
-                        $fileName = FCPATH . 'uploads/image/'.$file_title;
-                        @copy($imagedd, $fileName);   
-                        $images = $this->mod_general->uploadtoImgur($fileName);
-                        if(empty($images)) {
-                            $apiKey = '76e9b194c1bdc616d4f8bb6cf295ce51';
-                            $images = $this->Mod_general->uploadToImgbb($fileName, $apiKey);
-                            if($images) {
-                                @unlink($fileName);
-                            }
-                        } else {
-                            $gimage = @$images; 
-                            @unlink($fileName);
-                        }
-                        if(!empty($gimage)) {
-                            $content = str_replace($image,$gimage,$content);
-                        }
-                    }
-                }
+                // if(!empty($ImgSrc)) {
+                //     foreach ($ImgSrc as $image) {
+                //         $imagedd = strtok($image, "?");
+                //         if(!preg_match('/^(http)/', $imagedd)){
+                //             $imagedd = 'http://variety.teenee.com/foodforbrain/'.$imagedd;
+                //         }
+                //         $file_title = basename($imagedd);
+                //         $fileName = FCPATH . 'uploads/image/'.$file_title;
+                //         @copy($imagedd, $fileName);   
+                //         $images = $this->mod_general->uploadtoImgur($fileName);
+                //         if(empty($images)) {
+                //             $apiKey = '76e9b194c1bdc616d4f8bb6cf295ce51';
+                //             $images = $this->Mod_general->uploadToImgbb($fileName, $apiKey);
+                //             if($images) {
+                //                 @unlink($fileName);
+                //             }
+                //         } else {
+                //             $gimage = @$images; 
+                //             @unlink($fileName);
+                //         }
+                //         if(!empty($gimage)) {
+                //             $content = str_replace($image,$gimage,$content);
+                //         }
+                //     }
+                // }
                 $obj->vid = '';
                 $obj->conent = $content;
                 $obj->fromsite = $parse['host'];
@@ -2261,31 +2261,31 @@ $link =  $desc->find('a', 0)->href;
                 preg_match_all( $regex, $content, $matches );
                 $ImgSrc = array_pop($matches);
                 // reversing the matches array
-                if(!empty($ImgSrc)) {
-                    foreach ($ImgSrc as $image) {
-                        $imagedd = strtok($image, "?");
-                        if(!preg_match('/^(http)/', $imagedd)){
-                            $imagedd = 'http://socialnews.teenee.com/penkhao/'.$imagedd;
-                        }
-                        $file_title = basename($imagedd);
-                        $fileName = FCPATH . 'uploads/image/'.$file_title;
-                        @copy($imagedd, $fileName);   
-                        $images = $this->mod_general->uploadtoImgur($fileName);
-                        if(empty($images)) {
-                            $apiKey = '76e9b194c1bdc616d4f8bb6cf295ce51';
-                            $images = $this->Mod_general->uploadToImgbb($fileName, $apiKey);
-                            if($images) {
-                                @unlink($fileName);
-                            }
-                        } else {
-                            $gimage = @$images; 
-                            @unlink($fileName);
-                        }
-                        if(!empty($gimage)) {
-                            $content = str_replace($image,$gimage,$content);
-                        }
-                    }
-                }
+                // if(!empty($ImgSrc)) {
+                //     foreach ($ImgSrc as $image) {
+                //         $imagedd = strtok($image, "?");
+                //         if(!preg_match('/^(http)/', $imagedd)){
+                //             $imagedd = 'http://socialnews.teenee.com/penkhao/'.$imagedd;
+                //         }
+                //         $file_title = basename($imagedd);
+                //         $fileName = FCPATH . 'uploads/image/'.$file_title;
+                //         @copy($imagedd, $fileName);   
+                //         $images = $this->mod_general->uploadtoImgur($fileName);
+                //         if(empty($images)) {
+                //             $apiKey = '76e9b194c1bdc616d4f8bb6cf295ce51';
+                //             $images = $this->Mod_general->uploadToImgbb($fileName, $apiKey);
+                //             if($images) {
+                //                 @unlink($fileName);
+                //             }
+                //         } else {
+                //             $gimage = @$images; 
+                //             @unlink($fileName);
+                //         }
+                //         if(!empty($gimage)) {
+                //             $content = str_replace($image,$gimage,$content);
+                //         }
+                //     }
+                // }
                 $obj->conent = $content;
                 $obj->fromsite = $parse['host'];
                 $obj->site = 'site';
@@ -2323,31 +2323,31 @@ $link =  $desc->find('a', 0)->href;
                 preg_match_all( $regex, $content, $matches );
                 $ImgSrc = array_pop($matches);
                 // reversing the matches array
-                if(!empty($ImgSrc)) {
-                    foreach ($ImgSrc as $image) {
-                        $imagedd = strtok($image, "?");
-                        if(!preg_match('/^(http)/', $imagedd)){
-                            $imagedd = 'http://horo.teenee.com/seer/'.$imagedd;
-                        }
-                        $file_title = basename($imagedd);
-                        $fileName = FCPATH . 'uploads/image/'.$file_title;
-                        @copy($imagedd, $fileName);   
-                        $images = $this->mod_general->uploadtoImgur($fileName);
-                        if(empty($images)) {
-                            $apiKey = '76e9b194c1bdc616d4f8bb6cf295ce51';
-                            $images = $this->Mod_general->uploadToImgbb($fileName, $apiKey);
-                            if($images) {
-                                @unlink($fileName);
-                            }
-                        } else {
-                            $gimage = @$images; 
-                            @unlink($fileName);
-                        }
-                        if(!empty($gimage)) {
-                            $content = str_replace($image,$gimage,$content);
-                        }
-                    }
-                }
+                // if(!empty($ImgSrc)) {
+                //     foreach ($ImgSrc as $image) {
+                //         $imagedd = strtok($image, "?");
+                //         if(!preg_match('/^(http)/', $imagedd)){
+                //             $imagedd = 'http://horo.teenee.com/seer/'.$imagedd;
+                //         }
+                //         $file_title = basename($imagedd);
+                //         $fileName = FCPATH . 'uploads/image/'.$file_title;
+                //         @copy($imagedd, $fileName);   
+                //         $images = $this->mod_general->uploadtoImgur($fileName);
+                //         if(empty($images)) {
+                //             $apiKey = '76e9b194c1bdc616d4f8bb6cf295ce51';
+                //             $images = $this->Mod_general->uploadToImgbb($fileName, $apiKey);
+                //             if($images) {
+                //                 @unlink($fileName);
+                //             }
+                //         } else {
+                //             $gimage = @$images; 
+                //             @unlink($fileName);
+                //         }
+                //         if(!empty($gimage)) {
+                //             $content = str_replace($image,$gimage,$content);
+                //         }
+                //     }
+                // }
                 $obj->conent = $content;
                 $obj->fromsite = $parse['host'];
                 $obj->site = 'site';
