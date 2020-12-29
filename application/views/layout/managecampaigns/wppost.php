@@ -48,8 +48,9 @@ $log_id = $this->session->userdata ( 'user_id' );
                 </form>
                     <div class="col-md-12">
                         <h2 id="title"></h2>
-                        <div id="description"></div>
                         <div id="image"></div>
+                        <div id="description"></div>
+                        
                     </div>
                 </div>
             </div>
@@ -134,7 +135,7 @@ $log_id = $this->session->userdata ( 'user_id' );
                     if ( data ) {
                         var obj = JSON.parse(data);
                         if(obj.name == 'YouTube' || obj.name =='') {
-                            getLink(e);
+                            //getLink(e);
                         }
                       $('#title').html(escapeHtml(obj.name));
                       //$('#name_' + id).val(escapeHtml(obj.name));
@@ -179,6 +180,7 @@ $log_id = $this->session->userdata ( 'user_id' );
                       }
                       if(obj.from == 'site') {
                         $('#description').html(obj.content);
+                        $('#description').removeAllDataAttributes().removeClass();
                         window.setTimeout(function () {
                             Apps.unblockUI($("#post_"+sid));
                             noty({
@@ -224,7 +226,7 @@ $log_id = $this->session->userdata ( 'user_id' );
                     $(timer).html("Has Ended");
                     var sid = $(timer).closest(".optionBox");
                     if($(sid).hasClass('loadding')) {
-                        getcontent($(sid).attr('data-postid'));
+                        //getcontent($(sid).attr('data-postid'));
                     } 
                 }
             }, 1000);

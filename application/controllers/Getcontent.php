@@ -590,7 +590,7 @@ $link =  $desc->find('a', 0)->href;
         $parse = parse_url($url);
         //echo $parse['host'];
         $checkSite = $html->find('#main #Blog1 .post');
-        $wpsite = $html->find('.type-post .entry-content');
+        $wpsite = $html->find('.entry-content');
         if(count($checkSite)==1) {
             $setHost = 'blogspot';
         } else if(count($wpsite)==1 && preg_match ( '/wp-content/', $html )){
@@ -2931,20 +2931,25 @@ $link =  $desc->find('a', 0)->href;
                 break;
             case 'www.amarintv.com':
                 /*get label*/
-                $label = trim($html->find('.entry-header .nav-wrapper a',1)->plaintext);
-                if($label == 'หวย') {
-                    $obj->label = 'ไลฟ์สไตล์,เสี่ยงดวง - หวย';
-                } else if($label == 'ENTERTAINMENT UPDATE') {
-                    $obj->label = 'ข่าว,ข่าวบันเทิง';
-                } else if($label == 'NEWS UPDATE') {
-                    $obj->label = 'ข่าว,ข่าวด่วน';
-                } else if($label == 'NEWS UPDATE') {
-                    $obj->label = 'ข่าว,ข่าวด่วน';
-                } else if($label == 'LIFESTYLE UPDATE') {
-                    $obj->label = 'ไลฟ์สไตล์';
-                } else {
-                    $obj->label = $label;
+                $label = [];
+                foreach($html->find('.tags .body a') as $index => $labels) {
+                    $setNewLabel = trim($labels->plaintext);
+                    if($setNewLabel == 'หวย') {
+                        $label[] = 'ไลฟ์สไตล์,เสี่ยงดวง - หวย';
+                    } else if($setNewLabel == 'ENTERTAINMENT UPDATE') {
+                        $label[] = 'ข่าว,ข่าวบันเทิง';
+                    } else if($setNewLabel == 'NEWS UPDATE') {
+                        $label[] = 'ข่าว,ข่าวด่วน';
+                    } else if($setNewLabel == 'NEWS UPDATE') {
+                        $label[] = 'ข่าว,ข่าวด่วน';
+                    } else if($setNewLabel == 'LIFESTYLE UPDATE') {
+                        $label[] = 'ไลฟ์สไตล์';
+                    } else {
+                        $label[] = $setNewLabel;
+                    }
                 }
+
+                $obj->label = implode(',', $label);
                 //$obj->title = str_replace('หมีหวย.com', '', $obj->title);
                 /*End get label*/
 
@@ -2955,7 +2960,7 @@ $link =  $desc->find('a', 0)->href;
                 //     $item->outertext = '';
                 // }
                 // $html->save();
-                $content = @$html->find ( '#main #content-inner', 0 )->innertext;
+                $content = @$html->find ( '.news-detail .body', 0 )->innertext;
                 $content = preg_replace('/<center\b[^>]*>(.*?)<\/center>/is', "", $content);
                 $content = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $content);
                 $content = preg_replace('/<ins\b[^>]*>(.*?)<\/ins>/is', '<div class="setAds"></div>', $content);
@@ -2976,28 +2981,28 @@ $link =  $desc->find('a', 0)->href;
                 preg_match_all( $regex, $content, $matches );
                 $ImgSrc = array_pop($matches);
                 // reversing the matches array
-                if(!empty($ImgSrc)) {
-                    foreach ($ImgSrc as $image) {
-                        $imagedd = strtok($image, "?");
-                        $file_title = basename($imagedd);
-                        $fileName = FCPATH . 'uploads/image/'.$file_title;
-                        @copy($imagedd, $fileName);   
-                        $images = $this->mod_general->uploadtoImgur($fileName);
-                        if(empty($images)) {
-                            $apiKey = '76e9b194c1bdc616d4f8bb6cf295ce51';
-                            $images = $this->Mod_general->uploadToImgbb($fileName, $apiKey);
-                            if($images) {
-                                @unlink($fileName);
-                            }
-                        } else {
-                            $gimage = @$images; 
-                            @unlink($fileName);
-                        }
-                        if(!empty($gimage)) {
-                            $content = str_replace($image,$gimage,$content);
-                        }
-                    }
-                }
+                // if(!empty($ImgSrc)) {
+                //     foreach ($ImgSrc as $image) {
+                //         $imagedd = strtok($image, "?");
+                //         $file_title = basename($imagedd);
+                //         $fileName = FCPATH . 'uploads/image/'.$file_title;
+                //         @copy($imagedd, $fileName);   
+                //         $images = $this->mod_general->uploadtoImgur($fileName);
+                //         if(empty($images)) {
+                //             $apiKey = '76e9b194c1bdc616d4f8bb6cf295ce51';
+                //             $images = $this->Mod_general->uploadToImgbb($fileName, $apiKey);
+                //             if($images) {
+                //                 @unlink($fileName);
+                //             }
+                //         } else {
+                //             $gimage = @$images; 
+                //             @unlink($fileName);
+                //         }
+                //         if(!empty($gimage)) {
+                //             $content = str_replace($image,$gimage,$content);
+                //         }
+                //     }
+                // }
                 $obj->vid = '';
                 $obj->conent = $content;
                 $obj->fromsite = $parse['host'];
