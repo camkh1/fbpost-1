@@ -1556,14 +1556,15 @@ class Managecampaigns extends CI_Controller {
                     /* end add data to group of post */
                 }
                 $fbUserId = $this->session->userdata ( 'sid' );
-                $whereNext = array (
-                    'user_id' => $log_id,
-                    'u_id' => $fbUserId,
-                    'p_post_to' => 1,
-                );
-                $nextPost = $this->Mod_general->select ( Tbl_posts::tblName, 'p_id', $whereNext );
-                if(!empty($nextPost[0])) {
-                    $p_id = $nextPost[0]->p_id;
+                // $whereNext = array (
+                //     'user_id' => $log_id,
+                //     'u_id' => $fbUserId,
+                //     'p_post_to' => 1,
+                // );
+                // $nextPost = $this->Mod_general->select ( Tbl_posts::tblName, 'p_id', $whereNext );
+                if(!empty($AddToPost)) {
+                    //$p_id = $nextPost[0]->p_id;
+                    $p_id = $AddToPost;
                     //redirect(base_url() . 'managecampaigns/yturl?pid='.$p_id.'&bid=' . $bid . '&action=postblog&blink='.$blogLink); 
                     /*get blog link from database*/
                     $blogRand = $big = $this->getBlogLink();
@@ -3496,11 +3497,11 @@ class Managecampaigns extends CI_Controller {
                     $adsense = $adSenseCode;
                     preg_match_all($pattern, $setConents, $matches);
                     $i=0;
-                    // foreach ($matches[0] as $value) {
-                    //     $i++;
-                    //     $adsense = "<div style=\"text-align: center;\"><script>document.write(inSide$i);</script></div>";
-                    //     $txt = str_replace($value, $adsense, $setConents);
-                    // }
+                    foreach ($matches[0] as $value) {
+                        $i++;
+                        $adsense = "<div style=\"text-align: center;\"><script>document.write(inSide$i);</script></div>";
+                        $txt = str_replace($value, $adsense, $setConents);
+                    }
                     if(empty($txt)) {
                         $txt = $setConents;
                     }
