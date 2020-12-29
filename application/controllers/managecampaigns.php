@@ -3448,8 +3448,6 @@ class Managecampaigns extends CI_Controller {
         $dataContent          = new stdClass();
         //$lineButton = '<center><div class="line-it-button" data-lang="en" data-type="friend" data-lineid="0888250488" data-count="true" data-home="true" style="display: none;"></div> <img src="https://3.bp.blogspot.com/-IDEnasS2NeM/Xbpa6kTL_dI/AAAAAAAAnOE/71KpKu86xW4TiGKcCp1YstZy3Ol94f7zACNcBGAsYHQ/s1600/Line-button-thai.png" style="width:100%;height:auto;"/><script src="https://d.line-scdn.net/r/web/social-plugin/js/thirdparty/loader.min.js" async="async" defer="defer"></script></center>';
         $lineButton = '';
-        var_dump($gBlogType);
-        die;
         if(!empty($gBlogType->yengo)) {
             $yengo = "<center><script charset=\"utf-8\" src=\"//code.yengo.com/data/$gBlogType->yengo.js\"></script></center>";
         } else {
@@ -3492,26 +3490,28 @@ class Managecampaigns extends CI_Controller {
                 //require('Adsense.php');
                 //$newcontent = new adinsert($conent);
                 //$setConents = $this->ad_between_paragraphs($conent);
-                $setConents = $this->insertAd($conent, '<div class="setAdsSection"></div>', $pos = 1);
+                if(!empty($gBlogType->bads)) {
+                    $setConents = $this->insertAd($conent, '<div class="setAdsSection"></div>', $pos = 1);
 
-                if($blink == 'tnews') {
-                    $pattern = "|(<div class=\"setAdsSection\">.*?<\/div>)|";
-                    $adsense = $adSenseCode;
-                    preg_match_all($pattern, $setConents, $matches);
-                    $i=0;
-                    foreach ($matches[0] as $value) {
-                        $i++;
-                        $adsense = "<div class=\"separator\" style=\"clear: both;\"><img alt=\"\" border=\"0\" data-original-height=\"2\" data-original-width=\"800\" src=\"https://1.bp.blogspot.com/-m4eu4k6YPfs/X-qcxbQ_gZI/AAAAAAAA4nM/a1tQ0XjOPTkFqzFH8GUm23Z88G3AzCWSgCNcBGAsYHQ/s0/banglasite.jpg\"/></div><div class=\"separator\" style=\"clear: both;\"><img alt=\"\" border=\"0\" data-original-height=\"2\" data-original-width=\"800\" src=\"https://1.bp.blogspot.com/-m4eu4k6YPfs/X-qcxbQ_gZI/AAAAAAAA4nM/a1tQ0XjOPTkFqzFH8GUm23Z88G3AzCWSgCNcBGAsYHQ/s0/banglasite.jpg\"/></div><div class=\"separator\" style=\"clear: both;\"><img alt=\"\" border=\"0\" data-original-height=\"2\" data-original-width=\"800\" src=\"https://1.bp.blogspot.com/-m4eu4k6YPfs/X-qcxbQ_gZI/AAAAAAAA4nM/a1tQ0XjOPTkFqzFH8GUm23Z88G3AzCWSgCNcBGAsYHQ/s0/banglasite.jpg\"/></div><div class=\"separator\" style=\"clear: both;\"><img alt=\"\" border=\"0\" data-original-height=\"2\" data-original-width=\"800\" src=\"https://1.bp.blogspot.com/-m4eu4k6YPfs/X-qcxbQ_gZI/AAAAAAAA4nM/a1tQ0XjOPTkFqzFH8GUm23Z88G3AzCWSgCNcBGAsYHQ/s0/banglasite.jpg\"/></div><div style=\"text-align: center;\"><script>document.write(inSide$i);</script></div>";
-                        $txt = str_replace($value, $adsense, $setConents);
+                    if($blink == 'tnews') {
+                        $pattern = "|(<div class=\"setAdsSection\">.*?<\/div>)|";
+                        $adsense = $adSenseCode;
+                        preg_match_all($pattern, $setConents, $matches);
+                        $i=0;
+                        foreach ($matches[0] as $value) {
+                            $i++;
+                            $adsense = "<div class=\"separator\" style=\"clear: both;\"><img alt=\"\" border=\"0\" data-original-height=\"2\" data-original-width=\"800\" src=\"https://1.bp.blogspot.com/-m4eu4k6YPfs/X-qcxbQ_gZI/AAAAAAAA4nM/a1tQ0XjOPTkFqzFH8GUm23Z88G3AzCWSgCNcBGAsYHQ/s0/banglasite.jpg\"/></div><div class=\"separator\" style=\"clear: both;\"><img alt=\"\" border=\"0\" data-original-height=\"2\" data-original-width=\"800\" src=\"https://1.bp.blogspot.com/-m4eu4k6YPfs/X-qcxbQ_gZI/AAAAAAAA4nM/a1tQ0XjOPTkFqzFH8GUm23Z88G3AzCWSgCNcBGAsYHQ/s0/banglasite.jpg\"/></div><div class=\"separator\" style=\"clear: both;\"><img alt=\"\" border=\"0\" data-original-height=\"2\" data-original-width=\"800\" src=\"https://1.bp.blogspot.com/-m4eu4k6YPfs/X-qcxbQ_gZI/AAAAAAAA4nM/a1tQ0XjOPTkFqzFH8GUm23Z88G3AzCWSgCNcBGAsYHQ/s0/banglasite.jpg\"/></div><div class=\"separator\" style=\"clear: both;\"><img alt=\"\" border=\"0\" data-original-height=\"2\" data-original-width=\"800\" src=\"https://1.bp.blogspot.com/-m4eu4k6YPfs/X-qcxbQ_gZI/AAAAAAAA4nM/a1tQ0XjOPTkFqzFH8GUm23Z88G3AzCWSgCNcBGAsYHQ/s0/banglasite.jpg\"/></div><div style=\"text-align: center;\"><script>document.write(inSide$i);</script></div>";
+                            $txt = str_replace($value, $adsense, $setConents);
+                        }
+                        if(empty($txt)) {
+                            $txt = $setConents;
+                        }
+                        // $patternA = "|(<div class=\"setAds\">.*?<\/div>)|";
+                        //  preg_match_all($patternA, $txt, $matchesA);
+                        //  foreach ($matchesA[0] as $valueA) {
+                        //     $txt = str_replace($valueA, $adsense, $txt);
+                        // }
                     }
-                    if(empty($txt)) {
-                        $txt = $setConents;
-                    }
-                    // $patternA = "|(<div class=\"setAds\">.*?<\/div>)|";
-                    //  preg_match_all($patternA, $txt, $matchesA);
-                    //  foreach ($matchesA[0] as $valueA) {
-                    //     $txt = str_replace($valueA, $adsense, $txt);
-                    // }
                 }
                 if($label == 'news') {
                     $enContent = '';
