@@ -38,20 +38,32 @@ $log_id = $this->session->userdata ( 'user_id' );
                         <i class="icon-reorder">
                         </i>
                         Add New Post
-                    </h4>                     
-                    <div class="toolbar no-padding">
-                    </div>
+                    </h4>     
+                    <label class="pull-right">Instant Article 
+                        <input type="checkbox" value="1" id="isia" name="isia" />
+                    </label>
                 </div>
                 <div class="widget-content">
                     <form method="post" id="validate" class="form-horizontal row-border" enctype="multipart/form-data">
                     <input type="text" id="link_1" value="<?php echo @$postLink; ?>" class="form-control post-option" name="link[]" placeholder="URL" onchange="getLink(this);" /> 
-                </form>
-                    <div class="col-md-12">
-                        <h2 id="title"></h2>
-                        <div id="image"></div>
-                        <div id="description"></div>
-                        
+                
+                    <div class="form-group">
+                        <div class="col-md-12 clearfix">
+                            <input id="title" onclick="this.focus(); this.select()" type="text" name=""  class="form-control"/>
+                        </div>
                     </div>
+                    <div class="form-group">
+                        <div class="col-md-12 clearfix">
+                            <input id="image" onclick="this.focus(); this.select()" type="text" name=""  class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-12 clearfix">
+                            <textarea onclick="this.focus(); this.select()"  id="contents" rows="5" cols="5" rows="3" name="Prefix" class="form-control"></textarea>
+                        </div>
+                    </div>
+                    </form>
+                    <div class="clearfix"></div>
                 </div>
             </div>
         </div>
@@ -123,31 +135,30 @@ $log_id = $this->session->userdata ( 'user_id' );
         return str.replace(/&amp;|&lt;|&gt;|&quot;|&#039;/g, function(m) {return map[m];});
     }
         function getLink(e) {
-            var id = $(e).attr('id'),oldlink ='';
-            var sid = $(e).closest(".optionBox").data('postid'); 
-            Apps.blockUI($("#post_"+sid));
-            if($("input[name=foldlink]").is(":checked")) {
-                oldlink = $("input[name=foldlink]").val();
-            }            
+            var ia='';
+            if($("input[name=isia]").is(":checked")) {
+                ia = $("#isia").val();
+            }   
+            console.log(ia);         
             if(e!='') {
-                var jqxhr = $.ajax( "<?php echo base_url();?>managecampaigns/get_from_url?url=" + encodeURI($(e).val()) + "&old=" + oldlink)
+                var jqxhr = $.ajax( "<?php echo base_url();?>managecampaigns/get_from_url?url=" + encodeURI($(e).val()) + "&ia=" + ia)
                   .done(function(data) {
                     if ( data ) {
                         var obj = JSON.parse(data);
                         if(obj.name == 'YouTube' || obj.name =='') {
                             //getLink(e);
                         }
-                      $('#title').html(escapeHtml(obj.name));
+                      $('#title').val(escapeHtml(obj.name));
                       //$('#name_' + id).val(escapeHtml(obj.name));
                       //$('#vid_' + id).val(obj.vid);
-                      $('#description').html(obj.description);
-                      $('#image').html(obj.picture);
+                      //$('#description').html(obj.description);
+                      $('#description').html(obj.description); 
+                      $('#image').val(obj.picture);
                       //$('#show').attr("src",obj.picture);
                       if(obj.from != 'site') {
                         <?php if($userrole):?>
                             //getcontent(id.replace("link_", ""));
                             window.setTimeout(function () {
-                                Apps.unblockUI($("#post_"+sid));
                                 noty({
                                     text: "<strong>Success!</strong>",
                                     type: "success",
@@ -156,7 +167,6 @@ $log_id = $this->session->userdata ( 'user_id' );
                             }, 1000);
                         <?php else:?>
                             window.setTimeout(function () {
-                            Apps.unblockUI($("#post_"+sid));
                             noty({
                                 text: "<strong>Success!</strong>",
                                 type: "success",
@@ -179,8 +189,9 @@ $log_id = $this->session->userdata ( 'user_id' );
                         //$('#post_' + sid + ' .smpoststyle[value=tnews]').prop('checked', true);
                       }
                       if(obj.from == 'site') {
-                        $('#description').html(obj.content);
-                        $('#description').removeAllDataAttributes().removeClass();
+
+                        $('#contents').val(obj.content);
+                        //$('#description').removeAllDataAttributes().removeClass();
                         window.setTimeout(function () {
                             Apps.unblockUI($("#post_"+sid));
                             noty({
@@ -199,7 +210,8 @@ $log_id = $this->session->userdata ( 'user_id' );
                     //alert( "complete" );
                   });
             }
-        }
+        } 
+
     function countdown(end, timer,clear){
             if(clear) {
                clearInterval(x); 

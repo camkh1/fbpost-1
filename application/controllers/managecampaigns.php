@@ -4415,7 +4415,7 @@ HTML;
         if(!empty($this->input->get('url'))) {
             $url = $this->input->get('url');
         }
-        $oldurl = $this->input->get('old');
+        $oldurl = !empty($this->input->get('old'))? $this->input->get('old') : '';
         $this->Mod_general->checkUser ();
         $log_id = @$this->session->userdata ( 'user_id' );
         /* Sidebar */
@@ -4444,6 +4444,13 @@ HTML;
             }
 
             //$userAction = $this->Mod_general->userrole('uid');
+            if(!empty($this->input->get('ia'))) {
+                 //$setConents = preg_replace('/<img src="\b[^>]*"\/>/is', '<figure><img src="$1"\/><\/figure>', $setConents);  
+                 //$setConents = str_ireplace( array( '<figure class="op-tracker">', '</figure>' ), '', $setConent ); 
+                $setConents = preg_replace('#<img(.*)\s?/>#iU', '<figure><img$1 $2></figure>', $setConents, -1);
+                $setConents = preg_replace('#<iframe(.*)><\s?/iframe>#iU', '<figure class="op-interactive"><img$1 $2></figure>', $setConents, -1);
+                echo $setConents;
+            }
             if(!empty($content->fromsite) && !empty(is_admin)) {
                 $data = array (
                     'picture' => @$content->thumb,
@@ -4474,6 +4481,7 @@ HTML;
             //var_dump($data);die;         
             if (! empty ( $data )) {
                 /**/
+
                 if(!empty($this->input->get('url'))) {
                     echo json_encode($data);
                     exit();
@@ -7018,7 +7026,7 @@ public function imgtest()
                             /*cound shared*/
                             $where_shared = array('value' => $link);
                             $PostShare_pg = $this->Mod_general->select ('share_progess','*', $where_shared);
-                            if(count($PostShare_pg)>=7) {
+                            if(count($PostShare_pg)>=5) {
                                 $whereDlN = array(
                                     'p_name' => $pgvalue->p_name
                                 );
