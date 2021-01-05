@@ -140,6 +140,7 @@
                           openedWindow.close();
                         }
                         openWindow();
+                        location.reload();
                 <?php endif;
                 }
                     $today = time();?>
