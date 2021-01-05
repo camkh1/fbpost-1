@@ -115,7 +115,7 @@ class Wordpress extends CI_Controller
         $this->breadcrumbs->add('Setting', base_url().$this->uri->segment(1));
         $data['breadcrumb'] = $this->breadcrumbs->output();  
         /*End breadcrumb*/
-  
+        $data['postAto'] = $this->Mod_general->getActionPost();
         $this->load->view('wordpress/wait', $data);
     }
 

@@ -123,8 +123,25 @@
                 if (width >= 100) {
                   clearInterval(id);
                   //complete here
+                  <?php if(!empty($postAto->autopost)) {
+                if (date('H') <= 23 && date('H') > 4 && date('H') !='00'):?>
                   window.location = "<?php echo base_url();?>managecampaigns/autopostfb?action=posttoblog&pia=1";
-                    <?php
+                    <?php else:?>
+                        var openedWindow;
+
+                        function openWindow() {
+                            openedWindow = window.open('https://nnewsy.com/wp-admin/');
+                            window.setTimeout( function(){
+                               closeOpenedWindow();
+                            }, 20000);
+                        }
+
+                        function closeOpenedWindow() {
+                          openedWindow.close();
+                        }
+                        openWindow();
+                <?php endif;
+                }
                     $today = time();?>
                     window.setTimeout( function(){
                        var id = setInterval(frame, <?php echo $styleA;?>);
