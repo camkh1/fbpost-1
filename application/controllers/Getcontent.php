@@ -852,39 +852,7 @@ $link =  $desc->find('a', 0)->href;
                 }
                 $obj->label = implode(',', $label);
                 /*End get label*/
-                $content = @$html->find ( '.td-ss-main-content .td-post-content', 0 )->innertext;
-                $content = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $content);
-                $content = preg_replace('/<ins\b[^>]*>(.*?)<\/ins>/is', '<div class="setAds"></div>', $content);
-                $content = preg_replace("/<a(.*?)>/", "<a$1 target=\"_blank\">", $content);
-                // $regex = '~<img.*?src=["\']+(.*?)["\']+~';
-                // preg_match_all( $regex, $content, $matches );
-                // var_dump($matches[1]);
-                // die;
-                // $ImgSrc = array_pop($matches);
-
-                // // reversing the matches array
-                // if(!empty($ImgSrc)) {
-                //     foreach ($ImgSrc as $image) {
-                //         $imagedd = strtok($image, "?");
-                //         $file_title = basename($imagedd);
-                //         $fileName = FCPATH . 'uploads/image/'.$file_title;
-                //         @copy($image, $fileName);   
-                //         $images = $this->mod_general->uploadtoImgur($fileName);
-                //         if(empty($images)) {
-                //             $apiKey = '76e9b194c1bdc616d4f8bb6cf295ce51';
-                //             $images = $this->Mod_general->uploadToImgbb($fileName, $apiKey);
-                //             if($images) {
-                //                 @unlink($fileName);
-                //             }
-                //         } else {
-                //             $gimage = @$images; 
-                //             @unlink($fileName);
-                //         }
-                //         if(!empty($gimage)) {
-                //             $content = str_replace($image,$gimage,$content);
-                //         }
-                //     }
-                // }
+                $content = $this->gEntry($html,'.td-ss-main-content .td-post-content');                
                 $obj->vid = '';
                 $obj->conent = $content;
                 $obj->fromsite = $parse['host'];
@@ -903,22 +871,7 @@ $link =  $desc->find('a', 0)->href;
                     $item->outertext = '';
                 }
                 $html->save();
-                $content = @$html->find ( '#main .entry-content', 0 )->innertext;
-                $content = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $content);
-                $content = preg_replace('/<ins\b[^>]*>(.*?)<\/ins>/is', '<div class="setAds"></div>', $content);
-                $content = preg_replace("/<a(.*?)>/", "<a$1 target=\"_blank\">", $content);
-                $content = preg_replace( '/(<[^>]+) srcset=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-lazy-srcset=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-lazy-sizes=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-lazy-src=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-recalc-dims=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-large-file=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-medium-file=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-image-meta=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-image-description class=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-orig-file=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-permalink=".*?"/i', "$1", $content );
-
+                $content = $this->gEntry($html,'#main .entry-content');  
                 $regex = '/< *img[^>]*src *= *["\']?([^"\']*)/';
                 preg_match_all( $regex, $content, $matches );
                 $ImgSrc = array_pop($matches);
@@ -969,48 +922,7 @@ $link =  $desc->find('a', 0)->href;
                     $item->outertext = '';
                 }
                 $html->save();
-                $content = @$html->find ( '#main .entry-content', 0 )->innertext;
-                $content = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $content);
-                $content = preg_replace('/<ins\b[^>]*>(.*?)<\/ins>/is', '<div class="setAds"></div>', $content);
-                $content = preg_replace("/<a(.*?)>/", "<a$1 target=\"_blank\">", $content);
-                $content = preg_replace( '/(<[^>]+) srcset=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-lazy-srcset=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-lazy-sizes=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-lazy-src=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-recalc-dims=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-large-file=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-medium-file=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-image-meta=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-image-description class=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-orig-file=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-permalink=".*?"/i', "$1", $content );
-
-                $regex = '/< *img[^>]*src *= *["\']?([^"\']*)/';
-                // preg_match_all( $regex, $content, $matches );
-                // $ImgSrc = array_pop($matches);
-                // // reversing the matches array
-                // if(!empty($ImgSrc)) {
-                //     foreach ($ImgSrc as $image) {
-                //         $imagedd = strtok($image, "?");
-                //         $file_title = basename($imagedd);
-                //         $fileName = FCPATH . 'uploads/image/'.$file_title;
-                //         @copy($imagedd, $fileName);   
-                //         $images = $this->mod_general->uploadtoImgur($fileName);
-                //         if(empty($images)) {
-                //             $apiKey = '76e9b194c1bdc616d4f8bb6cf295ce51';
-                //             $images = $this->Mod_general->uploadToImgbb($fileName, $apiKey);
-                //             if($images) {
-                //                 @unlink($fileName);
-                //             }
-                //         } else {
-                //             $gimage = @$images; 
-                //             @unlink($fileName);
-                //         }
-                //         if(!empty($gimage)) {
-                //             $content = str_replace($image,$gimage,$content);
-                //         }
-                //     }
-                // }
+                $content = $this->gEntry($html,'#main .entry-content'); 
                 $obj->vid = '';
                 $obj->conent = $content;
                 $obj->fromsite = $parse['host'];
@@ -1030,47 +942,8 @@ $link =  $desc->find('a', 0)->href;
                 //     $item->outertext = '';
                 // }
                 // $html->save();
-                $content = @$html->find ( '#content .entry-content', 0 )->innertext;
-                $content = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $content);
-                $content = preg_replace('/<ins\b[^>]*>(.*?)<\/ins>/is', '<div class="setAds"></div>', $content);
-                $content = preg_replace("/<a(.*?)>/", "<a$1 target=\"_blank\">", $content);
-                $content = preg_replace( '/(<[^>]+) srcset=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-lazy-srcset=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-lazy-sizes=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-lazy-src=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-recalc-dims=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-large-file=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-medium-file=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-image-meta=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-image-description class=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-orig-file=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-permalink=".*?"/i', "$1", $content );
-                $regex = '/< *img[^>]*src *= *["\']?([^"\']*)/';
-                preg_match_all( $regex, $content, $matches );
-                $ImgSrc = array_pop($matches);
-                // reversing the matches array
-                if(!empty($ImgSrc)) {
-                    foreach ($ImgSrc as $image) {
-                        $imagedd = strtok($image, "?");
-                        $file_title = basename($imagedd);
-                        $fileName = FCPATH . 'uploads/image/'.$file_title;
-                        @copy($imagedd, $fileName);   
-                        $images = $this->mod_general->uploadtoImgur($fileName);
-                        if(empty($images)) {
-                            $apiKey = '76e9b194c1bdc616d4f8bb6cf295ce51';
-                            $images = $this->Mod_general->uploadToImgbb($fileName, $apiKey);
-                            if($images) {
-                                @unlink($fileName);
-                            }
-                        } else {
-                            $gimage = @$images; 
-                            @unlink($fileName);
-                        }
-                        if(!empty($gimage)) {
-                            $content = str_replace($image,$gimage,$content);
-                        }
-                    }
-                }
+                $content = $this->gEntry($html,'#content .entry-content'); 
+                
                 $obj->vid = '';
                 $obj->conent = $content;
                 $obj->fromsite = $parse['host'];
@@ -1090,32 +963,29 @@ $link =  $desc->find('a', 0)->href;
                     $item->outertext = '';
                 }
                 $html->save();
-                $content = @$html->find ( '.post-single-content', 0 )->innertext;
-                $content = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $content);
-                $content = preg_replace('/<ins\b[^>]*>(.*?)<\/ins>/is', '<div class="setAds"></div>', $content);
-                $content = preg_replace("/<a(.*?)>/", "<a$1 target=\"_blank\">", $content);
-                $regex = '~<img.*?src=["\']+(.*?)["\']+~';
-                preg_match_all( $regex, $content, $matches );
-                $ImgSrc = array_pop($matches);
+                $content = $this->gEntry($html,'#content .entry-content'); 
+                // $regex = '~<img.*?src=["\']+(.*?)["\']+~';
+                // preg_match_all( $regex, $content, $matches );
+                // $ImgSrc = array_pop($matches);
 
-                // reversing the matches array
-                if(!empty($ImgSrc)) {
-                    $images = explode('_n-', $ImgSrc[0]);
-                    $exten = pathinfo($ImgSrc[0]);
-                    $thumb = $images[0].'_n.'.$exten['extension'];
+                // // reversing the matches array
+                // if(!empty($ImgSrc)) {
+                //     $images = explode('_n-', $ImgSrc[0]);
+                //     $exten = pathinfo($ImgSrc[0]);
+                //     $thumb = $images[0].'_n.'.$exten['extension'];
 
-                    $file_title = basename($thumb);
-                    $fileName = FCPATH . 'uploads/image/'.$file_title;
-                    @copy($thumb, $fileName);   
-                    $thumb = $this->mod_general->uploadMedia($fileName);
-                    if(empty($thumb)) {
-                        $apiKey = '76e9b194c1bdc616d4f8bb6cf295ce51';
-                        $thumb = $this->Mod_general->uploadToImgbb($fileName, $apiKey);
-                        if($gimage) {
-                            @unlink($fileName);
-                        }
-                    }
-                }
+                //     $file_title = basename($thumb);
+                //     $fileName = FCPATH . 'uploads/image/'.$file_title;
+                //     @copy($thumb, $fileName);   
+                //     $thumb = $this->mod_general->uploadMedia($fileName);
+                //     if(empty($thumb)) {
+                //         $apiKey = '76e9b194c1bdc616d4f8bb6cf295ce51';
+                //         $thumb = $this->Mod_general->uploadToImgbb($fileName, $apiKey);
+                //         if($gimage) {
+                //             @unlink($fileName);
+                //         }
+                //     }
+                // }
                 $obj->thumb = $thumb;
                 $obj->vid = '';
                 $obj->conent = $content;
@@ -1136,47 +1006,7 @@ $link =  $desc->find('a', 0)->href;
                 //     $item->outertext = '';
                 // }
                 // $html->save();
-                $content = @$html->find ( '#main .entry-content', 0 )->innertext;
-                $content = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $content);
-                $content = preg_replace('/<ins\b[^>]*>(.*?)<\/ins>/is', '<div class="setAds"></div>', $content);
-                $content = preg_replace("/<a(.*?)>/", "<a$1 target=\"_blank\">", $content);
-                $content = preg_replace( '/(<[^>]+) srcset=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-lazy-srcset=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-lazy-sizes=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-lazy-src=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-recalc-dims=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-large-file=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-medium-file=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-image-meta=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-image-description class=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-orig-file=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-permalink=".*?"/i', "$1", $content );
-                $regex = '/< *img[^>]*src *= *["\']?([^"\']*)/';
-                preg_match_all( $regex, $content, $matches );
-                $ImgSrc = array_pop($matches);
-                // reversing the matches array
-                if(!empty($ImgSrc)) {
-                    foreach ($ImgSrc as $image) {
-                        $imagedd = strtok($image, "?");
-                        $file_title = basename($imagedd);
-                        $fileName = FCPATH . 'uploads/image/'.$file_title;
-                        @copy($imagedd, $fileName);   
-                        $images = $this->mod_general->uploadtoImgur($fileName);
-                        if(empty($images)) {
-                            $apiKey = '76e9b194c1bdc616d4f8bb6cf295ce51';
-                            $images = $this->Mod_general->uploadToImgbb($fileName, $apiKey);
-                            if($images) {
-                                @unlink($fileName);
-                            }
-                        } else {
-                            $gimage = @$images; 
-                            @unlink($fileName);
-                        }
-                        if(!empty($gimage)) {
-                            $content = str_replace($image,$gimage,$content);
-                        }
-                    }
-                }
+                $content = $this->gEntry($html,'#main .entry-content');                 
                 $obj->vid = '';
                 $obj->conent = $content;
                 $obj->fromsite = $parse['host'];
@@ -1198,48 +1028,7 @@ $link =  $desc->find('a', 0)->href;
                     $item->outertext = '';
                 }
                 $html->save();
-                $content = @$html->find ( '#main .entry-content', 0 )->innertext;
-                $content = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $content);
-                $content = preg_replace('/<ins\b[^>]*>(.*?)<\/ins>/is', '<div class="setAds"></div>', $content);
-                $content = preg_replace("/<a(.*?)>/", "<a$1 target=\"_blank\">", $content);
-                $content = preg_replace( '/(<[^>]+) srcset=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-lazy-srcset=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-lazy-sizes=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-lazy-src=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-recalc-dims=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-large-file=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-medium-file=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-image-meta=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-image-description class=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-orig-file=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-permalink=".*?"/i', "$1", $content );
-
-                $regex = '/< *img[^>]*src *= *["\']?([^"\']*)/';
-                preg_match_all( $regex, $content, $matches );
-                $ImgSrc = array_pop($matches);
-                // reversing the matches array
-                if(!empty($ImgSrc)) {
-                    foreach ($ImgSrc as $image) {
-                        $imagedd = strtok($image, "?");
-                        $file_title = basename($imagedd);
-                        $fileName = FCPATH . 'uploads/image/'.$file_title;
-                        @copy($imagedd, $fileName);   
-                        $images = $this->mod_general->uploadtoImgur($fileName);
-                        if(empty($images)) {
-                            $apiKey = '76e9b194c1bdc616d4f8bb6cf295ce51';
-                            $images = $this->Mod_general->uploadToImgbb($fileName, $apiKey);
-                            if($images) {
-                                @unlink($fileName);
-                            }
-                        } else {
-                            $gimage = @$images; 
-                            @unlink($fileName);
-                        }
-                        if(!empty($gimage)) {
-                            $content = str_replace($image,$gimage,$content);
-                        }
-                    }
-                }
+                $content = $this->gEntry($html,'#main .entry-content');                 
                 $obj->vid = '';
                 $obj->conent = $content;
                 $obj->fromsite = $parse['host'];
@@ -1261,48 +1050,7 @@ $link =  $desc->find('a', 0)->href;
                 //     $item->outertext = '';
                 // }
                 $html->save();
-                $content = @$html->find ( '.td-post-content', 0 )->innertext;
-                $content = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $content);
-                $content = preg_replace('/<ins\b[^>]*>(.*?)<\/ins>/is', '<div class="setAds"></div>', $content);
-                $content = preg_replace("/<a(.*?)>/", "<a$1 target=\"_blank\">", $content);
-                $content = preg_replace( '/(<[^>]+) srcset=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-lazy-srcset=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-lazy-sizes=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-lazy-src=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-recalc-dims=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-large-file=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-medium-file=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-image-meta=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-image-description class=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-orig-file=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-permalink=".*?"/i', "$1", $content );
-
-                // $regex = '/< *img[^>]*src *= *["\']?([^"\']*)/';
-                // preg_match_all( $regex, $content, $matches );
-                // $ImgSrc = array_pop($matches);
-                // // reversing the matches array
-                // if(!empty($ImgSrc)) {
-                //     foreach ($ImgSrc as $image) {
-                //         $imagedd = strtok($image, "?");
-                //         $file_title = basename($imagedd);
-                //         $fileName = FCPATH . 'uploads/image/'.$file_title;
-                //         @copy($imagedd, $fileName);   
-                //         $images = $this->mod_general->uploadtoImgur($fileName);
-                //         if(empty($images)) {
-                //             $apiKey = '76e9b194c1bdc616d4f8bb6cf295ce51';
-                //             $images = $this->Mod_general->uploadToImgbb($fileName, $apiKey);
-                //             if($images) {
-                //                 @unlink($fileName);
-                //             }
-                //         } else {
-                //             $gimage = @$images; 
-                //             @unlink($fileName);
-                //         }
-                //         if(!empty($gimage)) {
-                //             $content = str_replace($image,$gimage,$content);
-                //         }
-                //     }
-                // }
+                $content = $this->gEntry($html,'.td-post-content');                 
                 $obj->vid = '';
                 $obj->conent = $content;
                 $obj->fromsite = $parse['host'];
@@ -1320,10 +1068,7 @@ $link =  $desc->find('a', 0)->href;
                 }
                 $obj->label = implode(',', $label);
                 /*End get label*/
-
-                $content = @$html->find ( '.content-main .h4-content-lh', 0 )->innertext;
-                $content = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $content);
-                $content = preg_replace('/<ins\b[^>]*>(.*?)<\/ins>/is', '<div class="setAds"></div>', $content);
+                $content = $this->gEntry($html,'.content-main .h4-content-lh');                
                 $htmlContent = str_get_html($content);
                 foreach($htmlContent->find('.row') as $item) {
                     $item->outertext = '';
@@ -1403,50 +1148,7 @@ $link =  $desc->find('a', 0)->href;
                     $item->outertext = '';
                 }
                 $html->save();
-                $content = @$html->find ( '.container .col-md-8', 0 )->innertext;
-                $content = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $content);
-                $content = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $content);
-                $content = preg_replace('/<ins\b[^>]*>(.*?)<\/ins>/is', '<div class="setAds"></div>', $content);
-                $content = preg_replace("/<a(.*?)>/", "<a$1 target=\"_blank\">", $content);
-                $content = preg_replace( '/(<[^>]+) srcset=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-lazy-srcset=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-lazy-sizes=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-lazy-src=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-recalc-dims=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-large-file=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-medium-file=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-image-meta=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-image-description class=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-orig-file=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-permalink=".*?"/i', "$1", $content );
-                $pattern = "/<p[^>]*>&nbsp;<\\/p[^>]*>/"; 
-                $content = preg_replace($pattern, '', $content);
-                $regex = '/< *img[^>]*src *= *["\']?([^"\']*)/';
-                preg_match_all( $regex, $content, $matches );
-                $ImgSrc = array_pop($matches);
-                // reversing the matches array
-                if(!empty($ImgSrc)) {
-                    foreach ($ImgSrc as $image) {
-                        $imagedd = strtok($image, "?");
-                        $file_title = basename($imagedd);
-                        $fileName = FCPATH . 'uploads/image/'.$file_title;
-                        @copy($imagedd, $fileName);   
-                        $images = $this->mod_general->uploadtoImgur($fileName);
-                        if(empty($images)) {
-                            $apiKey = '76e9b194c1bdc616d4f8bb6cf295ce51';
-                            $images = $this->Mod_general->uploadToImgbb($fileName, $apiKey);
-                            if($images) {
-                                @unlink($fileName);
-                            }
-                        } else {
-                            $gimage = @$images; 
-                            @unlink($fileName);
-                        }
-                        if(!empty($gimage)) {
-                            $content = str_replace($image,$gimage,$content);
-                        }
-                    }
-                }
+                $content = $this->gEntry($html,'.container .col-md-8');                
                 $obj->vid = '';
                 $obj->conent = $content;
                 $obj->fromsite = $parse['host'];
@@ -1479,50 +1181,7 @@ $link =  $desc->find('a', 0)->href;
                 //     $item->outertext = '';
                 // }
                 // $html->save();
-                $content = @$html->find ( '.hentry .bdaia-post-content', 0 )->innertext;
-                $content = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $content);
-                $content = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $content);
-                $content = preg_replace('/<ins\b[^>]*>(.*?)<\/ins>/is', '<div class="setAds"></div>', $content);
-                $content = preg_replace("/<a(.*?)>/", "<a$1 target=\"_blank\">", $content);
-                $content = preg_replace( '/(<[^>]+) srcset=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-lazy-srcset=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-lazy-sizes=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-lazy-src=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-recalc-dims=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-large-file=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-medium-file=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-image-meta=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-image-description class=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-orig-file=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-permalink=".*?"/i', "$1", $content );
-                // $pattern = "/<p[^>]*>&nbsp;<\\/p[^>]*>/"; 
-                // $content = preg_replace($pattern, '', $content);
-                // $regex = '/< *img[^>]*src *= *["\']?([^"\']*)/';
-                // preg_match_all( $regex, $content, $matches );
-                // $ImgSrc = array_pop($matches);
-                // // reversing the matches array
-                // if(!empty($ImgSrc)) {
-                //     foreach ($ImgSrc as $image) {
-                //         $imagedd = strtok($image, "?");
-                //         $file_title = basename($imagedd);
-                //         $fileName = FCPATH . 'uploads/image/'.$file_title;
-                //         @copy($imagedd, $fileName);   
-                //         $images = $this->mod_general->uploadtoImgur($fileName);
-                //         if(empty($images)) {
-                //             $apiKey = '76e9b194c1bdc616d4f8bb6cf295ce51';
-                //             $images = $this->Mod_general->uploadToImgbb($fileName, $apiKey);
-                //             if($images) {
-                //                 @unlink($fileName);
-                //             }
-                //         } else {
-                //             $gimage = @$images; 
-                //             @unlink($fileName);
-                //         }
-                //         if(!empty($gimage)) {
-                //             $content = str_replace($image,$gimage,$content);
-                //         }
-                //     }
-                // }
+                $content = $this->gEntry($html,'.hentry .bdaia-post-content');                
                 $obj->vid = '';
                 $obj->conent = $content;
                 $obj->fromsite = $parse['host'];
@@ -1549,33 +1208,7 @@ $link =  $desc->find('a', 0)->href;
                 $content = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $content);
                 $content = preg_replace('/<ins\b[^>]*>(.*?)<\/ins>/is', '<div class="setAds"></div>', $content);
                 $content = preg_replace("/<a(.*?)>/", "<a$1 target=\"_blank\">", $content);
-
-                $regex = '/< *img[^>]*src *= *["\']?([^"\']*)/';
-                preg_match_all( $regex, $content, $matches );
-                $ImgSrc = array_pop($matches);
-                // reversing the matches array
-                if(!empty($ImgSrc)) {
-                    foreach ($ImgSrc as $image) {
-                        $imagedd = strtok($image, "?");
-                        $file_title = basename($imagedd);
-                        $fileName = FCPATH . 'uploads/image/'.$file_title;
-                        @copy($imagedd, $fileName);   
-                        $images = $this->mod_general->uploadtoImgur($fileName);
-                        if(empty($images)) {
-                            $apiKey = '76e9b194c1bdc616d4f8bb6cf295ce51';
-                            $images = $this->Mod_general->uploadToImgbb($fileName, $apiKey);
-                            if($images) {
-                                @unlink($fileName);
-                            }
-                        } else {
-                            $gimage = @$images; 
-                            @unlink($fileName);
-                        }
-                        if(!empty($gimage)) {
-                            $content = str_replace($image,$gimage,$content);
-                        }
-                    }
-                }
+                
                 $obj->vid = '';
                 $obj->conent = $content;
                 $obj->fromsite = $parse['host'];
@@ -1585,37 +1218,7 @@ $link =  $desc->find('a', 0)->href;
             case 'www.one31.net':
                 /*get label*/
                 $obj->label = 'ข่าว';
-                $contents = @$html->find ( '.box-newsdetail .newsdetail-txt', 0 );
-                $content = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $contents);
-                $content = preg_replace('/<ins\b[^>]*>(.*?)<\/ins>/is', '<div class="setAds"></div>', $content);
-                $content = preg_replace("/<a(.*?)>/", "<a$1 target=\"_blank\">", $content);
-
-                $regex = '/< *img[^>]*src *= *["\']?([^"\']*)/';
-                preg_match_all( $regex, $content, $matches );
-                $ImgSrc = array_pop($matches);
-                // reversing the matches array
-                if(!empty($ImgSrc)) {
-                    foreach ($ImgSrc as $image) {
-                        $imagedd = strtok($image, "?");
-                        $file_title = basename($imagedd);
-                        $fileName = FCPATH . 'uploads/image/'.$file_title;
-                        @copy($imagedd, $fileName);   
-                        $images = $this->mod_general->uploadtoImgur($fileName);
-                        if(empty($images)) {
-                            $apiKey = '76e9b194c1bdc616d4f8bb6cf295ce51';
-                            $images = $this->Mod_general->uploadToImgbb($fileName, $apiKey);
-                            if($images) {
-                                @unlink($fileName);
-                            }
-                        } else {
-                            $gimage = @$images; 
-                            @unlink($fileName);
-                        }
-                        if(!empty($gimage)) {
-                            $content = str_replace($image,$gimage,$content);
-                        }
-                    }
-                }
+                $content = $this->gEntry($html,'.box-newsdetail .newsdetail-txt');                
                 $obj->vid = '';
                 $obj->conent = $content;
                 $obj->fromsite = $parse['host'];
@@ -1624,22 +1227,7 @@ $link =  $desc->find('a', 0)->href;
                 break;
             case 'www.thaismiletopic.com':
                 /*get label*/
-                $content = @$html->find ( '.hentry .entry-content', 0 )->innertext;
-                $content = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $content);
-                $content = preg_replace('/<ins\b[^>]*>(.*?)<\/ins>/is', '<div class="setAds"></div>', $content);
-                $content = preg_replace("/<a(.*?)>/", "<a$1 target=\"_blank\">", $content);
-                $content = preg_replace( '/(<[^>]+) srcset=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-lazy-srcset=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-lazy-sizes=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-lazy-src=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-recalc-dims=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-large-file=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-medium-file=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-image-meta=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-image-description class=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-orig-file=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-permalink=".*?"/i', "$1", $content );
-
+                $content = $this->gEntry($html,'.hentry .entry-content');
                 $obj->vid = '';
                 $obj->conent = $content;
                 $obj->fromsite = $parse['host'];
@@ -1653,54 +1241,7 @@ $link =  $desc->find('a', 0)->href;
                 $obj->title = str_replace('หมีหวย.com', '', $obj->title);
                 /*End get label*/
 
-                // foreach($html->find('.sharedaddy') as $item) {
-                //     $item->outertext = '';
-                // }
-                // foreach($html->find('.robots-nocontent') as $item) {
-                //     $item->outertext = '';
-                // }
-                // $html->save();
-                $content = @$html->find ( '.hentry .entry-content', 0 )->innertext;
-                $content = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $content);
-                $content = preg_replace('/<ins\b[^>]*>(.*?)<\/ins>/is', '<div class="setAds"></div>', $content);
-                $content = preg_replace("/<a(.*?)>/", "<a$1 target=\"_blank\">", $content);
-                $content = preg_replace( '/(<[^>]+) srcset=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-lazy-srcset=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-lazy-sizes=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-lazy-src=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-recalc-dims=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-large-file=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-medium-file=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-image-meta=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-image-description class=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-orig-file=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-permalink=".*?"/i', "$1", $content );
-                $regex = '/< *img[^>]*src *= *["\']?([^"\']*)/';
-                preg_match_all( $regex, $content, $matches );
-                $ImgSrc = array_pop($matches);
-                // reversing the matches array
-                if(!empty($ImgSrc)) {
-                    foreach ($ImgSrc as $image) {
-                        $imagedd = strtok($image, "?");
-                        $file_title = basename($imagedd);
-                        $fileName = FCPATH . 'uploads/image/'.$file_title;
-                        @copy($imagedd, $fileName);   
-                        $images = $this->mod_general->uploadtoImgur($fileName);
-                        if(empty($images)) {
-                            $apiKey = '76e9b194c1bdc616d4f8bb6cf295ce51';
-                            $images = $this->Mod_general->uploadToImgbb($fileName, $apiKey);
-                            if($images) {
-                                @unlink($fileName);
-                            }
-                        } else {
-                            $gimage = @$images; 
-                            @unlink($fileName);
-                        }
-                        if(!empty($gimage)) {
-                            $content = str_replace($image,$gimage,$content);
-                        }
-                    }
-                }
+                $content = $this->gEntry($html,'.hentry .entry-content');                
                 $obj->vid = '';
                 $obj->conent = $content;
                 $obj->fromsite = $parse['host'];
@@ -1721,49 +1262,7 @@ $link =  $desc->find('a', 0)->href;
                     $item->outertext = '';
                 }
                 $html->save();
-                $content = @$html->find ( '#main .entry-content', 0 )->innertext;
-                $content = preg_replace('/<center\b[^>]*>(.*?)<\/center>/is', "", $content);
-                $content = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $content);
-                $content = preg_replace('/<ins\b[^>]*>(.*?)<\/ins>/is', '<div class="setAds"></div>', $content);
-                $content = preg_replace("/<a(.*?)>/", "<a$1 target=\"_blank\">", $content);
-                $content = preg_replace( '/(<[^>]+) srcset=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-lazy-srcset=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-lazy-sizes=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-lazy-src=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-recalc-dims=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-large-file=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-medium-file=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-image-meta=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-image-description class=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-orig-file=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-permalink=".*?"/i', "$1", $content );
-                $content = str_replace('--Advertisement--', '', $content);
-                $regex = '/< *img[^>]*src *= *["\']?([^"\']*)/';
-                preg_match_all( $regex, $content, $matches );
-                $ImgSrc = array_pop($matches);
-                // reversing the matches array
-                if(!empty($ImgSrc)) {
-                    foreach ($ImgSrc as $image) {
-                        $imagedd = strtok($image, "?");
-                        $file_title = basename($imagedd);
-                        $fileName = FCPATH . 'uploads/image/'.$file_title;
-                        @copy($imagedd, $fileName);   
-                        $images = $this->mod_general->uploadtoImgur($fileName);
-                        if(empty($images)) {
-                            $apiKey = '76e9b194c1bdc616d4f8bb6cf295ce51';
-                            $images = $this->Mod_general->uploadToImgbb($fileName, $apiKey);
-                            if($images) {
-                                @unlink($fileName);
-                            }
-                        } else {
-                            $gimage = @$images; 
-                            @unlink($fileName);
-                        }
-                        if(!empty($gimage)) {
-                            $content = str_replace($image,$gimage,$content);
-                        }
-                    }
-                }
+                $content = $this->gEntry($html,'#main .entry-content'); 
                 $obj->vid = '';
                 $obj->conent = $content;
                 $obj->fromsite = $parse['host'];
@@ -1781,38 +1280,7 @@ $link =  $desc->find('a', 0)->href;
                 }
                 $obj->label = implode(',', $label);
                 /*End get label*/
-
-                $contents = @$html->find ( '#main .data_detail', 0 );
-                $content = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $contents);
-                $content = preg_replace('/<ins\b[^>]*>(.*?)<\/ins>/is', '<div class="setAds"></div>', $content);
-                $content = preg_replace("/<a(.*?)>/", "<a$1 target=\"_blank\">", $content);
-
-                // $regex = '/< *img[^>]*src *= *["\']?([^"\']*)/';
-                // preg_match_all( $regex, $content, $matches );
-                // $ImgSrc = array_pop($matches);
-                // // reversing the matches array
-                // if(!empty($ImgSrc)) {
-                //     foreach ($ImgSrc as $image) {
-                //         $imagedd = strtok($image, "?");
-                //         $file_title = basename($imagedd);
-                //         $fileName = FCPATH . 'uploads/image/'.$file_title;
-                //         @copy($imagedd, $fileName);   
-                //         $images = $this->mod_general->uploadtoImgur($fileName);
-                //         if(empty($images)) {
-                //             $apiKey = '76e9b194c1bdc616d4f8bb6cf295ce51';
-                //             $images = $this->Mod_general->uploadToImgbb($fileName, $apiKey);
-                //             if($images) {
-                //                 @unlink($fileName);
-                //             }
-                //         } else {
-                //             $gimage = @$images; 
-                //             @unlink($fileName);
-                //         }
-                //         if(!empty($gimage)) {
-                //             $content = str_replace($image,$gimage,$content);
-                //         }
-                //     }
-                // }
+                $content = $this->gEntry($html,'#main .data_detail'); 
                 $obj->vid = '';
                 $obj->conent = $content;
                 $obj->fromsite = $parse['host'];
@@ -1909,32 +1377,7 @@ $link =  $desc->find('a', 0)->href;
                 $regex = '/< *img[^>]*src *= *["\']?([^"\']*)/';
                 preg_match_all( $regex, $content, $matches );
                 $ImgSrc = array_pop($matches);
-                // reversing the matches array
-                // if(!empty($ImgSrc)) {
-                //     foreach ($ImgSrc as $image) {
-                //         $imagedd = strtok($image, "?");
-                //         if(!preg_match('/^(http)/', $imagedd)){
-                //             $imagedd = 'http://variety.teenee.com/foodforbrain/'.$imagedd;
-                //         }
-                //         $file_title = basename($imagedd);
-                //         $fileName = FCPATH . 'uploads/image/'.$file_title;
-                //         @copy($imagedd, $fileName);   
-                //         $images = $this->mod_general->uploadtoImgur($fileName);
-                //         if(empty($images)) {
-                //             $apiKey = '76e9b194c1bdc616d4f8bb6cf295ce51';
-                //             $images = $this->Mod_general->uploadToImgbb($fileName, $apiKey);
-                //             if($images) {
-                //                 @unlink($fileName);
-                //             }
-                //         } else {
-                //             $gimage = @$images; 
-                //             @unlink($fileName);
-                //         }
-                //         if(!empty($gimage)) {
-                //             $content = str_replace($image,$gimage,$content);
-                //         }
-                //     }
-                // }
+               
                 $obj->vid = '';
                 $obj->conent = $content;
                 $obj->fromsite = $parse['host'];
@@ -1965,35 +1408,7 @@ $link =  $desc->find('a', 0)->href;
                 $content = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $content);
                 $content = preg_replace('/<ins\b[^>]*>(.*?)<\/ins>/is', '<div class="setAds"></div>', $content);
                 $content = preg_replace("/<a(.*?)>/", "<a$1 target=\"_blank\">", $content);
-                $regex = '/< *img[^>]*src *= *["\']?([^"\']*)/';
-                preg_match_all( $regex, $content, $matches );
-                $ImgSrc = array_pop($matches);
-                // reversing the matches array
-                if(!empty($ImgSrc)) {
-                    foreach ($ImgSrc as $image) {
-                        $imagedd = strtok($image, "?");
-                        if(!preg_match('/^(http)/', $imagedd)){
-                            $gimage = 'http://entertain.teenee.com/thaistar/'.$imagedd;
-                        }
-                        // $file_title = basename($imagedd);
-                        // $fileName = FCPATH . 'uploads/image/'.$file_title;
-                        // @copy($imagedd, $fileName);   
-                        // $images = $this->mod_general->uploadtoImgur($fileName);
-                        // if(empty($images)) {
-                        //     $apiKey = '76e9b194c1bdc616d4f8bb6cf295ce51';
-                        //     $images = $this->Mod_general->uploadToImgbb($fileName, $apiKey);
-                        //     if($images) {
-                        //         @unlink($fileName);
-                        //     }
-                        // } else {
-                        //     $gimage = @$images; 
-                        //     @unlink($fileName);
-                        // }
-                        if(!empty($gimage)) {
-                            $content = str_replace($image,$gimage,$content);
-                        }
-                    }
-                }
+                
                 $obj->vid = '';
                 $obj->conent = $content;
                 $obj->fromsite = $parse['host'];
@@ -2025,35 +1440,7 @@ $link =  $desc->find('a', 0)->href;
                 $content = preg_replace('/<ins\b[^>]*>(.*?)<\/ins>/is', '<div class="setAds"></div>', $content);
                 $content = preg_replace("/<a(.*?)>/", "<a$1 target=\"_blank\">", $content);
 
-                $regex = '/< *img[^>]*src *= *["\']?([^"\']*)/';
-                preg_match_all( $regex, $content, $matches );
-                $ImgSrc = array_pop($matches);
-                // reversing the matches array
-                // if(!empty($ImgSrc)) {
-                //     foreach ($ImgSrc as $image) {
-                //         $imagedd = strtok($image, "?");
-                //         if(!preg_match('/^(http)/', $imagedd)){
-                //             $imagedd = 'http://socialnews.teenee.com/penkhao/'.$imagedd;
-                //         }
-                //         $file_title = basename($imagedd);
-                //         $fileName = FCPATH . 'uploads/image/'.$file_title;
-                //         @copy($imagedd, $fileName);   
-                //         $images = $this->mod_general->uploadtoImgur($fileName);
-                //         if(empty($images)) {
-                //             $apiKey = '76e9b194c1bdc616d4f8bb6cf295ce51';
-                //             $images = $this->Mod_general->uploadToImgbb($fileName, $apiKey);
-                //             if($images) {
-                //                 @unlink($fileName);
-                //             }
-                //         } else {
-                //             $gimage = @$images; 
-                //             @unlink($fileName);
-                //         }
-                //         if(!empty($gimage)) {
-                //             $content = str_replace($image,$gimage,$content);
-                //         }
-                //     }
-                // }
+                
                 $obj->conent = $content;
                 $obj->fromsite = $parse['host'];
                 $obj->site = 'site';
@@ -2087,35 +1474,7 @@ $link =  $desc->find('a', 0)->href;
                 $content = preg_replace("/<a(.*?)>/", "<a$1 target=\"_blank\">", $content);
 
 
-                $regex = '/< *img[^>]*src *= *["\']?([^"\']*)/';
-                preg_match_all( $regex, $content, $matches );
-                $ImgSrc = array_pop($matches);
-                // reversing the matches array
-                // if(!empty($ImgSrc)) {
-                //     foreach ($ImgSrc as $image) {
-                //         $imagedd = strtok($image, "?");
-                //         if(!preg_match('/^(http)/', $imagedd)){
-                //             $imagedd = 'http://horo.teenee.com/seer/'.$imagedd;
-                //         }
-                //         $file_title = basename($imagedd);
-                //         $fileName = FCPATH . 'uploads/image/'.$file_title;
-                //         @copy($imagedd, $fileName);   
-                //         $images = $this->mod_general->uploadtoImgur($fileName);
-                //         if(empty($images)) {
-                //             $apiKey = '76e9b194c1bdc616d4f8bb6cf295ce51';
-                //             $images = $this->Mod_general->uploadToImgbb($fileName, $apiKey);
-                //             if($images) {
-                //                 @unlink($fileName);
-                //             }
-                //         } else {
-                //             $gimage = @$images; 
-                //             @unlink($fileName);
-                //         }
-                //         if(!empty($gimage)) {
-                //             $content = str_replace($image,$gimage,$content);
-                //         }
-                //     }
-                // }
+                
                 $obj->conent = $content;
                 $obj->fromsite = $parse['host'];
                 $obj->site = 'site';
@@ -2138,38 +1497,7 @@ $link =  $desc->find('a', 0)->href;
                 $content = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $content);
                 $content = preg_replace('/<ins\b[^>]*>(.*?)<\/ins>/is', '<div class="setAds"></div>', $content);
                 $content = preg_replace("/<a(.*?)>/", "<a$1 target=\"_blank\">", $content);
-
-                // $regex = '/< *img[^>]*src *= *["\']?([^"\']*)/';
-                // preg_match_all( $regex, $content, $matches );
-                // $ImgSrc = array_pop($matches);
-
-                // // reversing the matches array
-                // if(!empty($ImgSrc)) {
-                //     foreach ($ImgSrc as $image) {
-                //         $imagedd = strtok($image, "?");
-
-                //         if(!preg_match('/^(http)/', $imagedd)){
-                //             $imagedd = 'http://tnews.teenee.com/crime/'.$imagedd;
-                //         }
-                //         $file_title = basename($imagedd);
-                //         $fileName = FCPATH . 'uploads/image/'.$file_title;
-                //         @copy($imagedd, $fileName);   
-                //         $images = $this->mod_general->uploadtoImgur($fileName);
-                //         if(empty($images)) {
-                //             $apiKey = '76e9b194c1bdc616d4f8bb6cf295ce51';
-                //             $images = $this->Mod_general->uploadToImgbb($fileName, $apiKey);
-                //             if($images) {
-                //                 @unlink($fileName);
-                //             }
-                //         } else {
-                //             $gimage = @$images; 
-                //             @unlink($fileName);
-                //         }
-                //         if(!empty($gimage)) {
-                //             $content = str_replace($image,$gimage,$content);
-                //         }
-                //     }
-                // }
+                
                 $obj->vid = '';
                 $obj->conent = $content;
                 $obj->fromsite = $parse['host'];
@@ -2191,10 +1519,7 @@ $link =  $desc->find('a', 0)->href;
 
                 $obj->title = @$html->find ( '.post .entry h2.has-text-align-center', 0 )->innertext;;
                 //$html->save();
-                $content = @$html->find ( '.post .entry', 0 )->innertext;
-                $content = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $content);
-                $content = preg_replace('/<ins\b[^>]*>(.*?)<\/ins>/is', '<div class="setAds"></div>', $content);
-                $content = preg_replace("/<a(.*?)>/", "<a$1 target=\"_blank\">", $content);
+                $content = $this->gEntry($html,'.post .entry');                
                 $obj->vid = '';
                 $obj->conent = $content;
                 $obj->fromsite = $parse['host'];
@@ -2217,36 +1542,7 @@ $link =  $desc->find('a', 0)->href;
                 }
                 
                 /*End get label*/
-                $contents = @$html->find ( '.single-container .entry-content', 0 );
-                $content = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $contents);
-                $content = preg_replace('/<ins\b[^>]*>(.*?)<\/ins>/is', '<div class="setAds"></div>', $content);
-                $content = preg_replace("/<a(.*?)>/", "<a$1 target=\"_blank\">", $content);
-                $regex = '/< *img[^>]*src *= *["\']?([^"\']*)/';
-                preg_match_all( $regex, $content, $matches );
-                $ImgSrc = array_pop($matches);
-                // reversing the matches array
-                // if(!empty($ImgSrc)) {
-                //     foreach ($ImgSrc as $image) {
-                //         $imagedd = strtok($image, "?");
-                //         $file_title = basename($imagedd);
-                //         $fileName = FCPATH . 'uploads/image/'.$file_title;
-                //         @copy($imagedd, $fileName);   
-                //         $images = $this->mod_general->uploadtoImgur($fileName);
-                //         if(empty($images)) {
-                //             $apiKey = '76e9b194c1bdc616d4f8bb6cf295ce51';
-                //             $images = $this->Mod_general->uploadToImgbb($fileName, $apiKey);
-                //             if($images) {
-                //                 @unlink($fileName);
-                //             }
-                //         } else {
-                //             $gimage = @$images; 
-                //             @unlink($fileName);
-                //         }
-                //         if(!empty($gimage)) {
-                //             $content = str_replace($image,$gimage,$content);
-                //         }
-                //     }
-                // }
+                $content = $this->gEntry($html,'.single-container .entry-content');                
                 $obj->vid = '';
                 $obj->conent = $content;
                 $obj->fromsite = $parse['host'];
@@ -2294,38 +1590,7 @@ $link =  $desc->find('a', 0)->href;
                 foreach($html->find('.tags .SectionItem') as $item) {
                     $item->outertext = '';
                 }
-                $contents = @$html->find ( '.container .EntryBody', 0 );
-                $content = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $contents);
-                $content = preg_replace('/<ins\b[^>]*>(.*?)<\/ins>/is', '<div class="setAds"></div>', $content);
-                
-                
-                $content = preg_replace("/<a(.*?)>/", "<a$1 target=\"_blank\">", $content);
-                $regex = '/< *img[^>]*src *= *["\']?([^"\']*)/';
-                preg_match_all( $regex, $content, $matches );
-                $ImgSrc = array_pop($matches);
-                // reversing the matches array
-                if(!empty($ImgSrc)) {
-                    foreach ($ImgSrc as $image) {
-                        $imagedd = strtok($image, "?");
-                        $file_title = basename($imagedd);
-                        $fileName = FCPATH . 'uploads/image/'.$file_title;
-                        @copy($imagedd, $fileName);   
-                        $images = $this->mod_general->uploadtoImgur($fileName);
-                        if(empty($images)) {
-                            $apiKey = '76e9b194c1bdc616d4f8bb6cf295ce51';
-                            $images = $this->Mod_general->uploadToImgbb($fileName, $apiKey);
-                            if($images) {
-                                @unlink($fileName);
-                            }
-                        } else {
-                            $gimage = @$images; 
-                            @unlink($fileName);
-                        }
-                        if(!empty($gimage)) {
-                            $content = str_replace($image,$gimage,$content);
-                        }
-                    }
-                }
+                $content = $this->gEntry($html,'.container .EntryBody');                
                 $obj->vid = '';
                 $obj->conent = $content;
                 $obj->fromsite = $parse['host'];

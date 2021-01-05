@@ -237,6 +237,17 @@
 									return n;
 
 								}
+								function generateText(type,text,pos) {
+									var n = noty({
+										text: text,
+										type: type,
+										dismissQueue: false,
+										layout: pos,
+										theme: 'defaultTheme'
+									});
+									console.log(type + ' - ' + n.options.id);
+									return n;
+								}
 							</script>
 			<!-- Modal -->
 			<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">

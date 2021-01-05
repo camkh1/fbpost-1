@@ -1606,26 +1606,6 @@ class Managecampaigns extends CI_Controller {
         if(!empty($this->input->get('action'))) {
             if($this->input->get('action') == 'postblog') {
                 echo '<meta http-equiv="refresh" content="‭30‬">';
-                if(!empty($this->session->userdata('access_token'))) {
-                    $this->load->library('google_api');
-                    $client = new Google_Client();                  
-                    $client->setAccessToken($this->session->userdata('access_token'));
-                    if($client->isAccessTokenExpired()) {
-                         $currentURL = current_url(); //for simple URL
-                         $params = $_SERVER['QUERY_STRING']; //for parameters
-                         $fullURL = $currentURL . '?' . $params; //full URL with parameter
-                        $setUrl = base_url() . 'managecampaigns/autopost?glogin='. urlencode($fullURL);
-                        redirect($setUrl);
-                        exit();
-                    }
-                } else {
-                    $currentURL = current_url(); //for simple URL
-                     $params = $_SERVER['QUERY_STRING']; //for parameters
-                     $fullURL = $currentURL . '?' . $params; //full URL with parameter
-                    $setUrl = base_url() . 'managecampaigns/autopost?glogin='. urlencode($fullURL);
-                    redirect($setUrl);
-                    exit();
-                }
                 $pid = $this->input->get('pid');
                 $fbid = $this->session->userdata ( 'sid' );
                 $autopost = @$this->input->get('autopost');
@@ -1930,8 +1910,35 @@ class Managecampaigns extends CI_Controller {
 
 // var_dump($message);
 // var_dump($gLabels);
-// var_dump($bid);
-// die;
+                                            /*post to wordpress*/
+                                            if(empty($this->session->userdata('pia'))) {
+                                                echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'wordpress/autopostwp?pid='.$pid.'&action=postblog";}, 3000 );</script>';
+                                                exit();
+                                            }
+                                            /*End post to wordpress*/
+
+                                            /*check login first*/
+                                            if(!empty($this->session->userdata('access_token'))) {
+                                                $this->load->library('google_api');
+                                                $client = new Google_Client();                  
+                                                $client->setAccessToken($this->session->userdata('access_token'));
+                                                if($client->isAccessTokenExpired()) {
+                                                     $currentURL = current_url(); //for simple URL
+                                                     $params = $_SERVER['QUERY_STRING']; //for parameters
+                                                     $fullURL = $currentURL . '?' . $params; //full URL with parameter
+                                                    $setUrl = base_url() . 'managecampaigns/autopost?glogin='. urlencode($fullURL);
+                                                    redirect($setUrl);
+                                                    exit();
+                                                }
+                                            } else {
+                                                $currentURL = current_url(); //for simple URL
+                                                 $params = $_SERVER['QUERY_STRING']; //for parameters
+                                                 $fullURL = $currentURL . '?' . $params; //full URL with parameter
+                                                $setUrl = base_url() . 'managecampaigns/autopost?glogin='. urlencode($fullURL);
+                                                redirect($setUrl);
+                                                exit();
+                                            }
+                                            /*End check login first*/
                                         
                                             $blogData = $this->postToBlogger($bid, $vid, $title,$image,$message,$main_post_style,@$pOption->label,$getPost[0]);
                                             //$blogData['error'] = true;
@@ -5047,55 +5054,57 @@ HTML;
         }
         $ytData = $this->youtubeChannel($ytID,$max);
         if(!empty($ytData)) {
-            foreach ($ytData as $key => $ytArr) {
-                $dataContent          = new stdClass();
-                $dataContent->title    = $ytArr['snippet']['title'];
-                $dataContent->vid    = $ytArr['id'];
-                $dataContent->description    = $ytArr['snippet']['description'];
-                $dataContent->duration    = $ytArr['contentDetails']['duration'];
-                //$dataContent->viewCount    = $this->thousandsCurrencyFormat($ytArr['statistics']['viewCount']);
-                $dataContent->viewCount    = $ytArr['statistics']['viewCount'];
-                //$dataContent->publishedAt    = $this->time_elapsed_string($ytArr['snippet']['publishedAt']);
-                $dataContent->publishedAt    = $ytArr['snippet']['publishedAt'];
+            if(empty($ytData['error'])) {
+                foreach ($ytData as $key => $ytArr) {
+                    $dataContent          = new stdClass();
+                    $dataContent->title    = $ytArr['snippet']['title'];
+                    $dataContent->vid    = $ytArr['id'];
+                    $dataContent->description    = $ytArr['snippet']['description'];
+                    $dataContent->duration    = $ytArr['contentDetails']['duration'];
+                    //$dataContent->viewCount    = $this->thousandsCurrencyFormat($ytArr['statistics']['viewCount']);
+                    $dataContent->viewCount    = $ytArr['statistics']['viewCount'];
+                    //$dataContent->publishedAt    = $this->time_elapsed_string($ytArr['snippet']['publishedAt']);
+                    $dataContent->publishedAt    = $ytArr['snippet']['publishedAt'];
 
-                $ago = new DateTime($ytArr['snippet']['publishedAt']);
-                $twoDaysAgo = new DateTime(date('Y-m', strtotime("now")));
-                $dateModify = new DateTime(date('Y-m', strtotime($ytArr['snippet']['publishedAt'])));
-                //echo $ytArr['snippet']['publishedAt'];
+                    $ago = new DateTime($ytArr['snippet']['publishedAt']);
+                    $twoDaysAgo = new DateTime(date('Y-m', strtotime("now")));
+                    $dateModify = new DateTime(date('Y-m', strtotime($ytArr['snippet']['publishedAt'])));
+                    //echo $ytArr['snippet']['publishedAt'];
 
-                /*if video date is >= before yesterday*/
-                if($dateModify == $twoDaysAgo) { 
-                    if($ytArr['snippet']['liveBroadcastContent'] != 'upcoming') {
-                        $dataTy[] = $dataContent;
-                        /*check data exist*/
-                        $checkExist = $this->mod_general->select ( 
-                            'youtube', 
-                            'yid', 
-                            array (
-                                'yid' => $dataContent->vid,
-                                'y_fid' => $sid,
-                                'y_uid' => $log_id,
-                            )
-                        );
-                        /*End check data exist*/
-                        if(empty($checkExist[0])) {
-                            if(strlen($dataContent->vid) > 10) {
-                                $ShareH = $this->Mod_general->select ('share_history','*', array('title' => $dataContent->title,'uid' => $log_id));
-                                if(empty($ShareH[0])) {
-                                    $dataYtInstert = array (
-                                        'yid' => $dataContent->vid,
-                                        'y_date' => $ytArr['snippet']['publishedAt'],
-                                        'y_other' => json_encode($dataContent),
-                                        'y_status' => 0,
-                                        'y_fid' => $sid,
-                                        'y_uid' => $log_id,
-                                    );
-                                    $ytData = $this->Mod_general->insert ( 'youtube', $dataYtInstert );
+                    /*if video date is >= before yesterday*/
+                    if($dateModify == $twoDaysAgo) { 
+                        if($ytArr['snippet']['liveBroadcastContent'] != 'upcoming') {
+                            $dataTy[] = $dataContent;
+                            /*check data exist*/
+                            $checkExist = $this->mod_general->select ( 
+                                'youtube', 
+                                'yid', 
+                                array (
+                                    'yid' => $dataContent->vid,
+                                    'y_fid' => $sid,
+                                    'y_uid' => $log_id,
+                                )
+                            );
+                            /*End check data exist*/
+                            if(empty($checkExist[0])) {
+                                if(strlen($dataContent->vid) > 10) {
+                                    $ShareH = $this->Mod_general->select ('share_history','*', array('title' => $dataContent->title,'uid' => $log_id));
+                                    if(empty($ShareH[0])) {
+                                        $dataYtInstert = array (
+                                            'yid' => $dataContent->vid,
+                                            'y_date' => $ytArr['snippet']['publishedAt'],
+                                            'y_other' => json_encode($dataContent),
+                                            'y_status' => 0,
+                                            'y_fid' => $sid,
+                                            'y_uid' => $log_id,
+                                        );
+                                        $ytData = $this->Mod_general->insert ( 'youtube', $dataYtInstert );
+                                    } else {
+                                        continue;
+                                    }
                                 } else {
                                     continue;
                                 }
-                            } else {
-                                continue;
                             }
                         }
                     }
@@ -7846,6 +7855,8 @@ public function imgtest()
                     $this->session->set_userdata('backto', $setURl); 
                 }
                 
+                
+                /*End post to wordpress*/
                 echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/yturl?pid='.$pid.'&action=postblog";}, 3000 );</script>';
                     exit();
                 break;
@@ -8090,6 +8101,11 @@ public function imgtest()
                 //&post_only=1
                 $this->session->unset_userdata('backto');
                 $this->session->userdata('postauto',1);
+
+                $pia = $this->input->get('pia');
+                if(!empty($ia)) {
+                    $this->session->set_userdata('pia', 1);
+                }
                 break;
             default:
                 # code...
