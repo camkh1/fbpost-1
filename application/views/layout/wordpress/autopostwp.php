@@ -23,7 +23,7 @@ $contents = '';
 $titles = '';
 $thumb = '';
 $pid = '';
-$sitePpost = array('https://nnewsy.com/','https://news17times.com/');
+$sitePpost = array('https://news17times.com/','https://nnewsy.com/');
 $k = array_rand($sitePpost);
 $blogRand = $sitePpost[$k];
 //$labels = [];
@@ -32,6 +32,7 @@ if(!empty($post)) {
     $content = html_entity_decode(html_entity_decode(stripslashes(trim($pConent->message))));
     $content = preg_replace("/<p[^>]*>(?:\s|&nbsp;)*<\/p>/", '', $content); 
     $content = preg_replace("/<[\/]*div[^>]*>/i", "", $content); 
+    $content = preg_replace('/<!--(.|\s)*?-->/', '', $content); 
     preg_match_all('/\[youtube id="(.*?)"\]/i', $content, $matches, PREG_SET_ORDER);
     if ( !empty( $matches ) && !empty( $matches[0] ) && !empty( $matches[0][1] ) ) {
       foreach( $matches as $k=>$v ) {
