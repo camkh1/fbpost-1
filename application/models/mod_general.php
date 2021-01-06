@@ -1467,6 +1467,44 @@ public function get_video_id($param, $videotype = '')
         return array('userAgent' => $u_agent, 'name' => $bname, 'version' => $version, 'platform' => $platform, 'pattern' => $pattern);
     }
 
+    public function upload($file_path='', $param=array(),$rezie=1)
+    {
+        $maxDim = 1200;
+        $file_name = $file_path;
+        list($width, $height, $type, $attr) = @getimagesize( $file_path );
+        if($width < $maxDim) {
+            echo $width. ' - sssss';
+            $structure = FCPATH . 'uploads/image/';
+            if (!file_exists($structure)) {
+                mkdir($structure, 0777, true);
+            }
+            $file_title = basename($file_path);
+            $fileName = FCPATH . 'uploads/image/'.$file_title;
+            @copy($file_path, $fileName);
+
+                    $target_filename = $file_name;
+                    $ratio = $width/$height;
+                    if( $ratio > 1) {
+                        $new_width = $maxDim;
+                        $new_height = $maxDim/$ratio;
+                    } else {
+                        $new_width = $maxDim*$ratio;
+                        $new_height = $maxDim;
+                    }
+
+                    $src = imagecreatefromstring( file_get_contents( $file_name ) );
+                    $dst = imagecreatetruecolor( $new_width, 635 );
+                    imagecopyresampled( $dst, $src, 0, 0, 0, 50, $new_width, $new_height, $width, $height );
+                    imagedestroy( $src );
+                    imagejpeg( $dst, $fileName ); // adjust format as needed
+                    imagedestroy( $dst );
+
+            $image = $this->uploadtoImgur($fileName);
+        } else {
+            return $file_path;
+        }
+    }
+
     public function uploadMedia($file_path='', $param=array(),$rezie=1)
        {
         if(!empty($file_path)) {

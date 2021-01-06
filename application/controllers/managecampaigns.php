@@ -7301,7 +7301,7 @@ public function imgtest()
                         $linkUpate = $this->Mod_general->update('meta', $data_LinkUp,$setSWhere);
                         /*End update link status*/
                         if($linkUpate) {
-                            echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=post&pid='.$AddToPost.'";}, 30 );</script>';
+                            echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=post&pid='.$AddToPost.'";}, 10 );</script>';
                             exit();
                         }
                     }
@@ -7398,9 +7398,9 @@ public function imgtest()
                     /*End check post progress frist*/ 
 
                     $RanChoose = array(
-                        'site',
-                        'yt',
-                        //'mysite',
+                        //'site',
+                        //'yt',
+                        'amung',
                     );
                     $l = array_rand($RanChoose);
                     $getChoose = $RanChoose[$l];
@@ -7433,12 +7433,32 @@ public function imgtest()
                     $setURl = base_url().'managecampaigns/autopostfb?action=posttoblog&pause=1';
                 }
                 $this->session->set_userdata('backto', $setURl);
-                $amoung = $this->amung('xj6pvq4tkt',1,true);
+                $amoung = $this->amung('ajhapu0kye03',1,true);
                 $getUrl = $amoung->pages;
-                krsort($getUrl);
+                $glink = array();
+                //krsort($getUrl);
                 if(!empty($getUrl)) {
                     require_once(APPPATH.'controllers/Getcontent.php');
                     $aObj = new Getcontent(); 
+                    foreach ($getUrl as $key => $gurl) {
+                        $url = (string) $gurl->url;
+                        $glink[$url] = array($gurl->count => $url);
+                    }
+                    krsort($glink);
+                    $fistLink = '';
+                    $i=0;
+                    foreach ($glink as $key => $gurls) {
+                        $setLink = $this->insertLink($key);
+                        if(!empty($setLink)) {
+                            echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=post&pid='.$setLink.'";}, 10 );</script>';
+                            break;
+                        } else {
+                            continue;
+                        }
+                        $i++;
+                    }
+     
+die;
                     // $url = 'https://bajdkowjddbkw.blogspot.com/2020/02/the-arusun-aruba-catamaran-sail-with.html?m=1';
                     //         $content = $aObj->BloggerYtInside($url);
                     //         var_dump($content);
@@ -8112,6 +8132,174 @@ public function imgtest()
                 break;
         }
         $this->load->view ( 'managecampaigns/autopostfb', $data );
+    }
+
+    public function insertLink($url='')
+    {
+        $log_id = $this->session->userdata ( 'user_id' );
+        $user = $this->session->userdata ( 'email' );
+        $provider_uid = $this->session->userdata ( 'provider_uid' );
+        $provider = $this->session->userdata ( 'provider' );
+        $gemail = $this->session->userdata ('gemail');
+        $fbUserId = $this->session->userdata('fb_user_id');
+        $sid = $this->session->userdata ( 'sid' );
+        $getContent = $this->get_from_url($url);
+        $post_only = $this->session->userdata ( 'post_only' );
+        /*check duplicate*/
+        $whereDupA = array(
+            'object_id'      => $url,
+            'meta_name'     => $log_id . 'sitelink',
+            'meta_key'      => date('Y-m-d'),
+        );
+        $queryCheckDup = $this->Mod_general->select('meta', '*', $whereDupA);
+        /*check duplicate*/
+
+        if(empty($queryCheckDup[0])) {
+            /*preparepost*/
+            $tmp_path = './uploads/'.$log_id.'/'. $fbUserId . '_tmp_action.json';
+            $string = file_get_contents($tmp_path);
+            $json_a = json_decode($string);
+            $schedule = array (                    
+                'start_date' => $json_a->start_date,
+                'start_time' => $json_a->start_time,
+                'end_date' => $json_a->end_date,
+                'end_time' => $json_a->end_time,
+                'loop' => $json_a->loop,
+                'loop_every' => $json_a->loop_every,
+                'loop_on' => $json_a->loop_on,
+                'wait_group' => $json_a->wait_group,
+                'wait_post' => $json_a->wait_post,
+                'randomGroup' => $json_a->randomGroup,
+                'prefix_title' => $json_a->prefix_title,
+                'suffix_title' => $json_a->suffix_title,
+                'short_link' => $json_a->short_link,
+                'check_image' => $json_a->check_image,
+                'imgcolor' => $json_a->imgcolor,
+                'btnplayer' => $json_a->btnplayer,
+                'playerstyle' => $json_a->playerstyle,
+                'random_link' => $json_a->random_link,
+                'share_type' => $json_a->share_type,
+                'share_schedule' => $json_a->share_schedule,
+                'account_group_type' => $json_a->account_group_type,
+                'txtadd' => $json_a->txtadd,
+                'blogid' => $json_a->blogid,
+                'blogLink' => $json_a->blogLink,
+                'main_post_style' => 'tnews',
+                'userAgent' => $json_a->userAgent,
+                'checkImage' => $json_a->checkImage,
+                'ptype' => $json_a->ptype,
+                'img_rotate' => $json_a->img_rotate,
+                'filter_contrast' => $json_a->filter_contrast,
+                'filter_brightness' => $json_a->filter_brightness,
+                'post_by_manaul' => $json_a->post_by_manaul,
+                'foldlink' => $json_a->foldlink,
+                'gemail' => $json_a->gemail,
+                'label' => 'news',
+                'post_date'      => date('Y-m-d H:i:s'),
+                'pprogress' => $json_a->pprogress,
+                'ia' => 0,
+            );
+
+            /*save tmp data post*/
+            $target_dir = './uploads/image/';
+            $tmp_path = './uploads/'.$log_id.'/';
+            $file_tmp_name = $fbUserId . '_tmp_action.json';
+            $this->json($tmp_path,$file_tmp_name, $schedule);
+            /*End save tmp data post*/
+            require_once(APPPATH.'controllers/Getcontent.php');
+            $aObj = new Getcontent(); 
+            $getContent = $aObj->getConentFromSite($url,'');
+
+
+            $conent = $getContent->conent;
+            $thumb = $getContent->thumb;
+            $title = $getContent->title;
+            $youtubeCode = '';
+
+            ob_start();
+            ob_end_clean();
+            preg_match_all('/<iframe[^>]+src="([^"]+)"/', $getContent->conent, $match);
+
+            if(!empty($match[1])) {
+                preg_match("/^(?:http(?:s)?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:(?:watch)?\?(?:.*&)?v(?:i)?=|(?:embed|v|vi|user)\/))([^\?&\"'>]+)/", $match[1][0], $matches);
+                if (!empty($matches[1])) {
+                    $youtubeCode = '[embedyt] https://www.youtube.com/watch?v='.$matches[1].'[/embedyt]';
+                    $dataYT = $this->getContentfromYoutube('https://www.youtube.com/watch?v='.$matches[1]);
+                    
+                    $thumb = $this->Mod_general->upload($dataYT->thumb);
+                    $conent = $getContent->conent.'<br/>'.$youtubeCode;
+                    $title = $dataYT->title;
+                }
+            } 
+
+            $checkSite = $this->CheckSiteLotto();
+            if (in_array(@$getContent->fromsite, $checkSite)) {
+                if(strlen (strip_tags($getContent->conent))<250) {
+                    $bodytext = $this->generateText();
+                } else {
+                    $bodytext = $getContent->conent;
+                }
+                $conent = $bodytext.'<br/>'.$youtubeCode;
+            }
+            
+            $content = array (
+                    'name' => @htmlentities(htmlspecialchars(str_replace(' - YouTube', '', $title))),
+                    'message' => @htmlentities(htmlspecialchars(addslashes($conent))),
+                    'caption' => '',
+                    'link' => '',
+                    'mainlink' => '',
+                    'picture' => @$thumb,                            
+                    'vid' => '',                          
+            );
+            /*End preparepost*/
+            if($post_only) {
+                $p_progress = 1;
+            } else {
+                $p_progress = 0;
+            }
+            $dataPostInstert = array (
+                Tbl_posts::name => $title,
+                Tbl_posts::conent => json_encode($content),
+                Tbl_posts::p_date => date('Y-m-d H:i:s'),
+                Tbl_posts::schedule => json_encode($schedule),
+                Tbl_posts::user => $sid,
+                'user_id' => $log_id,
+                Tbl_posts::post_to => 0,
+                'p_status' => 1,
+                'p_progress' => $p_progress,
+                Tbl_posts::type => 'Facebook' 
+            );
+            $AddToPost = $this->Mod_general->insert ( Tbl_posts::tblName, $dataPostInstert );
+            if($AddToPost) {
+                /*update link status*/
+                $data_blog = array(
+                    'meta_key'      => date('Y-m-d'),
+                    'object_id'      => $url,
+                    'meta_value'     => 1,
+                    'meta_name'     => $log_id . 'sitelink',
+                );
+                $lastID = $this->Mod_general->insert('meta', $data_blog);
+               return $AddToPost;
+            }
+        } else {
+            return false;
+        } 
+    }
+    public function CheckSiteLotto()
+    {
+        $siteUrl = array(
+            'www.siha.leknews.com',
+        );
+        return $siteUrl;
+    }
+    public function generateText()
+    {
+        $text = array(
+            'มาแล้วครับ เลขเด็ดงวดนี้ เรียกได้ว่าเป็นอีกหนึ่งสำนักหวยที่ทำผลงานได้น่าติดตาม และได้รับความสนใจจากบรรดาคอหวยไม่แพ้หวยไทยรัฐ เลข ไทยรัฐก็ว่าได้หวยดังงวดนี้หวยดังเลขขายดี10อันดับ  หวยดังงวดนี้ หวย ดัง แม่ จำเนียร แม่จำเนียรมีหวยสูตรเด็ดมานำเสนอสมาชิกคอหวยได้ชมและติดตามกันอีกเช่นเคยครับ หวยซอง หวยบอกลาภเลขคำนวน เลขเด็ดสถิติเดินดีน่าติดตาม มีเลขดัง เลขเด็ด ทางเว็บไซต์ของเรา อัพเดทให้ชมกันตลอดอย่างต่อเนื่อง เรื่อยๆทุกวันจ้า แต่หวยทุกสูตรมีโอกาสหลุดเสมอ ขอให้พิจรณาตามความพอใจของท่านจ้า เป็นแค่แนวทางที่ทางเว็บเรานำมาแบ่งปันให้คนรักหวยได้ชมเท่านั้น ไม่มีหวยสูตรสูตรไหนเดินดีตลอดไปงวดนี้จะเข้าหรือไม่รอลุ้นได้ในวันหวยอกครับ ชอบก็เก็บไว้พิจารณากันได้ครับ สนับสนุนสลากกินแบ่งรัฐบาลเท่านั้นจ้า ขอขอบคุณแหล่งที่มาของข้อมูลที่แบ่งปันให้เราทุกคนได้ติดตามข้อมูลดีๆแนวทางสลากกินแบ่งรัฐบาลงวดนี้  ทั้งนี้ขอสนับสนุนให้เสี่ยงโชคอย่างถูกกฎหมายเท่านั้น',
+            'เป็นอีกหนึ่งข้อมูลดีๆที่น่าสนใจ เลขเด็ดมาแล้ว หวยอ.อำนวย ลองติดตามกันจ้า เรามาดูพร้อมกันเลยว่าหวยอาจารย์อำนวยงวดนี้ให้เลขเด็ดงวดนี้อะไรมาบ้าง สำหรับหวยความแม่นยำในหวยงวดนี้ไม่ขอการันตีผลงานครับ เรานำมาอัพเดทแบ่งปันเพื่อเป็นแนวทางเท่านั้น ขอบคุณทุกท่านที่เข้ามาชมและติดตามเว็บ ข่าวหวย ของเรายินดีแบ่งปันข้อมูลเลขเด็ดด้วยใจค่ะ แต่อย่าลืมว่าหวยเด็ด หวยซอง เลขเด็ดต่างๆที่ได้นำมาเสนอให้ทุกท่านได้ชมเป็นเพียงแนวทางเท่านั้นไม่มีหวย สูตรใดแม่น100% โปรดใช้วิจารณานในการรับชมและตัดสินใจ สนับสนุนสลากกินแบ่งรัฐบาลเท่านั้นครับ',
+        );
+        $k = array_rand($text);
+        return $text[$k];
     }
 
     public function  getYtToPost()
