@@ -29,19 +29,24 @@ $blogRand = $sitePpost[$k];
 //$labels = [];
 if(!empty($post)) {
     $pConent = json_decode($post[0]->p_conent);
-    $content = $pConent->message;
+    $content = html_entity_decode(html_entity_decode(stripslashes(trim($pConent->message))));
+    $content = preg_replace("/<p[^>]*>(?:\s|&nbsp;)*<\/p>/", '', $content); 
+    $content = preg_replace("/<[\/]*div[^>]*>/i", "", $content); 
     preg_match_all('/\[youtube id="(.*?)"\]/i', $content, $matches, PREG_SET_ORDER);
     if ( !empty( $matches ) && !empty( $matches[0] ) && !empty( $matches[0][1] ) ) {
       foreach( $matches as $k=>$v ) {
-        $embeded_code = '<div class="video-container"><iframe width="560" height="315" src="https://www.youtube.com/embed/'.$v[1].'" frameborder="0" allowfullscreen></iframe></div>';
+        $embeded_code = '[embedyt] https://www.youtube.com/watch?v='.$v[1].'[/embedyt]';
         $content = str_replace($v[0], $embeded_code, $content);
       }
     }
+
     $pSchedule = json_decode($post[0]->p_schedule);
     $titles = preg_replace('/\s+/', '<sp>', $post[0]->p_name);;
     $pid = $post[0]->p_id;
-    $contents = preg_replace('/\s+/', '<sp>', $pConent->message);
-    $contents = str_replace('/\n/g', '<br>', $contents);
+    $content = htmlentities($content);
+
+    $content = str_replace('/\n/g', '<br>', $content);
+    $content = trim(preg_replace('/\s+/', '<sp>', $content));
     $thumb = $pConent->picture;
     $labels = @$pSchedule->label;
     if(!empty($labels)) {
@@ -73,7 +78,7 @@ if(!empty($post)) {
     Please wait...
 </div>
 <code id="codeB" style="width:300px;overflow:hidden;display:none"></code>
-    <code id="examplecode5" style="width:300px;overflow:hidden;display:none">var codedefault2=&quot;SET !EXTRACT_TEST_POPUP NO\n SET !TIMEOUT_PAGE 300\n SET !ERRORIGNORE YES\n SET !TIMEOUT_STEP 0.1\n&quot;;var wm=Components.classes[&quot;@mozilla.org/appshell/window-mediator;1&quot;].getService(Components.interfaces.nsIWindowMediator);var window=wm.getMostRecentWindow(&quot;navigator:browser&quot;);const XMLHttpRequest = Components.Constructor(&quot;@mozilla.org/xmlextras/xmlhttprequest;1&quot;);var homeUrl = &quot;<?php echo base_url();?>&quot;,add_post_url = &quot;<?php echo @$blogRand;?>&quot;,titles = &quot;&quot;,contents = &quot;&quot;,thumb = &quot;<?php echo @$thumb;?>&quot;,pid = &quot;<?php echo @$pid;?>&quot;,labels = [<?php echo @$labels;?>];</code>
+    <code id="examplecode5" style="width:300px;overflow:hidden;display:none">var codedefault2=&quot;SET !EXTRACT_TEST_POPUP NO\n SET !TIMEOUT_PAGE 300\n SET !ERRORIGNORE YES\n SET !TIMEOUT_STEP 0.1\n&quot;;var wm=Components.classes[&quot;@mozilla.org/appshell/window-mediator;1&quot;].getService(Components.interfaces.nsIWindowMediator);var window=wm.getMostRecentWindow(&quot;navigator:browser&quot;);const XMLHttpRequest = Components.Constructor(&quot;@mozilla.org/xmlextras/xmlhttprequest;1&quot;);var homeUrl = &quot;<?php echo base_url();?>&quot;,add_post_url = &quot;<?php echo @$blogRand;?>&quot;,titles = &quot;&quot;,contents = &quot;&quot;,thumb = &quot;&quot;,pid = &quot;<?php echo @$pid;?>&quot;,labels = [<?php echo @$labels;?>];</code>
     <script type="text/javascript">
         function runcode(codes) {
             var str = $("#examplecode5").text();
@@ -145,7 +150,7 @@ if(!empty($post)) {
                     </div>
                     <div class="form-group">
                         <div class="col-md-12 clearfix">
-                            <textarea onclick="this.focus(); this.select()"  id="contents" rows="5" cols="5" rows="3" name="Prefix" class="form-control"><?php echo $contents;?></textarea>
+                            <textarea onclick="this.focus(); this.select()"  id="contents" rows="5" cols="5" rows="3" name="Prefix" class="form-control"><?php echo $content;?></textarea>
                         </div>
                     </div>
                     </form>
