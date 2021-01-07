@@ -3171,6 +3171,16 @@ class Managecampaigns extends CI_Controller {
                 $ChHiPost = $this->Mod_general->select('share_history', 'shp_id', $where_hi);
                 if(empty($ChHiPost)) {
                     $pConent = json_decode($gvalue->p_conent);
+                    if(empty($pConent->link)) {
+                        $id = $getPost[0]->p_id;
+                        $this->Mod_general->delete ( Tbl_posts::tblName, array (
+                        Tbl_posts::id => $id 
+                        ) );
+                        @$this->Mod_general->delete ( 'meta', array (
+                                'object_id' => $id, 
+                                'meta_name' => 'post_progress', 
+                        ) );                        
+                    }
                     $parse = parse_url($pConent->link);
                     if (!in_array($parse['host'], $siteUrl)) {
                         $whereMt = array(
