@@ -2896,8 +2896,10 @@ $link =  $desc->find('a', 0)->href;
         $content = str_replace("facebook.com/groups/websiamplaza", "facebook.com/groups/2114780255405136", $content);
         foreach($html->find('img') as $iitem) {
             $src = $iitem->src;
-            $datasrc =  $iitem->attr['data-src']; 
-            $content = str_replace($src,$datasrc,$content);
+            $datasrc =  @$iitem->attr['data-src'];
+            if(!empty($datasrc)) {
+                $content = str_replace($src,$datasrc,$content);
+            }
         }
         return $content;
     }

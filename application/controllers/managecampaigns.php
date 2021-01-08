@@ -8313,6 +8313,8 @@ die;
         if(!empty($setthumbs)) {
             $thumb = $this->Mod_general->upload($setthumbs);
         }
+        var_dump($content);
+        die;
         $dataPostInstert = array (
             Tbl_posts::name => @htmlentities(htmlspecialchars(str_replace(' - YouTube', '', $title))),
             Tbl_posts::conent => json_encode($content),
