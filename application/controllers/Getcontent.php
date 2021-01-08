@@ -1411,6 +1411,7 @@ $link =  $desc->find('a', 0)->href;
                 $content = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $content);
                 $content = preg_replace('/<ins\b[^>]*>(.*?)<\/ins>/is', '<div class="setAds"></div>', $content);
                 $content = preg_replace("/<a(.*?)>/", "<a$1 target=\"_blank\">", $content);
+                $content = preg_replace("/img src='/", "img src='https://entertain.teenee.com/thaistar/", $content);
                 
                 $obj->vid = '';
                 $obj->conent = $content;
