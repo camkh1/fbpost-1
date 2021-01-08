@@ -8322,7 +8322,7 @@ die;
             'user_id' => $log_id,
             Tbl_posts::post_to => 0,
             'p_status' => 1,
-            'p_progress' => $p_progress,
+            'p_progress' => 1,
             Tbl_posts::type => 'Facebook' 
         );
         $AddToPost = $this->Mod_general->insert ( Tbl_posts::tblName, $dataPostInstert );
