@@ -107,7 +107,7 @@
             $year = $month = $day = $hour = $minute = $second = 0;
             $setDayFormat = $setDay = '';
 
-            $waiting = 60;
+            $waiting = 40;
             $styleA = $waiting * (60 * 10);
             $waiting = $waiting * 60;
            ?>

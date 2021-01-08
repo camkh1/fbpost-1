@@ -577,6 +577,9 @@ $link =  $desc->find('a', 0)->href;
         $obj->description = '';
         //$obj->title = @$html->find ( 'title', 0 )->innertext;
         $obj->title = @$html->find ( 'meta[property=og:title]', 0 )->content;
+        if(empty($obj->title)) {
+            $obj->title = @$html->find ( 'title', 0 )->innertext;
+        }
         $og_image = @$html->find ( 'meta [property=og:image]', 0 )->content;
         $image_src = @$html->find ( 'link [rel=image_src]', 0 )->href;
         if (! empty ( $image_src )) {
@@ -2669,6 +2672,7 @@ $link =  $desc->find('a', 0)->href;
                     $item->outertext = '';
                 }
                 $html->save();
+
                 $content = @$html->find ( '#Blog1 .entry-content', 0 );
                 $content = preg_replace('/<center\b[^>]*>(.*?)<\/center>/is', "", $content);
                 $content = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $content);
@@ -2744,23 +2748,13 @@ $link =  $desc->find('a', 0)->href;
                 return $obj;
                 break;
             case 'wp':
-                $content = @$html->find ( '.type-post .entry-content', 0 );
-                $content = preg_replace('/<center\b[^>]*>(.*?)<\/center>/is', "", $content);
-                $content = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $content);
-                $content = preg_replace('/<ins\b[^>]*>(.*?)<\/ins>/is', '<div class="setAds"></div>', $content);
-                $content = preg_replace("/<a(.*?)>/", "<a$1 target=\"_blank\">", $content);
-                $content = preg_replace( '/(<[^>]+) srcset=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-lazy-srcset=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-lazy-sizes=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-lazy-src=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-recalc-dims=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-large-file=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-medium-file=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-image-meta=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-image-description class=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-orig-file=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-permalink=".*?"/i', "$1", $content );
-                $content = str_replace('--Advertisement--', '', $content);
+                $content = $this->gEntry($html,'.entry-content');                
+                if(empty($obj->thumb)) {
+                    $obj->thumb = $this->get_the_image($content);
+                    if(empty($obj->thumb)) {
+                        $obj->thumb = $html->find('.post-thumbnail img',0)->src;
+                    }
+                }
                 $obj->vid = '';
                 $obj->conent = $content;
                 $obj->fromsite = $parse['host'];
@@ -2774,23 +2768,7 @@ $link =  $desc->find('a', 0)->href;
                     $item->outertext = '';
                 }
                 $html->save();
-                $content = @$html->find ( '#Blog1 .entry-content', 0 );
-                $content = preg_replace('/<center\b[^>]*>(.*?)<\/center>/is', "", $content);
-                $content = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $content);
-                $content = preg_replace('/<ins\b[^>]*>(.*?)<\/ins>/is', '<div class="setAds"></div>', $content);
-                $content = preg_replace("/<a(.*?)>/", "<a$1 target=\"_blank\">", $content);
-                $content = preg_replace( '/(<[^>]+) srcset=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-lazy-srcset=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-lazy-sizes=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-lazy-src=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-recalc-dims=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-large-file=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-medium-file=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-image-meta=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-image-description class=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-orig-file=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-permalink=".*?"/i', "$1", $content );
-                $content = str_replace('--Advertisement--', '', $content);
+                $content = $this->gEntry($html,'.entry-content');                 
                 $obj->vid = '';
                 $obj->conent = $content;
                 $obj->fromsite = $parse['host'];
@@ -2804,23 +2782,7 @@ $link =  $desc->find('a', 0)->href;
                     $item->outertext = '';
                 }
                 $html->save();
-                $content = @$html->find ( '.single-post-content', 0 );
-                $content = preg_replace('/<center\b[^>]*>(.*?)<\/center>/is', "", $content);
-                $content = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $content);
-                $content = preg_replace('/<ins\b[^>]*>(.*?)<\/ins>/is', '<div class="setAds"></div>', $content);
-                $content = preg_replace("/<a(.*?)>/", "<a$1 target=\"_blank\">", $content);
-                $content = preg_replace( '/(<[^>]+) srcset=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-lazy-srcset=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-lazy-sizes=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-lazy-src=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-recalc-dims=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-large-file=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-medium-file=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-image-meta=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-image-description class=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-orig-file=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-permalink=".*?"/i', "$1", $content );
-                $content = str_replace('--Advertisement--', '', $content);
+                $content = $this->gEntry($html,'.single-post-content');                 
                 $obj->vid = '';
                 $obj->conent = $content;
                 $obj->fromsite = $parse['host'];
@@ -2844,23 +2806,7 @@ $link =  $desc->find('a', 0)->href;
                         $item->outertext = '';
                     }
                     $html->save();
-                    $content = @$html->find ( '#Blog1 .entry-content', 0 );
-                    $content = preg_replace('/<center\b[^>]*>(.*?)<\/center>/is', "", $content);
-                    $content = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $content);
-                    $content = preg_replace('/<ins\b[^>]*>(.*?)<\/ins>/is', '<div class="setAds"></div>', $content);
-                    $content = preg_replace("/<a(.*?)>/", "<a$1 target=\"_blank\">", $content);
-                    $content = preg_replace( '/(<[^>]+) srcset=".*?"/i', "$1", $content );
-                    $content = preg_replace( '/(<[^>]+) data-lazy-srcset=".*?"/i', "$1", $content );
-                    $content = preg_replace( '/(<[^>]+) data-lazy-sizes=".*?"/i', "$1", $content );
-                    $content = preg_replace( '/(<[^>]+) data-lazy-src=".*?"/i', "$1", $content );
-                    $content = preg_replace( '/(<[^>]+) data-recalc-dims=".*?"/i', "$1", $content );
-                    $content = preg_replace( '/(<[^>]+) data-large-file=".*?"/i', "$1", $content );
-                    $content = preg_replace( '/(<[^>]+) data-medium-file=".*?"/i', "$1", $content );
-                    $content = preg_replace( '/(<[^>]+) data-image-meta=".*?"/i', "$1", $content );
-                    $content = preg_replace( '/(<[^>]+) data-image-description class=".*?"/i', "$1", $content );
-                    $content = preg_replace( '/(<[^>]+) data-orig-file=".*?"/i', "$1", $content );
-                    $content = preg_replace( '/(<[^>]+) data-permalink=".*?"/i', "$1", $content );
-                    $content = str_replace('--Advertisement--', '', $content);
+                    $content = $this->gEntry($html,'.entry-content');                     
                     $obj->conent = $content;
                     $obj->fromsite = $parse['host'];
                     $obj->site = 'site';
@@ -3033,6 +2979,16 @@ $link =  $desc->find('a', 0)->href;
             );
         }
         return $data;
+    }
+
+    function get_the_image($args) {
+        /* Search the post's content for the <img /> tag and get its URL. */
+        preg_match_all('|<img.*?src=[\'"](.*?)[\'"].*?>|i', $args, $matches);
+
+        /* If there is a match for the image, return its URL. */
+        if (isset($matches) && @$matches[1][0])
+            return array('url' => @$matches[1][0]);
+        return false;
     }
 }
 

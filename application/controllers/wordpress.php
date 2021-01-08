@@ -91,6 +91,32 @@ class Wordpress extends CI_Controller
         $this->load->view('wordpress/autopostwp', $data);
     }
 
+    public function post()
+    {
+        $log_id = $this->session->userdata ( 'user_id' );
+        $user = $this->session->userdata ( 'email' );
+        $provider_uid = $this->session->userdata ( 'provider_uid' );
+        $provider = $this->session->userdata ( 'provider' );
+        $gemail = $this->session->userdata ('gemail');
+        $fbUserId = $this->session->userdata('fb_user_id');
+        $sid = $this->session->userdata ( 'sid' );
+        $post_only = $this->session->userdata ( 'post_only' );
+        $this->load->theme ( 'layout' );
+        $data ['title'] = 'Post to Wordpress by Manual';
+        if ($this->input->post ( 'link' )) {
+            $link = $this->input->post ( 'link' );
+            $title = @$this->input->post ( 'title' );
+            $thumb = @$this->input->post ( 'thumb' );
+            require_once(APPPATH.'controllers/managecampaigns.php');
+            $Managecampaigns =  new Managecampaigns();
+            $getdata = $Managecampaigns->insertLink($link,$title,$thumb);
+            if(!empty($getdata)) {
+                echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=post&pid='.$getdata.'";}, 10 );</script>';
+                exit();
+            }
+        }
+        $this->load->view('wordpress/post', $data);
+    }
     public function wait()
     {
         date_default_timezone_set("Asia/Phnom_Penh");

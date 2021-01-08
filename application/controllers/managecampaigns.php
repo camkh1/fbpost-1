@@ -8151,8 +8151,12 @@ die;
         $this->load->view ( 'managecampaigns/autopostfb', $data );
     }
 
-    public function insertLink($url='')
+    public function insertLink($url='',$settitle='',$setthumbs='')
     {
+        if(empty($url)) {
+            return false;
+            exit();
+        }
         $log_id = $this->session->userdata ( 'user_id' );
         $user = $this->session->userdata ( 'email' );
         $provider_uid = $this->session->userdata ( 'provider_uid' );
@@ -8162,132 +8166,67 @@ die;
         $sid = $this->session->userdata ( 'sid' );
         $getContent = $this->get_from_url($url);
         $post_only = $this->session->userdata ( 'post_only' );
-        /*check duplicate*/
-        $whereDupA = array(
-            'object_id'      => $url,
-            'meta_name'     => $log_id . 'sitelink',
-            'meta_key'      => date('Y-m-d'),
-        );
-        $queryCheckDup = $this->Mod_general->select('meta', '*', $whereDupA);
-        /*check duplicate*/
-
-        if(empty($queryCheckDup[0])) {
-            /*preparepost*/
-            $tmp_path = './uploads/'.$log_id.'/'. $fbUserId . '_tmp_action.json';
-            $string = file_get_contents($tmp_path);
-            $json_a = json_decode($string);
-            $schedule = array (                    
-                'start_date' => $json_a->start_date,
-                'start_time' => $json_a->start_time,
-                'end_date' => $json_a->end_date,
-                'end_time' => $json_a->end_time,
-                'loop' => $json_a->loop,
-                'loop_every' => $json_a->loop_every,
-                'loop_on' => $json_a->loop_on,
-                'wait_group' => $json_a->wait_group,
-                'wait_post' => $json_a->wait_post,
-                'randomGroup' => $json_a->randomGroup,
-                'prefix_title' => $json_a->prefix_title,
-                'suffix_title' => $json_a->suffix_title,
-                'short_link' => $json_a->short_link,
-                'check_image' => $json_a->check_image,
-                'imgcolor' => $json_a->imgcolor,
-                'btnplayer' => $json_a->btnplayer,
-                'playerstyle' => $json_a->playerstyle,
-                'random_link' => $json_a->random_link,
-                'share_type' => $json_a->share_type,
-                'share_schedule' => $json_a->share_schedule,
-                'account_group_type' => $json_a->account_group_type,
-                'txtadd' => $json_a->txtadd,
-                'blogid' => $json_a->blogid,
-                'blogLink' => $json_a->blogLink,
-                'main_post_style' => 'tnews',
-                'userAgent' => $json_a->userAgent,
-                'checkImage' => $json_a->checkImage,
-                'ptype' => $json_a->ptype,
-                'img_rotate' => $json_a->img_rotate,
-                'filter_contrast' => $json_a->filter_contrast,
-                'filter_brightness' => $json_a->filter_brightness,
-                'post_by_manaul' => $json_a->post_by_manaul,
-                'foldlink' => $json_a->foldlink,
-                'gemail' => $json_a->gemail,
-                'label' => 'news',
-                'post_date'      => date('Y-m-d H:i:s'),
-                'pprogress' => $json_a->pprogress,
-                'ia' => 0,
-            );
-
-            /*save tmp data post*/
-            $target_dir = './uploads/image/';
-            $tmp_path = './uploads/'.$log_id.'/';
-            $file_tmp_name = $fbUserId . '_tmp_action.json';
-            $this->json($tmp_path,$file_tmp_name, $schedule);
-            /*End save tmp data post*/
-            require_once(APPPATH.'controllers/Getcontent.php');
-            $aObj = new Getcontent(); 
-            $getContent = $aObj->getConentFromSite($url,'');
-
-
-            $conent = $getContent->conent;
-            $thumb = $getContent->thumb;
-            $title = $getContent->title;
-            $youtubeCode = '';
-
-            ob_start();
-            ob_end_clean();
-            preg_match_all('/<iframe[^>]+src="([^"]+)"/', $getContent->conent, $match);
-
-            if(!empty($match[1])) {
-                preg_match("/^(?:http(?:s)?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:(?:watch)?\?(?:.*&)?v(?:i)?=|(?:embed|v|vi|user)\/))([^\?&\"'>]+)/", $match[1][0], $matches);
-                if (!empty($matches[1])) {
-                    $youtubeCode = '[embedyt] https://www.youtube.com/watch?v='.$matches[1].'[/embedyt]';
-                    $dataYT = $this->getContentfromYoutube('https://www.youtube.com/watch?v='.$matches[1]);
-                    
-                    $thumb = $this->Mod_general->upload($dataYT->thumb);
-                    $conent = $getContent->conent.'<br/>'.$youtubeCode;
-                    $title = $dataYT->title;
-                }
-            } 
-
-            $checkSite = $this->CheckSiteLotto();
-            if (in_array(@$getContent->fromsite, $checkSite)) {
-                if(strlen (strip_tags($getContent->conent))<250) {
-                    $bodytext = $this->generateText();
-                } else {
-                    $bodytext = $getContent->conent;
-                }
-                $conent = $bodytext.'<br/>'.$youtubeCode;
+        preg_match("/^(?:http(?:s)?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:(?:watch)?\?(?:.*&)?v(?:i)?=|(?:embed|v|vi|user)\/))([^\?&\"'>]+)/", $url, $matches);
+        if (!empty($matches[1])) {
+            $ycontent = $this->getContentfromYoutube($url);
+            $conent = $ycontent->conent;
+            $thumb = $ycontent->thumb;
+            $title = $ycontent->title;
+            $bodytext = $this->generateText();
+            if(!empty($matches[1])) {
+                $youtubeCode = '[embedyt] https://www.youtube.com/watch?v='.$matches[1].'[/embedyt]';
+            } else {
+                $youtubeCode = '';
             }
             
-            $content = array (
-                    'name' => @htmlentities(htmlspecialchars(str_replace(' - YouTube', '', $title))),
-                    'message' => @htmlentities(htmlspecialchars(addslashes($conent))),
-                    'caption' => '',
-                    'link' => '',
-                    'mainlink' => '',
-                    'picture' => @$thumb,                            
-                    'vid' => '',                          
+            $conent = $bodytext.'<br/>'.$youtubeCode;
+            $from = 'yt';
+        } else {
+                    /*check duplicate*/
+            $whereDupA = array(
+                'object_id'      => $url,
+                'meta_name'     => $log_id . 'sitelink',
+                'meta_key'      => date('Y-m-d'),
             );
-            /*End preparepost*/
-            if($post_only) {
-                $p_progress = 1;
-            } else {
-                $p_progress = 0;
-            }
-            $dataPostInstert = array (
-                Tbl_posts::name => $title,
-                Tbl_posts::conent => json_encode($content),
-                Tbl_posts::p_date => date('Y-m-d H:i:s'),
-                Tbl_posts::schedule => json_encode($schedule),
-                Tbl_posts::user => $sid,
-                'user_id' => $log_id,
-                Tbl_posts::post_to => 0,
-                'p_status' => 1,
-                'p_progress' => $p_progress,
-                Tbl_posts::type => 'Facebook' 
-            );
-            $AddToPost = $this->Mod_general->insert ( Tbl_posts::tblName, $dataPostInstert );
-            if($AddToPost) {
+            $queryCheckDup = $this->Mod_general->select('meta', '*', $whereDupA);
+            /*check duplicate*/
+
+            if(empty($queryCheckDup[0])) {
+                require_once(APPPATH.'controllers/Getcontent.php');
+                $aObj = new Getcontent(); 
+                $getContent = $aObj->getConentFromSite($url,'');
+
+                $conent = $getContent->conent;
+                $thumb = $getContent->thumb;
+                $title = $getContent->title;
+                $youtubeCode = '';
+
+                ob_start();
+                ob_end_clean();
+                preg_match_all('/<iframe[^>]+src="([^"]+)"/', $getContent->conent, $match);
+
+                if(!empty($match[1])) {
+                    preg_match("/^(?:http(?:s)?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:(?:watch)?\?(?:.*&)?v(?:i)?=|(?:embed|v|vi|user)\/))([^\?&\"'>]+)/", $match[1][0], $matches);
+                    if (!empty($matches[1])) {
+                        $youtubeCode = '[embedyt] https://www.youtube.com/watch?v='.$matches[1].'[/embedyt]';
+                        $dataYT = $this->getContentfromYoutube('https://www.youtube.com/watch?v='.$matches[1]);
+                        
+                        $thumb = $this->Mod_general->upload($dataYT->thumb);
+                        $conent = $getContent->conent.'<br/>'.$youtubeCode;
+                        $title = $dataYT->title;
+                    }
+                } 
+
+                $checkSite = $this->CheckSiteLotto();
+                if (in_array(@$getContent->fromsite, $checkSite)) {
+                    if(strlen (strip_tags($getContent->conent))<250) {
+                        $bodytext = $this->generateText();
+                    } else {
+                        $bodytext = $getContent->conent;
+                    }
+                    $conent = $bodytext.'<br/>'.$youtubeCode;
+                }
+
                 /*update link status*/
                 $data_blog = array(
                     'meta_key'      => date('Y-m-d'),
@@ -8296,10 +8235,101 @@ die;
                     'meta_name'     => $log_id . 'sitelink',
                 );
                 $lastID = $this->Mod_general->insert('meta', $data_blog);
-               return $AddToPost;
             }
-        } else {
+        }
+        if(empty($conent)) {
             return false;
+            exit();
+        }
+
+        /*preparepost*/
+        $tmp_path = './uploads/'.$log_id.'/'. $fbUserId . '_tmp_action.json';
+        $string = file_get_contents($tmp_path);
+        $json_a = json_decode($string);
+        $schedule = array (                    
+            'start_date' => $json_a->start_date,
+            'start_time' => $json_a->start_time,
+            'end_date' => $json_a->end_date,
+            'end_time' => $json_a->end_time,
+            'loop' => $json_a->loop,
+            'loop_every' => $json_a->loop_every,
+            'loop_on' => $json_a->loop_on,
+            'wait_group' => $json_a->wait_group,
+            'wait_post' => $json_a->wait_post,
+            'randomGroup' => $json_a->randomGroup,
+            'prefix_title' => $json_a->prefix_title,
+            'suffix_title' => $json_a->suffix_title,
+            'short_link' => $json_a->short_link,
+            'check_image' => $json_a->check_image,
+            'imgcolor' => $json_a->imgcolor,
+            'btnplayer' => $json_a->btnplayer,
+            'playerstyle' => $json_a->playerstyle,
+            'random_link' => $json_a->random_link,
+            'share_type' => $json_a->share_type,
+            'share_schedule' => $json_a->share_schedule,
+            'account_group_type' => $json_a->account_group_type,
+            'txtadd' => $json_a->txtadd,
+            'blogid' => $json_a->blogid,
+            'blogLink' => $json_a->blogLink,
+            'main_post_style' => 'tnews',
+            'userAgent' => $json_a->userAgent,
+            'checkImage' => $json_a->checkImage,
+            'ptype' => $json_a->ptype,
+            'img_rotate' => $json_a->img_rotate,
+            'filter_contrast' => $json_a->filter_contrast,
+            'filter_brightness' => $json_a->filter_brightness,
+            'post_by_manaul' => $json_a->post_by_manaul,
+            'foldlink' => $json_a->foldlink,
+            'gemail' => $json_a->gemail,
+            'label' => 'news',
+            'post_date'      => date('Y-m-d H:i:s'),
+            'pprogress' => $json_a->pprogress,
+            'ia' => 0,
+        );
+
+        /*save tmp data post*/
+        $target_dir = './uploads/image/';
+        $tmp_path = './uploads/'.$log_id.'/';
+        $file_tmp_name = $fbUserId . '_tmp_action.json';
+        $this->json($tmp_path,$file_tmp_name, $schedule);
+        /*End save tmp data post*/
+        
+        $content = array (
+                'name' => @htmlentities(htmlspecialchars(str_replace(' - YouTube', '', $title))),
+                'message' => @htmlentities(htmlspecialchars(addslashes($conent))),
+                'caption' => '',
+                'link' => '',
+                'mainlink' => '',
+                'picture' => @$thumb,                            
+                'vid' => '',                          
+        );
+        /*End preparepost*/
+        if($post_only) {
+            $p_progress = 1;
+        } else {
+            $p_progress = 0;
+        }
+        if(!empty($settitle)) {
+            $title = $settitle;
+        } 
+        if(!empty($setthumbs)) {
+            $thumb = $this->Mod_general->upload($setthumbs);
+        }
+        $dataPostInstert = array (
+            Tbl_posts::name => @htmlentities(htmlspecialchars(str_replace(' - YouTube', '', $title))),
+            Tbl_posts::conent => json_encode($content),
+            Tbl_posts::p_date => date('Y-m-d H:i:s'),
+            Tbl_posts::schedule => json_encode($schedule),
+            Tbl_posts::user => $sid,
+            'user_id' => $log_id,
+            Tbl_posts::post_to => 0,
+            'p_status' => 1,
+            'p_progress' => $p_progress,
+            Tbl_posts::type => 'Facebook' 
+        );
+        $AddToPost = $this->Mod_general->insert ( Tbl_posts::tblName, $dataPostInstert );
+        if($AddToPost) {
+           return $AddToPost;
         } 
     }
     public function CheckSiteLotto()
