@@ -2360,6 +2360,8 @@ $link =  $desc->find('a', 0)->href;
                 $content = preg_replace('/<ins\b[^>]*>(.*?)<\/ins>/is', '<div class="setAds"></div>', $content);
                 $content = preg_replace("/<a(.*?)>/", "<a$1 target=\"_blank\">", $content);
                 $content = preg_replace( '/(<[^>]+) srcset=".*?"/i', "$1", $content );
+                $content = preg_replace( '/(<[^>]+) src=".*?"/i', "", $content );
+                $content = preg_replace( '/(<[^>]+) data-srcset=".*?"/i', "$1", $content );
                 $content = preg_replace( '/(<[^>]+) data-lazy-srcset=".*?"/i', "$1", $content );
                 $content = preg_replace( '/(<[^>]+) data-lazy-sizes=".*?"/i', "$1", $content );
                 $content = preg_replace( '/(<[^>]+) data-lazy-src=".*?"/i', "$1", $content );
@@ -2370,7 +2372,20 @@ $link =  $desc->find('a', 0)->href;
                 $content = preg_replace( '/(<[^>]+) data-image-description class=".*?"/i', "$1", $content );
                 $content = preg_replace( '/(<[^>]+) data-orig-file=".*?"/i', "$1", $content );
                 $content = preg_replace( '/(<[^>]+) data-permalink=".*?"/i', "$1", $content );
+                $content = preg_replace( '/(<[^>]+) data-src=".*?"/i', "src=\"$1\"", $content );
                 $content = str_replace('--Advertisement--', '', $content);
+
+                $regex = '/< *img[^>]*data-src=*["\']?([^"\']*)/';
+                preg_match_all( $regex, $content, $matches );
+                $ImgSrc = array_pop($matches);
+                // reversing the matches array
+                if(!empty($ImgSrc)) {
+                    foreach ($ImgSrc as $image) {
+                        var_dump($image);die;
+                        //$content = str_replace($image,$gimage,$content);
+                    }
+                }
+
                 $obj->vid = '';
                 $obj->conent = $content;
                 $obj->fromsite = $parse['host'];
@@ -2646,7 +2661,7 @@ $link =  $desc->find('a', 0)->href;
                 $content = preg_replace('/<ins\b[^>]*>(.*?)<\/ins>/is', '<div class="setAds"></div>', $content);
                 $content = preg_replace("/<a(.*?)>/", "<a$1 target=\"_blank\">", $content);
                 $content = preg_replace( '/(<[^>]+) srcset=".*?"/i', "$1", $content );
-                $content = preg_replace( '/(<[^>]+) data-lazy-srcset=".*?"/i', "$1", $content );
+                $content = preg_replace( '/(<[^>]+) data-lazy-srcset=".*?"/i', "", $content );
                 $content = preg_replace( '/(<[^>]+) data-lazy-sizes=".*?"/i', "$1", $content );
                 $content = preg_replace( '/(<[^>]+) data-lazy-src=".*?"/i', "$1", $content );
                 $content = preg_replace( '/(<[^>]+) data-recalc-dims=".*?"/i', "$1", $content );
@@ -2657,7 +2672,7 @@ $link =  $desc->find('a', 0)->href;
                 $content = preg_replace( '/(<[^>]+) data-orig-file=".*?"/i', "$1", $content );
                 $content = preg_replace( '/(<[^>]+) data-permalink=".*?"/i', "$1", $content );
                 $content = str_replace('--Advertisement--', '', $content);
-                $content = str_replace('"alt="', '" alt="', $content);
+                $content = str_replace('"alt="', '" alt="', $content);                
                 $content = $content . @$html->find ( '.content-img-all .content-img-gall', 0 )->innertext;
                 $obj->vid = '';
                 $obj->conent = $content;
@@ -2861,7 +2876,12 @@ $link =  $desc->find('a', 0)->href;
         $content = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $content);
         $content = preg_replace('/<ins\b[^>]*>(.*?)<\/ins>/is', '<div class="setAds"></div>', $content);
         $content = preg_replace("/<a(.*?)>/", "<a$1 target=\"_blank\">", $content);
+        $content = preg_replace('#<a.*?>(.*?)</a>#i', '\1', $content);
         $content = preg_replace( '/(<[^>]+) srcset=".*?"/i', "$1", $content );
+        $content = preg_replace( '/(<[^>]+) data-src=".*?"/i', "$1", $content );
+        $content = preg_replace( '/(<[^>]+) data-srcset=".*?"/i', "$1", $content );
+        $content = preg_replace( '/(<[^>]+) data-sizes=".*?"/i', "$1", $content );
+        $content = preg_replace( '/(<[^>]+) data-pagespeed-url-hash=".*?"/i', "$1", $content );
         $content = preg_replace( '/(<[^>]+) data-lazy-srcset=".*?"/i', "$1", $content );
         $content = preg_replace( '/(<[^>]+) data-lazy-sizes=".*?"/i', "$1", $content );
         $content = preg_replace( '/(<[^>]+) data-lazy-src=".*?"/i', "$1", $content );
@@ -2874,6 +2894,11 @@ $link =  $desc->find('a', 0)->href;
         $content = preg_replace( '/(<[^>]+) data-permalink=".*?"/i', "$1", $content );
         $content = str_replace('--Advertisement--', '', $content);
         $content = str_replace("facebook.com/groups/websiamplaza", "facebook.com/groups/2114780255405136", $content);
+        foreach($html->find('img') as $iitem) {
+            $src = $iitem->src;
+            $datasrc =  $iitem->attr['data-src']; 
+            $content = str_replace($src,$datasrc,$content);
+        }
         return $content;
     }
     public function BloggerYtInside($url='')
