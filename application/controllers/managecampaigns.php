@@ -8164,7 +8164,6 @@ die;
         $gemail = $this->session->userdata ('gemail');
         $fbUserId = $this->session->userdata('fb_user_id');
         $sid = $this->session->userdata ( 'sid' );
-        $getContent = $this->get_from_url($url);
         $post_only = $this->session->userdata ( 'post_only' );
         preg_match("/^(?:http(?:s)?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:(?:watch)?\?(?:.*&)?v(?:i)?=|(?:embed|v|vi|user)\/))([^\?&\"'>]+)/", $url, $matches);
         if (!empty($matches[1])) {
@@ -8210,7 +8209,7 @@ die;
                     if (!empty($matches[1])) {
                         $youtubeCode = '[embedyt] https://www.youtube.com/watch?v='.$matches[1].'[/embedyt]';
                         $dataYT = $this->getContentfromYoutube('https://www.youtube.com/watch?v='.$matches[1]);
-                        
+                        var_dump($dataYT);
                         $thumb = $this->Mod_general->upload($dataYT->thumb);
                         $conent = $getContent->conent.'<br/>'.$youtubeCode;
                         $title = $dataYT->title;
@@ -8226,7 +8225,6 @@ die;
                     }
                     $conent = $bodytext.'<br/>'.$youtubeCode;
                 }
-
                 /*update link status*/
                 $data_blog = array(
                     'meta_key'      => date('Y-m-d'),

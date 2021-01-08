@@ -2755,6 +2755,7 @@ $link =  $desc->find('a', 0)->href;
                         $obj->thumb = $html->find('.post-thumbnail img',0)->src;
                     }
                 }
+
                 $obj->vid = '';
                 $obj->conent = $content;
                 $obj->fromsite = $parse['host'];

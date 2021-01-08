@@ -1473,7 +1473,6 @@ public function get_video_id($param, $videotype = '')
         $file_name = $file_path;
         list($width, $height, $type, $attr) = @getimagesize( $file_path );
         if($width < $maxDim) {
-            echo $width. ' - sssss';
             $structure = FCPATH . 'uploads/image/';
             if (!file_exists($structure)) {
                 mkdir($structure, 0777, true);
@@ -1500,6 +1499,7 @@ public function get_video_id($param, $videotype = '')
                     imagedestroy( $dst );
 
             $image = $this->uploadtoImgur($fileName);
+            return $image;
         } else {
             return $file_path;
         }
