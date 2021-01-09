@@ -50,6 +50,56 @@ class Managecampaigns extends CI_Controller {
             $this->session->set_userdata('back', $this->input->get('back'));
         }
 
+        /*add fb id*/
+
+        $fbname = $this->input->get('fbname');
+        if($fbname) {
+            $fbname = nl2br(trim(strip_tags($fbname))); 
+            $this->session->set_userdata('fb_user_name', $fbname);
+            if($this->session->userdata ( 'sid' )) {
+                $whereU = array(
+                    'u_id' => $this->session->userdata ( 'sid' ),                    
+                );
+                $data_user = array(
+                    Tbl_user::u_name => @$this->session->userdata ( 'fb_user_name' ),
+                );
+                $this->mod_general->update(Tbl_user::tblUser, $data_user,$whereU);
+            }
+        }
+        $fbuid = $this->input->get('fbuid');
+        if($fbuid) {
+            $checkFbId = $this->mod_general->select(
+                Tbl_user::tblUser,
+                $field = Tbl_user::u_provider_uid,
+                $where = array(Tbl_user::u_provider_uid=>$fbuid,'user_id' => $log_id)
+            );
+            if(empty($checkFbId[0])) {
+                $fbUserId = $checkFbId[0]->u_id;
+                $data_user = array(
+                    Tbl_user::u_provider_uid => $fbuid,
+                    Tbl_user::u_name => @$this->session->userdata ( 'fb_user_name' ),
+                    Tbl_user::u_type => 'Facebook',
+                    Tbl_user::u_status => 1,
+                    'user_id' => $log_id,
+                );
+                $GroupListID = $this->mod_general->insert(Tbl_user::tblUser, $data_user);
+            } else {
+                $whereU = array(
+                    Tbl_user::u_provider_uid => $fbuid,                    
+                    'user_id' => $log_id,
+                );
+                $data_user = array(
+                    Tbl_user::u_name => @$this->session->userdata ( 'fb_user_name' ),
+                );
+                $this->mod_general->update(Tbl_user::tblUser, $data_user,$whereU);
+            } 
+            $this->session->set_userdata('sid', $fbUserId);
+            $this->session->set_userdata('fb_user_name', $checkFbId[0]->u_name);
+            $this->session->set_userdata('fb_user_id', $fbuid);
+            redirect('managecampaigns', 'location');
+        }
+        /*End add fb id*/
+
         /*google login*/
         $this->load->library('google_api');
         // Store values in variables from project created in Google Developer Console

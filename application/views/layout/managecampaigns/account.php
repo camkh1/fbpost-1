@@ -19,6 +19,37 @@
                     </div>
                 </div>
                 <div class="widget-content">
+                    <?php if(!empty($this->session->userdata ('fb_user_id'))):?>
+                    <div class="visual blue" style="float: left; margin-right: 20px">
+                        <img src="https://graph.facebook.com/<?php echo $this->session->userdata ( 'fb_user_id' );?>/picture" style="width: 60px" />
+                        <?php if(empty($this->session->userdata ( 'fb_user_name' ))):?>
+                            <form method="post" class="form-horizontal row-border">
+                                <input type="text" name="fb_user_name" class="form-control" placeholder="ឈ្មោះ / Name">
+                            </form>
+                        <?php endif;?>
+                        <br/><div style="width: 60px;overflow: hidden;height: 15px"><?php echo !empty($this->session->userdata ( 'fb_user_name' )) ? $this->session->userdata ( 'fb_user_name' ) : ''; ?></div>
+                    </div>
+                    <?php else:?>
+                        <div class="statbox widget box box-shadow"> 
+                            <div class="widget-content">
+                                <form method="get" class="form-horizontal row-border">
+                                    <div class="form-group"> 
+                                        <label class="col-md-2 control-label">FB ID:</label> 
+                                        <div class="col-md-10">
+                                            <input type="text" name="fbuid" class="form-control" placeholder="FB ID">
+                                        </div> 
+                                    </div>
+                                    <div class="form-group"> 
+                                        <label class="col-md-2 control-label">fb_user_name:</label> 
+                                        <div class="col-md-10">
+                                            <input type="text" name="fbname" class="form-control" placeholder="ឈ្មោះ / Name">
+                                        </div> 
+                                    </div>
+                                    <button type="submit" class="btn btn-primary pull-right">OK</button>
+                                </form>
+                            </div> 
+                        </div>
+                    <?php endif;?>
                     <!-- login to google -->
                     <?php if (isset($authUrl)){ ?>
                     <header id="sign_in">
