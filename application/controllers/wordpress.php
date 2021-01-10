@@ -61,7 +61,8 @@ class Wordpress extends CI_Controller
             // $pOption = json_decode($getPost[0]->p_schedule);
             // var_dump($pConent);
         }
-        if(!empty($data['link'])) {
+
+        if(!empty($data['link']) && strlen($data['link'])>20) {
             /*update post*/
             $pConent = json_decode($getPost[0]->p_conent);
             if(!empty($link) && !preg_match('/youtu/', $pConent->mainlink)) {
@@ -86,6 +87,9 @@ class Wordpress extends CI_Controller
                 }
             }
             /*End update post*/
+        } else {
+            echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'wordpress/autopostwp?pid='.$pid.'&action=postblog";}, 3000 );</script>';
+            exit();
         }
         $data['userrole'] = $this->Mod_general->userrole('uid');
         $this->load->view('wordpress/autopostwp', $data);
