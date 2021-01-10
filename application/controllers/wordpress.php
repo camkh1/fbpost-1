@@ -71,7 +71,7 @@ class Wordpress extends CI_Controller
                     'name' => $pConent->name,
                     'message' => $pConent->message,
                     'caption' => $pConent->caption,
-                    'link' => $link,
+                    'link' => @str_replace('?preview=true', '', $link),
                     'mainlink' => $pConent->mainlink,
                     'picture' => $pConent->picture,                            
                     'vid' => $pConent->vid,                            
