@@ -87,7 +87,7 @@ class Wordpress extends CI_Controller
                 }
             }
             /*End update post*/
-        } else {
+        } else if(!empty($data['link']) && strlen($data['link'])<20) {
             echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'wordpress/autopostwp?pid='.$pid.'&action=postblog";}, 3000 );</script>';
             exit();
         }
