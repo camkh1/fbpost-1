@@ -160,6 +160,51 @@ if(!empty($post)) {
             </div>
         </div>
 
+
+        <div class="col-md-12">
+            <div class="widget box">
+                <div class="widget-header">
+                    <h4>
+                        <i class="icon-reorder">
+                        </i>
+                        Add New Post
+                    </h4>     
+                    <div class="toolbar no-padding">
+                        <div class="btn-group"> 
+                            <span class="btn btn-xs widget-collapse"><i class="icon-angle-down"></i></span> </div>
+                    </div>
+                </div>
+                <div class="widget-content">
+                    <div class="col-md-3">
+                        <ul class="list-group">
+                            <li class="list-group-item no-padding"> 
+                                <a href="https://web.facebook.com/thainews/" class="list-group-item" target="_blank">Thainews 01</a>
+                                <a href="https://web.facebook.com/KhaoYouLike/" class="list-group-item" target="_blank">Thainews 02</a>
+                                <a href="https://web.facebook.com/khaosod/" class="list-group-item" target="_blank">Khaosod</a>
+                                <a href="https://web.facebook.com/AMARINTVHD" class="list-group-item" target="_blank">AMARINTVHD</a>
+                                <a href="https://web.facebook.com/siamnews/" class="list-group-item" target="_blank">Siamnews</a>
+                                <a href="https://web.facebook.com/teeneedotcom" class="list-group-item" target="_blank">Teenee</a>
+                                <a href="https://web.facebook.com/linetodayth/" class="list-group-item" target="_blank">Linetoday</a>
+                                <a href="https://web.facebook.com/onenews31/" class="list-group-item" target="_blank">Onenews31</a>
+                                <a href="https://web.facebook.com/SanookEveryday/" class="list-group-item" target="_blank">Sanook</a>
+                                <a href="https://web.facebook.com/SanookEveryday/" class="list-group-item" target="_blank">Sanook</a>
+                                <a href="https://web.facebook.com/share2877/" class="list-group-item" target="_blank">share2877</a>
+                                <a href="https://web.facebook.com/TnewsTV/" class="list-group-item" target="_blank">TnewsTV</a>
+                                <a href="https://web.facebook.com/jarm/" class="list-group-item" target="_blank">Jarm</a>
+                                <a href="https://web.facebook.com/fna69" class="list-group-item" target="_blank">fna69</a>
+                                <a href="http://tdaily.us/" class="list-group-item" target="_blank">tdaily</a>
+                                <a href="http://www.khreality.com/" class="list-group-item" target="_blank">Khreality</a>
+                                
+                            </li> 
+                        </ul>
+                    </div>
+                    <div class="col-md-3"></div>
+                    <div class="col-md-3"></div>
+                    <div class="col-md-3"></div>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+        </div>
     </div>
 
     </div>

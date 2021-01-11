@@ -593,10 +593,9 @@ $link =  $desc->find('a', 0)->href;
         $parse = parse_url($url);
         //echo $parse['host'];
         $checkSite = $html->find('#main #Blog1 .post');
-        $wpsite = $html->find('.entry-content');
         if(count($checkSite)==1) {
             $setHost = 'blogspot';
-        } else if(count($wpsite)==1 && preg_match ( '/wp-content/', $html )){
+        } else if(preg_match ( '/wp-includes/', $html ) && preg_match ( '/wp-content/', $html )){
             $setHost = 'wp';
         } else {
             $setHost = $parse['host'];
@@ -2764,7 +2763,27 @@ $link =  $desc->find('a', 0)->href;
                 return $obj;
                 break;
             case 'wp':
-                $content = $this->gEntry($html,'.entry-content');                
+                foreach(@$html->find('.td-default-sharing') as $item) {
+                    $item->outertext = '';
+                }
+                foreach(@$html->find('.ud-line-friend') as $item) {
+                    $item->outertext = '';
+                }
+                foreach(@$html->find('.td_block_related_posts') as $item) {
+                    $item->outertext = '';
+                }
+                foreach(@$html->find('footer') as $item) {
+                    $item->outertext = '';
+                }
+                $html->save();
+
+                $content = $this->gEntry($html,'.entry-content');
+                if(empty($content)) {
+                    $content = $this->gEntry($html,'.td-post-content');
+                }
+                if(empty($content)) {
+                    $content = $this->gEntry($html,'.post');
+                }               
                 if(empty($obj->thumb)) {
                     $obj->thumb = $this->get_the_image($content);
                     if(empty($obj->thumb)) {
@@ -2772,6 +2791,7 @@ $link =  $desc->find('a', 0)->href;
                     }
                 }
 
+echo $content;die;
                 $obj->vid = '';
                 $obj->conent = $content;
                 $obj->fromsite = $parse['host'];
@@ -2782,6 +2802,15 @@ $link =  $desc->find('a', 0)->href;
                 //$obj->title = @$html->find ( '.post .entry-title', 0 )->plaintext;
                 //$obj->thumb = @$html->find ( '.content-img-all .img-hi-news img', 0 )->src;
                 foreach($html->find('.sharedaddy') as $item) {
+                    $item->outertext = '';
+                }
+                foreach(@$html->find('.td-default-sharing') as $item) {
+                    $item->outertext = '';
+                }
+                foreach(@$html->find('.ud-line-friend') as $item) {
+                    $item->outertext = '';
+                }
+                foreach(@$html->find('.td_block_related_posts') as $item) {
                     $item->outertext = '';
                 }
                 $html->save();

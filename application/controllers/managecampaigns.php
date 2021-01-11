@@ -7498,6 +7498,8 @@ public function imgtest()
                     'ajhapu0kye03',
                     'imiuvz3jmk',
                     '7apyjaacup',
+                    '7l9f5or36e',
+                    'zxdd0m2tfl',
                 );
                 $k = array_rand($amoungArr);
                 $amoung = $this->amung($amoungArr[$k],1,true);
