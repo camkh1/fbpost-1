@@ -2791,7 +2791,6 @@ $link =  $desc->find('a', 0)->href;
                     }
                 }
 
-echo $content;die;
                 $obj->vid = '';
                 $obj->conent = $content;
                 $obj->fromsite = $parse['host'];
