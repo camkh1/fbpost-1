@@ -6176,6 +6176,8 @@ public function imgtest()
             $titleExcept = $this->input->post('titleExcept');
             $bloggerTemplate = $this->input->post('bloggerTemplate');
             $lotteryBlog = $this->input->post('lotteryBlog');
+            $sitetopost = $this->input->post('sitetopost');
+            $sitetopost = explode(',', $sitetopost);
             $newsBlog = $this->input->post('newsBlog');
             $posttype = $this->input->post('posttype');
             $fbUserId = $this->session->userdata ( 'sid' );
@@ -6191,6 +6193,7 @@ public function imgtest()
                 'titleExcept' => $titleExcept,
                 'posttype' => $posttype,
                 'blog_to_post' => array('lottery'=>$lotteryBlog,'news'=>$newsBlog),
+                'site_to_post' => $sitetopost,
             );
             /* check before insert */
             if (empty($query_ran)) {
@@ -6731,8 +6734,16 @@ public function imgtest()
         switch ($action) {
             case 'getpost':
                 $getfbuid = $this->input->get('uid');
+                $fb_name = $this->input->get('fb_name');
+                $fb_image = $this->input->get('fimg');
                 if($this->session->userdata ( 'uid' )) {
                     $getfbuid = $this->session->userdata ( 'uid' );
+                }
+                if($fb_name) {
+                    $this->session->set_userdata('fb_user_name', $fb_name);
+                }
+                if($fb_image) {
+                    $this->session->set_userdata('fb_image', $fb_image);
                 }
 
                 if(!empty($getfbuid)) {
@@ -6746,7 +6757,9 @@ public function imgtest()
                     if(!empty($dataFbAccount[0])) {
                         $fbUserId = $dataFbAccount[0]->u_id;
                         $this->session->set_userdata('sid', $fbUserId);
-                        $this->session->set_userdata('fb_user_name', $dataFbAccount[0]->u_name);
+                        if(!$this->session->userdata ( 'fb_user_name' )) {
+                            $this->session->set_userdata('fb_user_name', $dataFbAccount[0]->u_name);
+                        }
                     } else {
                         $fbUserId = $checkFbId[0]->u_id;
                         $data_user = array(

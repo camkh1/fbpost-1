@@ -23,9 +23,11 @@ $contents = '';
 $titles = '';
 $thumb = '';
 $pid = '';
-$sitePpost = array('https://www.jc24news.com/','https://news17times.com/');
+
+$sitePpost = $autopost->site_to_post;
 $k = array_rand($sitePpost);
 $blogRand = $sitePpost[$k];
+
 //$labels = [];
 if(!empty($post)) {
     $pConent = json_decode($post[0]->p_conent);

@@ -91,6 +91,16 @@ class Wordpress extends CI_Controller
             echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'wordpress/autopostwp?pid='.$pid.'&action=postblog";}, 3000 );</script>';
             exit();
         }
+        /*AutoPost*/
+        $whereShowAuto = array(
+            'c_name'      => 'autopost',
+            'c_key'     => $log_id,
+        );
+        $autoData = $this->Mod_general->select('au_config', '*', $whereShowAuto);
+        if(!empty($autoData[0])) {
+            $data['autopost'] = json_decode($autoData[0]->c_value);
+        } 
+        /*End AutoPost*/
         $data['userrole'] = $this->Mod_general->userrole('uid');
         $this->load->view('wordpress/autopostwp', $data);
     }
