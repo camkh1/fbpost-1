@@ -2785,12 +2785,15 @@ $link =  $desc->find('a', 0)->href;
                     $content = $this->gEntry($html,'.post');
                 }               
                 if(empty($obj->thumb)) {
-                    $obj->thumb = $this->get_the_image($content);
+                    $obj->thumb = @$html->find('.wp-post-image',0)->src;
                     if(empty($obj->thumb)) {
-                        $obj->thumb = $html->find('.post-thumbnail img',0)->src;
+                        $obj->thumb = @$html->find('.post-thumbnail img',0)->src;
+                    }
+                    if(empty($obj->thumb)) {
+                        $obj->thumb = @$this->get_the_image($content)['url'];
+                        
                     }
                 }
-
                 $obj->vid = '';
                 $obj->conent = $content;
                 $obj->fromsite = $parse['host'];
