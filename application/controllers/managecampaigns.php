@@ -7471,10 +7471,10 @@ public function imgtest()
                     /*End check post progress frist*/ 
 
                     $RanChoose = array(
-                        //'site',
+                        'site',
                         //'yt',
-                        'amung',
-                        'amung',
+                        //'amung',
+                        //'amung',
                     );
                     $l = array_rand($RanChoose);
                     $getChoose = $RanChoose[$l];
@@ -8274,7 +8274,6 @@ die;
                     if (!empty($matches[1])) {
                         $youtubeCode = '[embedyt] https://www.youtube.com/watch?v='.$matches[1].'[/embedyt]';
                         $dataYT = $this->getContentfromYoutube('https://www.youtube.com/watch?v='.$matches[1]);
-                        var_dump($dataYT);
                         $thumb = $this->Mod_general->upload($dataYT->thumb);
                         $conent = $getContent->conent.'<br/>'.$youtubeCode;
                         $title = $dataYT->title;
@@ -8393,7 +8392,7 @@ die;
         $AddToPost = $this->Mod_general->insert ( Tbl_posts::tblName, $dataPostInstert );
         if($AddToPost) {
            return $AddToPost;
-        } 
+        }
     }
     public function CheckSiteLotto()
     {
