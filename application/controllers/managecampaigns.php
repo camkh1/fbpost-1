@@ -1885,7 +1885,18 @@ class Managecampaigns extends CI_Controller {
                                             exit();
                         }
                         $post_by_manaul = $pOption->post_by_manaul;
+
+
+
                         if(!empty($image)) {
+                            /*post to wordpress*/
+                                            
+                        if(!empty($this->session->userdata('pia'))) {
+                            echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'wordpress/autopostwp?pid='.$pid.'&action=postblog";}, 1000 );</script>';
+                            exit();
+                        }
+                        /*End post to wordpress*/
+
                             /*update post*/
                             $whereUp = array('p_id' => $pid);
                             $content = array (
@@ -1960,12 +1971,7 @@ class Managecampaigns extends CI_Controller {
 
 // var_dump($message);
 // var_dump($gLabels);
-                                            /*post to wordpress*/
-                                            if(empty($this->session->userdata('pia'))) {
-                                                echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'wordpress/autopostwp?pid='.$pid.'&action=postblog";}, 3000 );</script>';
-                                                exit();
-                                            }
-                                            /*End post to wordpress*/
+
 
                                             /*check login first*/
                                             if(!empty($this->session->userdata('access_token'))) {
@@ -3222,14 +3228,14 @@ class Managecampaigns extends CI_Controller {
                 if(empty($ChHiPost)) {
                     $pConent = json_decode($gvalue->p_conent);
                     if(empty($pConent->link)) {
-                        $id = $getPost[0]->p_id;
-                        $this->Mod_general->delete ( Tbl_posts::tblName, array (
-                        Tbl_posts::id => $id 
-                        ) );
-                        @$this->Mod_general->delete ( 'meta', array (
-                                'object_id' => $id, 
-                                'meta_name' => 'post_progress', 
-                        ) );                        
+                        // $id = $getPost[0]->p_id;
+                        // $this->Mod_general->delete ( Tbl_posts::tblName, array (
+                        // Tbl_posts::id => $id 
+                        // ) );
+                        // @$this->Mod_general->delete ( 'meta', array (
+                        //         'object_id' => $id, 
+                        //         'meta_name' => 'post_progress', 
+                        // ) );                        
                     }
                     $parse = parse_url($pConent->link);
                     if (!in_array($parse['host'], $siteUrl)) {
@@ -6862,6 +6868,7 @@ public function imgtest()
                             ) );
                             @$this->Mod_general->delete ( 'post', array (
                                 'p_id' => $pid,
+                                'u_id' => $sid,
                             ) );
                         }
                         /*End Clean post if no link*/
@@ -7386,7 +7393,7 @@ public function imgtest()
                         'https://www.siamstreet.com/',
                         'https://www.dailyliveexpress.com/',
                         'https://www.mumkhao.com/',
-                        'https://www.xn--42c2dgos8bxc2dtcg.com/',
+                        //'https://www.xn--42c2dgos8bxc2dtcg.com/',
                         'https://board.postjung.com/',
                         'http://huaythai.me/',
                         'https://www.susee.supipernews.com/',
@@ -8360,8 +8367,8 @@ die;
                 'name' => @htmlentities(htmlspecialchars(str_replace(' - YouTube', '', $title))),
                 'message' => @htmlentities(htmlspecialchars(addslashes($conent))),
                 'caption' => '',
-                'link' => '',
-                'mainlink' => '',
+                'link' => $url,
+                'mainlink' => $url,
                 'picture' => @$thumb,                            
                 'vid' => '',                          
         );
@@ -8386,7 +8393,7 @@ die;
             'user_id' => $log_id,
             Tbl_posts::post_to => 0,
             'p_status' => 1,
-            'p_progress' => 1,
+            'p_post_to' => 1,
             Tbl_posts::type => 'Facebook' 
         );
         $AddToPost = $this->Mod_general->insert ( Tbl_posts::tblName, $dataPostInstert );

@@ -61,23 +61,25 @@ class Wordpress extends CI_Controller
             // $pOption = json_decode($getPost[0]->p_schedule);
             // var_dump($pConent);
         }
-        if(!empty($data['link']) && strlen($data['link'])>20) {
+        if(!empty($getPost[0]) && strlen($link)>20) {
             /*update post*/
             $pConent = json_decode($getPost[0]->p_conent);
             if(!empty($link)) {
                 $whereUp = array('p_id' => $pid);
+                $links = @str_replace('?preview=true', '', $link);
                 $content = array (
                     'name' => $pConent->name,
                     'message' => $pConent->message,
                     'caption' => $pConent->caption,
-                    'link' => @str_replace('?preview=true', '', $link),
-                    'mainlink' => $pConent->mainlink,
+                    'link' => $links,
+                    'mainlink' => $links,
                     'picture' => $pConent->picture,                            
                     'vid' => $pConent->vid,                            
                 );
                 $dataPostInstert = array (
                     Tbl_posts::conent => json_encode ( $content ),
                     'p_post_to' => 0,
+                    'p_progress' => 1,
                 );
                 $updates = $this->Mod_general->update( Tbl_posts::tblName,$dataPostInstert, $whereUp);
                 if($updates) {
@@ -118,6 +120,7 @@ class Wordpress extends CI_Controller
         $this->load->theme ( 'layout' );
         $data ['title'] = 'Post to Wordpress by Manual';
         if ($this->input->post ( 'link' )) {
+            $this->session->set_userdata('pia', 1);
             $link = $this->input->post ( 'link' );
             $title = @$this->input->post ( 'title' );
             $thumb = @$this->input->post ( 'thumb' );
