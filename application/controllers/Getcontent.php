@@ -54,7 +54,7 @@ class Getcontent extends CI_Controller
         
         $obj = new stdClass();
         $parse = parse_url($url);
-        //echo $parse['host'];
+        $parse['host'];
 
 
         switch ($parse['host']) {
