@@ -7395,7 +7395,7 @@ public function imgtest()
                         'https://www.mumkhao.com/',
                         //'https://www.xn--42c2dgos8bxc2dtcg.com/',
                         'https://board.postjung.com/',
-                        'http://huaythai.me/',
+                        //'http://huaythai.me/',
                         'https://www.susee.supipernews.com/',
                         //'http://www.huayhot.com/',
                         'www.susee.supipernews.com/',
@@ -7480,8 +7480,8 @@ public function imgtest()
                     $RanChoose = array(
                         'site',
                         //'yt',
-                        //'amung',
-                        //'amung',
+                        'amung',
+                        'amung',
                     );
                     $l = array_rand($RanChoose);
                     $getChoose = $RanChoose[$l];
