@@ -1889,13 +1889,12 @@ class Managecampaigns extends CI_Controller {
 
 
                         if(!empty($image)) {
-                            /*post to wordpress*/
-                                            
-                        if(!empty($this->session->userdata('pia'))) {
-                            echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'wordpress/autopostwp?pid='.$pid.'&action=postblog";}, 1000 );</script>';
-                            exit();
-                        }
-                        /*End post to wordpress*/
+                            /*post to wordpress*/              
+                            if(!empty($this->session->userdata('pia'))) {
+                                echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'wordpress/autopostwp?pid='.$pid.'&action=postblog";}, 1000 );</script>';
+                                exit();
+                            }
+                            /*End post to wordpress*/
 
                             /*update post*/
                             $whereUp = array('p_id' => $pid);
