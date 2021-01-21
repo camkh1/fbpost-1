@@ -1881,7 +1881,7 @@ class Managecampaigns extends CI_Controller {
                             $image = $picture;
                         }
 
-                        if (preg_match('/ytimg.com/', $image) && !preg_match('/maxresdefault/', $image)) {
+                        if (empty($this->session->userdata('pia')) && preg_match('/ytimg.com/', $image) && !preg_match('/maxresdefault/', $image)) {
                             echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'facebook/shareation?post=getpost";}, 600 );</script>'; 
                                             exit();
                         }
@@ -1889,13 +1889,6 @@ class Managecampaigns extends CI_Controller {
 
 
                         if(!empty($image)) {
-                            /*post to wordpress*/              
-                            if(!empty($this->session->userdata('pia'))) {
-                                echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'wordpress/autopostwp?pid='.$pid.'&action=postblog";}, 1000 );</script>';
-                                exit();
-                            }
-                            /*End post to wordpress*/
-
                             /*update post*/
                             $whereUp = array('p_id' => $pid);
                             $content = array (
@@ -1913,6 +1906,12 @@ class Managecampaigns extends CI_Controller {
                             );
                             $updatesImg = $this->Mod_general->update( Tbl_posts::tblName,$dataPostInstert, $whereUp);
                             /*End update post*/
+                            /*post to wordpress*/              
+                            if(!empty($this->session->userdata('pia'))) {
+                                echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'wordpress/autopostwp?pid='.$pid.'&action=postblog";}, 1000 );</script>';
+                                exit();
+                            }
+                            /*End post to wordpress*/
                             sleep(3);
                             if($updatesImg) {
                                 if(empty($pOption->post_by_manaul)) {
