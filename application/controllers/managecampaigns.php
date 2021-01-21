@@ -1815,7 +1815,7 @@ class Managecampaigns extends CI_Controller {
                             } 
                         }
 
-                        if (preg_match("/http/", $imgUrl) && preg_match('/ytimg.com/', $imgUrl)) {
+                        if (preg_match('/ytimg.com/', $imgUrl)) {
                             @copy($imgUrl, $fileName);
 
                             /*upload image to blog*/
@@ -1842,6 +1842,7 @@ class Managecampaigns extends CI_Controller {
                                 'no_need_upload'=> $no_need_upload,
                             );
                             if(!empty($pOption->foldlink) && !empty($pConent->picture)) {
+                                echo 2222;
                                 $image = $pConent->picture;
                             } else {
                                 if ( ! function_exists( 'exif_imagetype' ) ) {
@@ -1880,12 +1881,11 @@ class Managecampaigns extends CI_Controller {
                             $image = $picture;
                         }
 
-                        if (preg_match("/http/", $image) && preg_match('/ytimg.com/', $image) && !preg_match('/maxresdefault/', $image)) {
+                        if (preg_match('/ytimg.com/', $image) && !preg_match('/maxresdefault/', $image)) {
                             echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'facebook/shareation?post=getpost";}, 600 );</script>'; 
                                             exit();
                         }
                         $post_by_manaul = $pOption->post_by_manaul;
-
 
 
                         if(!empty($image)) {
