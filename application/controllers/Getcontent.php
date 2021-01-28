@@ -2775,6 +2775,9 @@ $link =  $desc->find('a', 0)->href;
                 foreach(@$html->find('footer') as $item) {
                     $item->outertext = '';
                 }
+                foreach(@$html->find('.dpsp-content-wrapper') as $item) {
+                    $item->outertext = '';
+                }
                 $html->save();
 
                 $content = $this->gEntry($html,'.entry-content');
@@ -2794,6 +2797,7 @@ $link =  $desc->find('a', 0)->href;
                         
                     }
                 }
+
                 $obj->vid = '';
                 $obj->conent = $content;
                 $obj->fromsite = $parse['host'];

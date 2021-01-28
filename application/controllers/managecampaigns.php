@@ -3284,6 +3284,13 @@ class Managecampaigns extends CI_Controller {
                         'l_sid' => $sid,
                     );
                     $geGList = $this->Mod_general->select ( 'group_list', '*', $wGList );
+                    if(empty($geGList)) {
+                        $wGList = array (
+                            'l_user_id' => $log_id,
+                            'l_sid' => $sid,
+                        );
+                        $geGList = $this->Mod_general->select ( 'group_list', '*', $wGList );
+                    }
                     if(!empty($geGList[0])) {
                         $account_group_type = $geGList[0]->l_id;
                         $wGroupType = array (
@@ -6904,11 +6911,28 @@ public function imgtest()
                             '*', 
                             $where_so);
                         /*End Check share exist*/
-                        
+
+                        /*if no share but post*/
+                        if(!empty($isNoDup) && empty($dataShare[0])) {
+                            echo $pid;
+                            $this->ins_share($pid);
+                            /*Check share exist*/
+                            $where_so = array (
+                                'p_id' => $pid,
+                                'sh_status'=>0
+                            );
+                            $dataShare = $this->Mod_general->select(
+                                'share',
+                                '*', 
+                                $where_so);
+                            /*End Check share exist*/
+                        }
+                        /*End if no share but post*/
                         /*End Check link is avable time*/
+                        
                         if(!empty($dataShare[0])) {
                             /*get group id*/
-                            // $whereGruops['where_in'] = array('p_id' => $pid);
+                            // $whereGruops['where_in'] = [array]('p_id' => $pid);
                             // $gids = $this->Mod_general->select ('socail_network_group','sg_page_id', $whereGruops);
                             // if(!empty($gids[0])) {
                             //     $sharePost->group_id = $gids[0]->sg_page_id;
@@ -8219,6 +8243,109 @@ die;
                 break;
         }
         $this->load->view ( 'managecampaigns/autopostfb', $data );
+    }
+
+    public function ins_share($pid)
+    {
+        $log_id = $this->session->userdata ( 'user_id' );
+        $user = $this->session->userdata ( 'email' );
+        $provider_uid = $this->session->userdata ( 'provider_uid' );
+        $provider = $this->session->userdata ( 'provider' );
+        $gemail = $this->session->userdata ('gemail');
+        $fbUserId = $this->session->userdata('fb_user_id');
+        $sid = $this->session->userdata ( 'sid' );                   
+
+        /*if empty groups*/
+        $fbUserId = $this->session->userdata('fb_user_id');
+        $tmp_path = './uploads/'.$log_id.'/'. $fbUserId . '_tmp_action.json';
+                    
+        $string = @file_get_contents($tmp_path);
+        $json_a = @json_decode($string);
+        /*get group*/
+        $wGList = array (
+            'lname' => 'post_progress',
+            'l_user_id' => $log_id,
+            'l_sid' => $sid,
+        );
+        $geGList = $this->Mod_general->select ( 'group_list', '*', $wGList );
+        if(empty($geGList)) {
+            $wGList = array (
+                'l_user_id' => $log_id,
+                'l_sid' => $sid,
+            );
+            $geGList = $this->Mod_general->select ( 'group_list', '*', $wGList );
+        }
+        if(!empty($geGList[0])) {
+            $account_group_type = $geGList[0]->l_id;
+            $wGroupType = array (
+                'gu_grouplist_id' => $geGList[0]->l_id,
+                'gu_user_id' => $log_id,
+                'gu_status' => 1
+            );  
+        } else {
+            $account_group_type = $json_a->account_group_type;
+            $wGroupType = array (
+                'gu_grouplist_id' => $json_a->account_group_type,
+                'gu_user_id' => $log_id,
+                'gu_status' => 1
+            );
+        }
+        /*End get group*/
+
+        $tablejoin = array('socail_network_group'=>'socail_network_group.sg_id=group_user.gu_idgroups');
+        $itemGroups = $this->Mod_general->join('group_user', $tablejoin, $fields = '*', $wGroupType);
+
+        if(!empty($itemGroups)) {
+            $fbUserId = $this->session->userdata('fb_user_id');
+            $tmp_path = './uploads/'.$log_id.'/'. $fbUserId . '_tmp_action.json';
+                        
+            $string = @file_get_contents($tmp_path);
+            $json_a = @json_decode($string);
+
+            if(@$json_a->share_schedule == 1) {
+                $date = DateTime::createFromFormat('m-d-Y H:i:s',$startDate . ' ' . $startTime);
+                $cPost = $date->format('Y-m-d H:i:s');
+            } else {
+                $cPost = date('Y-m-d H:i:s');
+            }
+            $ShContent = array (
+                'userAgent' => @$json_a->userAgent,                            
+            );                    
+            foreach($itemGroups as $key => $groups) { 
+                if(!empty($groups)) {       
+                    $dataGoupInstert = array(
+                        'p_id' => $pid,
+                        'sg_page_id' => $groups->sg_id,
+                        'social_id' => @$sid,
+                        'sh_social_type' => 'Facebook',
+                        'sh_type' => @$json_a->ptype,
+                        'c_date' => $cPost,
+                        'uid' => $log_id,                                    
+                        'sh_option' => json_encode($ShContent),                                    
+                    );
+                    $AddToGroup = $this->Mod_general->insert(Tbl_share::TblName, $dataGoupInstert);
+                }
+            } 
+        }
+        /* end add data to group of post */
+        /*End if empty groups*/
+
+        /*add to history post*/
+        $whereFb = array(
+            'meta_name'      => 'post_progress',
+            'meta_key'      => $sid,
+            'meta_value'      => 1,
+            'object_id'      => $pid,
+            'date'      => date('Y-m-d H:i:s'),
+        );
+        @$this->Mod_general->insert('meta', $whereFb);
+        /*End add to history post*/
+        $checkLink = $this->mod_general->chceckLink($pid);
+        if($checkLink->needToPost) {
+            return false;
+            exit();
+        }
+        return $pid;
     }
 
     public function insertLink($url='',$settitle='',$setthumbs='')
