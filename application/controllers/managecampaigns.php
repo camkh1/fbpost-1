@@ -7500,8 +7500,9 @@ public function imgtest()
                     /*End check post progress frist*/ 
 
                     $RanChoose = array(
-                        'site',
+                        //'site',
                         //'yt',
+                        'amung',
                         'amung',
                         'amung',
                     );
@@ -7542,6 +7543,7 @@ public function imgtest()
                     '7apyjaacup',
                     '7l9f5or36e',
                     'zxdd0m2tfl',
+                    'ha38zbkro1k',
                 );
                 $k = array_rand($amoungArr);
                 $amoung = $this->amung($amoungArr[$k],1,true);
