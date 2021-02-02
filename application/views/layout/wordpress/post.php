@@ -150,6 +150,15 @@ if(!empty($post)) {
                         </div>
                     </div>
                     <div class="form-group">
+                        <label class="col-md-6 control-label"> Label</label>
+                        <div class="col-md-6">
+                            <select name="label" class="select2" style="width: 100%">                       
+                                <option value="lotto">Lotto</option>
+                                <option value="news">News</option>
+                            </select>             
+                        </div>                                   
+                    </div>
+                    <div class="form-group">
                         <div class="col-md-12 clearfix">
                             <input id="sumbmit" type="submit"class="btn pull-right" value="Post" />
                         </div>

@@ -49,13 +49,32 @@ if(!empty($post)) {
     $content = htmlentities($content);
 
     $content = str_replace('/\n/g', '<br>', $content);
-    $content = trim(preg_replace('/\s+/', '<sp>', $content));
+    $content = trim(preg_replace('/\s+/', '<sp>', $content));    
     $thumb = $pConent->picture;
+    $content = '<img src="'.$thumb.'"/>' . $content;
     $labels = @$pSchedule->label;
+    if(preg_match('/บน-ล่าง/', $post[0]->p_name) || preg_match('/เลข/', $post[0]->p_name) || preg_match('/งวด/', $post[0]->p_name) || preg_match('/หวย/', $post[0]->p_name) || preg_match('/ปลดหนี้/', $post[0]->p_name) || preg_match('/Lotto/', $post[0]->p_name) || preg_match('/Lottery/', $post[0]->p_name))  {
+        $labels = 'lotto';
+    }
     if(!empty($labels)) {
         switch ($labels) {
             case 'news':
-                $labels = '1,3';
+                if($blogRand == 'https://news17times.com/') {
+                    $labels = '1';
+                } else if($blogRand == 'https://www.jc24news.com/') {
+                    $labels = '5';
+                } else {
+                    $labels = '1';
+                }
+                break;
+            case 'lotto':
+                if($blogRand == 'https://news17times.com/') {
+                    $labels = '14';
+                } else if($blogRand == 'https://www.jc24news.com/') {
+                    $labels = '13';
+                } else {
+                    $labels = '13';
+                }
                 break;
             
             default:

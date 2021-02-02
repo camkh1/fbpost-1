@@ -124,9 +124,10 @@ class Wordpress extends CI_Controller
             $link = $this->input->post ( 'link' );
             $title = @$this->input->post ( 'title' );
             $thumb = @$this->input->post ( 'thumb' );
+            $label = @$this->input->post ( 'label' );
             require_once(APPPATH.'controllers/managecampaigns.php');
             $Managecampaigns =  new Managecampaigns();
-            $getdata = $Managecampaigns->insertLink($link,$title,$thumb);
+            $getdata = $Managecampaigns->insertLink($link,$title,$thumb,$label);
             if(!empty($getdata)) {
                 //echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=post&pid='.$getdata.'";}, 10 );</script>';
                 echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/yturl?pid='.$getdata.'&action=postblog";}, 10 );</script>';
