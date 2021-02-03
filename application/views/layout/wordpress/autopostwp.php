@@ -51,7 +51,7 @@ if(!empty($post)) {
     $content = str_replace('/\n/g', '<br>', $content);
     $content = trim(preg_replace('/\s+/', '<sp>', $content));    
     $thumb = $pConent->picture;
-    $content = '<img src="'.$thumb.'"/>' . $content;
+    $content = '<p><img src="'.$thumb.'"/></p>' . $content;
     $labels = @$pSchedule->label;
     if(preg_match('/บน-ล่าง/', $post[0]->p_name) || preg_match('/เลข/', $post[0]->p_name) || preg_match('/งวด/', $post[0]->p_name) || preg_match('/หวย/', $post[0]->p_name) || preg_match('/ปลดหนี้/', $post[0]->p_name) || preg_match('/Lotto/', $post[0]->p_name) || preg_match('/Lottery/', $post[0]->p_name))  {
         $labels = 'lotto';
