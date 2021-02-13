@@ -22,7 +22,7 @@
                     	<?php if(!empty($_GET['id'])):?>
                     	<div class="row has-success" style="margin-bottom:10px;">
                             <div class="col-md-4">
-                                <label for="imageid">ID:</label>
+                                <label for="imageid"><a href="https://facebook.com/<?php echo @$_GET['id'];?>" target="_blank"><?php echo @$_GET['t'];?> ID</a>:</label>
                             </div>
                             <div class="col-md-8">
                                 <input type="text" onclick="this.focus(); this.select()" class="form-control" value="<?php echo $_GET['id'];?>" />

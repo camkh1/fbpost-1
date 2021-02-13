@@ -252,15 +252,38 @@ class Facebook extends CI_Controller
         $this->load->theme('layout');
         $data['title'] = 'Find Facebook ID';
         if ($this->input->post('urlid')) {
-            $this->load->library('html_dom');
-            $url = 'https://findmyfbid.com/';
+            @$this->load->library('html_dom');
+            $url = $this->input->post('urlid');
+            if(preg_match('/mobile.facebook.com/', $url) ) {
+                $url = str_replace('mobile.', 'web.', $url);
+            }
+            if(preg_match('/m.facebook.com/', $url) ) {
+                $url = str_replace('m.', 'web.', $url);
+            }
+            if(preg_match('/mbasic.facebook.com/', $url) ) {
+                $url = str_replace('mbasic.', 'web.', $url);
+            }
             $data = array('url' => $this->input->post('urlid'));
-            $options = array('http' => array('header' => "User-Agent:MyAgent/1.0\r\n", 'method' => 'POST', 'content' => http_build_query($data),),);
+            $options = array('http' => array('header' => "User-Agent:MyAgent/1.0\r\n", 'method' => 'GET', 'content' => http_build_query($data),),);
             $context = stream_context_create($options);
-            $html = file_get_html($url, false, $context);
-            $html = str_replace('{"id":', '', $html);
-            $html = str_replace('}', '', $html);
-            redirect(base_url() . 'Facebook/fbid?id=' . $html);
+            $html = @file_get_html($url, false, $context);
+            $getId = @$html->find( 'meta[property=al:android:url]', 0 )->content;
+            if(preg_match('/group/', $getId)) {
+                $t = 'Proup';
+                $id = str_replace('fb://group/', '', $getId);
+            }
+            if(preg_match('/profile/', $getId)) {
+                $t = 'Profile';
+                $id = str_replace('fb://profile/', '', $getId);
+            }
+            if(preg_match('/page/', $getId)) {
+                $t = 'Page';
+                $id = str_replace('fb://page/', '', $getId);
+                $id = str_replace('?referrer=app_link', '', $id);
+            }
+            // $html = str_replace('{"id":', '', $html);
+            // $html = str_replace('}', '', $html);
+            redirect(base_url() . 'Facebook/fbid?id=' . $id. '&t='.$t);
         }
         $this->load->view('facebook/fbid', $data);
     }
@@ -370,21 +393,23 @@ class Facebook extends CI_Controller
         $user = $this->session->userdata('email');
         $data['title'] = 'Phone number generator';
         if ($this->input->post('phone')) {
+            $phone = $this->input->post('phone');
+            $ccode = $this->input->post('ccode');
             for ($i=0; $i < $this->input->post('max'); $i++) { 
-                $phone = $this->input->post('phone');
-                $ccode = $this->input->post('ccode');
+                $nphone = $phone + $i;
                 if (substr($phone, 0, 1) == '0') {
-                     $phone = substr($phone, 1);
+                    $phone = substr($phone, 1);
                 } 
-                if($i<10) {
-                    $nphone = substr($phone, 0, -1);
-                } else if($i<100) {
-                    $nphone = substr($phone, 0, -2);
-                } else if($i<1000) {
-                    $nphone = substr($phone, 0, -3);
-                }
-                $pass = '0' . $nphone . $i;
-                $number = $ccode. $nphone . $i;
+                $nphone = $phone + $i; 
+                // if($i<10) {
+                //     $nphone = substr($phone, 0, -1);
+                // } else if($i<100) {
+                //     $nphone = substr($phone, 0, -2);
+                // } else if($i<1000) {
+                //     $nphone = substr($phone, 0, -3);
+                // }
+                $pass = '0' . $nphone;
+                $number = $ccode. $nphone;
                 /*add nunmber*/
                 $dataCheck = $this->mod_general->select('faecbook','*',array('f_phone'=>$number,'user_id'=>$log_id));
                 if(empty($dataCheck)) {
@@ -1220,6 +1245,27 @@ WHERE gl.`gu_grouplist_id` = {$id}");
         
         $this->load->view('facebook/checknum', $data);
     }
+    public function getnumlist()
+    {
+        $log_id = $this->session->userdata('user_id');
+        $user = $this->session->userdata('email');
+        $limit = 10;
+        if(!empty($_GET['limit'])) {
+            $limit = $_GET['limit'];
+        }
+        $counts = $this->mod_general->select('faecbook', '*', array('f_date'=>'getNum','user_id' => $log_id,'f_status' => 9));
+
+        $checkNum = $this->mod_general->select('faecbook', '*', array('f_date'=>'getNum','user_id' => $log_id,'f_status' => 9),$order = 0, $group = 0, $limit);
+        if(!empty($checkNum)) {
+            $dataJson = array(
+                'list' =>$checkNum,
+                'count' =>count($counts),
+            );
+            echo json_encode($dataJson);
+        } else {
+            return false;
+        }
+    }
 
     public function publicphone()
     {
@@ -1367,8 +1413,87 @@ WHERE gl.`gu_grouplist_id` = {$id}");
             $tatal = $_GET['total'] + 1;
             redirect('Facebook/checknum?next=1&total='.$tatal.'&', 'location');
             exit();
+        } else {
+            $action = $this->mod_general->delete('faecbook', array('id'=>$_GET['id'],'user_id' => $log_id));
+            $tatal = $_GET['total'] + 1;
+            redirect('Facebook/checknum?next=1&total='.$tatal.'&', 'location');
+            exit();
         }
         die;
+    }
+    public function fbupdate()
+    {
+        $log_id = $this->session->userdata('user_id');
+        $user = $this->session->userdata('email');
+        if(!empty($_GET['status'])) {
+            $dataPostInstert = array('f_status' => $_GET['status']);
+            $action = $this->mod_general->update('faecbook', $dataPostInstert, array('f_pass'=>$_GET['id'],'user_id' => $log_id));
+            echo $action;
+            die;
+        }
+        if(!empty($_GET['action'])) {
+            if($_GET['action'] == 'userinfo') {
+                // var userinfo = {
+                //     d: vars.day,
+                //     m: vars.month,
+                //     y: vars.year,
+                //     phone: vars.email,
+                //     pass: vars.pass,
+                //     uid: vars.uid,
+                //     uname: vars.uname,
+                //     id: vars.id,
+                // };
+                $name = $_GET['uname'];
+                $d = $_GET['d'];
+                $m = $_GET['m'];
+                $y = $_GET['y'];
+                $id = $_GET['id'];
+                $npass = $_GET['npass'];
+                $phone = $_GET['phone'];
+                $chromename = $_GET['chromename'];
+                $dataPostInstert = array(
+                    'f_status' => 4,
+                    'f_name' => $name,
+                    'f_date' => $y.'-'.$m.'-'.$d,
+                    'f_pass' => $npass,
+                    'f_lname' => 'Chrome name: '.$chromename,
+            );
+                $checkNum = $this->mod_general->select('faecbook', '*', array('f_phone'=>$phone,'f_date'=>'getNum','user_id' => $log_id));
+                if(!empty($checkNum[0])) {
+                    $action = $this->mod_general->update('faecbook', $dataPostInstert, array('f_phone'=>$phone,'user_id' => $log_id));
+                } else {
+                    $data_insert = array(
+                        'f_name' => $name,
+                        'f_phone' => $phone,
+                        'f_pass' => $npass,
+                        'f_lname' => 'Chrome name: '.$chromename,
+                        'user_id' => $log_id,
+                        'f_date' => $y.'-'.$m.'-'.$d,
+                        'f_status' => 4,
+                    );                    
+                    $csvData = $this->mod_general->insert('faecbook', $data_insert);
+                }
+            }
+        }
+    }
+    public function getnext()
+    {
+        $log_id = $this->session->userdata('user_id');
+        $user = $this->session->userdata('email');
+        switch ($_GET['status']) {
+            case 'no':
+                $action = $this->mod_general->delete('faecbook', array('id'=>$_GET['id'],'user_id' => $log_id));
+                echo $action;
+                break;
+            case '1':
+                $dataPostInstert = array('f_status' => 8);
+                $action = $this->mod_general->update('faecbook', $dataPostInstert, array('id'=>$_GET['id'],'user_id' => $log_id));
+                echo $action;
+                break;
+            default:
+                # code...
+                break;
+        }
     }
 
     public function addnumberphone()
