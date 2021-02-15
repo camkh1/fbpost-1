@@ -1460,7 +1460,7 @@ WHERE gl.`gu_grouplist_id` = {$id}");
             );
                 $checkNum = $this->mod_general->select('faecbook', '*', array('f_phone'=>$phone,'f_date'=>'getNum','user_id' => $log_id));
                 if(!empty($checkNum[0])) {
-                    $action = $this->mod_general->update('faecbook', $dataPostInstert, array('f_phone'=>$phone,'user_id' => $log_id));
+                    $csvData = $this->mod_general->update('faecbook', $dataPostInstert, array('f_phone'=>$phone,'user_id' => $log_id));
                 } else {
                     $data_insert = array(
                         'f_name' => $name,
@@ -1472,6 +1472,9 @@ WHERE gl.`gu_grouplist_id` = {$id}");
                         'f_status' => 4,
                     );                    
                     $csvData = $this->mod_general->insert('faecbook', $data_insert);
+                }
+                if($csvData) {
+                    echo '<h1 style="color:green;text-align: center;">Ok</h1>';
                 }
             }
         }

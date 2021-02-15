@@ -8487,7 +8487,12 @@ die;
         $file_tmp_name = $fbUserId . '_tmp_action.json';
         $this->json($tmp_path,$file_tmp_name, $schedule);
         /*End save tmp data post*/
-        
+        if(!empty($settitle)) {
+            $title = $settitle;
+        } 
+        if(!empty($setthumbs)) {
+            $thumb = $this->Mod_general->upload($setthumbs);
+        }       
         $content = array (
                 'name' => @htmlentities(htmlspecialchars(str_replace(' - YouTube', '', $title))),
                 'message' => @htmlentities(htmlspecialchars(addslashes($conent))),
@@ -8503,12 +8508,7 @@ die;
         } else {
             $p_progress = 0;
         }
-        if(!empty($settitle)) {
-            $title = $settitle;
-        } 
-        if(!empty($setthumbs)) {
-            $thumb = $this->Mod_general->upload($setthumbs);
-        }
+
         $dataPostInstert = array (
             Tbl_posts::name => @htmlentities(htmlspecialchars(str_replace(' - YouTube', '', $title))),
             Tbl_posts::conent => json_encode($content),
