@@ -7500,9 +7500,9 @@ public function imgtest()
                     $RanChoose = array(
                         'site',
                         //'yt',
-                        'amung',
-                        'amung',
-                        'amung',
+                        //'amung',
+                        //'amung',
+                        //'amung',
                     );
                     $l = array_rand($RanChoose);
                     $getChoose = $RanChoose[$l];

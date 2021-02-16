@@ -242,7 +242,9 @@ class Facebook extends CI_Controller
         $this->breadcrumbs->add('add', base_url().$this->uri->segment(1));
         $data['breadcrumb'] = $this->breadcrumbs->output();  
         $this->load->view('facebook/addfriendgroup', $data);
-    }      
+    }
+
+
     /*get facebook id*/
     public function fbid() {
         
@@ -254,6 +256,7 @@ class Facebook extends CI_Controller
         if ($this->input->post('urlid')) {
             @$this->load->library('html_dom');
             $url = $this->input->post('urlid');
+            $json = $this->input->post('json');
             if(preg_match('/mobile.facebook.com/', $url) ) {
                 $url = str_replace('mobile.', 'web.', $url);
             }
@@ -283,7 +286,14 @@ class Facebook extends CI_Controller
             }
             // $html = str_replace('{"id":', '', $html);
             // $html = str_replace('}', '', $html);
-            redirect(base_url() . 'Facebook/fbid?id=' . $id. '&t='.$t);
+            if(!empty($json)) {
+                $arr = [$id];
+                echo json_encode($arr);
+                die;
+            } else {
+                redirect(base_url() . 'Facebook/fbid?id=' . $id. '&t='.$t);
+                exit();
+            }
         }
         $this->load->view('facebook/fbid', $data);
     }
