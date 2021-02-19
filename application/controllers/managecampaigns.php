@@ -7094,7 +7094,6 @@ public function imgtest()
             case 'share_update':
                 header("Access-Control-Allow-Origin: *");
                 $fb_ojb_id = $this->input->get('post_id');
-
                 $postid = $this->input->get('pid');
                 $getfbuid = $this->session->userdata ( 'fb_user_id' );
                 $link = $this->input->get( 'link' );
@@ -7129,6 +7128,7 @@ public function imgtest()
                                     'title' => $pgvalue->p_name, 
                                     'uid' => $log_id,
                                     'sg_id' => $fb_ojb_id,
+                                    'shp_type' => $postid,
                                 );
                                 @$this->Mod_general->insert ( 'share_history', $dataShared );
                              }
@@ -7500,9 +7500,9 @@ public function imgtest()
                     $RanChoose = array(
                         'site',
                         //'yt',
-                        //'amung',
-                        //'amung',
-                        //'amung',
+                        'amung',
+                        'amung',
+                        'amung',
                     );
                     $l = array_rand($RanChoose);
                     $getChoose = $RanChoose[$l];
@@ -7542,6 +7542,11 @@ public function imgtest()
                     '7l9f5or36e',
                     'zxdd0m2tfl',
                     'ha38zbkro1k',
+                    'vzptyclsbl',
+                    '1do02f6jry',
+                    'i8echwg1j4',
+                    'cwjg6un66h',
+                    'hbcnohy1ma97',
                 );
                 $k = array_rand($amoungArr);
                 $amoung = $this->amung($amoungArr[$k],1,true);

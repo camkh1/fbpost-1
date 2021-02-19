@@ -622,6 +622,27 @@ $link =  $desc->find('a', 0)->href;
                 $obj->site = 'site';
                 return $obj;
                 break;
+            case 'www.siamtoday.com':
+                foreach($html->find('.line_view') as $item) {
+                    $item->outertext = '';
+                }
+                /*get label*/
+                $label = [];
+                $last = count($html->find('.breadcrumb li')) - 1;
+                foreach($html->find('.breadcrumb li') as $index => $labels) {
+                    if($index != $last && $index !=0) {
+                        $label[] = $labels->plaintext;
+                    } 
+                }
+                 $obj->label = implode(',', $label);
+                /*End get label*/
+                $content = $this->gEntry($html,'#article-post .data_detail');
+                $obj->vid = '';
+                $obj->conent = $content;
+                $obj->fromsite = $parse['host'];
+                $obj->site = 'site';
+                return $obj;
+                break;
             case 'www.siamstreet.com':
                 foreach($html->find('.line_view') as $item) {
                     $item->outertext = '';

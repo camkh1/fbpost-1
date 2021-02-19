@@ -244,6 +244,10 @@ class Facebook extends CI_Controller
         $this->load->view('facebook/addfriendgroup', $data);
     }
 
+    public function savePostID($value='')
+    {
+        # code...
+    }
 
     /*get facebook id*/
     public function fbid() {
