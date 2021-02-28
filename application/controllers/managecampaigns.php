@@ -7206,6 +7206,17 @@ public function imgtest()
                                     'shp_type' => $postid,
                                 );
                                 @$this->Mod_general->insert ( 'share_history', $dataShared );
+                             } else {
+                                $updateHistWh = array(
+                                    'shp_id' => $ShareH[0]->shp_id
+                                );
+                                $dataShared = array (
+                                    'sid' => $sid,
+                                    'uid' => $log_id,
+                                    'sg_id' => $fb_ojb_id,
+                                    'shp_type' => $postid,
+                                );
+                                $update = $this->Mod_general->update( Tbl_posts::tblName,$dataShared, $updateHistWh);
                              }
                              /*End Share history*/
 
