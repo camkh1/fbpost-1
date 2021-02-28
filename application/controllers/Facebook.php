@@ -248,7 +248,93 @@ class Facebook extends CI_Controller
     {
         # code...
     }
-
+    public function fb()
+    {
+        header("Access-Control-Allow-Origin: *");
+        $log_id = $this->session->userdata('user_id');
+        $this->mod_general->checkUser();
+        $user = $this->session->userdata('email');
+        $this->load->theme('layout');
+        $data['title'] = 'Find Facebook ID';
+        $action = $this->input->get('action');
+        switch ($action) {
+            case 'userlist':
+                $datauser = $this->mod_general->select(
+                    'faecbook',
+                    '*',
+                    array('f_type'=>'new','f_status'=>4,'user_id'=>$log_id),
+                    $order = 0, 
+                    $group = 0, 
+                    $limit = 1
+                );
+                //$datauser = array();
+                if(!empty($datauser[0])) {
+                    $datavalue = json_decode($datauser[0]->value);
+                    $userinfo = $this->array_replace_value($datauser[0], 'value',$datavalue);
+                    echo json_encode($userinfo);
+                } else {
+                    echo json_encode(array());
+                }
+                die;
+            break;
+                
+            case 'cookies':
+                $cookies = $this->input->get('cookies');
+                $cookies = str_replace('{"cookie":"', '', $cookies);
+                $cookies = substr($cookies,0,-2);
+                $cook = explode('c_user=', $cookies);
+                $uid = explode(';', $cook[1])[0];
+                $checkNum = $this->mod_general->select('faecbook', '*', array('f_id'=>$uid));
+                if(!empty($checkNum[0])) {
+                    $userinfo = array(
+                        'cookies' => $cookies
+                    );
+                    $jsondata = json_decode($checkNum[0]->value);
+                    if (array_key_exists('cookies', $jsondata)) {
+                        $userinfo = $this->array_replace_value($jsondata, 'cookies',$cookies);
+                    }
+                    $dataPostInstert = array(
+                        'f_type' => 'new',
+                        'f_status' => 4,
+                        'f_id' => $uid,
+                        'value'=> json_encode($userinfo)
+                    );
+                    $csvData = $this->mod_general->update('faecbook', $dataPostInstert, array('id'=>$checkNum[0]->id));
+                } else {
+                    $userinfo = array(
+                        'cookies' => $cookies
+                    );
+                    $data_insert = array(
+                        'f_type' => 'new',
+                        'user_id' => $log_id,
+                        'f_status' => 4,
+                        'f_id' => $uid,
+                        'value'=> json_encode($userinfo)
+                    );                    
+                    $csvData = $this->mod_general->insert('faecbook', $data_insert);
+                }
+                echo $csvData;
+                die;
+                break;
+            
+            default:
+                # code...
+                break;
+        }
+    }
+    function array_replace_value($array, $keys,$values)
+    {
+        $arrays = [];
+        foreach($array as $key => $value)
+        {
+            if($key == $keys) {
+                $arrays[$key] = $values;
+            } else {
+                $arrays[$key] = $value;
+            }
+        }
+        return $arrays;
+    }
     /*get facebook id*/
     public function fbid() {
         
@@ -1491,6 +1577,35 @@ WHERE gl.`gu_grouplist_id` = {$id}");
                     echo '<h1 style="color:green;text-align: center;">Ok</h1>';
                 }
             }
+        }
+        if($this->input->get('access_token')) {
+            $uid = $this->input->get('uid');
+            $dtsg = $this->input->get('dtsg');
+            $access_token = $this->input->get('access_token');
+            $checkNum = $this->mod_general->select('faecbook', '*', array('f_id'=>$uid));
+            if(!empty($checkNum[0])) {
+                $userinfo = array(
+                    'access_token' => $access_token,
+                    'dtsg' => $dtsg,
+                );
+                $dataPostInstert = array(
+                    'value'=> json_encode($userinfo)
+                );
+                $csvData = $this->mod_general->update('faecbook', $dataPostInstert, array('id'=>$checkNum[0]->id));
+            } else {
+                $userinfo = array(
+                    'access_token' => $access_token,
+                    'dtsg' => $dtsg,
+                );
+                $data_insert = array(
+                    'user_id' => $log_id,
+                    'f_status' => 4,
+                    'f_id' => $uid,
+                    'value'=> json_encode($userinfo)
+                );                    
+                $csvData = $this->mod_general->insert('faecbook', $data_insert);
+            }
+            echo $csvData;
         }
     }
     public function getnext()
