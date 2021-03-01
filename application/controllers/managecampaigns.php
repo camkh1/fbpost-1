@@ -3176,7 +3176,7 @@ class Managecampaigns extends CI_Controller {
             'https://www.jc24news.com/author/sivuth/feed',
             'https://news17times.com/archives/author/sn/feed',
         );
-        $oneDays = date('Y-m-d', strtotime('-1 days', strtotime(date('Y-m-d'))));
+        $oneDays = date('Y-m-d', strtotime('today', strtotime(date('Y-m-d'))));
         $k = array_rand($siteFeed);
         $getSiteUrl = $siteFeed[$k];
         $rss = new DOMDocument();
@@ -3260,11 +3260,11 @@ class Managecampaigns extends CI_Controller {
         /*End clean*/
 
         /*check post progress frist*/
-        $oneDaysAgo = date('Y-m-d', strtotime('-1 days', strtotime(date('Y-m-d'))));
+        $oneDaysAgos = date('Y-m-d', strtotime('now', strtotime(date('Y-m-d'))));
         $where_pro = array(
             'p_progress' => 1,
             'u_id != ' => $sid,
-            'p_date >= '=> $oneDaysAgo,
+            'p_date >= '=> $oneDaysAgos,
             'user_id' => $log_id
         );
         // $tablejoin = array('share_history'=>'share_history.title != post.p_name');
@@ -3303,6 +3303,8 @@ class Managecampaigns extends CI_Controller {
                             $pid = $gvalue->p_id;
                             break;
                         }
+                    } else {
+                        continue;
                     }
                 } else {
                     continue;
@@ -3322,7 +3324,8 @@ class Managecampaigns extends CI_Controller {
             $dataPost->conent = $getPost[0]->p_conent;
             $dataPost->date = $getPost[0]->p_date;
             $pOption = json_decode($getPost[0]->p_schedule);
-        } else {
+        } 
+        else {
             $dataPost = $this->getfeed();
              $content = array (
                 'name' => @$dataPost->name,
