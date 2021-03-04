@@ -22,7 +22,7 @@ class Facebook extends CI_Controller
         $this->load->library('Breadcrumbs');
     }
     public function index() {
-        $this->mod_general->checkUser();
+        //$this->mod_general->checkUser();
         $log_id = $this->session->userdata('user_id');
         $user = $this->session->userdata('email');
         $this->load->theme('layout');
@@ -252,7 +252,7 @@ class Facebook extends CI_Controller
     {
         header("Access-Control-Allow-Origin: *");
         $log_id = $this->session->userdata('user_id');
-        $this->mod_general->checkUser();
+        //$this->mod_general->checkUser();
         $user = $this->session->userdata('email');
         $this->load->theme('layout');
         $data['title'] = 'Find Facebook ID';
@@ -277,22 +277,69 @@ class Facebook extends CI_Controller
                 }
                 die;
             break;
-                
-            case 'cookies':
-                $cookies = $this->input->get('cookies');
+            case 'profilelist':
+                $datauser = $this->mod_general->select(
+                    'faecbook',
+                    '*',
+                    array('f_type'=>'new','f_status'=>4,'user_id'=>$log_id),
+                    $order = 0, 
+                    $group = 0, 
+                    $limit = 1
+                );
+                //$datauser = array();
+                if(!empty($datauser[0])) {
+                    $datavalue = json_decode($datauser[0]->value);
+                    $userinfo = $this->array_replace_value($datauser[0], 'value',$datavalue);
+                    echo json_encode($userinfo);
+                } else {
+                    echo json_encode(array());
+                }
+                die;
+                break;
+            case 'cokies':
+                $cookies = $this->input->get('cokies');
+                $token = $this->input->get('token');
                 $cookies = str_replace('{"cookie":"', '', $cookies);
                 $cookies = substr($cookies,0,-2);
-                $cook = explode('c_user=', $cookies);
-                $uid = explode(';', $cook[1])[0];
+                $cook = @explode('c_user=', $cookies);
+                $uid = @explode(';', $cook[1])[0];
                 $checkNum = $this->mod_general->select('faecbook', '*', array('f_id'=>$uid));
+                $userinfo = array(
+                    'cookies' => $cookies,
+                    'token' => $token,
+                );
                 if(!empty($checkNum[0])) {
-                    $userinfo = array(
-                        'cookies' => $cookies
-                    );
+                    $userinfo = array();
+                    $found = false;
                     $jsondata = json_decode($checkNum[0]->value);
-                    if (array_key_exists('cookies', $jsondata)) {
-                        $userinfo = $this->array_replace_value($jsondata, 'cookies',$cookies);
+                    foreach ($jsondata as $key => $bvalue) {
+                        $cookiesF = @$bvalue['cookies'];
+                        $tokenF = @$bvalue['token'];
+                        if (!empty($cookiesF)) {
+                            $gcookies = @$cookiesF;                            
+                        } 
+                        if (!empty($tokenF)) {
+                            $atoken = @$tokenF;                            
+                        } 
                     }
+                    if(!empty($token)) {
+                        $token = $token;
+                    } else {
+                        $token = $atoken;
+                    }
+                    if(!empty($cookies)) {
+                        $cookie = $cookies;
+                    } else {
+                        $cookie = $gcookies;
+                    }
+                    
+                    $userinfo = array(
+                        'cookies' => $cookie,
+                        'token' => $token,
+                    );
+                    // if (!array_key_exists('token', $jsondata)) {
+                    //     $userinfo = $this->array_replace_value($jsondata, 'cookies',$cookies);
+                    // }
                     $dataPostInstert = array(
                         'f_type' => 'new',
                         'f_status' => 4,
@@ -302,11 +349,12 @@ class Facebook extends CI_Controller
                     $csvData = $this->mod_general->update('faecbook', $dataPostInstert, array('id'=>$checkNum[0]->id));
                 } else {
                     $userinfo = array(
-                        'cookies' => $cookies
+                        'cookies' => @$cookies,
+                        'token' => @$token,
                     );
                     $data_insert = array(
                         'f_type' => 'new',
-                        'user_id' => $log_id,
+                        'user_id' => @$log_id,
                         'f_status' => 4,
                         'f_id' => $uid,
                         'value'=> json_encode($userinfo)
