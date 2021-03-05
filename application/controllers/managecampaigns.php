@@ -3301,9 +3301,9 @@ class Managecampaigns extends CI_Controller {
                             'gu_status' => 1
                         );  
                     } else {
-                        $account_group_type = $json_a->account_group_type;
+                        $account_group_type = @$json_a->account_group_type;
                         $wGroupType = array (
-                            'gu_grouplist_id' => $json_a->account_group_type,
+                            'gu_grouplist_id' => @$json_a->account_group_type,
                             'gu_user_id' => $log_id,
                             'gu_status' => 1
                         );
@@ -6916,7 +6916,6 @@ public function imgtest()
 
                         /*if no share but post*/
                         if(!empty($isNoDup) && empty($dataShare[0])) {
-                            echo $pid;
                             $this->ins_share($pid);
                             /*Check share exist*/
                             $where_so = array (
@@ -7139,7 +7138,7 @@ public function imgtest()
                             /*cound shared*/
                             $where_shared = array('value' => $link);
                             $PostShare_pg = $this->Mod_general->select ('share_progess','*', $where_shared);
-                            if(count($PostShare_pg)>=5) {
+                            if(count($ShareH)>=7) {
                                 $whereDlN = array(
                                     'p_name' => $pgvalue->p_name
                                 );
@@ -8290,9 +8289,9 @@ die;
                 'gu_status' => 1
             );  
         } else {
-            $account_group_type = $json_a->account_group_type;
+            $account_group_type = @$json_a->account_group_type;
             $wGroupType = array (
-                'gu_grouplist_id' => $json_a->account_group_type,
+                'gu_grouplist_id' => @$json_a->account_group_type,
                 'gu_user_id' => $log_id,
                 'gu_status' => 1
             );

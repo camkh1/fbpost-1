@@ -278,23 +278,76 @@ class Facebook extends CI_Controller
                 die;
             break;
             case 'profilelist':
+                $fbid = $this->input->get('fbid');
+                if(!empty($fbid)) {
+                    $w = array('f_id'=>$fbid);
+                } else {
+                    $w = array('f_type'=>'new','f_status'=>4,'user_id'=>$log_id);
+                }
                 $datauser = $this->mod_general->select(
                     'faecbook',
                     '*',
-                    array('f_type'=>'new','f_status'=>4,'user_id'=>$log_id),
+                    $w,
                     $order = 0, 
                     $group = 0, 
                     $limit = 1
                 );
                 //$datauser = array();
                 if(!empty($datauser[0])) {
-                    $datavalue = json_decode($datauser[0]->value);
-                    $userinfo = $this->array_replace_value($datauser[0], 'value',$datavalue);
+                    if(!empty($fbid)) {
+                        header ('Content-type: text/html; charset=utf-8');
+                        $chromename = @$datauser[0]->f_lname;
+                        $chromename = str_replace('Chrome name: ', '', $chromename);
+                        $datavalue = json_decode($datauser[0]->value);
+                        $userinfo = array(
+                            'NAME' => @$datavalue->NAME,
+                            'SHORT_NAME' => @$datavalue->SHORT_NAME,
+                            'accessToken' => @$datavalue->token,
+                            'dtsg_ag' => @$datavalue->dtsg_ag,
+                            'user_id' => @$datavalue->user_id,
+                            'vip' => @$datavalue->vip,
+                            '__spin_b' => @$datavalue->__spin_b,
+                            '__spin_r' => @$datavalue->__spin_r,
+                            '__spin_t' => @$datavalue->__spin_t,
+                            '_hsi' => @$datavalue->_hsi,
+                            'chromename' => @$chromename,
+                        );
+                        echo json_encode($userinfo);
+                        die;
+                    } else {
+                        $datavalue = json_decode($datauser[0]->value);
+                        $userinfo = $this->array_replace_value($datauser[0], 'value',$datavalue);
+                    }
+                    
                     echo json_encode($userinfo);
                 } else {
                     echo json_encode(array());
                 }
                 die;
+                break;
+            case 'chromename':
+                $cookies = $this->input->get('name');
+                $fid = $this->input->get('user_id');
+                $name = $this->input->get('name');
+                if(!empty($fid)) {
+                    $datauser = $this->mod_general->select(
+                        'faecbook',
+                        '*',
+                        array('f_id'=>$fid)
+                    );
+                    //$datauser = array();
+                    if(!empty($datauser[0])) {
+                        $dataPostInstert = array(
+                            'f_lname' => 'Chrome name: ' .$name
+                        );
+                        $csvData = $this->mod_general->update('faecbook', $dataPostInstert, array('id'=>$datauser[0]->id));
+                    } else {
+                        $data_insert = array(
+                            'f_id' => $fid,
+                        );                    
+                        $csvData = $this->mod_general->insert('faecbook', $data_insert);
+                    }
+                }
                 break;
             case 'cokies':
                 $cookies = $this->input->get('cokies');
@@ -332,10 +385,18 @@ class Facebook extends CI_Controller
                     } else {
                         $cookie = $gcookies;
                     }
-                    
                     $userinfo = array(
                         'cookies' => $cookie,
                         'token' => $token,
+                        'NAME' => @$this->input->get('NAME'),
+                        'SHORT_NAME' => @$this->input->get('SHORT_NAME'),
+                        'dtsg_ag' => @$this->input->get('dtsg_ag'),
+                        'user_id' => @$this->input->get('user_id'),
+                        'vip' => @$this->input->get('vip'),
+                        '__spin_b' => @$this->input->get('__spin_b'),
+                        '__spin_r' => @$this->input->get('__spin_r'),
+                        '__spin_t' => @$this->input->get('__spin_t'),
+                        '_hsi' => @$this->input->get('_hsi'),
                     );
                     // if (!array_key_exists('token', $jsondata)) {
                     //     $userinfo = $this->array_replace_value($jsondata, 'cookies',$cookies);
@@ -351,6 +412,15 @@ class Facebook extends CI_Controller
                     $userinfo = array(
                         'cookies' => @$cookies,
                         'token' => @$token,
+                        'NAME' => @$this->input->get('NAME'),
+                        'SHORT_NAME' => @$this->input->get('SHORT_NAME'),
+                        'dtsg_ag' => @$this->input->get('dtsg_ag'),
+                        'user_id' => @$this->input->get('user_id'),
+                        'vip' => @$this->input->get('vip'),
+                        '__spin_b' => @$this->input->get('__spin_b'),
+                        '__spin_r' => @$this->input->get('__spin_r'),
+                        '__spin_t' => @$this->input->get('__spin_t'),
+                        '_hsi' => @$this->input->get('_hsi')
                     );
                     $data_insert = array(
                         'f_type' => 'new',
@@ -364,7 +434,6 @@ class Facebook extends CI_Controller
                 echo $csvData;
                 die;
                 break;
-            
             default:
                 # code...
                 break;
