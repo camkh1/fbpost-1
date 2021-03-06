@@ -269,6 +269,7 @@ class Facebook extends CI_Controller
                 );
                 //$datauser = array();
                 if(!empty($datauser[0])) {
+                    
                     $datavalue = json_decode($datauser[0]->value);
                     $userinfo = $this->array_replace_value($datauser[0], 'value',$datavalue);
                     echo json_encode($userinfo);
@@ -434,10 +435,21 @@ class Facebook extends CI_Controller
                 echo $csvData;
                 die;
                 break;
+            case 'userupdate':
+                $uid = $this->input->get('uid');
+                echo $this->userupdate($uid);
+                break;
             default:
                 # code...
                 break;
         }
+    }
+    public function userupdate($uid)
+    {
+        $dataPostInstert = array(
+            'f_type'=> 'old'
+        );
+        return $this->mod_general->update('faecbook', $dataPostInstert, array('f_id'=>$uid));
     }
     function array_replace_value($array, $keys,$values)
     {

@@ -7499,10 +7499,8 @@ public function imgtest()
                     /*End check post progress frist*/ 
 
                     $RanChoose = array(
-                        'site',
+                        //'site',
                         //'yt',
-                        'amung',
-                        'amung',
                         'amung',
                     );
                     $l = array_rand($RanChoose);
