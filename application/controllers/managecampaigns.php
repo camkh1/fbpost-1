@@ -6720,6 +6720,7 @@ public function imgtest()
 
     public function autopostfb($value='')
     {
+        header("Access-Control-Allow-Origin: *");
         date_default_timezone_set("Asia/Phnom_Penh");
         $log_id = $this->session->userdata ( 'user_id' );
         $user = $this->session->userdata ( 'email' );
@@ -6729,7 +6730,7 @@ public function imgtest()
         $fbUserId = $this->session->userdata('fb_user_id');
         $sid = $this->session->userdata ( 'sid' );
         $post_only = $this->session->userdata ( 'post_only' );
-        header("Access-Control-Allow-Origin: *");
+        
 
         $this->load->theme ( 'layout' );
         $data ['title'] = 'Admin Area :: Setting';
@@ -7095,6 +7096,7 @@ public function imgtest()
             case 'share_update':
                 header("Access-Control-Allow-Origin: *");
                 $fb_ojb_id = $this->input->get('post_id');
+                $gid = $this->input->get('gid');
                 $postid = $this->input->get('pid');
                 $getfbuid = $this->session->userdata ( 'fb_user_id' );
                 $link = $this->input->get( 'link' );
@@ -7128,7 +7130,7 @@ public function imgtest()
                                     'sid' => $sid,
                                     'title' => $pgvalue->p_name, 
                                     'uid' => $log_id,
-                                    'sg_id' => $fb_ojb_id,
+                                    'sg_id' => $gid.'_'.$fb_ojb_id,
                                     'shp_type' => $postid,
                                 );
                                 @$this->Mod_general->insert ( 'share_history', $dataShared );
@@ -7138,7 +7140,7 @@ public function imgtest()
                             /*cound shared*/
                             $where_shared = array('value' => $link);
                             $PostShare_pg = $this->Mod_general->select ('share_progess','*', $where_shared);
-                            if(count($ShareH)>=7) {
+                            if(count($ShareH)>=6) {
                                 $whereDlN = array(
                                     'p_name' => $pgvalue->p_name
                                 );
@@ -8137,6 +8139,7 @@ die;
                 }
                 break;
             case 'getgroup':
+                    header('Access-Control-Allow-Origin: *');
                     $userID = $this->input->get('log_id');
                     $fb_id = $this->input->get('fb_id');
                     if(!empty($userID)) {

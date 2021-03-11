@@ -269,10 +269,20 @@ class Facebook extends CI_Controller
                 );
                 //$datauser = array();
                 if(!empty($datauser[0])) {
-                    
+
                     $datavalue = json_decode($datauser[0]->value);
                     $userinfo = $this->array_replace_value($datauser[0], 'value',$datavalue);
-                    echo json_encode($userinfo);
+                    if(!empty($userinfo['f_id']) && preg_match('/c_user=/', $userinfo['value']->cookies)) {
+                        echo json_encode($userinfo);
+                    } else {
+                        $dataPostInstert = array(
+                            'f_type' => 'old'
+                        );
+                        $this->mod_general->update('faecbook', $dataPostInstert, array('id'=>$datauser[0]->id));
+                        redirect(base_url() . 'Facebook/fb?action=userlist');
+                        exit();
+                    }
+                    //echo json_encode($userinfo);
                 } else {
                     echo json_encode(array());
                 }
@@ -306,6 +316,7 @@ class Facebook extends CI_Controller
                             'accessToken' => @$datavalue->token,
                             'dtsg_ag' => @$datavalue->dtsg_ag,
                             'user_id' => @$datavalue->user_id,
+                            'l_user_id' => @$log_id,
                             'vip' => @$datavalue->vip,
                             '__spin_b' => @$datavalue->__spin_b,
                             '__spin_r' => @$datavalue->__spin_r,
@@ -438,6 +449,9 @@ class Facebook extends CI_Controller
             case 'userupdate':
                 $uid = $this->input->get('uid');
                 echo $this->userupdate($uid);
+                break;
+            case 'getgroup':
+                $this->getaddedgroup();
                 break;
             default:
                 # code...
@@ -662,7 +676,200 @@ class Facebook extends CI_Controller
         $this->load->view('facebook/gennum', $data);
     }
 
+public function getgroups()
+{
+    $log_id = $this->session->userdata('user_id');
+    if(empty($log_id)) {
+        $log_id = $this->input->get('uid');
+    }
+    $fid = $this->input->get('fid');
+    header('Access-Control-Allow-Origin: *');
+    $where_blog = array(
+        'meta_key'      => 'defualt_goups_'.$log_id,
+    );
+    $query_blog_exist = $this->Mod_general->select('meta', '*', $where_blog);
 
+    //
+    $u = array (
+        'user_id' => $log_id,
+        'u_provider_uid' => $fid,
+    );
+    $uList = $this->Mod_general->select ( 'users', '*', $u );
+    if(!empty($uList[0])) {
+        $sid = $uList[0]->u_id;
+        $wGList = array (
+            'l_user_id' => $log_id,
+            'l_sid' => $sid,
+        );
+        $geGList = $this->Mod_general->select ( 'group_list', '*', $wGList );
+
+        if(!empty($geGList[0])) {
+            $account_group_type = $geGList[0]->l_id;
+            $wGroupType = array (
+                'gu_grouplist_id' => $geGList[0]->l_id,
+                'gu_user_id' => $log_id,
+                'gu_status' => 1
+            );  
+            $tablejoin = array('socail_network_group'=>'socail_network_group.sg_id=group_user.gu_idgroups');
+            $itemGroups = $this->Mod_general->join('group_user', $tablejoin, $fields = '*', $wGroupType);
+        } 
+    }
+    if(empty($itemGroups[0])) {
+        $itemGroups = array();
+    }
+    if (!empty($query_blog_exist[0])) {
+        echo json_encode(array('groups'=>$query_blog_exist,'groups_added'=> @$itemGroups));
+    } else {
+        echo json_encode(array('groups'=>array()));
+    }
+    die;
+}
+public function ugroup()
+{
+    $log_id = $this->input->get('uid');
+    $fid = $this->input->get('fid');
+    $gid = $this->input->get('gid');
+    $action = $this->input->get('action');
+    header('Access-Control-Allow-Origin: *');
+    switch ($action) {
+        case 'request_group':
+            echo 1111111;
+            break;
+        case 'updategroup':
+            $w = array (
+                'meta_key' => 'requestgroup',
+                'meta_name' => $fid,
+            );
+            $mfid = $this->Mod_general->select ( 'meta', '*', $w );
+            if(!empty($mfid[0])) {
+
+            } else {
+                $data_insert = array(
+                    'object_id' => $gid,
+                    'meta_key' => 'requestgroup',
+                    'meta_name' => $fid,
+                    'meta_value' => $log_id,
+                );
+                $csvData = $this->mod_general->insert('meta', $data_insert);
+            }
+
+            $w = array(
+                'meta_key'      => 'defualt_goups_'.$log_id,
+                'object_id'      => $gid,
+            );
+            $d = array(
+                'date'=>1
+            );
+            $query_blog_exist = $this->Mod_general->update('meta', $d, $w);
+            if($query_blog_exist) {
+                
+            }
+            $checkFbId = $this->mod_general->select(
+                'users',
+                'u_id',
+                $where = array('u_provider_uid'=>$fid,'user_id' => $log_id)
+            );
+            if(!empty($checkFbId[0])) {
+                $obj = new stdClass();
+                $obj->sid = $checkFbId[0]->u_id;
+                $obj->catename = 'post_progress';
+                $obj->log_id = $log_id;
+                $obj->id = [$gid];
+                $this->addusergroups($obj);
+            }
+            break;
+        case 'memberrequest':
+            $w = array (
+                'meta_key' => 'requestgroup',
+            );
+            $mList = $this->Mod_general->select ( 'meta', '*', $w );
+            echo json_encode($mList);
+            break;
+        case 'approverequest':
+            $id = $this->input->get('id');
+            $w = array(
+                'meta_id'      => $id,
+            );
+            $d = array(
+                'date'=>1
+            );
+            return @$this->Mod_general->update('meta', $d, $w);
+            break;
+        case 'delreqest':
+            $id = $this->input->get('id');
+            if(!empty($id)) {
+                $this->mod_general->delete('meta', array('meta_id'=>$id,'meta_key'=>'requestgroup'));
+            }
+            break;
+        default:
+            # code...
+            break;
+    }
+    die;
+}
+public function addusergroups($obj)
+{
+    $getGList = $this->mod_general->select('group_list','*',array('l_user_id'=>$obj->log_id,'l_sid'=>$obj->sid));
+    if(!empty($getGList[0])) {
+        $GroupListID = $getGList[0]->l_id;
+    } else {
+        /*add to group list*/
+        $data_groupList = array(
+            'lname' => $obj->catename,
+            'l_user_id' => $obj->log_id,
+            'l_category' => 0,
+            'l_count' => count($id),
+            'l_sid' => $obj->sid,
+        );
+        $GroupListID = $this->mod_general->insert('group_list', $data_groupList);
+        /*end add to group list*/
+    }
+    
+    
+    foreach ($obj->id as $key => $gvalue) {
+        /*add to group*/
+        $groupID = $gvalue;
+        $groupTitle = $gvalue;
+        $groupMember = 0;
+        $checkID = $this->mod_general->select('socail_network_group','*',array('sg_page_id'=>$groupID,'s_id' => $obj->sid));
+        if(!empty($checkID[0])) {
+            $fgId = $checkID[0]->sg_id;
+        } else {
+            @iconv_set_encoding("internal_encoding", "TIS-620");
+            @iconv_set_encoding("output_encoding", "UTF-8");
+            @ob_start("ob_iconv_handler");
+            $data_group = array(
+                'sg_name' => $this->mod_general->remove_emoji($groupTitle),
+                'sg_page_id' => $groupID,
+                'sg_member' => $groupMember,
+                's_id' => $obj->sid,
+                'sg_type' => 'groups',
+                'sg_status' => 1,
+            );
+            @ob_end_flush();
+            $fgId = $this->mod_general->insert('socail_network_group', $data_group);
+        }
+
+
+        /*add to user group*/
+        $checkUserGroup = $this->mod_general->select('group_user','*',array('gu_idgroups'=>$fgId,'gu_user_id' => $obj->log_id,'gu_grouplist_id' => $GroupListID));
+        if(empty($checkUserGroup)) {
+            $data_user_group = array(
+                'gu_idgroups' => $fgId,
+                'gu_user_id' => $obj->log_id,
+                'gu_grouplist_id' => $GroupListID,
+                'sid' => $obj->sid,
+            );
+            $userGroupID = $this->mod_general->insert('group_user', $data_user_group);
+        }
+        /*End add to user group*/
+    }
+}
+public function getaddedgroup($value)
+{
+   $log_id = $this->input->get('uid');
+   $log_id = $this->input->get('uid');
+}
     public function getfriendlist()
     {
         $log_id = $this->session->userdata('user_id');
@@ -1125,6 +1332,8 @@ HTML;
  });" 
         );
 
+
+
         if(empty($this->session->userdata ( 'fb_user_id' ))) {
             redirect(base_url() . 'managecampaigns');
             exit();
@@ -1485,7 +1694,7 @@ WHERE gl.`gu_grouplist_id` = {$id}");
         $counts = $this->mod_general->select('faecbook', '*', array('f_date'=>'getNum','user_id' => $log_id,'f_status' => 9));
 
         $checkNum = $this->mod_general->select('faecbook', '*', array('f_date'=>'getNum','user_id' => $log_id,'f_status' => 9),$order = 0, $group = 0, $limit);
-        if(!empty($checkNum)) {
+        if(!empty($checkNum) && count($counts)>1) {
             $dataJson = array(
                 'list' =>$checkNum,
                 'count' =>count($counts),
@@ -1652,6 +1861,7 @@ WHERE gl.`gu_grouplist_id` = {$id}");
     }
     public function fbupdate()
     {
+        header('Access-Control-Allow-Origin: *');
         $log_id = $this->session->userdata('user_id');
         $user = $this->session->userdata('email');
         if(!empty($_GET['status'])) {
@@ -1713,10 +1923,27 @@ WHERE gl.`gu_grouplist_id` = {$id}");
             $access_token = $this->input->get('access_token');
             $checkNum = $this->mod_general->select('faecbook', '*', array('f_id'=>$uid));
             if(!empty($checkNum[0])) {
-                $userinfo = array(
-                    'access_token' => $access_token,
-                    'dtsg' => $dtsg,
-                );
+                $userinfo = array();
+                $ftoken = false;
+                $jsondata = json_decode($checkNum[0]->value);
+                foreach ($jsondata as $key => $bvalue) {
+                    if($key =='token') {
+                        if(!empty($access_token)) {
+                            $userinfo['token'] = $access_token;
+                        } 
+                        $ftoken = true;
+                    } else {
+                        $userinfo[$key] = $bvalue;
+                        $ftoken = false;
+                    } 
+                }
+                if(empty($ftoken)) {
+                    $token = array(
+                        'token' =>$access_token
+                    );
+                    $userinfo = array_merge($userinfo,$token);
+                }
+                
                 $dataPostInstert = array(
                     'value'=> json_encode($userinfo)
                 );
@@ -1734,7 +1961,28 @@ WHERE gl.`gu_grouplist_id` = {$id}");
                 );                    
                 $csvData = $this->mod_general->insert('faecbook', $data_insert);
             }
-            echo $csvData;
+            $checkNums = $this->mod_general->select('faecbook', '*', array('f_id'=>$uid));
+            if(!empty($checkNums[0])) {
+                $jsondata = json_decode($checkNums[0]->value);
+                $arrInfo = array(
+                    'user' => array(
+                        'id' => '604397f13b5a91390c440b28',
+                        'uid' => $checkNums[0]->f_id,
+                        'picture' => '',
+                        'name' => '',
+                        'plan' => array(
+                            'type'=>'free',
+                            'start_time'=>'1614479042958',
+                            'end_time'=>strtotime( "2100-01-31" ),
+                            '_id'=>'604397f13b5a91390c440b29',
+                        ),
+                        'access_token'=> @$jsondata->token,
+                        'dtsg'=> @$jsondata->dtsg,
+                    ),
+                    'token'=> @$jsondata->token,
+                );
+                echo json_encode($arrInfo);
+            }
         }
     }
     public function getnext()
@@ -1907,6 +2155,94 @@ WHERE gl.`gu_grouplist_id` = {$id}");
         }
         return $link;
         /*End show blog link*/
+    }
+
+    public function setting()
+    {
+        $log_id = $this->session->userdata ( 'user_id' );
+        $guid = $this->session->userdata ('guid');
+        $user = $this->session->userdata ( 'email' );
+        $provider_uid = $this->session->userdata ( 'provider_uid' );
+        $provider = $this->session->userdata ( 'provider' );
+        $sid = $this->session->userdata ( 'sid' );
+        $this->load->theme ( 'layout' );
+        $data ['title'] = 'Admin Area :: Facebook Setting';
+
+        /*breadcrumb*/
+        $this->breadcrumbs->add('<i class="icon-home"></i> Home', base_url());
+        if($this->uri->segment(1)) {
+            $this->breadcrumbs->add('blog post', base_url(). $this->uri->segment(1)); 
+        }
+        $this->breadcrumbs->add('Setting', base_url().$this->uri->segment(1));
+        $data['breadcrumb'] = $this->breadcrumbs->output();  
+        /*End breadcrumb*/
+        if ($this->input->get('m')) {
+            $id = $this->input->get('id');
+            $data ['addJsScript'] = array (
+                "$(document).ready(function() {
+                    setTimeout(function () {
+                        generateText('success','Groups has been added on ID: ".$id."','topRight');
+                    }, 1000);
+                    setTimeout(function () {
+                        $.noty.closeAll();
+                    }, 7000);
+                });"
+            );
+        }
+        /*FORM*/
+        if ($this->input->post('submit')) {
+            $gid    = trim($this->input->post('gid'));
+            $gname    = trim($this->input->post('gname'));
+            $gtype    = trim(@$this->input->post('gtype'));
+            if(!empty($gid)) {
+                $whereLinkA = array(
+                    'object_id'     => $gid,
+                );
+                $queryLinkData = $this->Mod_general->select('meta', '*', $whereLinkA);
+                /* check before insert */
+                if (empty($queryLinkData[0])) {
+                    $data_blog = array(
+                        'meta_key'      =>  'defualt_goups_'. $log_id,
+                        'object_id'      => $gid,
+                        'meta_value'     => $gtype,
+                        'meta_name'     => $gname,
+                        'date'     => 0
+                    );
+                    $lastID = $this->Mod_general->insert('meta', $data_blog);
+                } else {
+                    $data_blog = array(
+                        'meta_key'      => 'defualt_goups_'. $log_id,
+                        'object_id'      => $gid,
+                        'meta_value'     => $gtype,
+                        'meta_name'     => $gname,
+                        'date'     => 0
+                    );
+                    $setWhere = array('meta_id' => $queryLinkData[0]->meta_id);
+                    $lastID = $this->Mod_general->update('meta', $data_blog,$setWhere);
+                }
+            }
+            if($lastID) {
+                redirect(base_url() . 'facebook/setting?m=success&id='.$lastID);
+            } else {
+                redirect(base_url() . 'facebook/setting?m=error');
+            }
+            
+        }
+        /*End FORM*/
+
+        $where_blog = array(
+            'meta_key'      => 'defualt_goups_'.$log_id,
+        );
+        $data['list'] = false;
+        $query_blog_exist = $this->Mod_general->select('meta', '*', $where_blog);
+        if (!empty($query_blog_exist[0])) {
+            $data['list'] = $query_blog_exist;
+        }
+
+        if (!empty($this->input->get('backto'))) {
+            redirect($this->input->get('backto'));
+        }
+        $this->load->view ( 'facebook/setting', $data );
     }
     public function shareation($value=1)
     {

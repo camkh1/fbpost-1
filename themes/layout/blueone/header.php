@@ -53,6 +53,8 @@
                     <li><a href="javascript:;"><i class="icon-plus"></i> Remove Tools</a></li>
                     <li><a href="<?php echo base_url() . 'Facebook/unfriend'; ?>"><i class="icon-plus"></i> Remove all Friends</a></li>
                     <li><a href="<?php echo base_url(); ?>"><i class="icon-plus"></i> Remove all Groups</a></li> 
+                    <li class="divider"></li>
+                    <li><a href="<?php echo base_url();?>facebook/setting"><i class="icon-wrench"></i> Setting</a></li>
                 </ul>
             </li>
         </ul>

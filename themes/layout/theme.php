@@ -237,6 +237,8 @@
 									return n;
 
 								}
+								//NOTY has 11 layouts; top, topLeft, topCenter, topRight, center, centerLeft, centerRight, bottom, bottomLeft, bottomCenter, bottomRight
+								//and 5 types alert, success, warning, error, information
 								function generateText(type,text,pos) {
 									var n = noty({
 										text: text,
