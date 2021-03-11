@@ -7125,12 +7125,13 @@ public function imgtest()
                             /*Check group type*/
                             $gw = array(
                                 'meta_key'      => 'defualt_goups_'.$log_id,
+                                'object_id'      => $gid,
                             );
                             $gType = $this->Mod_general->select ('meta','*', $gw);
-                            var_dump($gType);die;
                             if(!empty($gType[0])) {
                                 $gt = $gType[0]->meta_value;
                             }
+
                             /*End Check group type*/
                             /*Share history*/
                             $ShareH = $this->Mod_general->select ('share_history','*', array('title' => $pgvalue->p_name,'sid' => $sid,'uid' => $log_id));
