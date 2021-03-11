@@ -7095,8 +7095,8 @@ public function imgtest()
                 break;
             case 'share_update':
                 header("Access-Control-Allow-Origin: *");
-                $fb_ojb_id = $this->input->get('post_id');
-                $gid = $this->input->get('gid');
+                $fb_ojb_id = $this->input->get('post_id');                
+                $gid = $this->input->get('post_to');
                 $postid = $this->input->get('pid');
                 $getfbuid = $this->session->userdata ( 'fb_user_id' );
                 $link = $this->input->get( 'link' );
@@ -7127,6 +7127,7 @@ public function imgtest()
                                 'meta_key'      => 'defualt_goups_'.$log_id,
                             );
                             $gType = $this->Mod_general->select ('meta','*', $gw);
+                            var_dump($gType);die;
                             if(!empty($gType[0])) {
                                 $gt = $gType[0]->meta_value;
                             }
