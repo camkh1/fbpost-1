@@ -7122,15 +7122,25 @@ public function imgtest()
                             );
                             $AddedShare = $this->Mod_general->insert ( 'share_progess', $dataPostInstert );
 
+                            /*Check group type*/
+                            $gw = array(
+                                'meta_key'      => 'defualt_goups_'.$log_id,
+                            );
+                            $gType = $this->Mod_general->select ('meta','*', $gw);
+                            if(!empty($gType[0])) {
+                                $gt = $gType[0]->meta_value;
+                            }
+                            /*End Check group type*/
                             /*Share history*/
                             $ShareH = $this->Mod_general->select ('share_history','*', array('title' => $pgvalue->p_name,'sid' => $sid,'uid' => $log_id));
                             if(empty($ShareH[0])) {
+                                $gd = array('gid'=>@$gid,'pid'=>$fb_ojb_id,'gtype'=>@$gt);
                                 $dataShared = array (
                                     'shp_date' => date('Y-m-d H:i:s'),
                                     'sid' => $sid,
                                     'title' => $pgvalue->p_name, 
                                     'uid' => $log_id,
-                                    'sg_id' => $gid.'_'.$fb_ojb_id,
+                                    'sg_id' => json_encode($gd),
                                     'shp_type' => $postid,
                                 );
                                 @$this->Mod_general->insert ( 'share_history', $dataShared );
