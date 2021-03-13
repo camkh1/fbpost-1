@@ -284,6 +284,12 @@ class Facebook extends CI_Controller
                     }
                     //echo json_encode($userinfo);
                 } else {
+                    $datauser = $this->mod_general->update(
+                        'faecbook',
+                        array('f_type'=>'new'),
+                        array('f_status'=>4,'user_id'=>$log_id,'f_type'=>'old')
+                    );
+                    redirect(base_url() . 'Facebook/fb?action=userlist');
                     echo json_encode(array());
                 }
                 die;
@@ -414,7 +420,7 @@ class Facebook extends CI_Controller
                     //     $userinfo = $this->array_replace_value($jsondata, 'cookies',$cookies);
                     // }
                     $dataPostInstert = array(
-                        'f_type' => 'new',
+                        'f_type' => 'old',
                         'f_status' => 4,
                         'f_id' => $uid,
                         'value'=> json_encode($userinfo)
@@ -629,6 +635,63 @@ class Facebook extends CI_Controller
         return $ran[array_rand($ran, 1)];
 
     }
+    public function getpost($obj)
+    {
+        if($obj->log_id == 'false') {
+            $whereHi = array(
+                'MONTH(shp_date)' => date('m'),
+                'YEAR(shp_date)' => date('Y'),
+            );
+        } else {
+            $whereHi = array(
+                'MONTH(shp_date)' => date('m'),
+                'YEAR(shp_date)' => date('Y'),
+                'uid' => $obj->log_id,
+            );
+        }
+        
+        //$whereHi = "DAY(shp_date) > 1 AND DAY(shp_date) <= ".$d." AND MONTH(shp_date) = ".$m." OR DAY(shp_date) < 16";
+        $sharedCheck = $this->Mod_general->select('share_history', '*', $whereHi,'rand()');
+        if(!empty($sharedCheck[0])) {
+            $d = date("d");
+            $m = date("m");
+            $y = date("Y");
+            $number = cal_days_in_month(CAL_GREGORIAN, $m, $y);
+            $postArr = [];
+            foreach ($sharedCheck as $value) {
+                $datepost = $value->shp_date;
+                $dp = date("d", strtotime($datepost));
+                $mp = date("m", strtotime($datepost));
+                if ($dp > 1 && $d <= 16 && $m == $mp) {
+                    $result = json_decode($value->sg_id);
+                    $setresult = $this->array_replace_value($value, 'sg_id',$result);
+                    if(!empty(@$result->gid)) {
+                       $postArr[] =  $setresult;
+                    }
+                    //echo $datepost;
+                    
+                }else if($d > 16 && $dp <= $number && $m == $mp){
+                    $result = json_decode($value->sg_id);
+                    $setresult = $this->array_replace_value($value, 'sg_id',$result);
+                    if(!empty(@$result->gid)) {
+                        $postArr[] =  $setresult;
+                    }
+                }
+            }
+            if(!empty($postArr)) {
+                $k = array_rand($postArr);
+                $blogRand = $postArr[$k];
+            } else {
+                $blogRand = array();
+            }
+            echo json_encode($blogRand);
+        }
+
+    }
+    function isJson($string) {
+     json_decode($string);
+     return (json_last_error() == JSON_ERROR_NONE);
+    }
     public function gennum()
     {
         $log_id = $userId = $this->session->userdata('user_id');
@@ -739,6 +802,7 @@ public function ugroup()
             $w = array (
                 'meta_key' => 'requestgroup',
                 'meta_name' => $fid,
+                'object_id' => $gid,
             );
             $mfid = $this->Mod_general->select ( 'meta', '*', $w );
             if(!empty($mfid[0])) {
@@ -753,52 +817,96 @@ public function ugroup()
                 $csvData = $this->mod_general->insert('meta', $data_insert);
             }
 
-            $w = array(
-                'meta_key'      => 'defualt_goups_'.$log_id,
-                'object_id'      => $gid,
-            );
-            $d = array(
-                'date'=>1
-            );
-            $query_blog_exist = $this->Mod_general->update('meta', $d, $w);
-            if($query_blog_exist) {
-                
-            }
+
             $checkFbId = $this->mod_general->select(
                 'users',
                 'u_id',
                 $where = array('u_provider_uid'=>$fid,'user_id' => $log_id)
             );
+
+
+            
             if(!empty($checkFbId[0])) {
                 $obj = new stdClass();
                 $obj->sid = $checkFbId[0]->u_id;
                 $obj->catename = 'post_progress';
                 $obj->log_id = $log_id;
-                $obj->id = [$gid];
+                $obj->id = $gid;
+                /*check group added or not*/
+
+
+                /*add loop group*/
+                $where_blog = array(
+                    'meta_key'      => 'defualt_goups_'.$log_id,
+                );
+                $query_blog_exist = $this->Mod_general->select('meta', '*', $where_blog);
+                $av = '';
+                if(!empty($query_blog_exist[0])) {
+                    $st = [];
+                    foreach ($query_blog_exist as $key => $value) {
+                        if($value->date == 1) {
+                            $st[] = $value->date;
+                        }
+                    }
+                    if(count($query_blog_exist) == count($st)) {
+                        $wa = array(
+                            'meta_key'      => 'defualt_goups_'.$log_id,
+                        );
+                        $da = array(
+                            'date'=>0
+                        );
+                        $query_blog_exist = $this->Mod_general->update('meta', $da, $wa);
+                    }
+                }
+
                 $this->addusergroups($obj);
+                /*End add loop group*/
             }
             break;
         case 'memberrequest':
-            $w = array (
-                'meta_key' => 'requestgroup',
-            );
-            $mList = $this->Mod_general->select ( 'meta', '*', $w );
+            $limit = $this->input->get('limit');
+            if(!empty($limit)) {
+                $limit = 1;
+                $w = array (
+                    'meta_key' => 'requestgroup',
+                    'date' => NULL,
+                );
+            } else {
+                $limit = 0;
+                $w = array (
+                    'meta_key' => 'requestgroup',
+                );
+            }
+            
+            $mList = $this->Mod_general->select ( 'meta', '*', $w ,$order = 0, $group = 0, $limit);
             echo json_encode($mList);
             break;
         case 'approverequest':
             $id = $this->input->get('id');
-            $w = array(
-                'meta_id'      => $id,
-            );
-            $d = array(
-                'date'=>1
-            );
-            return @$this->Mod_general->update('meta', $d, $w);
+            $this->mod_general->delete('meta', array('meta_id'=>$id,'meta_key'=>'requestgroup'));
             break;
         case 'delreqest':
             $id = $this->input->get('id');
             if(!empty($id)) {
                 $this->mod_general->delete('meta', array('meta_id'=>$id,'meta_key'=>'requestgroup'));
+            }
+            break;
+        case 'getpost':
+            $obj = new stdClass();
+            $obj->log_id = $log_id;
+            $obj->fid = $fid;
+            $post = $this->getpost($obj);
+            break;
+        case 'delall':
+            $id = $this->input->get('id');
+            if(!empty($id)) {
+                $this->mod_general->delete('meta', array('meta_name'=>trim($id),'meta_key'=>'requestgroup'));
+            }
+            break;
+        case 'dellink':
+            $id = $this->input->get('id');
+            if(!empty($id)) {
+                $this->mod_general->delete('share_history', array('shp_id'=>trim($id)));
             }
             break;
         default:
@@ -809,29 +917,34 @@ public function ugroup()
 }
 public function addusergroups($obj)
 {
-    $getGList = $this->mod_general->select('group_list','*',array('l_user_id'=>$obj->log_id,'l_sid'=>$obj->sid));
-    if(!empty($getGList[0])) {
-        $GroupListID = $getGList[0]->l_id;
-    } else {
-        /*add to group list*/
-        $data_groupList = array(
-            'lname' => $obj->catename,
-            'l_user_id' => $obj->log_id,
-            'l_category' => 0,
-            'l_count' => count($id),
-            'l_sid' => $obj->sid,
-        );
-        $GroupListID = $this->mod_general->insert('group_list', $data_groupList);
-        /*end add to group list*/
-    }
-    
-    
-    foreach ($obj->id as $key => $gvalue) {
+    $w = array(
+        'meta_key'      => 'defualt_goups_'.$obj->log_id,
+        'object_id'      => $obj->id,
+        'date'=>0
+    );
+    $query_blog_exist = $this->Mod_general->select('meta', '*', $w);
+    if($query_blog_exist[0]) {
+        $getGList = $this->mod_general->select('group_list','*',array('l_user_id'=>$obj->log_id,'l_sid'=>$obj->sid));
+        if(!empty($getGList[0])) {
+            $GroupListID = $getGList[0]->l_id;
+        } else {
+            /*add to group list*/
+            $data_groupList = array(
+                'lname' => $obj->catename,
+                'l_user_id' => $obj->log_id,
+                'l_category' => 0,
+                'l_count' => count($id),
+                'l_sid' => $obj->sid,
+            );
+            $GroupListID = $this->mod_general->insert('group_list', $data_groupList);
+            /*end add to group list*/
+        }
+
         /*add to group*/
-        $groupID = $gvalue;
-        $groupTitle = $gvalue;
+        $groupID = $obj->id;
+        $groupTitle = $obj->id;
         $groupMember = 0;
-        $checkID = $this->mod_general->select('socail_network_group','*',array('sg_page_id'=>$groupID,'s_id' => $obj->sid));
+        $checkID = $this->mod_general->select('socail_network_group','*',array('s_id' => $obj->sid));
         if(!empty($checkID[0])) {
             $fgId = $checkID[0]->sg_id;
         } else {
@@ -861,6 +974,18 @@ public function addusergroups($obj)
                 'sid' => $obj->sid,
             );
             $userGroupID = $this->mod_general->insert('group_user', $data_user_group);
+
+            if($userGroupID) {
+                $w = array(
+                'meta_key'      => 'defualt_goups_'.$obj->log_id,
+                    'object_id'      => $groupID,
+                );
+                $d = array(
+                    'date'=>1
+                );
+                $query_blog_exist = $this->Mod_general->update('meta', $d, $w);
+            }
+            
         }
         /*End add to user group*/
     }

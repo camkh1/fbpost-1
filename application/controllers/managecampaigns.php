@@ -6731,7 +6731,12 @@ public function imgtest()
         $sid = $this->session->userdata ( 'sid' );
         $post_only = $this->session->userdata ( 'post_only' );
         
-
+        $obj = new stdClass();
+        $obj->log_id = $log_id;
+        $obj->provider_uid = $provider_uid;
+        $obj->provider = $provider;
+        $obj->gemail = $gemail;
+        $obj->post_only = $post_only;
         $this->load->theme ( 'layout' );
         $data ['title'] = 'Admin Area :: Setting';
 
@@ -8257,6 +8262,21 @@ die;
                     $this->session->set_userdata('pia', 1);
                 }
                 break;
+            case 'updateuserdetail':
+                $uid = $this->input->get('uid');
+                $name = $this->input->get('name');
+                $log_id = $this->input->get('log_id');
+                if($uid) {
+                    $obj->uid = $uid;
+                }
+                if($uid) {
+                    $obj->name = $name;
+                }
+                if($log_id) {
+                    $obj->log_id = $log_id;
+                }
+                $this->userd($obj);
+                break;
             default:
                 # code...
                 break;
@@ -8264,6 +8284,33 @@ die;
         $this->load->view ( 'managecampaigns/autopostfb', $data );
     }
 
+public function userd($obj)
+{
+    $where_u= array (
+        'user_id' => $obj->log_id,
+        'u_provider_uid' => $obj->uid,
+        Tbl_user::u_status => 1
+    );
+    $dataFbAccount = $this->Mod_general->select ( Tbl_user::tblUser, '*', $where_u );
+    if(!empty($dataFbAccount[0])) {
+        $fbUserId = $dataFbAccount[0]->u_id;
+        $this->session->set_userdata('sid', $fbUserId);
+        if($obj->name) {
+            $this->session->set_userdata('fb_user_name', $obj->name);
+        }
+    } else {
+        $fbUserId = $checkFbId[0]->u_id;
+        $data_user = array(
+            Tbl_user::u_provider_uid => $obj->uid,
+            Tbl_user::u_name => @$obj->name,
+            Tbl_user::u_type => 'Facebook',
+            Tbl_user::u_status => 1,
+            'user_id' => $obj->log_id,
+        );
+        $GroupListID = $this->mod_general->insert(Tbl_user::tblUser, $data_user);
+    }
+    
+}
     public function ins_share($pid)
     {
         $log_id = $this->session->userdata ( 'user_id' );
