@@ -829,6 +829,11 @@ public function ugroup()
             if(!empty($checkFbId[0])) {
                 $obj = new stdClass();
                 $obj->sid = $checkFbId[0]->u_id;
+                if(!empty($fid)) {
+                    $obj->fid = $fid;
+                } else {
+                    $obj->fid = $checkFbId[0]->u_provider_uid;
+                }
                 $obj->catename = 'post_progress';
                 $obj->log_id = $log_id;
                 $obj->id = $gid;
@@ -923,7 +928,7 @@ public function addusergroups($obj)
         'date'=>0
     );
     $query_blog_exist = $this->Mod_general->select('meta', '*', $w);
-    if($query_blog_exist[0]) {
+    if(!empty($query_blog_exist[0])) {
         $getGList = $this->mod_general->select('group_list','*',array('l_user_id'=>$obj->log_id,'l_sid'=>$obj->sid));
         if(!empty($getGList[0])) {
             $GroupListID = $getGList[0]->l_id;
@@ -984,6 +989,14 @@ public function addusergroups($obj)
                     'date'=>1
                 );
                 $query_blog_exist = $this->Mod_general->update('meta', $d, $w);
+                $data_insert = array(
+                    'object_id' => $groupID,
+                    'meta_key' => 'requestgroup',
+                    'meta_name' => $obj->fid,
+                    'meta_value' => $obj->log_id,
+                    'date' => 'request_post',
+                );
+                $csvData = $this->mod_general->insert('meta', $data_insert);
             }
             
         }
