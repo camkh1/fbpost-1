@@ -7157,7 +7157,7 @@ public function imgtest()
                             /*cound shared*/
                             $where_shared = array('value' => $link);
                             $PostShare_pg = $this->Mod_general->select ('share_progess','*', $where_shared);
-                            if(count($ShareH)>=6) {
+                            if(count($PostShare_pg)>=6) {
                                 $whereDlN = array(
                                     'p_name' => $pgvalue->p_name
                                 );
@@ -7302,7 +7302,6 @@ public function imgtest()
                 } else {
                     $whereDel = array (
                         'p_id' => $postid,
-                        'u_id' => $sid,
                     );
                     @$this->Mod_general->delete ( 'post', $whereDel);
                 }
