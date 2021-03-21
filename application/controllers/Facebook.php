@@ -2020,38 +2020,79 @@ WHERE gl.`gu_grouplist_id` = {$id}");
                 //     uname: vars.uname,
                 //     id: vars.id,
                 // };
-                $name = $_GET['uname'];
-                $d = $_GET['d'];
-                $m = $_GET['m'];
-                $y = $_GET['y'];
-                $id = $_GET['id'];
-                $npass = $_GET['npass'];
-                $phone = $_GET['phone'];
-                $chromename = $_GET['chromename'];
+                $all = $this->input->get();
+                $name = @$_GET['name'];
+                $d = @$_GET['birthday'];
+                $id = @$_GET['id'];
+                $npass = @$_GET['npass'];
+                $phone = @$_GET['phone'];
+                $uid = @$_GET['user_id'];
+                $chromename = @$_GET['chromename'];
+
                 $dataPostInstert = array(
+                    'f_type' => 'new',
                     'f_status' => 4,
+                    'f_id' => $uid,
                     'f_name' => $name,
-                    'f_date' => $y.'-'.$m.'-'.$d,
+                    'f_date' => $d,
                     'f_pass' => $npass,
-                    'f_lname' => 'Chrome name: '.$chromename,
-            );
-                $checkNum = $this->mod_general->select('faecbook', '*', array('f_phone'=>$phone,'f_date'=>'getNum','user_id' => $log_id));
+                    'f_lname' => 'Chrome name: '. @$chromename,
+                    'f_status' => 4,
+                    'value'=> json_encode($all)
+                );
+                //$where = "id='$id' OR f_id=$uid OR f_phone =";
+                $checkNum = $this->mod_general->select('faecbook', '*', array('id'=>$id));
                 if(!empty($checkNum[0])) {
-                    $csvData = $this->mod_general->update('faecbook', $dataPostInstert, array('f_phone'=>$phone,'user_id' => $log_id));
+                    $csvData = $this->mod_general->update(
+                        'faecbook', 
+                        $dataPostInstert, 
+                        array('id'=>$id)
+                    );
                 } else {
                     $data_insert = array(
                         'f_name' => $name,
+                        'f_id' => $uid,
                         'f_phone' => $phone,
                         'f_pass' => $npass,
                         'f_lname' => 'Chrome name: '.$chromename,
                         'user_id' => $log_id,
-                        'f_date' => $y.'-'.$m.'-'.$d,
+                        'f_date' => $d,
                         'f_status' => 4,
                     );                    
                     $csvData = $this->mod_general->insert('faecbook', $data_insert);
                 }
+                if(!empty($uid)) {
+                    /*add user*/
+                    $where_u= array (
+                        'u_provider_uid' => $uid,
+                    );
+                    $dataFbAccount = $this->Mod_general->select ( Tbl_user::tblUser, '*', $where_u );
+                    if(!empty($dataFbAccount[0])) {
+                        $data_user = array(
+                            Tbl_user::u_provider_uid => $uid,
+                            Tbl_user::u_name => @$name,
+                            Tbl_user::u_type => 'Facebook',
+                            Tbl_user::u_status => 1,
+                            'user_id' => $log_id,
+                            'u_email' => $phone,
+                        );
+                        $w = array('u_provider_uid'=>$uid);
+                        $GroupListID = $this->mod_general->update(Tbl_user::tblUser, $data_user, $w);
+                    } else {
+                        $data_user = array(
+                            Tbl_user::u_provider_uid => $uid,
+                            Tbl_user::u_name => @$name,
+                            Tbl_user::u_type => 'Facebook',
+                            Tbl_user::u_status => 1,
+                            'user_id' => $log_id,
+                            'u_email' => $phone,
+                        );
+                        $GroupListID = $this->mod_general->insert(Tbl_user::tblUser, $data_user);
+                    }
+                    /*End add user*/
+                }
                 if($csvData) {
-                    echo '<h1 style="color:green;text-align: center;">Ok</h1>';
+                    echo '<input id="success" value="1" type="hiddden"/><h1 style="color:green;text-align: center;">Ok</h1>';
                 }
             }
         }

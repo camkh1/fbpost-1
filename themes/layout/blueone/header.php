@@ -33,6 +33,7 @@
         <ul class="nav navbar-nav navbar-left">
             <li class="dropdown user"> <a href="#" class="dropdown-toggle" data-toggle="dropdown"> <i class="icon-facebook-sign"></i> <span class="username">Facebook</span> <i class="icon-caret-down small"></i> </a>
                 <ul class="dropdown-menu">
+                    <li> <a href="<?php echo base_url() . 'Facebook/fblist'; ?>"><i class="icon-facebook"></i> Facebook list</a> </li>
                     <li> <a href="<?php echo base_url() . 'Facebook/group'; ?>"><i class="icon-facebook"></i> Facebook Groups</a> </li>
                     <li><a href="<?php echo base_url(); ?>"><i class="icon-plus"></i> Remove all Groups</a></li>  
                     <li><a href="<?php echo base_url(); ?>Facebook/removegroup"><i class="icon-plus"></i> Remove all Groups by ID</a></li>  
