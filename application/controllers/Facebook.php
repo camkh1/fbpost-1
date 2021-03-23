@@ -2029,27 +2029,57 @@ WHERE gl.`gu_grouplist_id` = {$id}");
                 $uid = @$_GET['user_id'];
                 $chromename = @$_GET['chromename'];
 
-                $dataPostInstert = array(
-                    'f_type' => 'new',
-                    'f_status' => 4,
-                    'f_id' => $uid,
-                    'f_name' => $name,
-                    'f_date' => $d,
-                    'f_pass' => $npass,
-                    'f_lname' => 'Chrome name: '. @$chromename,
-                    'f_status' => 4,
-                    'value'=> json_encode($all)
-                );
-                //$where = "id='$id' OR f_id=$uid OR f_phone =";
-                $checkNum = $this->mod_general->select('faecbook', '*', array('id'=>$id));
+
+                $response = new stdClass ();
+                if(!empty($npass)) {
+                    $response->f_pass = $npass;
+                }
+                if(!empty($phone)) {
+                    $response->f_phone = $phone;
+                }
+                if(!empty($uid)) {
+                    $response->f_id = $uid;
+                }
+                if(!empty($chromename)) {
+                    $response->f_lname = 'Chrome name: '. $chromename;
+                }
+                if(!empty($d)) {
+                    $response->f_date = $d;
+                }
+                if(!empty($log_id)) {
+                    $response->user_id = $log_id;
+                }
+                $response->value = json_encode($all);
+                $response->f_status = 4;
+                $response->f_type = 'new';
+                $dataPostInstert = (array) $response;
+
+                // $dataPostInstert = array(
+                //     'f_type' => 'new',
+                //     'f_id' => $uid,
+                //     'f_name' => $name,
+                //     'f_date' => $d,
+                //     'f_pass' => $npass,
+                //     'f_lname' => 'Chrome name: '. @$chromename,
+                //     'f_status' => 4,
+                //     'value'=> json_encode($all)
+                // );
+                if($uid) {
+                    $where = array('f_id' =>$uid);
+                } else if($phone) {
+                    $where = array('f_phone' =>$phone);
+                } else if($id) {
+                    $where = array('id' =>$id);
+                }
+                $checkNum = $this->mod_general->select('faecbook', '*', $where);
                 if(!empty($checkNum[0])) {
                     $csvData = $this->mod_general->update(
                         'faecbook', 
                         $dataPostInstert, 
-                        array('id'=>$id)
+                        array('id'=>$checkNum[0]->id)
                     );
                 } else {
-                    $data_insert = array(
+                   /* $data_insert = array(
                         'f_name' => $name,
                         'f_id' => $uid,
                         'f_phone' => $phone,
@@ -2058,8 +2088,8 @@ WHERE gl.`gu_grouplist_id` = {$id}");
                         'user_id' => $log_id,
                         'f_date' => $d,
                         'f_status' => 4,
-                    );                    
-                    $csvData = $this->mod_general->insert('faecbook', $data_insert);
+                    ); */                   
+                    $csvData = $this->mod_general->insert('faecbook', $dataPostInstert);
                 }
                 if(!empty($uid)) {
                     /*add user*/
