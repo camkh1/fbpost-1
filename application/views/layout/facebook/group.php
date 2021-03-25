@@ -116,7 +116,7 @@
                                             <input type="checkbox" id="itemid" name="itemid[]" class="uniform" value="<?php echo $value->sg_id; ?>" />
                                         </td>
                                         <td>
-                                            <a href="https://www.facebook.com/groups/<?php echo $value->sg_page_id; ?>/members/" target="_blank"><?php echo $value->sg_page_id; ?> || <?php echo $value->sg_name; ?></a>
+                                            <a href="https://www.facebook.com/groups/<?php echo $value->sg_page_id; ?>/members/" target="_blank"><?php echo $value->sg_name; ?></a><br/><a href="https://www.facebook.com/groups/<?php echo $value->sg_page_id; ?>/" target="_blank"><?php echo $value->sg_name; ?></a>
                                         </td> 
                                         <td>
                                             <?php echo $value->sg_type; ?>

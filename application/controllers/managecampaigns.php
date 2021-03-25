@@ -7155,9 +7155,9 @@ public function imgtest()
                              /*End Share history*/
 
                             /*cound shared*/
-                            $where_shared = array('value' => $link);
-                            $PostShare_pg = $this->Mod_general->select ('share_progess','*', $where_shared);
-                            if(count($PostShare_pg)>=5) {
+                            $where_shared = array('title' => $pgvalue->p_name);
+                            $PostShare_pg = $this->Mod_general->select ('share_history','*', $where_shared);
+                            if(count($PostShare_pg)>=4) {
                                 $whereDlN = array(
                                     'p_name' => $pgvalue->p_name
                                 );
