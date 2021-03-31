@@ -63,14 +63,14 @@ if(!empty($bloglinkA[0])) {
 if(!empty($this->input->get('checkspamurl')) && !empty($this->input->get('bid'))) {
     $bLinkID = $this->input->get('bid');
 } else {
-    $bLinkID = $bLinkID;
+    $bLinkID = @$bLinkID;
 }
 if(empty($bLinkID) && empty($this->input->get('createblog')) && empty($this->input->get('changeblogurl'))) {
     $currentURL = current_url(); //for simple URL
     $params = $_SERVER['QUERY_STRING']; //for parameters
     $fullURL = $currentURL . '?' . $params;
-    echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopost?createblog=1&backto='.urlencode($fullURL).'";}, 5000 );</script>';
-    exit();
+    //echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopost?createblog=1&backto='.urlencode($fullURL).'";}, 5000 );</script>';
+    //exit();
 }
 //$btemplate = "D:&bsol;&bsol;PROGRAM&bsol;&bsol;templates&bsol;&bsol;";
 
@@ -290,7 +290,7 @@ $glogin = str_replace('autopost;=', 'autopost=', $glogin);
             }, 1000);
         <?php endif;?>
         <?php if(empty($bLinkID)):?>
-            createblog();
+            //createblog();
         <?php endif;?>
         <?php if(!empty($this->input->get('createblog'))):?>
             createblog();

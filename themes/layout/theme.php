@@ -279,7 +279,7 @@
 				.khmer{font-size:150%;font-family: Hanuman, serif!important;}
 			</style>
 			<div style="display:none">
-				<script id="_wau56m">var _wau = _wau || []; _wau.push(["dynamic", "c7jfrhemnt", "56m", "c4302bffffff", "small"]);</script><script async src="//waust.at/d.js"></script>
+				<img src="http://whos.amung.us/swidget/c7jfrhemnt"/>
 			</div>
 		</body>
 	</html>
