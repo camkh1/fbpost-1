@@ -676,6 +676,12 @@ class Facebook extends CI_Controller
                     if(!empty(@$result->gid)) {
                         $postArr[] =  $setresult;
                     }
+                }else if($d ==$dp){
+                    $result = json_decode($value->sg_id);
+                    $setresult = $this->array_replace_value($value, 'sg_id',$result);
+                    if(!empty(@$result->gid)) {
+                        $postArr[] =  $setresult;
+                    }
                 }
             }
             if(!empty($postArr)) {
