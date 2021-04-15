@@ -632,6 +632,24 @@ public function get_video_id($param, $videotype = '')
             echo $exc->getTraceAsString();
         }
     }
+
+    function getconfig($param)
+    {
+        $log_id = $this->session->userdata ('user_id');
+        $whereShowAuto = array(
+            'c_name'      => 'autopost',
+            'c_key'     => $log_id,
+        );
+        $autoData = $this->select('au_config', '*', $whereShowAuto);
+        if(!empty($autoData[0])) {
+            $autopost = json_decode($autoData[0]->c_value);
+            if(!empty($autopost->{$param})) {
+                return $autopost->{$param};
+            }
+        } else {
+            return false;
+        }
+    }
     
     function getuserPage($parent_id = 0, $level = 0) {
         $has_childs = false;

@@ -257,6 +257,12 @@ class Facebook extends CI_Controller
         $this->load->theme('layout');
         $data['title'] = 'Find Facebook ID';
         $action = $this->input->get('action');
+        $offset = !empty($this->input->get('offset')) ? $this->input->get('offset') : 0;
+        $limit = !empty($this->input->get('limit')) ? $this->input->get('limit') : 1;
+
+        if($limit == 'none') {
+            $limit = 0;
+        }
         switch ($action) {
             case 'userlist':
                 $datauser = $this->mod_general->select(
@@ -265,7 +271,8 @@ class Facebook extends CI_Controller
                     array('f_type'=>'new','f_status'=>4,'user_id'=>$log_id),
                     $order = 0, 
                     $group = 0, 
-                    $limit = 1
+                    $limit,
+                    $offset
                 );
                 //$datauser = array();
                 if(!empty($datauser[0])) {
@@ -282,6 +289,43 @@ class Facebook extends CI_Controller
                         redirect(base_url() . 'Facebook/fb?action=userlist');
                         exit();
                     }
+                    //echo json_encode($userinfo);
+                } else {
+                    $datauser = $this->mod_general->update(
+                        'faecbook',
+                        array('f_type'=>'new'),
+                        array('f_status'=>4,'user_id'=>$log_id,'f_type'=>'old')
+                    );
+                    redirect(base_url() . 'Facebook/fb?action=userlist');
+                    echo json_encode(array());
+                }
+                die;
+            break;
+            case 'fblists':
+                $datauser = $this->mod_general->select(
+                    'faecbook',
+                    '*',
+                    array('f_type'=>'new','f_status'=>4,'user_id'=>$log_id),
+                    $order = 0, 
+                    $group = 0, 
+                    $limit,
+                    $offset
+                );
+                $c = $this->mod_general->select(
+                    'faecbook',
+                    '*',
+                    array('f_type'=>'new','f_status'=>4,'user_id'=>$log_id)
+                );
+                //$datauser = array();
+                if(!empty($datauser[0])) {
+                    if($limit==1) {
+                        $datavalue = json_decode($datauser[0]->value);
+                        $userinfo = $this->array_replace_value($datauser[0], 'value',$datavalue);
+                        echo json_encode(array('fb'=>$userinfo, 'count'=>count($c)));
+                    } else {
+                        echo json_encode(array('fb'=>$datauser, 'count'=>count($c)));
+                    }
+                    
                     //echo json_encode($userinfo);
                 } else {
                     $datauser = $this->mod_general->update(
@@ -920,6 +964,30 @@ public function ugroup()
                 $this->mod_general->delete('share_history', array('shp_id'=>trim($id)));
             }
             break;
+        case 'addgroups':
+            $checkFbId = $this->mod_general->select(
+                'users',
+                '*',
+                $where = array('u_provider_uid'=>$fid)
+            );
+            if(!empty($checkFbId[0])) { 
+                $this->session->set_userdata('sid', $checkFbId[0]->u_id);
+                $this->session->set_userdata('fb_user_name', @$checkFbId[0]->u_name);
+                $this->session->set_userdata('fb_user_id', $fid);        
+                $obj = new stdClass();
+                $obj->sid = $checkFbId[0]->u_id;
+                if(!empty($fid)) {
+                    $obj->fid = $fid;
+                } else {
+                    $obj->fid = $checkFbId[0]->u_provider_uid;
+                }
+                $obj->catename = 'post_progress';
+                $obj->log_id = $log_id;
+                $obj->id = $gid;
+                $this->addugroups($obj);
+                //addugroups($obj)
+            }
+            break;
         default:
             # code...
             break;
@@ -1008,6 +1076,59 @@ public function addusergroups($obj)
         }
         /*End add to user group*/
     }
+}
+public function addugroups($obj)
+{
+    $getGList = $this->mod_general->select('group_list','*',array('l_user_id'=>$obj->log_id,'l_sid'=>$obj->sid));
+    if(!empty($getGList[0])) {
+        $GroupListID = $getGList[0]->l_id;
+    } else {
+        /*add to group list*/
+        $data_groupList = array(
+            'lname' => $obj->catename,
+            'l_user_id' => $obj->log_id,
+            'l_category' => 0,
+            'l_count' => count($id),
+            'l_sid' => $obj->sid,
+        );
+        $GroupListID = $this->mod_general->insert('group_list', $data_groupList);
+        /*end add to group list*/
+    }
+    /*add to group*/
+    $groupID = $obj->id;
+    $groupTitle = $obj->id;
+    $groupMember = 0;
+    $checkID = $this->mod_general->select('socail_network_group','*',array('s_id' => $obj->sid,'sg_page_id' => $groupID));
+    if(!empty($checkID[0])) {
+        $fgId = $checkID[0]->sg_id;
+    } else {
+        @iconv_set_encoding("internal_encoding", "TIS-620");
+        @iconv_set_encoding("output_encoding", "UTF-8");
+        @ob_start("ob_iconv_handler");
+        $data_group = array(
+            'sg_name' => $this->mod_general->remove_emoji($groupTitle),
+            'sg_page_id' => $groupID,
+            'sg_member' => $groupMember,
+            's_id' => $obj->sid,
+            'sg_type' => 'groups',
+            'sg_status' => 1,
+        );
+        @ob_end_flush();
+        $fgId = $this->mod_general->insert('socail_network_group', $data_group);
+    }
+
+    /*add to user group*/
+    $checkUserGroup = $this->mod_general->select('group_user','*',array('gu_idgroups'=>$fgId,'gu_user_id' => $obj->log_id,'gu_grouplist_id' => $GroupListID));
+    if(empty($checkUserGroup)) {
+        $data_user_group = array(
+            'gu_idgroups' => $fgId,
+            'gu_user_id' => $obj->log_id,
+            'gu_grouplist_id' => $GroupListID,
+            'sid' => $obj->sid,
+        );
+        $userGroupID = $this->mod_general->insert('group_user', $data_user_group);    
+    }
+    /*End add to user group*/
 }
 public function getaddedgroup($value)
 {

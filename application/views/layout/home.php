@@ -1,4 +1,7 @@
-<?php $userType = $this->session->userdata('user_type');?>
+<?php $userType = $this->session->userdata('user_type');
+$log_id = $this->session->userdata('user_id');
+?>
+<input type="hidden" name="user_id" value="<?php echo @$log_id;?>">
 <div class="page-header">
     <div class="page-title">
         <h3 style="font-size: 14px;">

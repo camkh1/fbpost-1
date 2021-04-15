@@ -372,6 +372,28 @@ $glogin = str_replace('autopost;=', 'autopost=', $glogin);
                                                     <input type="text" name="bloggerTemplate" class="form-control" style="width: 100%" placeholder="blogger Template" value="<?php echo @$autopost->templateLink;?>" required />
                                                 </div>
                                             </div>
+
+
+                                            <div class="widget box">
+                                            <div class="widget-content">
+                                                <label class="control-label">
+                                                    Groups config:
+                                                </label>
+                                                <div class="col-md-12">                                             
+                                                    <div class="form-group">
+                                                         <label class="col-md-4 control-label">Max group to post: </label>
+                                                        <div class="col-md-8">
+                                                            <label class="radio khmer"> 
+                                                                <input class="form-control input-width-mini" style="float:left;margin-right:5px;" value="<?php echo !empty($autopost->group_to_post) ? $autopost->group_to_post: '5';?>" name="gpost" type="number"> groups
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div style="clear:both"></div>
+                                            </div>
+                                        </div>
+
+
                                     </div>
                                     <div class="col-md-6">
                                             <div class="widget box">
@@ -414,34 +436,34 @@ $glogin = str_replace('autopost;=', 'autopost=', $glogin);
 
 
                                     <div class="col-md-6">
-                                            <div class="widget box">
-                                    <div class="widget-content">
-                                        <label class="control-label">
-                                            Site to post:
-                                        </label>
-                                        <div class="col-md-12">                                             
-                                            <div id="blogtype_lottery" style=""> 
-                                                    <div class="form-group">
-                                                        <div class="col-md-12">
-                                                            <input type="text" name="sitetopost" class="form-control" style="width: 100%" placeholder="Lottery blog" value="<?php echo @implode(',', $autopost->site_to_post);?>" required="">
-                                                        </div>
+                                        <div class="widget box">
+                                            <div class="widget-content">
+                                                <label class="control-label">
+                                                    Site to post:
+                                                </label>
+                                                <div class="col-md-12">                                             
+                                                    <div id="blogtype_lottery" style=""> 
+                                                            <div class="form-group">
+                                                                <div class="col-md-12">
+                                                                    <input type="text" name="sitetopost" class="form-control" style="width: 100%" placeholder="Lottery blog" value="<?php echo @implode(',', $autopost->site_to_post);?>" required="">
+                                                                </div>
+                                                            </div>
+                                                        <div style="clear:both"></div>
                                                     </div>
-                                                <div style="clear:both"></div>
-                                            </div>
-                                            <div id="blogtype_news" style="display: none;"> 
-                                                    <div class="form-group">
-                                                        <div class="col-md-12">
-                                                            <input type="text" name="newsBlog" class="form-control" style="width: 100%" placeholder="News blog" value="<?php echo @$autopost->blog_to_post->news;?>" required="">
-                                                        </div>
+                                                    <div id="blogtype_news" style="display: none;"> 
+                                                            <div class="form-group">
+                                                                <div class="col-md-12">
+                                                                    <input type="text" name="newsBlog" class="form-control" style="width: 100%" placeholder="News blog" value="<?php echo @$autopost->blog_to_post->news;?>" required="">
+                                                                </div>
+                                                            </div>
+                                                        <div style="clear:both"></div>
                                                     </div>
+                                                </div>
                                                 <div style="clear:both"></div>
                                             </div>
                                         </div>
-                                        <div style="clear:both"></div>
                                     </div>
-                                </div>
 
-                                    </div>
                                     <div style="clear:both"></div>
                                     <div class="form-actions" style="padding: 10px 20px 10px;margin: auto;margin-bottom: -10px">
                                             <input name="saveAuto" type="button" value="Save" class="btn btn-primary pull-right" />

@@ -114,6 +114,7 @@ class Managecampaigns extends CI_Controller {
         $client->setClientSecret($client_secret);
         $client->setRedirectUri($redirect_uri);
         $client->setAccessType("offline");      
+        $client->addScope('https://www.googleapis.com/auth/youtube');
         $client->addScope('https://www.googleapis.com/auth/youtube.force-ssl');
         $client->addScope("https://www.googleapis.com/auth/userinfo.email");
         $client->addScope("https://www.googleapis.com/auth/userinfo.profile");
@@ -6193,6 +6194,9 @@ public function imgtest()
             $sitetopost = explode(',', $sitetopost);
             $newsBlog = $this->input->post('newsBlog');
             $posttype = $this->input->post('posttype');
+
+            /*group to psot*/
+            $gpost = $this->input->post('gpost');
             $fbUserId = $this->session->userdata ( 'sid' );
             $autopost = 'autopost';
             $whereAuto = array(
@@ -6207,6 +6211,7 @@ public function imgtest()
                 'posttype' => $posttype,
                 'blog_to_post' => array('lottery'=>$lotteryBlog,'news'=>$newsBlog),
                 'site_to_post' => $sitetopost,
+                'group_to_post' => $gpost,
             );
             /* check before insert */
             if (empty($query_ran)) {
@@ -6416,6 +6421,7 @@ public function imgtest()
                     //exit();
                 }
             }
+
 
         }
         /*End add blog link by Imacros*/
@@ -6863,7 +6869,7 @@ public function imgtest()
                             'title' => $gvalue->p_name,
                             'uid ' => $sid,
                         );
-                        $getShPost = $this->Mod_general->select('share_history', '*', $where_sh,"RAND()");
+                        $getShPost = $this->Mod_general->select('share_history', '*', $where_sh);
                         /*End check duplicate post*/
                         $isNoDup = false;
                         if(empty($getShPost[0])) {
@@ -6893,22 +6899,23 @@ public function imgtest()
                         );
                         $checkTimeShare = $this->Mod_general->select('share_progess','*', $whereStime,'shp_id DESC');
                         if(!empty($checkTimeShare[0])) {
-                            $todaysdate = date('Y/m/d H:i:s', strtotime('-10 minutes'));
-                            $mydate=$checkTimeShare[0]->shp_date;
-                            if (strtotime($todaysdate)>=strtotime($mydate))
-                            {
-                                $isCanPost = true;
-                            }
-                            else
-                            {
-                                // FALSE STATEMENT
-                                $isCanPost = false;
-                                continue;
-                            }
+                            // $todaysdate = date('Y/m/d H:i:s', strtotime('-10 minutes'));
+                            // $mydate=$checkTimeShare[0]->shp_date;
+                            // if (strtotime($todaysdate)>=strtotime($mydate))
+                            // {
+                            //     $isCanPost = true;
+                            // }
+                            // else
+                            // {
+                            //     // FALSE STATEMENT
+                            //     $isCanPost = false;
+                            //     continue;
+                            // }
+                            $isCanPost = true;
                         } else {
                            $isCanPost = true; 
                         }
-                        $isCanPost = true;
+                        
                         /*Check share exist*/
                         $where_so = array (
                             'p_id' => $pid,
@@ -6924,14 +6931,14 @@ public function imgtest()
                         if(!empty($isNoDup) && empty($dataShare[0])) {
                             $this->ins_share($pid);
                             /*Check share exist*/
-                            $where_so = array (
+                            $where_sos = array (
                                 'p_id' => $pid,
                                 'sh_status'=>0
                             );
                             $dataShare = $this->Mod_general->select(
                                 'share',
                                 '*', 
-                                $where_so);
+                                $where_sos);
                             /*End Check share exist*/
                         }
                         /*End if no share but post*/
@@ -6951,14 +6958,18 @@ public function imgtest()
                             );
                             $tablejoin = array('socail_network_group'=>'socail_network_group.sg_id=share.sg_page_id');
                             $dataGroup = $this->Mod_general->join('share', $tablejoin, $fields = '*', $wGroupType);
+                            $gcd = [];
                             if(!empty($dataGroup)) {                
                                 foreach($dataGroup as $key => $groups) { 
-                                    if(!empty($groups)) {      
-                                        $dataGoupInstert[] = array(
-                                            'group_id'=>$groups->sg_page_id,
-                                            'group_name'=>$groups->sg_name,
-                                            'status'=>$groups->sh_status);
-                                    }
+                                    if(!empty($groups)) {  
+                                        if (!in_array($groups->sg_page_id, $gcd)) {
+                                            array_push($gcd, $groups->sg_page_id);
+                                            $dataGoupInstert[] = array(
+                                                'group_id'=>$groups->sg_page_id,
+                                                'group_name'=>$groups->sg_name,
+                                                'status'=>$groups->sh_status);
+                                            }
+                                        }
                                 } 
                             }
                             /*End get group id*/
@@ -7052,6 +7063,9 @@ public function imgtest()
                         'post' =>$dataPostg
                     );
                 }
+                $max_groups = $this->Mod_general->getconfig('group_to_post');
+                
+                shuffle($dataGoupInstert);
                 $dataJson = array(
                     'post' => $dataJsons,
                     'preTitle' => $preTitle,
@@ -7430,7 +7444,7 @@ public function imgtest()
                     require_once(APPPATH.'controllers/Getcontent.php');
                     $aObj = new Getcontent();
                     $siteUrl = array(
-                        'https://www.siamnews.com/',
+                        //'https://www.siamnews.com/',
                         'https://www.siamstreet.com/',
                         'https://www.dailyliveexpress.com/',
                         'https://www.mumkhao.com/',
@@ -7517,8 +7531,8 @@ public function imgtest()
                     /*End check post progress frist*/ 
 
                     $RanChoose = array(
-                        //'site',
-                        //'yt',
+                        'site',
+                        'yt',
                         'amung',
                     );
                     $l = array_rand($RanChoose);
@@ -8158,6 +8172,7 @@ die;
                     header('Access-Control-Allow-Origin: *');
                     $userID = $this->input->get('log_id');
                     $fb_id = $this->input->get('fb_id');
+                    $uid = $this->input->get('uid');
                     if(!empty($userID)) {
                         $log_id = $userID;
                         $this->session->set_userdata('user_id', $userID);
@@ -8165,17 +8180,38 @@ die;
                     if(!empty($fb_id)) {
                         $this->session->set_userdata('fb_user_id', $fb_id);
                     }
-                    
-                    /*if empty groups*/
+                    if(!empty($uid)) {
+                        $this->session->set_userdata('fb_user_id', $uid);
+                    }
+
                     if($this->session->userdata('fb_user_id')) {
                         $fbUserId = $this->session->userdata('fb_user_id');
                     } else {
                         $fbUserId = $this->input->get('uid');
                     }
+
+                    $where = array('f_id' =>$uid);
+                    $checkNum = $this->mod_general->select('faecbook', '*', $where);
+                    if(!empty($checkNum[0])) {
+                        $log_id = $checkNum[0]->user_id;
+                        $fbUserId = $checkNum[0]->f_id;
+                    }
+                    /*if empty groups*/
+                    
                     $tmp_path = './uploads/'.$log_id.'/'. $fbUserId . '_tmp_action.json';
                     $string = @file_get_contents($tmp_path);
                     $json_a = json_decode($string);
                     /*get group*/
+                    $checkFbId = $this->mod_general->select(
+                        Tbl_user::tblUser,
+                        '*',
+                        $where = array(Tbl_user::u_provider_uid=>$fbUserId)
+                    );
+                    if(!empty($checkFbId[0])) {
+                        $sid = $checkFbId[0]->u_id;
+                    }
+
+
                     $wGList = array (
                         'lname' => 'post_progress',
                         'l_user_id' => $log_id,
@@ -8190,9 +8226,9 @@ die;
                             'gu_status' => 1
                         );  
                     } else {
-                        $account_group_type = $json_a->account_group_type;
+                        $account_group_type = @$json_a->account_group_type;
                         $wGroupType = array (
-                            'gu_grouplist_id' => $json_a->account_group_type,
+                            'gu_grouplist_id' => @$json_a->account_group_type,
                             'gu_user_id' => $log_id,
                             'gu_status' => 1
                         );
@@ -8335,7 +8371,6 @@ public function userd($obj)
         $geGList = $this->Mod_general->select ( 'group_list', '*', $wGList );
         if(empty($geGList)) {
             $wGList = array (
-                'l_user_id' => $log_id,
                 'l_sid' => $sid,
             );
             $geGList = $this->Mod_general->select ( 'group_list', '*', $wGList );
@@ -8699,7 +8734,9 @@ public function userd($obj)
              $params = $_SERVER['QUERY_STRING']; //for parameters
              $fullURL = $currentURL . '?' . $params; //full URL with parameter
             $setUrl = base_url() . 'managecampaigns/autopost?glogin='. urlencode($fullURL);
-            $this->getYoutubeVideos($ytID,5,$setUrl);
+            $this->youtubefeed($ytID,5,$setUrl);
+            die;
+            //$this->getYoutubeVideos($ytID,5,$setUrl);
             /*clean up for 3 days ago*/
             $twoDaysAgo = date('Y-m-d h:m:s', strtotime('-2 days', strtotime(date('Y-m-d'))));
             $checkYtExist = $this->mod_general->select ( 
@@ -8720,6 +8757,148 @@ public function userd($obj)
             redirect(base_url() . 'managecampaigns/autopostfb?action=yt');
         }
         echo '<meta http-equiv="refresh" content="30">';
+    }
+
+    public function youtubefeed($ytID,$limit,$setUrl)
+    {
+        $log_id = $this->session->userdata ( 'user_id' );
+        $user = $this->session->userdata ( 'email' );
+        $provider_uid = $this->session->userdata ( 'provider_uid' );
+        $provider = $this->session->userdata ( 'provider' );
+        $gemail = $this->session->userdata ('gemail');
+        $fbUserId = $this->session->userdata('fb_user_id');
+        $sid = $this->session->userdata ( 'sid' );
+
+        $this->load->library ( 'html_dom' );
+        $url = 'https://www.youtube.com/channel/'.$ytID.'/videos';
+        $options = array(
+          'http'=>array(
+            'method'=>"GET",
+            'header'=>"Accept-language: en\r\n" .
+                      "Cookie: foo=bar\r\n" .  // check function.stream-context-create on php.net
+                      "User-Agent: Mozilla/5.0 (Linux; U; Android 2.2) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1\r\n" // i.e. An iPad 
+          )
+        );
+
+        $context = stream_context_create($options);
+        $file = file_get_contents($url, false, $context);
+$str = <<< HTML
+'.$file.'
+HTML;
+                        $html = str_get_html($str);
+                        
+        // $article = $html->find('a.compact-media-item-metadata-content');
+        // foreach($article as $index => $slink) {
+        //     $ytl = $slink->href;
+        //     echo $ytl;
+        // }//name is Doe, John"
+        $html = str_replace('\\x22:\\', '', $html);
+        $vids = explode("videoId", $html);
+
+        $i = 0;
+        $vidarr = [];
+        foreach($vids as $vidss) {
+            if($i != 0) {
+                $ytl = explode('\\', $vidss);
+                $vid = str_replace('x22', '', $ytl[0]);
+                if($i<22) {
+                    $title = str_replace('x22titlex7b\x22runsx5b\x7b\x22textx22', 'titleee', $vidss);
+                    $title = str_replace('\x22\x7d\x5d,\x22accessibilityx7b\x22accessibility', 'emdtile', $title);
+                    $title = explode('titleee', $title);
+                    $title = explode('emdtile', @$title[1]);
+                    $title = @$title[0];
+                    if(!empty($title)) {
+                        $vidarr[] = array(
+                            'id'=> $vid,
+                            'title'=> $title,
+                        );     
+                    }
+                    $dataContent          = new stdClass();
+                    $dataContent->title    = $title;
+                    $dataContent->vid    = $vid;
+                    /*check data exist*/
+                    $checkExist = $this->mod_general->select ( 
+                        'youtube', 
+                        'yid', 
+                        array (
+                            'yid' => $vid,
+                            'y_fid' => $sid,
+                            'y_uid' => $log_id,
+                        )
+                    );
+                    /*End check data exist*/
+                    if(empty($checkExist[0])) {
+                        if($vid) {
+                            $ShareH = $this->Mod_general->select ('share_history','*', array('title' => $title,'uid' => $log_id));
+                            if(empty($ShareH[0])) {
+                                $dataYtInstert = array (
+                                    'yid' => $vid,
+                                    'y_status' => 0,
+                                    'y_fid' => $sid,
+                                    'y_uid' => $log_id,
+                                    'y_other' => json_encode($dataContent),
+                                    'y_date' => date('Y-m-d H:i:s'),
+                                );
+                                $ytData = $this->Mod_general->insert ( 'youtube', $dataYtInstert );
+                            } else {
+                                continue;
+                            }
+                        } else {
+                            continue;
+                        }
+                    }
+                }  
+                
+                         
+                //var_dump($vid);
+                
+                
+                
+            } 
+            $i++;
+        }
+
+        /*update youtube channel*/
+        $where_yt = array(
+            'c_name'      => 'youtubeChannel',
+            'c_key'     => $log_id,
+        );
+        $query_yt = $this->Mod_general->select('au_config', '*', $where_yt);
+        if (!empty($query_yt[0])) {
+            $found = false;
+            $inputYt = array();
+            $ytexData = json_decode($query_yt[0]->c_value);
+            foreach ($ytexData as $key => $ytex) {                    
+                $pos = strpos($ytex->ytid, $ytID);
+                if ($pos === false) {
+                    $inputYt[] = array(
+                        'ytid'=> $ytex->ytid,
+                        'ytname' => $ytex->ytname,
+                        'date' => $ytex->date,
+                        'status' => $ytex->status,
+                        'order' => @$ytex->order,
+                    );
+                } else {
+                   $inputYt[] = array(
+                        'ytid'=> $ytex->ytid,
+                        'ytname' => $ytex->ytname,
+                        'date' => strtotime("now"),
+                        'status' => 1,
+                        'order' => @$ytex->order,
+                    );
+                }
+            }
+            $data_yt = array(
+                'c_value'      => json_encode($inputYt)
+            );
+            $whereYT = array(
+                'c_key'     => $log_id,
+                'c_name'      => 'youtubeChannel'
+            );
+            $this->Mod_general->update('au_config', $data_yt,$whereYT);
+        }
+        /*End update youtube channel*/
+        return true;
     }
 
     public function amung($id='',$max=1,$type='')
@@ -9045,8 +9224,8 @@ public function userd($obj)
                 'ia' => 0,
             );
             /*save tmp data post*/
-            require_once(APPPATH.'controllers/Splogr.php');
-            $aObj = new Splogr();  
+            //require_once(APPPATH.'controllers/Splogr.php');
+            //$aObj = new Splogr();  
             $i = 0;
             $dataPost = true;
 
@@ -9127,10 +9306,11 @@ public function userd($obj)
                     //     $image = $picture;
                     // }
                     /*End upload image so server*/
-                    $contents = $aObj->getpost(1);
-                    $txt = preg_replace('/\r\n|\r/', "\n", $contents["content"][0]["content"]); 
+                    //$contents = $aObj->getpost(1);
+                    //$txt = preg_replace('/\r\n|\r/', "\n", $contents["content"][0]["content"]); 
+                    $txt = $this->generateText() . '[embedyt] https://www.youtube.com/watch?v='.$yid.'[/embedyt]';
                     $content = array (
-                        'name' => @htmlentities(htmlspecialchars(str_replace(' - YouTube', '', $contents["content"][0]["title"]))),
+                        'name' => @htmlentities(htmlspecialchars(str_replace(' - YouTube', '', $title))),
                         'message' => @htmlentities(htmlspecialchars(addslashes($txt))),
                         'caption' => @$y_other->description,
                         'link' => 'https://www.youtube.com/watch?v='.$yid,
@@ -10474,7 +10654,6 @@ function makeRequests($service) {
             $channelsResponse = $youtube->channels->listChannels('contentDetails', array(
               'id' => $channelId,
             ));
-
             $setPost = [];
             foreach ($channelsResponse['items'] as $channel) {
               // Extract the unique playlist ID that identifies the list of videos
