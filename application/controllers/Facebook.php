@@ -974,6 +974,7 @@ public function ugroup()
                 $this->session->set_userdata('sid', $checkFbId[0]->u_id);
                 $this->session->set_userdata('fb_user_name', @$checkFbId[0]->u_name);
                 $this->session->set_userdata('fb_user_id', $fid);        
+                $this->session->set_userdata('user_id', $checkFbId[0]->user_id);        
                 $obj = new stdClass();
                 $obj->sid = $checkFbId[0]->u_id;
                 if(!empty($fid)) {
@@ -982,10 +983,9 @@ public function ugroup()
                     $obj->fid = $checkFbId[0]->u_provider_uid;
                 }
                 $obj->catename = 'post_progress';
-                $obj->log_id = $log_id;
+                $obj->log_id = !empty($log_id) ? $log_id : $checkFbId[0]->user_id;
                 $obj->id = $gid;
                 $this->addugroups($obj);
-                //addugroups($obj)
             }
             break;
         default:
@@ -2034,6 +2034,7 @@ WHERE gl.`gu_grouplist_id` = {$id}");
 
 
         $fTable = 'faecbook';
+        $search = $this->input->get('filtername');
         $this->load->library ( 'pagination' );
         $per_page = (! empty ( $_GET ['result'] )) ? $_GET ['result'] : 20;
         $config ['base_url'] = base_url () . 'Facebook/fblist';
@@ -2042,8 +2043,14 @@ WHERE gl.`gu_grouplist_id` = {$id}");
         $config ['per_page'] = $per_page;
         $config = $this->mod_general->paginations($config);
         $page = ($this->uri->segment ( 3 )) ? $this->uri->segment ( 3 ) : 0;
+        $data['page'] = $page;
+        if(empty($search)) {
+            $query_blog = $this->mod_general->select($fTable, '*', array('f_date'=>'getNum','user_id' => $log_id,'f_status = 8 OR f_status ='=>4), "id DESC", '', $config['per_page'], $page); 
+        } else {
+            $select = ' * FROM faecbook WHERE f_status = 4 AND f_id LIKE "%'.$search.'" OR f_phone LIKE "%'.$search.'" OR f_name LIKE "%'.$search.'"';
+            $query_blog = $this->mod_general->fql($fTable, $select); 
+        }
         
-        $query_blog = $this->mod_general->select($fTable, '*', array('f_date'=>'getNum','user_id' => $log_id,'f_status = 8 OR f_status ='=>4), "id DESC", '', $config['per_page'], $page); 
         $config ["uri_segment"] = 3;
         $this->pagination->initialize ( $config );
         $data ["total_rows"] = count ( $count_blog );

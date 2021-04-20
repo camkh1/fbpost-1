@@ -31,26 +31,26 @@ class Getcontent extends CI_Controller
         /*End clean*/
 
         $this->load->library ( 'html_dom' );
-        $headers = @get_headers($url);
-        if(strpos($headers[0],'404') === false)
-        {
+        // $headers = @get_headers($url);
+        // if(strpos($headers[0],'404') === false)
+        // {
 
-        } else {
-            if(is_connected) {
-                $cleanUrl = $this->mod_general->delete(
-                    'meta', 
-                    array(
-                        'object_id'      => $url,
-                        'meta_name'     => $log_id . 'sitelink',
-                    )
-                );
-                if($cleanUrl) {
-                    redirect(base_url().'managecampaigns/autopostfb?action=site');
-                }
-            } else {
-                redirect(base_url().'managecampaigns/autopostfb?action=site');
-            }
-        }
+        // } else {
+        //     if(is_connected) {
+        //         $cleanUrl = $this->mod_general->delete(
+        //             'meta', 
+        //             array(
+        //                 'object_id'      => $url,
+        //                 'meta_name'     => $log_id . 'sitelink',
+        //             )
+        //         );
+        //         if($cleanUrl) {
+        //             redirect(base_url().'managecampaigns/autopostfb?action=site');
+        //         }
+        //     } else {
+        //         redirect(base_url().'managecampaigns/autopostfb?action=site');
+        //     }
+        // }
         
         $obj = new stdClass();
         $parse = parse_url($url);

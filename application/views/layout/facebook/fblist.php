@@ -108,6 +108,52 @@
                     </div>
                 </div>
                 <div class="widget-content" style="display: block;">
+                    <div class="row">
+                        <div class="dataTables_header clearfix">
+                            <div class="col-md-6">
+                                <div id="DataTables_Table_0_length" class="dataTables_length">
+                                    <label> <select name="DataTables_Table_0_length" size="1"
+                                        aria-controls="DataTables_Table_0" class="select2-offscreen"
+                                        tabindex="-1" onchange="getComboA(this)">
+                                            <option value="5" <?php echo (count($result) == 5 ? 'selected':'');?>>5</option>
+                                            <option value="10" <?php echo (count($result) == 10 ? 'selected':'');?>>10</option>
+                                            <option value="20" <?php echo (count($result) == 20 ? 'selected':'');?>>20</option>
+                                            <option value="25" <?php echo (count($result) == 25 ? 'selected':'');?>>25</option>
+                                            <option value="50" <?php echo (count($result) == 50 ? 'selected':'');?>>50</option>
+                                            <option value="-1">All</option>
+                                    </select>
+                                    </label>
+                                </div>
+                                <?php if ($log_id == 2 || $log_id == 527 || $log_id == 511 || $log_id == 3):?>
+                                <div class="btn-group">
+                                    <button class="btn btn-sm dropdown-toggle"
+                                        data-toggle="dropdown">
+                                        <i class="icol-cog"></i> <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a
+                                            href="<?php echo base_url(); ?>managecampaigns?progress=1"><i class="icon-share"></i> Post in progress</a></li>
+                                        <li><a
+                                            href="<?php echo base_url(); ?>managecampaigns?progress=clear"><i class="icon-pencil"></i> Post list</a></li>
+                                    </ul>
+                                </div>
+                                <?php endif;?>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="dataTables_filter" id="DataTables_Table_0_filter">
+                                    <form method="">                                        
+                                        <label style="float: right;">
+                                            <div class="input-group">
+                                                <span class="input-group-addon"> <i class="icon-search"> </i>
+                                                </span> <input type="text" aria-controls="DataTables_Table_0"
+                                                    class="form-control" name="filtername" />
+                                            </div>
+                                        </label>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <table class="table table-hover table-condensed">
                         <thead>
                             <tr>

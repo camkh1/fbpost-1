@@ -7171,7 +7171,7 @@ public function imgtest()
                             /*cound shared*/
                             $where_shared = array('title' => $pgvalue->p_name);
                             $PostShare_pg = $this->Mod_general->select ('share_history','*', $where_shared);
-                            if(count($PostShare_pg)>=4) {
+                            if(count($PostShare_pg)==10) {
                                 $whereDlN = array(
                                     'p_name' => $pgvalue->p_name
                                 );
@@ -8324,10 +8324,13 @@ public function userd($obj)
     $where_u= array (
         'user_id' => $obj->log_id,
         'u_provider_uid' => $obj->uid,
-        Tbl_user::u_status => 1
     );
     $dataFbAccount = $this->Mod_general->select ( Tbl_user::tblUser, '*', $where_u );
+
     if(!empty($dataFbAccount[0])) {
+        if(empty($dataFbAccount[0]->u_name) && !empty($obj->name)) {
+            $query_blog_exist = $this->Mod_general->update(Tbl_user::tblUser, array('u_name'=>$obj->name), array('u_id'=>$dataFbAccount[0]->u_id));
+        }
         $fbUserId = $dataFbAccount[0]->u_id;
         $this->session->set_userdata('sid', $fbUserId);
         if($obj->name) {
