@@ -7251,6 +7251,8 @@ public function imgtest()
                 /*clean*/
                 header("Access-Control-Allow-Origin: *");
                 $getfbuid = $this->input->get('uid');
+                $postid = $this->input->get('pid');
+
                 if($this->session->userdata ( 'uid' )) {
                     $getfbuid = $this->session->userdata ( 'uid' );
                 }
@@ -7262,17 +7264,18 @@ public function imgtest()
                 foreach ($getProDel as $prodel) {
                     @$this->Mod_general->delete ( Tbl_share::TblName, array (
                         'p_id' => $prodel->p_id,
-                        'social_id' => @$sid,
                     ) );
                     $this->Mod_general->delete ( 'meta', array (
                         'object_id' => $prodel->p_id,
-                        'meta_key'  => $sid,
                     ) );
                     $this->Mod_general->delete ( 'post', array (
                         'p_id' => $prodel->p_id,
                     ) );
                 }
-                $postid = $this->input->get('postid');
+                if(!empty($this->input->get('postid'))) {
+                    $postid = $this->input->get('postid');
+                }
+                
                 /*check if exist*/
                 $whereMta = array(
                     'meta_name'      => 'post_progress',

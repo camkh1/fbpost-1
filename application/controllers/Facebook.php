@@ -2047,7 +2047,7 @@ WHERE gl.`gu_grouplist_id` = {$id}");
         if(empty($search)) {
             $query_blog = $this->mod_general->select($fTable, '*', array('f_date'=>'getNum','user_id' => $log_id,'f_status = 8 OR f_status ='=>4), "id DESC", '', $config['per_page'], $page); 
         } else {
-            $select = ' * FROM faecbook WHERE f_status = 4 AND f_id LIKE "%'.$search.'" OR f_phone LIKE "%'.$search.'" OR f_name LIKE "%'.$search.'"';
+            $select = ' * FROM faecbook WHERE f_status = 4 AND f_id LIKE "%'.$search.'" OR f_phone LIKE "%'.$search.'" OR f_name LIKE "%'.$search.'" OR f_lname  LIKE "Chrome name: %'.$search.'"';
             $query_blog = $this->mod_general->fql($fTable, $select); 
         }
         
