@@ -7128,7 +7128,7 @@ public function imgtest()
                 $Postpg = $this->Mod_general->select ('share_history','*', $where_Ppg);
             
 
-               if(empty($Postpg[0])) {                  
+               if(!empty($link)) {                  
 
                     /*Check group type*/
                     $gw = array(
@@ -7238,7 +7238,6 @@ public function imgtest()
                 header("Access-Control-Allow-Origin: *");
                 $getfbuid = $this->input->get('uid');
                 $postid = $this->input->get('pid');
-
                 if($this->session->userdata ( 'uid' )) {
                     $getfbuid = $this->session->userdata ( 'uid' );
                 }
