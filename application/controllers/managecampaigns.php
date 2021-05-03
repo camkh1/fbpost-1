@@ -6827,6 +6827,20 @@ public function imgtest()
                 }
                 /*End get group for post*/
 
+                /*get history id*/
+                $dataShareH = $this->Mod_general->select (
+                    'share_history',
+                    '*', 
+                    array(),
+                    $order = 'rand()',
+                    $group = 0, 
+                    $limit = 1 
+                );
+                if(!empty($dataShareH[0])) {
+                    $posthistory = $dataShareH[0];
+                }
+                /*End get history id*/
+
                 /*End get post that not share*/
                 /*check post progress frist*/
                 
@@ -7071,6 +7085,7 @@ public function imgtest()
                     'preTitle' => $preTitle,
                     'subTitle' => $subTitle,
                     'groups' =>$dataGoupInstert,
+                    'posthistory'=> @json_decode($posthistory->sg_id)
                 );
                     // $where_Pshare = array (
                     //     'u_id' => $sid,
