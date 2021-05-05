@@ -8597,7 +8597,8 @@ public function userd($obj)
         if(!empty($settitle)) {
             $title = $settitle;
         } 
-        $title = str_replace(',', '_', $title);
+        $title = str_replace('Thailottery', '', $title);
+        $title = str_replace('/\s+/', '_', $title);
         $title = str_replace('/\s+/', '_', $title);
         $title = $this->getMBStrSplit($title, 1);
         $tc = count($title) / 2;
@@ -8611,7 +8612,7 @@ public function userd($obj)
         }
         //$title1 = implode(' ', $title);
         $title = implode('', $st);
-        
+
         if(!empty($setthumbs)) {
             $thumb = $this->Mod_general->upload($setthumbs);
         }       
