@@ -8474,9 +8474,10 @@ public function userd($obj)
             $conent = $ycontent->conent;
             $thumb = $ycontent->thumb;
             $title = $ycontent->title;
+            
             $bodytext = $this->generateText();
             if(!empty($matches[1])) {
-                $youtubeCode = '[embedyt] https://www.youtube.com/watch?v='.$matches[1].'[/embedyt]';
+                $youtubeCode = '[embedyt]https://www.youtube.com/watch?v='.$matches[1].'[/embedyt]';
             } else {
                 $youtubeCode = '';
             }
@@ -8596,6 +8597,21 @@ public function userd($obj)
         if(!empty($settitle)) {
             $title = $settitle;
         } 
+        $title = str_replace(',', '_', $title);
+        $title = str_replace('/\s+/', '_', $title);
+        $title = $this->getMBStrSplit($title, 1);
+        $tc = count($title) / 2;
+        $st = [];
+        for ($i=0; $i < count($title); $i++) {                
+            if($i<$tc) {
+                array_push($st, $title[$i] . ' ');
+            } else {
+                array_push($st, $title[$i] . '');
+            }
+        }
+        //$title1 = implode(' ', $title);
+        $title = implode('', $st);
+        
         if(!empty($setthumbs)) {
             $thumb = $this->Mod_general->upload($setthumbs);
         }       
@@ -8631,6 +8647,24 @@ public function userd($obj)
         if($AddToPost) {
            return $AddToPost;
         }
+    }
+
+    function getMBStrSplit($string, $split_length = 1){
+        mb_internal_encoding('UTF-8');
+        mb_regex_encoding('UTF-8'); 
+        
+        $split_length = ($split_length <= 0) ? 1 : $split_length;
+        $mb_strlen = mb_strlen($string, 'utf-8');
+        $array = array();
+        $i = 0; 
+        
+        while($i < $mb_strlen)
+        {
+            $array[] = mb_substr($string, $i, $split_length);
+            $i = $i+$split_length;
+        }
+        
+        return $array;
     }
     public function CheckSiteLotto()
     {
