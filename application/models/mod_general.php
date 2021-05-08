@@ -1531,21 +1531,44 @@ public function get_video_id($param, $videotype = '')
     public function uploadMedia($file_path='', $param=array(),$rezie=1)
        {
         if(!empty($file_path)) {
-             if (file_exists($file_path)) {
+            if(!empty($param['btnplayer'])) {
+                $structure = FCPATH . 'uploads/image/';
+                if (!file_exists($structure)) {
+                    mkdir($structure, 0777, true);
+                }
+                $file_title = basename($file_path);
+                $fileName = FCPATH . 'uploads/image/'.$file_title;
+                @copy($file_path, $fileName);
+                $file_path = $fileName;
+                $file_name = $imgName = $fileName;
+                $uploads = 1;
+            }
+            $file_name = $file_path;
+            if (file_exists($file_path)) {
+
                 $this->load->library('ChipVNl');
                 \ChipVN\Loader::registerAutoLoad();
 
 
-                $imgName = $file_path;
                 $client_id = '51d22a7e4b628e4';
 
                 $filetype = mime_content_type($file_path);
                 /*resize image*/
                 if(!empty($rezie)) {
                     $maxDim = 1200;
-                    $file_name = $imgName;
                     list($width, $height, $type, $attr) = @getimagesize( $file_name );
                     if($width < $maxDim) {
+                        if(empty($uploads)) {
+                            $structure = FCPATH . 'uploads/image/';
+                            if (!file_exists($structure)) {
+                                mkdir($structure, 0777, true);
+                            }
+                            $file_title = basename($file_path);
+                            $fileName = FCPATH . 'uploads/image/'.$file_title;
+                            @copy($file_path, $fileName);
+                            $file_path = $fileName;
+                            $file_name = $imgName = $fileName;
+                        }
                         if ( $width < $maxDim || $height < $maxDim ) {
                             $target_filename = $file_name;
                             $ratio = $width/$height;
@@ -1564,7 +1587,7 @@ public function get_video_id($param, $videotype = '')
                             imagejpeg( $dst, $imgName ); // adjust format as needed
                             imagedestroy( $dst );
                         }
-                    }
+                    } 
                 }
                 // $fileSName = FCPATH . 'uploads/image/'.strtotime("now").basename($imgName);
                 // @copy($file_path, $fileSName);
@@ -1721,10 +1744,12 @@ public function get_video_id($param, $videotype = '')
                     // } else {
                     //     return false;
                     // }
+                } else {
+                    return $file_path;
                 }
                 /*End upload*/
             } else {
-                return false;
+                return $file_path;
             }
         } else {
             return false;

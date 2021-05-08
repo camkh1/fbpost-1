@@ -8477,13 +8477,15 @@ public function userd($obj)
             
             $bodytext = $this->generateText();
             if(!empty($matches[1])) {
+                $from = 'yt';
                 $youtubeCode = '[embedyt]https://www.youtube.com/watch?v='.$matches[1].'[/embedyt]';
             } else {
                 $youtubeCode = '';
+                $from = '';
             }
             
             $conent = $bodytext.'<p>'.$youtubeCode.'</p>';
-            $from = 'yt';
+            
         } else {
                     /*check duplicate*/
             $whereDupA = array(
@@ -8537,6 +8539,7 @@ public function userd($obj)
                 );
                 $lastID = $this->Mod_general->insert('meta', $data_blog);
             }
+            $from = 'site';
         }
         if(empty($conent)) {
             return false;
@@ -8613,9 +8616,44 @@ public function userd($obj)
         //$title1 = implode(' ', $title);
         $title = implode('', $st);
 
-        if(!empty($setthumbs)) {
-            $thumb = $this->Mod_general->upload($setthumbs);
-        }       
+        // if(!empty($setthumbs)) {
+        //     //$thumb = $this->Mod_general->upload($setthumbs);
+        //     $param = array(
+        //         'btnplayer'=>0,
+        //         'playerstyle'=>1,
+        //         'imgcolor'=>0,
+        //         'txtadd'=>'',
+        //         'filter_brightness'=>'',
+        //         'filter_contrast'=>'',
+        //         'img_rotate'=>'',
+        //     );
+        //     $thumb = $this->mod_general->uploadMedia($setthumbs,$param);
+        //     echo $thumb;die;
+        // } 
+        if($from == 'yt') {
+            $param = array(
+                'btnplayer'=>1,
+                'playerstyle'=>0,
+                'imgcolor'=>0,
+                'txtadd'=>'',
+                'filter_brightness'=>1,
+                'filter_contrast'=>0,
+                'img_rotate'=>'',
+                'no_need_upload'=>'',
+            );
+        } else {
+            $param = array(
+                'btnplayer'=>0,
+                'playerstyle'=>0,
+                'imgcolor'=>0,
+                'txtadd'=>'',
+                'filter_brightness'=>0,
+                'filter_contrast'=>0,
+                'img_rotate'=>'',
+                'no_need_upload'=>1,
+            );
+        }
+        $thumb = $this->mod_general->uploadMedia($thumb,$param);   
         $content = array (
                 'name' => @htmlentities(htmlspecialchars(str_replace(' - YouTube', '', $title))),
                 'message' => @htmlentities(htmlspecialchars(addslashes($conent))),
