@@ -7172,7 +7172,7 @@ public function imgtest()
                     /*cound shared*/
                     $where_shared = array('title' => $link);
                     $PostShare_pg = $this->Mod_general->select ('share_history','*', $where_shared);
-                    if(count($PostShare_pg)==7) {
+                    if(count($PostShare_pg)==5) {
                         if(!empty($message)) {
                             $whereDlN = array(
                                 'p_name' => $message
