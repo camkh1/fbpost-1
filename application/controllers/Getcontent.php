@@ -593,10 +593,13 @@ $link =  $desc->find('a', 0)->href;
         $parse = parse_url($url);
         //echo $parse['host'];
         $checkSite = $html->find('#main #Blog1 .post');
+        $siam = $html->find('#article-post .data_detail');
         if(count($checkSite)==1) {
             $setHost = 'blogspot';
         } else if(preg_match ( '/wp-includes/', $html ) && preg_match ( '/wp-content/', $html )){
             $setHost = 'wp';
+        } else if(count($siam)==1) {
+            $setHost = 'www.siamnews.com';
         } else {
             $setHost = $parse['host'];
         }
