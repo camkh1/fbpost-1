@@ -1411,7 +1411,15 @@ $link =  $desc->find('a', 0)->href;
                 return $obj;
                 break;
             case 'entertain.teenee.com':
+                $path = parse_url($url, PHP_URL_PATH);
                 /*get label*/
+                $getpath = explode('/', $path);
+                $parsed_url = parse_url($url);
+                $domain = $parsed_url['scheme'] . "://" . $parsed_url['host'];
+                $setup = '';
+                if(!empty($getpath[1])) {
+                    $setup = $domain.'/'.$getpath[1] . '/';
+                }
                 $label = [];
                 $last = count($html->find('.post-header .post-author a')) - 1;
                 foreach($html->find('.post-header .post-author a') as $index => $labels) {
@@ -1434,7 +1442,7 @@ $link =  $desc->find('a', 0)->href;
                 $content = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $content);
                 $content = preg_replace('/<ins\b[^>]*>(.*?)<\/ins>/is', '<div class="setAds"></div>', $content);
                 $content = preg_replace("/<a(.*?)>/", "<a$1 target=\"_blank\">", $content);
-                $content = preg_replace("/img src='/", "img src='https://entertain.teenee.com/thaistar/", $content);
+                $content = preg_replace("/img src='/", "img src='".$setup, $content);
                 
                 $obj->vid = '';
                 $obj->conent = $content;

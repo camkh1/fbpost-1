@@ -3237,7 +3237,7 @@ class Managecampaigns extends CI_Controller {
                         // ) );                        
                     }
                     $parse = parse_url($pConent->link);
-                    if (!in_array($parse['host'], $siteUrl)) {
+                    if (in_array($parse['host'], $siteUrl)) {
                         $whereMt = array(
                             'meta_name'      => 'post_progress',
                             'meta_key'      => $sid,
@@ -4512,7 +4512,7 @@ HTML;
                     $aObj = new Getcontent(); 
                     $content = $aObj->getConentFromSite($url,$oldurl);
                 if(!empty($content->fromsite)) {
-                    $conTenSite = '<br/><div class="meta-from"> ดูข่าวต้นฉบับ: '.'<a href="'.$url.'" target="_blank">'.$content->fromsite.'</a></div>';
+                    $conTenSite = '<p> ดูข่าวต้นฉบับ: '.$url.'</p>';
                 } else {
                     $conTenSite = '';
                 }
@@ -6989,7 +6989,7 @@ public function imgtest()
                             /*End get group id*/
 
                             $parse = parse_url($pConent->link);
-                            if (!in_array(@$parse['host'], $siteUrl)) {
+                            if (in_array(@$parse['host'], $siteUrl)) {
                                 if(empty($checkExistP[0])) {
                                     if(!empty($isCanPost)) {
                                         if(!empty($isNoDup)) {

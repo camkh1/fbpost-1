@@ -302,27 +302,10 @@ class Mod_general extends CI_Model
     function checkSiteLinkStatus()
     {
         $siteUrl = array(
-            'www.siamnews.com',
-            'www.siamstreet.com',
-            'www.dailyliveexpress.com',
-            'www.siamvariety.com',
-            'www.siamtopic.com',
-            'www.mumkhao.com',
-            'www.xn--42c2dgos8bxc2dtcg.com',
-            'board.postjung.com',
-            'huaythai.me',
-            'www.huaythaitoday.com',
-            'www.youtube.com',
-            'youtu.be',
-            'www.huayhot.com',
-            'www.verl.supiper.online',
-            'www.tha.supiper.online',
-            'www.to.supiper.online',
-            'www.visit.seepiper.online',
-            'www.shear.tosenews365.online',
-            'www.thare.freshtimes.online',
-            'www.see.trueinewslike.online',
-            'www.xn--22c0ba9d0gc4c.news',
+            'www.bz24news.com',
+            'news17times.com',
+            'www.timesclicks.com',
+            'www.jc24news.com',
         );
         return $siteUrl;
     }

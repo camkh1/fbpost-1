@@ -27,7 +27,11 @@ $pid = '';
 $sitePpost = $autopost->site_to_post;
 $k = array_rand($sitePpost);
 $blogRand = $sitePpost[$k];
-
+$site = @$_GET['site'];
+$action = @$_GET['action'];
+if(!empty($site)) {
+    $blogRand = $site;
+}
 //$labels = [];
 if(!empty($post)) {
     $pConent = json_decode($post[0]->p_conent);
@@ -63,6 +67,8 @@ if(!empty($post)) {
                     $labels = '1';
                 } else if($blogRand == 'https://www.jc24news.com/') {
                     $labels = '5';
+                } else if($blogRand == 'http://www.bz24news.com/') {
+                    $labels = '1';
                 } else {
                     $labels = '1';
                 }
@@ -72,11 +78,12 @@ if(!empty($post)) {
                     $labels = '14';
                 } else if($blogRand == 'https://www.jc24news.com/') {
                     $labels = '13';
+                } else if($blogRand == 'http://www.bz24news.com/') {
+                    $labels = '52';
                 } else {
                     $labels = '13';
                 }
                 break;
-            
             default:
                 $labels = '1';
                 break;
@@ -100,7 +107,7 @@ if(!empty($post)) {
     Please wait...
 </div>
 <code id="codeB" style="width:300px;overflow:hidden;display:none"></code>
-    <code id="examplecode5" style="width:300px;overflow:hidden;display:none">var codedefault2=&quot;SET !EXTRACT_TEST_POPUP NO\n SET !TIMEOUT_PAGE 300\n SET !ERRORIGNORE YES\n SET !TIMEOUT_STEP 0.1\n&quot;;var wm=Components.classes[&quot;@mozilla.org/appshell/window-mediator;1&quot;].getService(Components.interfaces.nsIWindowMediator);var window=wm.getMostRecentWindow(&quot;navigator:browser&quot;);const XMLHttpRequest = Components.Constructor(&quot;@mozilla.org/xmlextras/xmlhttprequest;1&quot;);var homeUrl = &quot;<?php echo base_url();?>&quot;,add_post_url = &quot;<?php echo @$blogRand;?>&quot;,titles = &quot;&quot;,contents = &quot;&quot;,thumb = &quot;&quot;,pid = &quot;<?php echo @$pid;?>&quot;,labels = [<?php echo @$labels;?>];</code>
+    <code id="examplecode5" style="width:300px;overflow:hidden;display:none">var codedefault2=&quot;SET !EXTRACT_TEST_POPUP NO\n SET !TIMEOUT_PAGE 300\n SET !ERRORIGNORE YES\n SET !TIMEOUT_STEP 0.1\n&quot;;var wm=Components.classes[&quot;@mozilla.org/appshell/window-mediator;1&quot;].getService(Components.interfaces.nsIWindowMediator);var window=wm.getMostRecentWindow(&quot;navigator:browser&quot;);const XMLHttpRequest = Components.Constructor(&quot;@mozilla.org/xmlextras/xmlhttprequest;1&quot;);var homeUrl = &quot;<?php echo base_url();?>&quot;,add_post_url = &quot;<?php echo @$blogRand;?>&quot;,titles = &quot;&quot;,contents = &quot;&quot;,thumb = &quot;&quot;,pid = &quot;<?php echo @$pid;?>&quot;,labels = [<?php echo @$labels;?>]<?php if(empty($link) && $action == 'postblog'):?>,fileupload = &quot;<?php echo @$fileupload;?>&quot;,imgname=&quot;<?php echo @$imgname;?>&quot;,imgext=&quot;<?php echo @$imgext;?>&quot;<?php endif;?>;</code>
     <script type="text/javascript">
         function runcode(codes) {
             var str = $("#examplecode5").text();
@@ -138,8 +145,11 @@ if(!empty($post)) {
             }
         }
     window.setTimeout( function(){
-        <?php if(empty($link)):?>
+    <?php if(empty($link) && $action == 'postwp'):?>
         load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/postToWordpress');
+    <?php endif;?>
+    <?php if(empty($link) && $action == 'postblog'):?>
+        load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/uploadToWordpress');
     <?php endif;?>
     }, 2000 );
     </script>

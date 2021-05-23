@@ -36,6 +36,7 @@ class Wordpress extends CI_Controller
         $sid = $this->session->userdata ( 'sid' );
         $post_only = $this->session->userdata ( 'post_only' );
         header("Access-Control-Allow-Origin: *");
+        $action = $this->input->get('action');
 
         $this->load->theme ( 'layout' );
         $data ['title'] = 'Auto Post to Wordpress';
@@ -56,10 +57,52 @@ class Wordpress extends CI_Controller
         );
         $getPost = $this->Mod_general->select ( Tbl_posts::tblName, '*', $wPost );
         if(!empty($getPost[0])) {
+            if(!empty($this->input->get('unlink'))) {
+                $unfile = FCPATH . 'uploads/image/'.$this->input->get('unlink');
+                unlink($unfile);
+            }
             $data['post']= $getPost;
+            if($action == 'postblog') {                
+                $pConent = json_decode($getPost[0]->p_conent);
+                $thumb = $pConent->picture;
+                $ext = pathinfo($thumb, PATHINFO_EXTENSION);
+                $file_title = strtotime(date('Y-m-d H:i:s'));
+                $fileName = FCPATH . 'uploads/image/'.$file_title.'.'.$ext;
+                @copy($thumb, $fileName);
+                $str = str_replace('/', '\\', $fileName);
+                $str = str_replace('\\', '\\\\', $str);
+                $data['fileupload'] = $str;
+                $data['imgname'] = $file_title;
+                $data['imgext'] = $ext;
+            }
             // $pConent = json_decode($getPost[0]->p_conent);
             // $pOption = json_decode($getPost[0]->p_schedule);
             // var_dump($pConent);
+        }
+        if(!empty($getPost[0]) && !empty($this->input->get('img'))) {
+            $img = $this->input->get('img');
+            $site = $this->input->get('site');
+            $whereUp = array('p_id' => $pid);
+            /*update post*/
+            $pConent = json_decode($getPost[0]->p_conent);
+            $content = array (
+                'name' => $pConent->name,
+                'message' => $pConent->message,
+                'caption' => $pConent->caption,
+                'link' => $pConent->link,
+                'mainlink' => $pConent->mainlink,
+                'picture' => $img,                            
+                'vid' => $pConent->vid,                            
+            );
+            $dataPostInstert = array (
+                Tbl_posts::conent => json_encode ( $content )
+            );
+            $updates = $this->Mod_general->update( Tbl_posts::tblName,$dataPostInstert, $whereUp);
+            if($updates) {
+                $setUrl = base_url() . 'wordpress/autopostwp?pid='.$pid.'&action=postwp&site='.$site;
+                redirect($setUrl);
+            }
+            /*End update post*/
         }
         if(!empty($getPost[0]) && strlen($link)>20) {
             /*update post*/
@@ -101,7 +144,8 @@ class Wordpress extends CI_Controller
         $autoData = $this->Mod_general->select('au_config', '*', $whereShowAuto);
         if(!empty($autoData[0])) {
             $data['autopost'] = json_decode($autoData[0]->c_value);
-        } 
+        }
+
         /*End AutoPost*/
         $data['userrole'] = $this->Mod_general->userrole('uid');
         $this->load->view('wordpress/autopostwp', $data);
