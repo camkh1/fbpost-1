@@ -59,7 +59,7 @@ class Wordpress extends CI_Controller
         if(!empty($getPost[0])) {
             if(!empty($this->input->get('unlink'))) {
                 $unfile = FCPATH . 'uploads/image/'.$this->input->get('unlink');
-                unlink($unfile);
+                @unlink($unfile);
             }
             $data['post']= $getPost;
             if($action == 'postblog') {                
@@ -69,6 +69,10 @@ class Wordpress extends CI_Controller
                 $file_title = strtotime(date('Y-m-d H:i:s'));
                 $fileName = FCPATH . 'uploads/image/'.$file_title.'.'.$ext;
                 @copy($thumb, $fileName);
+                if (preg_match('/fbpost\\\uploads/', $thumb)) {
+                    //@unlink($thumb);
+                }
+
                 $str = str_replace('/', '\\', $fileName);
                 $str = str_replace('\\', '\\\\', $str);
                 $data['fileupload'] = $str;
@@ -81,6 +85,7 @@ class Wordpress extends CI_Controller
         }
         if(!empty($getPost[0]) && !empty($this->input->get('img'))) {
             $img = $this->input->get('img');
+            $img = str_replace('http:', 'https:', $img);
             $site = $this->input->get('site');
             $whereUp = array('p_id' => $pid);
             /*update post*/

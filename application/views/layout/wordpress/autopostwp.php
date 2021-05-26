@@ -172,7 +172,7 @@ if(!empty($post)) {
                 
                     <div class="form-group">
                         <div class="col-md-12 clearfix">
-                            <input id="title" onclick="this.focus(); this.select()" type="text" name=""  class="form-control" value="<?php echo @$titles;?>" />
+                            <input id="title" onclick="this.focus(); this.select()" type="text" name=""  class="form-control" value="<?php echo htmlspecialchars_decode(@$titles);?>" />
                         </div>
                     </div>
                     <div class="form-group">

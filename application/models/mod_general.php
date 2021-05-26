@@ -304,8 +304,8 @@ class Mod_general extends CI_Model
         $siteUrl = array(
             'www.bz24news.com',
             'news17times.com',
-            'www.timesclicks.com',
             'www.jc24news.com',
+            'updatecamp.com',
         );
         return $siteUrl;
     }
@@ -1514,21 +1514,35 @@ public function get_video_id($param, $videotype = '')
     public function uploadMedia($file_path='', $param=array(),$rezie=1)
        {
         if(!empty($file_path)) {
-            if(!empty($param['btnplayer'])) {
-                $structure = FCPATH . 'uploads/image/';
-                if (!file_exists($structure)) {
-                    mkdir($structure, 0777, true);
-                }
-                $file_title = basename($file_path);
-                $fileName = FCPATH . 'uploads/image/'.$file_title;
-                @copy($file_path, $fileName);
-                $file_path = $fileName;
-                $file_name = $imgName = $fileName;
-                $uploads = 1;
+            $structure = FCPATH . 'uploads/image/';
+            if (!file_exists($structure)) {
+                mkdir($structure, 0777, true);
             }
+            
+            $array = pathinfo($file_path);
+            var_dump($array);
+            $file_title = $array['filename'];
+            $ext = $array['extension'];
+            if (preg_match('/jpg/', $ext)) {
+                $ext = '.jpg';
+            }
+            if (preg_match('/png/', $ext)) {
+                $ext = '.png';
+            }
+            if (preg_match('/png/', $ext)) {
+                $ext = '.png';
+            }
+            if (preg_match('/jpeg/', $ext)) {
+                $ext = '.jpeg';
+            }
+            $fileName = FCPATH . 'uploads/image/'.$file_title.$ext;
+            //$fileName = FCPATH . 'uploads/image/'.$file_title;
+            @copy($file_path, $fileName);
+            $file_path = $fileName;
+            $file_name = $imgName = $fileName;
+            $uploads = 1;
             $file_name = $file_path;
             if (file_exists($file_path)) {
-
                 $this->load->library('ChipVNl');
                 \ChipVN\Loader::registerAutoLoad();
 
@@ -1540,7 +1554,7 @@ public function get_video_id($param, $videotype = '')
                 if(!empty($rezie)) {
                     $maxDim = 1200;
                     list($width, $height, $type, $attr) = @getimagesize( $file_name );
-                    if($width < $maxDim) {
+                    if($width < $maxDim || $width < $height) {
                         if(empty($uploads)) {
                             $structure = FCPATH . 'uploads/image/';
                             if (!file_exists($structure)) {
@@ -1558,11 +1572,14 @@ public function get_video_id($param, $videotype = '')
                             if( $ratio > 1) {
                                 $new_width = $maxDim;
                                 $new_height = $maxDim/$ratio;
+                            } else if ( $width < $maxDim && $height > $width) {
+
                             } else {
                                 $new_width = $maxDim*$ratio;
                                 $new_height = $maxDim;
                             }
-
+                            $new_width = 1200;
+                            $new_height = 635;
                             $src = imagecreatefromstring( file_get_contents( $file_name ) );
                             $dst = imagecreatetruecolor( $new_width, 635 );
                             imagecopyresampled( $dst, $src, 0, 0, 0, 50, $new_width, $new_height, $width, $height );
