@@ -7199,6 +7199,7 @@ public function imgtest()
                             $itemGroups = $this->Mod_general->join('group_user', $tablejoin, $fields = '*', $wGroupType);
 
                     if(!empty($itemGroups)) {
+                        $gcd = [];
                         foreach($itemGroups as $key => $groups) { 
                             if(!empty($groups)) {  
                                 if (!in_array($groups->sg_page_id, $gcd)) {
