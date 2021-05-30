@@ -70,7 +70,7 @@ class Wordpress extends CI_Controller
                 $fileName = FCPATH . 'uploads/image/'.$file_title.'.'.$ext;
                 @copy($thumb, $fileName);
                 if (preg_match('/fbpost\\\uploads/', $thumb)) {
-                    //@unlink($thumb);
+                    @unlink($thumb);
                 }
 
                 $str = str_replace('/', '\\', $fileName);

@@ -296,15 +296,19 @@ function parse_query_string(query) {
     <?php
     if(!empty($socialList)):
     $Mod_general = new Mod_general ();
-    $prefix = "ลุ้นจะให้โชคใหมงวดนี้พิมพ์ OK 👌👌|👉👉พิม36 ค่ะ|แม้นเลข 19 ก่อนไปดูเลข|ขอสติ๊กเกอร์คนละตัว👇|อยากได้กด 48 มาครับ⏰|งวดนี้มาแล้วกด(24)ก่อนไปดูเลข👇|กด( สาธุ)ก่อนไปดู|พิมพ์ 67 แทนขอบคุณ|ไครเอาพิมพ์​ (รอ)มา ดูเลย |กด41ดูเลย👇👇|งวดนี้มาแล้วกด(33)ก่อนไปดูเลข👇|พิม 21 เข้าดูเลย👇👇👇|งวดนี้มาแล้วกด 39 ก่อนไปดูเลข|ห้ามลืมกด 11 ไปดูเลย|ห้ามลืมกด 81ไปดูเลย| ห้ามลืมกด 88 ไปดูเลย|กด '78' เข้าดูเลย👇|กด 55 เข้าดูเลย👇";
      foreach ($socialList as $value):
     	$content = json_decode($value->p_conent);
     	$getLink = $content->link;
     	$picture = @$content->picture;
     	$uploaded = true;
 
-    	$prefixArr = explode('|', $prefix);
-        $preTitle = $prefixArr[mt_rand(0, count($prefixArr) - 1)];
+    	$subfixArr = explode('|', $suffix);
+        $subTitle = $subfixArr[mt_rand(0, count($subfixArr) - 1)];
+        $txtRan = ['สาธุ🙏🙏🙏','รวยๆ🙏🙏🙏','รอ','OK'];
+        $randtext = $txtRan[mt_rand(0, count($txtRan) - 1)];
+        $subTitle = str_replace('randtxt', $randtext, $subTitle);
+        $subTitle = str_replace('randnum', rand(1,9).rand(1,9), $subTitle);
+
 
     	if (!@preg_match('/http/', @$picture)):
     		preg_match("/^(?:http(?:s)?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:(?:watch)?\?(?:.*&)?v(?:i)?=|(?:embed|v|vi|user)\/))([^\?&\"'>]+)/", $getLink, $matches);
@@ -367,9 +371,7 @@ function parse_query_string(query) {
 								        // }
 							        }
 						                    //$link = get_bitly_short_url( $link, BITLY_USERNAME, BITLY_API_KEY );
-        									?>
-        									<textarea style="height: 25px;margin-bottom: 3px" id="copy-text" type="text" name="glink" class="form-control" onClick="copyText(this);"><?php echo $value->{Tbl_posts::name}.' ' . $preTitle;?> <?php echo @$link;?></textarea>
-        									<textarea style="height: 25px;" id="copy-text" type="text" name="glink" class="form-control" onClick="copyText(this);"><?php echo $value->{Tbl_posts::name};?><br/><?php echo @$mainlink;?><a href="<?php echo $link;?>"><img style="border:1px solid #000;display: none;" src="<?php echo $content->picture; ?>" alt="" class="wp-image-45"/></a><link href="<?php echo @$picture; ?>" rel="image_src"/><meta content="<?php echo @$picture; ?>" property="og:image"/></textarea>
+        									?>  		
         <?php if ($value->{Tbl_posts::status} == 1) { ?>
                                                 <span
 									class="label label-success"> Active </span>
@@ -396,7 +398,7 @@ function parse_query_string(query) {
 												<li><a
 												href="<?php echo base_url(); ?>facebook/shareation?post=getpost&pid=<?php echo $value->{Tbl_posts::id}; ?>"><i class="icon-share"></i> Share now</a></li>
 											<?php endif;?>
-											<li><a data-title="<?php echo $value->{Tbl_posts::name};?>" data-mlink="<?php echo @$mainlink;?>" data-img="<?php echo $content->picture; ?>" data-link="<?php echo @$link;?>" onclick="getcode(this);" href="javascript:void(0);"><i class="icon-pencil"></i> Get Link</a></li>
+											<li><a data-title="<?php echo $value->{Tbl_posts::name};?>" data-mlink="<?php echo @$mainlink;?>" data-img="<?php echo $content->picture; ?>" data-pre="<?php echo $subTitle;?>" data-link="<?php echo @$link;?>" onclick="getcode(this);" href="javascript:void(0);"><i class="icon-pencil"></i> Get Link</a></li>
 											<?php
 											$parse = parse_url($glink);
 											//$bContent = preg_replace('/\s+/', '<sp>', $message);
@@ -520,9 +522,10 @@ function getcode(e) {
 	var link = $(e).attr('data-link');
 	var title = $(e).attr('data-title');
 	var img = $(e).attr('data-img');
-	var setHTml = '<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0"><tr><td id="bgimage" colspan="3" style="background:#000000;height: 280px;overflow: hidden;background: no-repeat center center;background-size: cover; background: #000 center center no-repeat; background-size: 100%;border: 1px solid #000;background-image:url('+img+');"><a id="main_link" href="'+mlink+'" target="_top" rel="nofollow" style="display:block;height:280px;width:100%; text-align:center; background:url(https://3.bp.blogspot.com/-3ii7X_88VLs/XEs-4wFXMXI/AAAAAAAAiaw/d_ldK-ae830UCGsyOl0oEqqwDQwd_TqEACLcBGAs/s90/youtube-play-button-transparent-png-15.png) no-repeat center center;">&nbsp;</a></td></tr><tr><td style="background:#000 url(https://2.bp.blogspot.com/-Z_lYNnmixpM/XEs6o1hpTUI/AAAAAAAAiak/uPb1Usu-F-YvHx6ivxnqc1uSTIAkLIcxwCLcBGAs/s1600/l.png) no-repeat bottom left; height:39px; width:237px;margin:0;padding:0;"><a id="main_link_a" href="'+mlink+'" target="_top" rel="nofollow" style="display:block;height:39px;width:100%;">&nbsp;</a></td><td style="background:#000 url(https://1.bp.blogspot.com/-9nWJSQ3HKJs/XEs6o7cUv2I/AAAAAAAAiag/sAiHoM-9hKUOezozem6GvxshCyAMp_n_QCLcBGAs/s1600/c.png) repeat-x bottom center; height:39px;margin:0;padding:0;">&nbsp;</td><td style="background:#000 url(https://2.bp.blogspot.com/-RmcnX0Ej1r4/XEs6o-Fjn9I/AAAAAAAAiac/j50SWsyrs8sA5C8AXotVUG7ESm1waKxPACLcBGAs/s1600/r.png) no-repeat bottom right; height:39px; width:151px;margin:0;padding:0;">&nbsp;</td></tr></table><meta content="'+img+'" property="og:image"/><img class="thumbnail noi" style="text-align:center; display:none;" src="'+img+'"/><h2>'+title+'</h2>';
-	console.log(setHTml);
-	$("#codetext").html(setHTml);
+	var pre = $(e).attr('data-pre');
+	//var setHTml = '<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0"><tr><td id="bgimage" colspan="3" style="background:#000000;height: 280px;overflow: hidden;background: no-repeat center center;background-size: cover; background: #000 center center no-repeat; background-size: 100%;border: 1px solid #000;background-image:url('+img+');"><a id="main_link" href="'+mlink+'" target="_top" rel="nofollow" style="display:block;height:280px;width:100%; text-align:center; background:url(https://3.bp.blogspot.com/-3ii7X_88VLs/XEs-4wFXMXI/AAAAAAAAiaw/d_ldK-ae830UCGsyOl0oEqqwDQwd_TqEACLcBGAs/s90/youtube-play-button-transparent-png-15.png) no-repeat center center;">&nbsp;</a></td></tr><tr><td style="background:#000 url(https://2.bp.blogspot.com/-Z_lYNnmixpM/XEs6o1hpTUI/AAAAAAAAiak/uPb1Usu-F-YvHx6ivxnqc1uSTIAkLIcxwCLcBGAs/s1600/l.png) no-repeat bottom left; height:39px; width:237px;margin:0;padding:0;"><a id="main_link_a" href="'+mlink+'" target="_top" rel="nofollow" style="display:block;height:39px;width:100%;">&nbsp;</a></td><td style="background:#000 url(https://1.bp.blogspot.com/-9nWJSQ3HKJs/XEs6o7cUv2I/AAAAAAAAiag/sAiHoM-9hKUOezozem6GvxshCyAMp_n_QCLcBGAs/s1600/c.png) repeat-x bottom center; height:39px;margin:0;padding:0;">&nbsp;</td><td style="background:#000 url(https://2.bp.blogspot.com/-RmcnX0Ej1r4/XEs6o-Fjn9I/AAAAAAAAiac/j50SWsyrs8sA5C8AXotVUG7ESm1waKxPACLcBGAs/s1600/r.png) no-repeat bottom right; height:39px; width:151px;margin:0;padding:0;">&nbsp;</td></tr></table><meta content="'+img+'" property="og:image"/><img class="thumbnail noi" style="text-align:center; display:none;" src="'+img+'"/><h2>'+title+'</h2>';
+	var data = title + '\n' + pre +'\n'+link;
+	$("#codetext").html(data);
 	$('#exampleModal').modal('show');
 	// if(code) {
 	// 	var dataUser = code;
@@ -536,6 +539,10 @@ function postManual(e) {
 	var mlink = $(e).attr('data-mlink');
 	var link = $(e).attr('data-link');
 	var title = $(e).attr('data-title');
+	title = title.replace('&quot;','"');
+	title = title.replace('&#39;',"'");
+	title = title.replace('& # 3 9 ;',"'");
+	title = title.replace('&amp; # 3 9 ;',"'");
 	var pid = $(e).attr('data-pid');
 	var message = $(e).attr('data-message');
 	message = message.replace(/\\/g, '');
@@ -558,19 +565,20 @@ function setMLink(e) {
 	}
 }
 function copyText(e) {
-  e.select();
-  document.execCommand('copy');
-  	var n = noty({
-	    text: 'copyed',
-	    type: 'success',
-	    dismissQueue: false,
-	    layout: 'top',
-	    theme: 'defaultTheme'
-	});
+	//alert(e);
+ e.select();
+ //  document.execCommand('copy');
+ //  	var n = noty({
+	//     text: 'copyed',
+	//     type: 'success',
+	//     dismissQueue: false,
+	//     layout: 'top',
+	//     theme: 'defaultTheme'
+	// });
 
-    setTimeout(function () {
-        $.noty.closeAll();
-    }, 1000);
+ //    setTimeout(function () {
+ //        $.noty.closeAll();
+ //    }, 1000);
 }
     </script>   
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">

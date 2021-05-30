@@ -2810,6 +2810,15 @@ $link =  $desc->find('a', 0)->href;
                 foreach(@$html->find('.dpsp-content-wrapper') as $item) {
                     $item->outertext = '';
                 }
+                foreach(@$html->find('.sd-social') as $item) {
+                    $item->outertext = '';
+                }
+                foreach(@$html->find('.sharedaddy') as $item) {
+                    $item->outertext = '';
+                }
+                foreach(@$html->find('.quads-location') as $item) {
+                    $item->outertext = '';
+                }
                 $html->save();
 
                 $content = $this->gEntry($html,'.entry-content');

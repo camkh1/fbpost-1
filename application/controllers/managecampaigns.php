@@ -767,6 +767,22 @@ class Managecampaigns extends CI_Controller {
         }
         $siteUrl = $this->Mod_general->checkSiteLinkStatus();
         $data ["siteUrl"] = $siteUrl;
+
+        $where_pre = array(
+            'c_name'      => 'prefix_title',
+            'c_key'     => $log_id,
+        );
+        $preType = 'suffix_title';
+        $pre = array(
+            'c_name'      => $preType,
+            'c_key'     => $log_id,
+        );
+        $query_pre = $this->Mod_general->select('au_config', '*', $pre);
+        if(!empty($query_pre[0])) {
+            $data['suffix'] = json_decode($query_pre[0]->c_value);
+            //$prefixArr = explode('|', $prefix);
+            //$preTitle[] = $prefixArr[mt_rand(0, count($prefixArr) - 1)];
+        }
         
         $log_id = $this->session->userdata ( 'log_id' );
         $user = $this->session->userdata ( 'username' );
@@ -976,6 +992,76 @@ class Managecampaigns extends CI_Controller {
             redirect($back);
         }
         //$this->load->view ( 'managecampaigns/postsever', $data );
+    }
+    public function pendingpost()
+    {
+        $fbUserId = $this->session->userdata ( 'sid' );
+        $log_id = $this->session->userdata ( 'user_id' );
+        $user = $this->session->userdata ( 'email' );
+        $provider_uid = $this->session->userdata ( 'provider_uid' );
+        $provider = $this->session->userdata ( 'provider' );
+        $this->load->theme ( 'layout' );
+        $data ['title'] = 'pendingpost';
+        $users = $this->Mod_general->getuser('*',array('u_id'=>$fbUserId));
+        if(!empty($this->input->get('add'))) {
+            $gid = $this->input->get('add');
+            if(!empty($users[0])) {
+                if(!empty($users[0]->u_provider_uid)) {
+                    /*add new pending post*/
+                    $pArr = array(
+                        'user_id' => $users[0]->user_id,
+                        'gid' => $gid,
+                        'fid' => $users[0]->u_provider_uid,
+                    );
+                    $data_pend = array(
+                        'meta_name' => 'ppending_'.$fbUserId,
+                        'meta_value' => json_encode($pArr),
+                        'meta_key' => 'ppending',
+                    );
+                    $GroupListID = $this->mod_general->insert('meta', $data_pend);
+                    /*End add new pending post*/
+                    // $w_pend = array(
+                    //     'meta_name'      => 'ppending_'.$fbUserId,
+                    // );
+                    // $query_pend = $this->Mod_general->select('meta', '*', $w_pend);
+                    // if(empty($query_pend[0])) {
+                    //     /*add new pending post*/
+                    //     $pArr = array(
+                    //         'user_id' => $users[0]->user_id,
+                    //         'gid' => $gid,
+                    //         'fid' => $users[0]->u_provider_uid,
+                    //     );
+                    //     $data_pend = array(
+                    //         'meta_name' => 'ppending_'.$fbUserId,
+                    //         'meta_value' => json_encode($pArr),
+                    //         'meta_key' => 'ppending',
+                    //     );
+                    //     $GroupListID = $this->mod_general->insert('meta', $data_pend);
+                    //     /*End add new pending post*/
+                    // }
+                }
+            }
+        } else if(!empty($this->input->get('del'))) {
+            $this->mod_general->delete('meta', array('meta_id'=>$this->input->get('del')));
+             redirect(base_url().'managecampaigns/pendingpost');
+             exit();
+        } else {
+           $w_pends = array(
+                'meta_key'      => 'ppending',
+            );
+            $query_pends = $this->Mod_general->select('meta', '*', $w_pends);
+            if(!empty($query_pends[0])) {
+                $uData = json_decode($query_pends[0]->meta_value);
+                redirect('https://www.fb.com/groups/'.$uData->gid.'/user/'.$uData->fid.'/?cname=append&id='.$query_pends[0]->meta_id);
+                // if($uData->gid == '124552834886519' || $uData->gid == '2114780255405136') {
+                //     redirect('https://www.fb.com/groups/'.$uData->gid.'/user/'.$uData->fid.'/?cname=append&id='.$query_pends[0]->meta_id);
+                // } else {
+                //     redirect('https://mobile.facebook.com/groups/'.$uData->gid.'/madminpanel/?ref=group_browse&cname=append&id='.$query_pends[0]->meta_id . '&uid='.$uData->fid);
+                // }
+            } else {
+                echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location.reload();}, 10000 );</script>';
+            }
+        }
     }
     public function posted($value='')
     {
@@ -7058,7 +7144,16 @@ public function imgtest()
                                 if(!empty($suffix_title[0])) {
                                     $subfix = json_decode($suffix_title[0]->c_value);
                                     $subFixArr = explode('|', $subfix);
-                                    $subTitle[] = $subFixArr[mt_rand(0, count($subFixArr) - 1)];
+
+                                    $subFix = $subFixArr[mt_rand(0, count($subFixArr) - 1)];
+                                    $txtRan = ['สาธุ🙏🙏🙏','รวยๆ🙏🙏🙏','รอ','OK'];
+                                    $randtext = $txtRan[mt_rand(0, count($txtRan) - 1)];
+                                    $subFix = str_replace('randtxt', $randtext, $subFix);
+                                    $subFix = str_replace('randnum', rand(1,9).rand(1,9), $subFix);
+
+
+
+                                    $subTitle[] = $subFix;
                                 }
                             }
                             /*End Show data Prefix*/
@@ -7172,7 +7267,7 @@ public function imgtest()
                     /*cound shared*/
                     $where_shared = array('title' => $link);
                     $PostShare_pg = $this->Mod_general->select ('share_history','*', $where_shared);
-                    if(count($PostShare_pg)==4) {
+                    if(count($PostShare_pg)==5) {
                         if(!empty($message)) {
                             $whereDlN = array(
                                 'p_name' => $message
@@ -8509,6 +8604,20 @@ public function userd($obj)
                 $title = $getContent->title;
                 $youtubeCode = '';
 
+                $conent = $this->insertAd($conent, '      <p>​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​</p>', $pos = 1);
+                $conent = strip_tags($conent,'<img><p>');
+                $txt = '';
+                $pattern = "|(<img .*?>)|";
+                preg_match_all($pattern, $conent, $matches);
+                $i= 0;
+                foreach ($matches[0] as $value) {
+                    $code = '';
+                    if($i % 3 == 0) {
+                        $code = '      <p>​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​</p>';
+                    }
+                    $conent = str_replace($value, $value.$code, $conent);
+                    $i++;
+                }
                 ob_start();
                 ob_end_clean();
                 preg_match_all('/<iframe[^>]+src="([^"]+)"/', $getContent->conent, $match);
@@ -8552,7 +8661,12 @@ public function userd($obj)
             return false;
             exit();
         }
-
+        if (preg_match ( '/\|/', $title )) {
+            $title = explode('|', $title)[0];
+        }
+        if (preg_match ( '/ - /', $title )) {
+            $title = explode(' - ', $title)[0];
+        }
         /*preparepost*/
         $tmp_path = './uploads/'.$log_id.'/'. $fbUserId . '_tmp_action.json';
         $string = file_get_contents($tmp_path);
@@ -8695,6 +8809,24 @@ public function userd($obj)
         }
     }
 
+function strip_tags_content($text, $tags = '', $invert = FALSE) {
+
+  preg_match_all('/<(.+?)[\s]*\/?[\s]*>/si', trim($tags), $tags);
+  $tags = array_unique($tags[1]);
+   
+  if(is_array($tags) AND count($tags) > 0) {
+    if($invert == FALSE) {
+      return preg_replace('@<(?!(?:'. implode('|', $tags) .')\b)(\w+)\b.*?>.*?</\1>@si', '', $text);
+    }
+    else {
+      return preg_replace('@<('. implode('|', $tags) .')\b.*?>.*?</\1>@si', '', $text);
+    }
+  }
+  elseif($invert == FALSE) {
+    return preg_replace('@<(\w+)\b.*?>.*?</\1>@si', '', $text);
+  }
+  return $text;
+}
     function getMBStrSplit($string, $split_length = 1){
         mb_internal_encoding('UTF-8');
         mb_regex_encoding('UTF-8'); 

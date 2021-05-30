@@ -287,7 +287,7 @@ class Mod_general extends CI_Model
             $this->db->where($where);
         }
         if($field == 'me') {
-            $this->db->where(array('u_id' => $log_id));
+            $this->db->where(array('user_id' => $log_id));
         }
         $query = $this->db->get();
         return $query->result();
@@ -306,6 +306,7 @@ class Mod_general extends CI_Model
             'news17times.com',
             'www.jc24news.com',
             'updatecamp.com',
+            'aq24news.com',
         );
         return $siteUrl;
     }
@@ -1520,7 +1521,6 @@ public function get_video_id($param, $videotype = '')
             }
             
             $array = pathinfo($file_path);
-            var_dump($array);
             $file_title = $array['filename'];
             $ext = $array['extension'];
             if (preg_match('/jpg/', $ext)) {
@@ -1582,7 +1582,7 @@ public function get_video_id($param, $videotype = '')
                             $new_height = 635;
                             $src = imagecreatefromstring( file_get_contents( $file_name ) );
                             $dst = imagecreatetruecolor( $new_width, 635 );
-                            imagecopyresampled( $dst, $src, 0, 0, 0, 50, $new_width, $new_height, $width, $height );
+                            imagecopyresampled( $dst, $src, 0, 0, 0, 0, $new_width, $new_height, $width, $height );
                             imagedestroy( $src );
                             imagejpeg( $dst, $imgName ); // adjust format as needed
                             imagedestroy( $dst );
