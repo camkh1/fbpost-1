@@ -7207,7 +7207,7 @@ public function imgtest()
                                     $dataGoupInstert[] = array(
                                         'group_id'=>$groups->sg_page_id,
                                         'group_name'=>$groups->sg_name,
-                                        'status'=>$groups->sh_status
+                                        'status'=>''
                                     );
                                 }
                             }
