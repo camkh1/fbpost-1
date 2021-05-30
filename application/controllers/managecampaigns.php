@@ -7171,6 +7171,48 @@ public function imgtest()
                     $dataJson = array(
                         'post' =>$dataPostg
                     );
+
+                    /*get group*/ 
+
+                    $wGList = array (
+                        'lname' => 'post_progress',
+                        'l_user_id' => $log_id,
+                        'l_sid' => $sid,
+                    );
+                    $geGList = $this->Mod_general->select ( 'group_list', '*', $wGList );
+                    if(!empty($geGList[0])) {
+                        $account_group_type = $geGList[0]->l_id;
+                        $wGroupType = array (
+                            'gu_grouplist_id' => $geGList[0]->l_id,
+                            'gu_user_id' => $log_id,
+                            'gu_status' => 1
+                        );  
+                    } else {
+                        $account_group_type = @$json_a->account_group_type;
+                        $wGroupType = array (
+                            'gu_grouplist_id' => @$json_a->account_group_type,
+                            'gu_user_id' => $log_id,
+                            'gu_status' => 1
+                        );
+                    }
+                    $tablejoin = array('socail_network_group'=>'socail_network_group.sg_id=group_user.gu_idgroups');
+                            $itemGroups = $this->Mod_general->join('group_user', $tablejoin, $fields = '*', $wGroupType);
+
+                    if(!empty($itemGroups)) {
+                        foreach($itemGroups as $key => $groups) { 
+                            if(!empty($groups)) {  
+                                if (!in_array($groups->sg_page_id, $gcd)) {
+                                    array_push($gcd, $groups->sg_page_id);
+                                    $dataGoupInstert[] = array(
+                                        'group_id'=>$groups->sg_page_id,
+                                        'group_name'=>$groups->sg_name,
+                                        'status'=>$groups->sh_status
+                                    );
+                                }
+                            }
+                        }
+                    }
+                    /*End get g*/
                 }
                 $max_groups = $this->Mod_general->getconfig('group_to_post');
                 
