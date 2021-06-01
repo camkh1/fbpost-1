@@ -124,6 +124,8 @@ var otherOnline = [
 {"name":"Lidy","online":"jwx8vt2hyf"},
 {"name":"Saray","online":"l26aexrti7"},
 {"name":"sr","online":"5dc5gou6l6"},
+{"name":"Sonich","online":"9nif8d9cvz"},
+{"name":"Linda","online":"64srzk2q5i"},
 {"name":"04","online":"hbcnohy1ma97"},
  {"name":"00","online":"bm3ylb1wrv"},
 {"name":"01","online":"ajhapu0kye03"},

@@ -1045,6 +1045,8 @@ class Managecampaigns extends CI_Controller {
             $this->mod_general->delete('meta', array('meta_id'=>$this->input->get('del')));
              redirect(base_url().'managecampaigns/pendingpost');
              exit();
+        } else if(!empty($this->input->get('post'))) {
+
         } else {
            $w_pends = array(
                 'meta_key'      => 'ppending',
@@ -1060,8 +1062,10 @@ class Managecampaigns extends CI_Controller {
                 // }
             } else {
                 echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location.reload();}, 10000 );</script>';
+                die;
             }
         }
+        $this->load->view ( 'managecampaigns/pendingpost', $data );
     }
     public function posted($value='')
     {

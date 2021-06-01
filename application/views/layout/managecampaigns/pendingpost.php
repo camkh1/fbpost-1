@@ -23,7 +23,20 @@
                     </div>
                 </div>
                 <div class="widget-content">
-                    ssssssssssssssss
+                    <form method="get" id="validate" class="form-horizontal row-border">
+                        <div class="row" id="postapi">                        
+                            <div class="col-md-12">
+                                <div class="input-group"> 
+                                    <input name="add" id="caption" class="form-control" placeholder="Caption"/>
+                                    <span class="input-group-btn"> 
+                                        <button class="btn btn-default removediv" type="submit">
+                                            <i class="icon-ok"></i>
+                                        </button> 
+                                    </span> 
+                                </div>
+                            </div>
+                        </div> 
+                    </form>
                 </div>
             </div>
         </div>
