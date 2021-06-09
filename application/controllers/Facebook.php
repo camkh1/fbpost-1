@@ -2915,6 +2915,12 @@ WHERE gl.`gu_grouplist_id` = {$id}");
                 $dataid = $this->Mod_general->update('share', $dataShare, $whereShere);
                 /*End update share group id */
 
+                /*get link*/
+                /*End get link*/
+                $where_Pshare = array (
+                    'p_id' => $pid,
+                );
+                $dataPostg = $this->Mod_general->select ('post','*', $where_Pshare);
                 /*share_history*/
                 $whereCheck = array (
                     'uid' => $log_id,
@@ -2929,6 +2935,7 @@ WHERE gl.`gu_grouplist_id` = {$id}");
                 );
                 $count_shared = 0;
                 if(!empty($ShareCheck[0])) {
+                    $pConent = json_decode($dataPostg[0]->p_conent);
                     $whereHi = array(
                         'sid' => $sid,
                         'uid' => $log_id,
@@ -2945,6 +2952,8 @@ WHERE gl.`gu_grouplist_id` = {$id}");
                             'shhare_id' => $ShareCheck[0]->sh_id,
                             'sid' => $ShareCheck[0]->social_id,
                             'uid' => $log_id,
+                            'title' => $pConent->link,
+
                         );
                         $GroupListID = $this->mod_general->insert('share_history', $ShareCheckHis);
                     }
@@ -2992,6 +3001,9 @@ WHERE gl.`gu_grouplist_id` = {$id}");
                     $limit = 1 
                 );
                 if(!empty($dataPost[0])) {
+                    $pConent = json_decode($dataPost[0]->p_conent);
+                    
+
                     /* check before insert */
                     $where_so = array (
                         'uid' => $log_id,
@@ -3012,6 +3024,7 @@ WHERE gl.`gu_grouplist_id` = {$id}");
                         'uid' => $log_id,
                         'social_id'=> $sid,
                         'p_id'=> $dataPost[0]->p_id,
+                        'sh_type'=> 'imacros',
                     );
                     $dataShCheck = $this->Mod_general->select (
                         'share',
@@ -3020,6 +3033,25 @@ WHERE gl.`gu_grouplist_id` = {$id}");
                     );
                     if(count($dataShCheck) == $count_shared) {
                         /*clean*/
+                        /*count link limit*/
+                        $where_shared = array('title' => $pConent->link);
+                        $PostShare_pg = $this->Mod_general->select ('share_history','*', $where_shared);
+                        if(count($PostShare_pg)>=5) {
+                            $whereDlN = array(
+                                    'p_name' => $dataPost[0]->p_name
+                                );
+                                $getpDelN = $this->Mod_general->like('post', '*', $whereDlN);
+                                foreach ($getpDelN as $dvalue) {
+                                    $whereDel = array (
+                                        'p_id' => $dvalue->p_id
+                                    );
+                                    @$this->Mod_general->delete ( 'post', $whereDel);
+                                    @$this->Mod_general->delete ( 'meta', array (
+                                        'object_id' => $dvalue->p_id,
+                                    ));
+                                }
+                        }
+                        /*End count link limit*/
                         $oneDaysAgo = date('Y-m-d h:m:s', strtotime('-1 days', strtotime(date('Y-m-d'))));
                         $where_pro = array('p_progress' => 1,'u_id' => $sid,'p_date <= '=> $oneDaysAgo);
                         $getProDel = $this->Mod_general->select('post', '*', $where_pro);
@@ -3068,16 +3100,16 @@ WHERE gl.`gu_grouplist_id` = {$id}");
                             'p_id' => $dataPost[0]->p_id,
                             'uid' => $log_id,
                         ));
-                        $this->Mod_general->delete ( 'share_history', array (
-                            'shp_posted_id' => $dataPost[0]->p_id,
-                            'uid' => $log_id,
-                        ));
+                        // $this->Mod_general->delete ( 'share_history', array (
+                        //     'shp_posted_id' => $dataPost[0]->p_id,
+                        //     'uid' => $log_id,
+                        // ));
                         //                         echo '<pre>';
                         // print_r($getProDel);
                         // echo '</pre>';
                         // die;
                         /*go to check post*/
-                        echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'Facebook/share?post=checkpost";}, 2000 );</script>';
+                        echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns?m=share_done";}, 2000 );</script>';
                         exit();
                     }
                     /*End check post and share count*/ 
@@ -3320,7 +3352,7 @@ WHERE gl.`gu_grouplist_id` = {$id}");
                 /*count share posts*/
                 $whereCount = array (
                     'p_id' => $pid,
-
+                    'sh_type'=>'imacros'
                 );
                 $shareCountPost = $this->Mod_general->select ('share','*', $whereCount);
                 $sharePost->totalGroups = count($shareCountPost);
@@ -3329,7 +3361,7 @@ WHERE gl.`gu_grouplist_id` = {$id}");
                 $str = time();
                 $str = md5($str);
                 $uniq_id = substr($str, 0, 9);
-                $link = $pConent->link . '?s=' . $uniq_id. '&g='.$sharePost->group_id.'&fb='.$this->session->userdata ( 'fb_user_id' ).'&m=1';
+                $link = $pConent->link;
                 
                 //$pLink = $sharePost->link . '&g='.$sharePost->group_id.'&fb='.$this->session->userdata ( 'fb_user_id' ).'&m=1';
                 //bitly shorter
@@ -3429,6 +3461,449 @@ WHERE gl.`gu_grouplist_id` = {$id}");
         $this->load->view('facebook/share', $data);
     }
 
+    public function getlink()
+    {
+        $log_id = !empty($this->input->get('uid')) ? $this->input->get('uid') : $this->session->userdata('user_id');
+        $user = $this->session->userdata('email');
+        $action = $this->input->get('post');
+        $sid = !empty($this->input->get('suid')) ? $this->input->get('suid') : $this->session->userdata ( 'sid' );
+        $pid = $this->input->get( 'id' );
+        $postId = $this->input->get( 'pid' );
+
+        if(!empty($this->input->get('uid'))) {
+            $this->session->set_userdata('user_id', $this->input->get('uid'));
+        }
+        if(!empty($this->input->get('suid'))) {
+            $this->session->set_userdata('sid', $this->input->get('suid'));
+        }
+        $userAgent = 0;
+        if(!empty($this->input->get('agent'))) {
+           $userAgent = $this->input->get('agent');
+        }
+        $this->session->set_userdata('sid', $sid);
+        $data['licence'] = $this->session->userdata('licence');
+
+
+        $data['title'] = 'Share to Facebook';
+        $this->breadcrumbs->add('<i class="icon-home"></i> Home', base_url());
+        $this->breadcrumbs->add('Post list', base_url().'managecampaigns');
+        $this->breadcrumbs->add('Share post', base_url().$this->uri->segment(2));
+        $data['breadcrumb'] = $this->breadcrumbs->output();
+        $this->load->view('facebook/getlink', $data);
+    }
+
+    public function shareto()
+    {
+        $log_id = !empty($this->input->get('uid')) ? $this->input->get('uid') : $this->session->userdata('user_id');
+        $user = $this->session->userdata('email');
+        $action = $this->input->get('post');
+        $sid = !empty($this->input->get('suid')) ? $this->input->get('suid') : $this->session->userdata ( 'sid' );
+        $pid = $this->input->get( 'id' );
+        $postId = $this->input->get( 'pid' );
+
+        if(!empty($this->input->get('uid'))) {
+            $this->session->set_userdata('user_id', $this->input->get('uid'));
+        }
+        if(!empty($this->input->get('suid'))) {
+            $this->session->set_userdata('sid', $this->input->get('suid'));
+        }
+        $userAgent = 0;
+        if(!empty($this->input->get('agent'))) {
+           $userAgent = $this->input->get('agent');
+        }
+
+        $this->session->set_userdata('sid', $sid);
+        $data['licence'] = $this->session->userdata('licence');
+
+
+        $data['title'] = 'Share to Facebook';
+        $this->breadcrumbs->add('<i class="icon-home"></i> Home', base_url());
+        $this->breadcrumbs->add('Post list', base_url().'managecampaigns');
+        $this->breadcrumbs->add('Share post', base_url().$this->uri->segment(2));
+        $data['breadcrumb'] = $this->breadcrumbs->output();
+
+        
+        
+
+        $action = $this->input->get('action');
+        switch ($action) {
+            case 'getpost':
+            $getfbuid = $this->input->get('uid');
+            $fb_name = $this->input->get('fb_name');
+            $fb_image = $this->input->get('fimg');
+            if($this->session->userdata ( 'uid' )) {
+                $getfbuid = $this->session->userdata ( 'uid' );
+            }
+            if($fb_name) {
+                $this->session->set_userdata('fb_user_name', $fb_name);
+            }
+            if($fb_image) {
+                $this->session->set_userdata('fb_image', $fb_image);
+            }
+
+            if(!empty($getfbuid)) {
+                $this->session->set_userdata('fb_user_id', $getfbuid);
+                $where_u= array (
+                    'user_id' => $log_id,
+                    'u_provider_uid' => $getfbuid,
+                    Tbl_user::u_status => 1
+                );
+                $dataFbAccount = $this->Mod_general->select ( Tbl_user::tblUser, '*', $where_u );
+                if(!empty($dataFbAccount[0])) {
+                    $fbUserId = $dataFbAccount[0]->u_id;
+                    $this->session->set_userdata('sid', $fbUserId);
+                    if(!$this->session->userdata ( 'fb_user_name' )) {
+                        $this->session->set_userdata('fb_user_name', $dataFbAccount[0]->u_name);
+                    }
+                } else {
+                    $fbUserId = $checkFbId[0]->u_id;
+                    $data_user = array(
+                        Tbl_user::u_provider_uid => $getfbuid,
+                        Tbl_user::u_name => @$this->session->userdata ( 'fb_user_name' ),
+                        Tbl_user::u_type => 'Facebook',
+                        Tbl_user::u_status => 1,
+                        'user_id' => $log_id,
+                    );
+                    $GroupListID = $this->mod_general->insert(Tbl_user::tblUser, $data_user);
+                }
+            } 
+            /*get page id*/
+            $wFbconfig = array(
+                'meta_name'      => 'fbconfig',
+                'object_id'     => $log_id,
+                'meta_key'     => $sid,
+            );
+            $fbpid = $this->Mod_general->select('meta', '*', $wFbconfig);
+            $fbpids = array();
+            if(!empty($fbpid[0])) {
+                $fbpids = array(
+                    'pageid'=>$fbpid[0]->meta_value
+                );
+            }
+            /*End get page id*/
+
+            /*get group for post*/
+            $wFbgconfig = array(
+                'meta_name'      => 'fbgconfig',
+                'object_id'     => $log_id,
+                'meta_key'     => $sid,
+            );
+            $fbgpid = $this->Mod_general->select('meta', '*', $wFbgconfig);
+            $fbgpids = array();
+            if(!empty($fbgpid[0])) {
+                $fbgpids = array(
+                    'groupid' => $fbgpid[0]->meta_value,
+                );
+            }
+            /*End get group for post*/
+
+            /*get history id*/
+            $dataShareH = $this->Mod_general->select (
+                'share_history',
+                '*', 
+                array(),
+                $order = 'rand()',
+                $group = 0, 
+                $limit = 1 
+            );
+            if(!empty($dataShareH[0])) {
+                $posthistory = $dataShareH[0];
+            }
+            /*End get history id*/
+
+            /*End get post that not share*/
+            /*check post progress frist*/
+            
+            /*set facebook name*/
+            $fbAccount = array();
+            if($this->session->userdata ( 'fb_user_name' )) {
+                $fbAccount = array(
+                    'fbid' => $this->session->userdata ( 'uid' ),
+                    'fb_name' => $this->session->userdata ( 'fb_user_name' ),
+                );
+             }
+            /*End set facebook name*/
+            //date('H') <= 23 && date('H') > 3 && date('H') !='00'
+            //if (date('H') <= 23 && date('H') > 3 && date('H') !='00') {
+                /*get post that not share ixist*/
+            $where_pro = array(
+                'u_id ' => $sid,
+                //'share_history.sid' => $sid,
+                'user_id' => $log_id,
+            );
+            $dataJsons = array();
+            $preTitle = array();
+            $subTitle = array();
+            $dataGoupInstert = array();
+            $siteUrl = $this->Mod_general->checkSiteLinkStatus();
+
+
+            //$tablejoin = array('share_history'=>'share_history.title != post.p_name');
+            //$getPost = $this->Mod_general->join('post', $tablejoin, $fields = '*', $where_pro,"RAND()",'p_name');
+            $getPost = $this->Mod_general->select('post', '*', $where_pro,"RAND()");
+            if(!empty($getPost[0])) {
+                foreach ($getPost as $gvalue) {
+                    $pid = $gvalue->p_id;
+                    $pConent = json_decode($gvalue->p_conent);
+                    $pSchedule = json_decode($gvalue->p_schedule);
+                    $gLabel = @$pSchedule->label;
+
+                    /*check duplicate post*/
+                    $where_sh = array(
+                        'title' => $gvalue->p_name,
+                        'uid ' => $sid,
+                    );
+                    $getShPost = $this->Mod_general->select('share_history', '*', $where_sh);
+                    /*End check duplicate post*/
+                    $isNoDup = false;
+                    if(empty($getShPost[0])) {
+                        $isNoDup = true;
+                    }
+
+                    /*Clean post if no link*/
+                    if(empty($pConent->link)) {
+                        @$this->Mod_general->delete ( Tbl_share::TblName, array (
+                            'p_id' => $pid,
+                            'social_id' => @$sid,
+                        ) );
+                        @$this->Mod_general->delete ( 'meta', array (
+                            'object_id' => $pid,
+                        ) );
+                        @$this->Mod_general->delete ( 'post', array (
+                            'p_id' => $pid,
+                            'u_id' => $sid,
+                        ) );
+                    }
+                    /*End Clean post if no link*/
+
+                    /*Check link is avable time*/
+                    $whereStime = array(
+                        'shp_type'      => 'share_update',
+                        'value'      => $pConent->link
+                    );
+                    $checkTimeShare = $this->Mod_general->select('share_progess','*', $whereStime,'shp_id DESC');
+                    if(!empty($checkTimeShare[0])) {
+                        // $todaysdate = date('Y/m/d H:i:s', strtotime('-10 minutes'));
+                        // $mydate=$checkTimeShare[0]->shp_date;
+                        // if (strtotime($todaysdate)>=strtotime($mydate))
+                        // {
+                        //     $isCanPost = true;
+                        // }
+                        // else
+                        // {
+                        //     // FALSE STATEMENT
+                        //     $isCanPost = false;
+                        //     continue;
+                        // }
+                        $isCanPost = true;
+                    } else {
+                       $isCanPost = true; 
+                    }
+                    
+                    /*Check share exist*/
+                    $where_so = array (
+                        'p_id' => $pid,
+                        'sh_status'=>0
+                    );
+                    $dataShare = $this->Mod_general->select(
+                        'share',
+                        '*', 
+                        $where_so);
+                    /*End Check share exist*/
+
+                    /*if no share but post*/
+                    if(!empty($isNoDup) && empty($dataShare[0])) {
+                        $this->ins_share($pid);
+                        /*Check share exist*/
+                        $where_sos = array (
+                            'p_id' => $pid,
+                            'sh_status'=>0
+                        );
+                        $dataShare = $this->Mod_general->select(
+                            'share',
+                            '*', 
+                            $where_sos);
+                        /*End Check share exist*/
+                    }
+                    /*End if no share but post*/
+                    /*End Check link is avable time*/
+                    
+                    if(!empty($dataShare[0])) {
+
+                        $wGroupType = array (
+                            'p_id' => $pid,
+                        );
+                        $tablejoin = array('socail_network_group'=>'socail_network_group.sg_id=share.sg_page_id');
+                        $dataGroup = $this->Mod_general->join('share', $tablejoin, $fields = '*', $wGroupType);
+                        $gcd = [];
+                        if(!empty($dataGroup)) {                
+                            foreach($dataGroup as $key => $groups) { 
+                                if(!empty($groups)) {  
+                                    if (!in_array($groups->sg_page_id, $gcd)) {
+                                        array_push($gcd, $groups->sg_page_id);
+                                        $dataGoupInstert[] = array(
+                                            'group_id'=>$groups->sg_page_id,
+                                            'group_name'=>$groups->sg_name,
+                                            'status'=>$groups->sh_status);
+                                        }
+                                    }
+                            } 
+                        }
+                        /*End get group id*/
+
+                        $parse = parse_url($pConent->link);
+                        if (in_array(@$parse['host'], $siteUrl)) {
+                            if(empty($checkExistP[0])) {
+                                if(!empty($isCanPost)) {
+                                    if(!empty($isNoDup)) {
+                                        $dataJsons[] = $gvalue;
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        continue;
+                    }
+                    if(preg_match('/บน-ล่าง/', $gvalue->p_name) || preg_match('/เลข/', $gvalue->p_name) || preg_match('/งวด/', $gvalue->p_name) || preg_match('/หวย/', $gvalue->p_name) || preg_match('/ปลดหนี้/', $gvalue->p_name) || preg_match('/Lotto/', $gvalue->p_name) || preg_match('/Lottery/', $gvalue->p_name))  {
+                        $gLabel = 'lotto';
+                    }
+
+                    if(!empty($dataJsons) && !empty($gLabel) && $gLabel == 'lotto') {
+                        /*Show data Prefix*/
+                        if(!empty($pSchedule->prefix_checked)) {
+                            if(!empty($pSchedule->prefix_title)) {
+                                $prefixArr = explode('|', $pSchedule->prefix_title);
+                                $preRand = $prefixArr[mt_rand(0, count($prefixArr) - 1)];
+                            } else {       
+                                $where_pre = array(
+                                    'c_name'      => 'prefix_title',
+                                    'c_key'     => $log_id,
+                                );
+                                $prefix_title = $this->Mod_general->select('au_config', '*', $where_pre);
+                                if(!empty($prefix_title[0])) {
+                                    $prefix = json_decode($prefix_title[0]->c_value);
+                                    $prefixArr = explode('|', $prefix);
+                                    $preTitle[] = $prefixArr[mt_rand(0, count($prefixArr) - 1)];
+                                }
+                            }
+                        }
+                        /*End Show data Prefix*/
+                        /*Show data Prefix*/
+                        if(!empty($pSchedule->suffix_title)) {
+                            $subFixArr = explode('|', $pSchedule->suffix_title);
+                            $subRand = $subFixArr[mt_rand(0, count($subFixArr) - 1)];
+                        } else {
+                            $whereSuf = array(
+                                'c_name'      => 'suffix_title',
+                                'c_key'     => $log_id,
+                            );
+                            $suffix_title = $this->Mod_general->select('au_config', '*', $whereSuf);
+                            if(!empty($suffix_title[0])) {
+                                $subfix = json_decode($suffix_title[0]->c_value);
+                                $subFixArr = explode('|', $subfix);
+
+                                $subFix = $subFixArr[mt_rand(0, count($subFixArr) - 1)];
+                                $txtRan = ['สาธุ🙏🙏🙏','รวยๆ🙏🙏🙏','รอ','OK'];
+                                $randtext = $txtRan[mt_rand(0, count($txtRan) - 1)];
+                                $subFix = str_replace('randtxt', $randtext, $subFix);
+                                $subFix = str_replace('randnum', rand(1,9).rand(1,9), $subFix);
+
+
+
+                                $subTitle[] = $subFix;
+                            }
+                        }
+                        /*End Show data Prefix*/
+                    }
+                }
+            }
+            if(empty($dataJsons)) {
+                require_once(APPPATH.'controllers/managecampaigns.php');
+                $Managecampaigns =  new Managecampaigns();
+                $progrs = $Managecampaigns->getprogress();
+                $where_Pshare = array (
+                    'u_id' => $sid,
+                    'p_status' => 1,
+                    'p_id' => $progrs,
+                );
+                $dataPostg = $this->Mod_general->select ('post','*', $where_Pshare);
+                $dataJson = array(
+                    'post' =>$dataPostg
+                );
+
+                /*get group*/ 
+
+                $wGList = array (
+                    'lname' => 'post_progress',
+                    'l_user_id' => $log_id,
+                    'l_sid' => $sid,
+                );
+                $geGList = $this->Mod_general->select ( 'group_list', '*', $wGList );
+                if(!empty($geGList[0])) {
+                    $account_group_type = $geGList[0]->l_id;
+                    $wGroupType = array (
+                        'gu_grouplist_id' => $geGList[0]->l_id,
+                        'gu_user_id' => $log_id,
+                        'gu_status' => 1
+                    );  
+                } else {
+                    $account_group_type = @$json_a->account_group_type;
+                    $wGroupType = array (
+                        'gu_grouplist_id' => @$json_a->account_group_type,
+                        'gu_user_id' => $log_id,
+                        'gu_status' => 1
+                    );
+                }
+                $tablejoin = array('socail_network_group'=>'socail_network_group.sg_id=group_user.gu_idgroups');
+                        $itemGroups = $this->Mod_general->join('group_user', $tablejoin, $fields = '*', $wGroupType);
+
+                if(!empty($itemGroups)) {
+                    $gcd = [];
+                    foreach($itemGroups as $key => $groups) { 
+                        if(!empty($groups)) {  
+                            if (!in_array($groups->sg_page_id, $gcd)) {
+                                array_push($gcd, $groups->sg_page_id);
+                                $dataGoupInstert[] = array(
+                                    'group_id'=>$groups->sg_page_id,
+                                    'group_name'=>$groups->sg_name,
+                                    'status'=>''
+                                );
+                            }
+                        }
+                    }
+                }
+                echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'facebook/shareto?action=getpost";}, 30 );</script>';
+                die;
+                /*End get g*/
+            }
+            $max_groups = $this->Mod_general->getconfig('group_to_post');
+            
+            shuffle($dataGoupInstert);
+            $dataJson = array(
+                'post' => $dataJsons,
+                'preTitle' => $preTitle,
+                'subTitle' => $subTitle,
+                'groups' =>$dataGoupInstert,
+                'posthistory'=> @json_decode($posthistory->sg_id)
+            );
+            $data['post_list'] = array_merge($dataJson, $fbgpids,$fbpids,$fbAccount);
+            echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'facebook/shareation?post=getpost";}, 2000 );</script>';
+            break;
+            case 'sharelink':
+                $this->sharelink();
+                break;
+            default:
+                # code...
+                break;
+        }
+        /*End get Post to post*/
+        $this->load->view('facebook/shareto', $data);
+    }
+public function sharelink($value='')
+{
+    echo 111;
+    die;
+}
     public function shorturl($link='',$type=0)
     {
         if(!preg_match('/bit.ly/', $link)) {

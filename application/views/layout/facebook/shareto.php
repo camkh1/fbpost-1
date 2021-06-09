@@ -21,10 +21,12 @@
             <div class="progress progress-striped active"> <div id="timer" class="progress-bar progress-bar-danger" style="width: 0%"></div> </div>
         </div>
     </div>
-    <?php if(!empty($action) && $action != 'checkpost'):?>
+    <?php if(!empty($post_list['post'])):
+        $post = $post_list['post'][0];
+        ?>
     <div class="row">
         <div class="col-md-12">
-            Group ID: <b><?php echo $sharePost->group_id;?></b> || <b>Post ID:</b> <?php echo $sharePost->pid;?> || <b>Share counts:</b> <?php echo $sharePost->count_shared;?>/<?php echo $sharePost->totalGroups;?>
+            Group ID: <b><?php //echo $sharePost->group_id;?></b> || <b>Post ID:</b> <?php echo $post->p_id;?> || <b>Share counts:</b> <?php //echo $sharePost->count_shared;?>/<?php //echo $sharePost->totalGroups;?>
         </div>      
         <div class="col-md-12">
            <table class="table table-striped table-bordered table-hover table-checkable table-tabletools datatable dataTable">
@@ -39,16 +41,18 @@
                         </thead>
                         <tbody>
     <?php
-    if(count($sharePost->posts_list)<1):?>
+
+    if(count($post_list['post'])<1):?>
         <script type="text/javascript">
-        window.location = "<?php echo base_url();?>facebook/shareation?post=getpost"
+        window.location = "<?php echo base_url();?>facebook/shareto?action=getpost"
         </script>
     <?php endif;
-     foreach ($sharePost->posts_list as $value) { ?>
-                                    <tr class="<?php echo ($sharePost->pid == $value->{Tbl_posts::id}) ? 'trbackground' : '';?>">
+     foreach ($post_list['post'] as $value) {
+      ?>
+                                    <tr class="<?php //echo ($value->p_id == $value->{Tbl_posts::id}) ? 'trbackground' : '';?>">
                                 <td class="checkbox-column"><input type="checkbox" id="itemid"
                                     name="itemid[]" class="uniform"
-                                    value="<?php echo $value->{Tbl_posts::id}; ?>" <?php echo ($sharePost->pid == $value->{Tbl_posts::id}) ? 'checked' : '';?> /></td>
+                                    value="<?php echo $value->{Tbl_posts::id}; ?>" /></td>
                                 <td><a
                                     href="<?php echo base_url(); ?>managecampaigns/add?id=<?php echo $value->{Tbl_posts::id}; ?>"><?php echo $value->{Tbl_posts::name}; ?></a>
                                 </td>
@@ -75,14 +79,15 @@
     <script type="text/javascript" src="<?php echo base_url(); ?>themes/layout/blueone/plugins/nprogress/nprogress.js"></script>
     <meta content='text/html; charset=UTF-8' http-equiv='Content-Type'/>    
     <?php //var_dump($sharePost);?>     
-   <?php if(!empty($action) && $action != 'checkpost'):
-    if(!empty($sharePost->pcount)):
-        $pTitle = $sharePost->title;
-        if(!empty($uerAgent)) {
-            $pLink = $sharePost->link;
-        } else {
-            $pLink = urlencode($sharePost->link);
-        }
+   <?php if(!empty($action) && $action == 'getpost'):
+    if(!empty($post)):
+
+        $pTitle = $post->p_name;
+        $pConent = json_decode($post->p_conent);
+        $pOption = json_decode($post->p_schedule);
+        
+        $pLink = urlencode($pConent->link);
+
         $group_id = $sharePost->group_id;
         $pid = $sharePost->pid;
         $sid = $sharePost->sid;
@@ -185,7 +190,7 @@
                             <?php if(!empty($this->input->get('agent'))):?>
                             load_contents("//postautofb2.blogspot.com/feeds/posts/default/-/userAgentShareToGroupByID");
                             <?php else:?>
-                            load_contents("//postautofb2.blogspot.com/feeds/posts/default/-/postToGroupByLink");
+                            load_contents("//postautofb2.blogspot.com/feeds/posts/default/-/postToGroupByPostId");
                             <?php endif;?>
                         <?php else:?>
                             window.setTimeout( function(){window.location = "<?php echo base_url();?>managecampaigns/yturl?pid=<?php echo @$pid;?>&bid=<?php echo @$sharePost->json_a->blogid;?>&action=postblog&blink=<?php @$sharePost->json_a->blogLink;?>&autopost=1";}, 0 );

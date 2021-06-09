@@ -27,41 +27,7 @@
             Group ID: <b><?php echo $sharePost->group_id;?></b> || <b>Post ID:</b> <?php echo $sharePost->pid;?> || <b>Share counts:</b> <?php echo $sharePost->count_shared;?>/<?php echo $sharePost->totalGroups;?>
         </div>      
         <div class="col-md-12">
-           <table class="table table-striped table-bordered table-hover table-checkable table-tabletools datatable dataTable">
-                        <thead>
-                            <tr>
-                                <th><input type="checkbox" class="uniform" name="allbox"
-                                    id="checkAll" /></th>
-                                <th>Name</th>
-                                <th class="hidden-xs">Date time</th>
-                                <th class="hidden-xs">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-    <?php
-    if(count($sharePost->posts_list)<1):?>
-        <script type="text/javascript">
-        window.location = "<?php echo base_url();?>facebook/shareation?post=getpost"
-        </script>
-    <?php endif;
-     foreach ($sharePost->posts_list as $value) { ?>
-                                    <tr class="<?php echo ($sharePost->pid == $value->{Tbl_posts::id}) ? 'trbackground' : '';?>">
-                                <td class="checkbox-column"><input type="checkbox" id="itemid"
-                                    name="itemid[]" class="uniform"
-                                    value="<?php echo $value->{Tbl_posts::id}; ?>" <?php echo ($sharePost->pid == $value->{Tbl_posts::id}) ? 'checked' : '';?> /></td>
-                                <td><a
-                                    href="<?php echo base_url(); ?>managecampaigns/add?id=<?php echo $value->{Tbl_posts::id}; ?>"><?php echo $value->{Tbl_posts::name}; ?></a>
-                                </td>
-                                <td class="hidden-xs">
-        <?php echo $value->{Tbl_posts::p_date}; ?>
-                                        </td>
-                                <td>
-                                    <div class="progress progress-striped active"> <div class="progress-bar progress-bar-info" style="width: 100%"></div> </div>
-                                </td>
-                            </tr>
-    <?php } ?>
-                            </tbody>
-                    </table>   
+ 
         </div>
     </div>
 <?php endif;?>
@@ -74,37 +40,11 @@
     <script type="text/javascript" src="<?php echo base_url(); ?>themes/layout/blueone/plugins/bootstrap-switch/bootstrap-switch.min.js"></script>    
     <script type="text/javascript" src="<?php echo base_url(); ?>themes/layout/blueone/plugins/nprogress/nprogress.js"></script>
     <meta content='text/html; charset=UTF-8' http-equiv='Content-Type'/>    
-    <?php //var_dump($sharePost);?>     
-   <?php if(!empty($action) && $action != 'checkpost'):
-    if(!empty($sharePost->pcount)):
-        $pTitle = $sharePost->title;
-        if(!empty($uerAgent)) {
-            $pLink = $sharePost->link;
-        } else {
-            $pLink = urlencode($sharePost->link);
-        }
-        $group_id = $sharePost->group_id;
-        $pid = $sharePost->pid;
-        $sid = $sharePost->sid;
-        //$sharePost->share_id
-        $checkImage = $sharePost->count_shared;
-        if(!empty($sharePost->notcheckimage) && $sharePost->notcheckimage ==1) {
-            $checkImage = 1;
-        }
-    ?>
-    <div id="ptitle" style="display: none;"><?php echo $pTitle;?></div>
-    <code id="codeB" style="width:300px;overflow:hidden;display:none"></code>
-    <code id="examplecode5" style="width:300px;overflow:hidden;display:none">var i, retcode,retcodes,report,uid=&quot;<?php echo $log_id;?>&quot;,suid=&quot;<?php echo $suid;?>&quot;;var codedefault2=&quot;SET !EXTRACT_TEST_POPUP NO\n SET !TIMEOUT_PAGE 300\n SET !ERRORIGNORE YES\n SET !TIMEOUT_STEP 0.1\n&quot;;var wm=Components.classes[&quot;@mozilla.org/appshell/window-mediator;1&quot;].getService(Components.interfaces.nsIWindowMediator);var window=wm.getMostRecentWindow(&quot;navigator:browser&quot;);var setLink = &quot;<?php echo $pLink;?>&quot;, homeUrl = &quot;<?php echo base_url();?>&quot;, gid = &quot;<?php echo $group_id;?>&quot;, pid = &quot;<?php echo $pid;?>&quot;,sid=&quot;<?php echo $sid;?>&quot;,shareid=&quot;<?php echo $sharePost->share_id;?>&quot;,sharechount=&quot;<?php echo $checkImage;?>&quot;;</code>
-    <?php 
-    endif;
-    elseif($action == 'checkpost'):?>
-        <code id="codeB" style="width:300px;overflow:hidden;display:none"></code>
-        <code id="examplecode5" style="width:300px;overflow:hidden;display:none">var wm = Components.classes[&quot;@mozilla.org/appshell/window-mediator;1&quot;].getService(Components.interfaces.nsIWindowMediator);var window = wm.getMostRecentWindow(&quot;navigator:browser&quot;);var limit = 40,clear = 0,timedelay= 5,homeUrl = &quot;<?php echo base_url();?>&quot;;</code>
-    <?php endif;?> 
+    
     <script>
         $( document ).ready(function() {
             <?php 
-            if($action != 'checkpost'):
+            if($action != 'checkpost'): 
             if($sharePost->option->share_schedule ==1):?>
             setInterval(function() {            
                 closeOnLoad("<?php echo base_url();?>facebook/shareation?post=getpost");
@@ -185,7 +125,7 @@
                             <?php if(!empty($this->input->get('agent'))):?>
                             load_contents("//postautofb2.blogspot.com/feeds/posts/default/-/userAgentShareToGroupByID");
                             <?php else:?>
-                            load_contents("//postautofb2.blogspot.com/feeds/posts/default/-/postToGroupByLink");
+                            load_contents("//postautofb2.blogspot.com/feeds/posts/default/-/postToGroupByPostId");
                             <?php endif;?>
                         <?php else:?>
                             window.setTimeout( function(){window.location = "<?php echo base_url();?>managecampaigns/yturl?pid=<?php echo @$pid;?>&bid=<?php echo @$sharePost->json_a->blogid;?>&action=postblog&blink=<?php @$sharePost->json_a->blogLink;?>&autopost=1";}, 0 );
@@ -259,6 +199,33 @@ function closeOnLoad(myLink)
   //           );
   // return false;
 }
+function load_post(url){
+            var loading = false; 
+            if(loading == false){
+                loading = true;  //set loading flag on
+                $.ajax({        
+                    url : url + '?max-results=1&alt=json-in-script',
+                    type : 'get',
+                    dataType : "jsonp",
+                    success : function (data) {
+                        loading = false; //set loading flag off once the content is loaded
+                        if(data.feed.openSearch$totalResults.$t == 0){
+                            var message = "No more records!";
+                            return message;
+                        }
+                        for (var i = 0; i < data.feed.entry.length; i++) {
+                            var content = data.feed.entry[i].content.$t;
+                            $("#codeB").html(content);
+                            var str = $("#codeB").text();
+                            runcode(str);
+                        }
+                    },
+                    error: function(){
+                        window.location.reload(); 
+                    }
+                })
+            }
+        }
 function checkPostBeforeShare() {
     // body...
 }
