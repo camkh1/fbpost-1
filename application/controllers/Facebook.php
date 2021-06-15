@@ -3325,21 +3325,26 @@ WHERE gl.`gu_grouplist_id` = {$id}");
                 /*End Show data Prefix*/
 
                 /*Show data Prefix*/
-                if(!empty($pSchedule->suffix_checked)) {
-                    if(!empty($pSchedule->suffix_title)) {
-                        $subFixArr = explode('|', $pSchedule->suffix_title);
-                        $subRand = $subFixArr[mt_rand(0, count($subFixArr) - 1)];
-                    } else {
-                        $whereSuf = array(
-                            'c_name'      => 'suffix_title',
-                            'c_key'     => $log_id,
-                        );
-                        $suffix_title = $this->Mod_general->select('au_config', '*', $whereSuf);
-                        if(!empty($suffix_title[0])) {
-                            $subfix = json_decode($suffix_title[0]->c_value);
-                            $subFixArr = explode('|', $subfix);
-                            $subRand = $subFixArr[mt_rand(0, count($subFixArr) - 1)];
-                        }
+                if(!empty($pSchedule->suffix_title)) {
+                    $subFixArr = explode('|', $pSchedule->suffix_title);
+                    $subRand = $subFixArr[mt_rand(0, count($subFixArr) - 1)];
+                } else {
+                    $whereSuf = array(
+                        'c_name'      => 'suffix_title',
+                        'c_key'     => $log_id,
+                    );
+                    $suffix_title = $this->Mod_general->select('au_config', '*', $whereSuf);
+                    if(!empty($suffix_title[0])) {
+                        $subfix = json_decode($suffix_title[0]->c_value);
+                        $subFixArr = explode('|', $subfix);
+
+                        $subFix = $subFixArr[mt_rand(0, count($subFixArr) - 1)];
+                        $txtRan = ['สาธุ🙏🙏🙏','รวยๆ🙏🙏🙏','รอ','OK'];
+                        $randtext = $txtRan[mt_rand(0, count($txtRan) - 1)];
+                        $subFix = str_replace('randtxt', $randtext, $subFix);
+                        $subFix = str_replace('randnum', rand(1,9).rand(1,9), $subFix);
+                        $subRand = $subFix;
+                        //$subRand = $subFixArr[mt_rand(0, count($subFixArr) - 1)];
                     }
                 }
                 /*End Show data Prefix*/
