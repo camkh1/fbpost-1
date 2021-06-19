@@ -8813,6 +8813,9 @@ public function userd($obj)
                 'no_need_upload'=>1,
             );
         }
+        if(!empty($setthumbs)) {
+            $thumb = $setthumbs;
+        }
         $thumb = $this->mod_general->uploadMedia($thumb,$param);  
         $content = array (
                 'name' => @htmlentities(htmlspecialchars(str_replace(' - YouTube', '', $title))),
