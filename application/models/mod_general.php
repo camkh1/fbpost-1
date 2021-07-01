@@ -307,6 +307,11 @@ class Mod_general extends CI_Model
             'www.jc24news.com',
             'updatecamp.com',
             'aq24news.com',
+            'web.facebook.com',
+            'www.facebook.com',
+            'm.facebook.com',
+            'mobile.facebook.com',
+            'mbasic.facebook.com',
         );
         return $siteUrl;
     }

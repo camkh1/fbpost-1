@@ -503,6 +503,22 @@ class Facebook extends CI_Controller
             case 'getgroup':
                 $this->getaddedgroup();
                 break;
+            case 'savefriendphotos':
+                $postdata = file_get_contents("php://input");
+                $dataFriends = json_decode($postdata);
+                for ($i=0; $i < count($dataFriends); $i++) { 
+                    $name = $dataFriends[$i]->name;
+                    $id = $dataFriends[$i]->id;
+                    $profile = $dataFriends[$i]->profile;
+                    $image = $dataFriends[$i]->image;
+                    for ($j=0; $j < count($image); $j++) { 
+                        $imgUrl = $image[$i];
+                        echo $imgUrl;
+                        echo '<br/>';
+                    }
+                }
+                die;
+                break;
             default:
                 # code...
                 break;
@@ -2156,6 +2172,11 @@ WHERE gl.`gu_grouplist_id` = {$id}");
                 // };
                 $all = $this->input->get();
                 $name = @$_GET['name'];
+                if(!empty($name)) {
+                    $name = $name;
+                } else {
+                    $name = @$_GET['NAME'];
+                }
                 $d = @$_GET['birthday'];
                 $id = @$_GET['id'];
                 $npass = @$_GET['npass'];
@@ -2182,6 +2203,9 @@ WHERE gl.`gu_grouplist_id` = {$id}");
                 }
                 if(!empty($log_id)) {
                     $response->user_id = $log_id;
+                }
+                if(!empty($name)) {
+                    $response->f_name = $name;
                 }
                 $response->value = json_encode($all);
                 $response->f_status = 4;
