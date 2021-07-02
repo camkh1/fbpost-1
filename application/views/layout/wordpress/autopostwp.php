@@ -63,25 +63,30 @@ if(!empty($post)) {
     if(!empty($labels)) {
         switch ($labels) {
             case 'news':
-                if($blogRand == 'https://news17times.com/') {
+                if($blogRand == 'https://www.jc24news.com/') {
                     $labels = '1';
-                } else if($blogRand == 'https://www.jc24news.com/') {
-                    $labels = '5';
                 } else if($blogRand == 'http://www.bz24news.com/') {
-                    $labels = '1';
+                    $labels = '2';
                 } else {
                     $labels = '1';
                 }
                 break;
             case 'lotto':
-                if($blogRand == 'https://news17times.com/') {
-                    $labels = '14';
-                } else if($blogRand == 'https://www.jc24news.com/') {
+                if($blogRand == 'https://www.jc24news.com/') {
                     $labels = '13';
                 } else if($blogRand == 'http://www.bz24news.com/') {
-                    $labels = '52';
+                    $labels = '3';
                 } else {
                     $labels = '13';
+                }
+                break;
+            case 'entertainment':
+                if($blogRand == 'https://www.jc24news.com/') {
+                    $labels = '3';
+                } else if($blogRand == 'http://www.bz24news.com/') {
+                    $labels = '4';
+                } else {
+                    $labels = '1';
                 }
                 break;
             default:

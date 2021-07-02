@@ -23,7 +23,7 @@ $contents = '';
 $titles = '';
 $thumb = '';
 $pid = '';
-$sitePpost = array('https://jc24news.com/','https://news17times.com/','https://nnewsy.com/');
+$sitePpost = array('https://jc24news.com/','https://www.bz24news.com/');
 $k = array_rand($sitePpost);
 $blogRand = $sitePpost[$k];
 //$labels = [];
@@ -55,7 +55,9 @@ if(!empty($post)) {
             case 'news':
                 $labels = '1,3';
                 break;
-            
+            case 'entertainment':
+                $labels = '4';
+                break;
             default:
                 $labels = '1';
                 break;
@@ -155,6 +157,7 @@ if(!empty($post)) {
                             <select name="label" class="select2" style="width: 100%">                       
                                 <option value="lotto">Lotto</option>
                                 <option value="news">News</option>
+                                <option value="entertainment">Entertainment</option>
                             </select>             
                         </div>                                   
                     </div>
