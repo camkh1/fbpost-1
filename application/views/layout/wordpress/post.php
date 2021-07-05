@@ -193,7 +193,7 @@ if(!empty($post)) {
                                 <a href="https://web.facebook.com/thainews/" class="list-group-item" target="_blank">Thainews 01</a>
                                 <a href="https://web.facebook.com/KhaoYouLike/" class="list-group-item" target="_blank">Thainews 02</a>
                                 <a href="https://web.facebook.com/khaosod/" class="list-group-item" target="_blank">Khaosod</a>
-                                <a href="https://web.facebook.com/AMARINTVHD" class="list-group-item" target="_blank">AMARINTVHD</a>
+                                <a href="https://www.amarintv.com/news/latest" class="list-group-item" target="_blank">AMARINTVHD</a>
                                 <a href="https://web.facebook.com/siamnews/" class="list-group-item" target="_blank">Siamnews</a>
                                 <a href="https://web.facebook.com/teeneedotcom" class="list-group-item" target="_blank">Teenee</a>
                                 <a href="https://web.facebook.com/linetodayth/" class="list-group-item" target="_blank">Linetoday</a>

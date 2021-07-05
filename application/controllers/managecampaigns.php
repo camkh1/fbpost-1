@@ -3309,12 +3309,28 @@ class Managecampaigns extends CI_Controller {
         $siteUrl = $this->Mod_general->checkSiteLinkStatus();
         if(!empty($getPost[0])) {
             foreach ($getPost as $gvalue) {
-                $where_hi = array(
-                    'title' => $gvalue->p_name,
-                    'sid' => $sid
+                $pConent = json_decode($gvalue->p_conent);
+                $where_hdel = array(
+                    'title' => $pConent->link,
                 );
-                $ChHiPost = $this->Mod_general->select('share_history', 'shp_id', $where_hi);
-                if(empty($ChHiPost)) {
+                $ChHiPost = $this->Mod_general->select('share_history', 'shp_id', $where_hdel);
+                if(count($ChHiPost)>=5) {
+                    $id = $gvalue->p_id;
+                    $this->Mod_general->delete ( Tbl_posts::tblName, array (
+                    Tbl_posts::id => $id 
+                    ) );
+                    @$this->Mod_general->delete ( 'meta', array (
+                            'object_id' => $id, 
+                            'meta_name' => 'post_progress', 
+                    ) );
+                }
+
+                $where_hi = array(
+                    'title' => $pConent->link,
+                    'sid'=> $sid
+                );
+                $ChHiPosts = $this->Mod_general->select('share_history', 'shp_id', $where_hi);
+                if(empty($ChHiPosts)) {
                     $pConent = json_decode($gvalue->p_conent);
                     if(empty($pConent->link)) {
                         // $id = $getPost[0]->p_id;
@@ -7314,7 +7330,7 @@ public function imgtest()
                     /*cound shared*/
                     $where_shared = array('title' => $link);
                     $PostShare_pg = $this->Mod_general->select ('share_history','*', $where_shared);
-                    if(count($PostShare_pg)==5) {
+                    if(count($PostShare_pg)>=5) {
                         if(!empty($message)) {
                             $whereDlN = array(
                                 'p_name' => $message
