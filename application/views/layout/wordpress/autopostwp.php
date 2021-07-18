@@ -65,7 +65,7 @@ if(!empty($post)) {
             case 'news':
                 if($blogRand == 'https://www.jc24news.com/') {
                     $labels = '1';
-                } else if($blogRand == 'http://www.bz24news.com/') {
+                } else if($blogRand == 'https://www.bz24news.com/') {
                     $labels = '2';
                 } else {
                     $labels = '1';

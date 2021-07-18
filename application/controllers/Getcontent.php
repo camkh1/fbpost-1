@@ -580,6 +580,11 @@ $link =  $desc->find('a', 0)->href;
         if(empty($obj->title)) {
             $obj->title = @$html->find ( 'title', 0 )->innertext;
         }
+        $setitle = explode(' - ', $obj->title);
+        if(!empty($setitle[0])) {
+            $obj->title = $setitle[0];
+        }
+        echo $obj->title;
         $og_image = @$html->find ( 'meta [property=og:image]', 0 )->content;
         $image_src = @$html->find ( 'link [rel=image_src]', 0 )->href;
         if (! empty ( $image_src )) {

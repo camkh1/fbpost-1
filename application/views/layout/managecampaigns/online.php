@@ -120,7 +120,7 @@ var otherOnline = [
 {"name":"Dina","online":"i1drzm2jod"},
 {"name":"Kimsreang","online":"j8b0xhyztf"},
 {"name":"Davith","online":"ns8l6cuqe1"},
-{"name":"Davin","online":"ku37ejg0kb"},
+{"name":"03","online":"hiakzs6dj2"},
 {"name":"Lidy","online":"jwx8vt2hyf"},
 {"name":"Saray","online":"l26aexrti7"},
 {"name":"sr","online":"5dc5gou6l6"},
@@ -143,11 +143,13 @@ var otherOnline = [
 {"name":"11","online":"2elj3y9kwi"},
 {"name":"12","online":"0zhkpjoyqm"},
 {"name":"13","online":"lo8hajw31q"},
-{"name":"cham","online":"cwjg6un66h"},
 {"name":"14","online":"gyj39zpbes"},
 {"name":"15","online":"vmgkc7n9ar"},
 {"name":"16","online":"2y9ybjfnh9"},
 {"name":"17","online":"ve537zro62"},
+{"name":"18","online":"doacrf9y8q"},
+{"name":"19","online":"mrwghx8l4t"},
+{"name":"20","online":"m3kss2or0p"},
 {"name":"Auto Post","online":"c7jfrhemnt"},
 ];
 var items = ["FF5647","FF3CAE","EA49FF","5D5BFF","62C0FF","00E08A","00E309","FF8537","FF000F","FD0044","E9A100","7CBA00","40C200","FE3EFF","C78FFF","72D8FF","007F23","00C61A","157200","3A6F00","647A00","D7D900","E37A00","DC3A00","DD0017","DD0067","C2008B","740057","940052","A1001C","9C1400","9D4A00","845D00","5E6400"];

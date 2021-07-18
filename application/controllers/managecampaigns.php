@@ -6885,6 +6885,26 @@ public function imgtest()
                         Tbl_user::u_status => 1
                     );
                     $dataFbAccount = $this->Mod_general->select ( Tbl_user::tblUser, '*', $where_u );
+                    $gBig = [];
+                    $del = [];
+                    foreach ($dataFbAccount as $u) {
+                        //echo $u->u_id . ' user groups: ';
+                        $sql = 'SELECT COUNT(gu_id) c FROM group_user gu
+WHERE sid ='.$u->u_id .' ORDER BY 1 DESC';
+                        $dataFbAccounts = $this->Mod_general->sql($sql);
+                        if(!empty($dataFbAccounts[0]->c) && count($gBig)<1) {
+                            array_push($gBig, $u->u_id);
+                        } else {
+                            array_push($del, $u->u_id);
+                        }
+                    }
+                    for ($i=0; $i < count($del); $i++) { 
+                        if(!empty($gBig)) {
+                            @$this->Mod_general->delete ( Tbl_user::tblUser, array (
+                                'u_id ' => $del[$i]
+                            ) );
+                        }
+                    }
                     if(!empty($dataFbAccount[0])) {
                         $fbUserId = $dataFbAccount[0]->u_id;
                         $this->session->set_userdata('sid', $fbUserId);
@@ -6892,17 +6912,26 @@ public function imgtest()
                             $this->session->set_userdata('fb_user_name', $dataFbAccount[0]->u_name);
                         }
                     } else {
-                        $fbUserId = $checkFbId[0]->u_id;
-                        $data_user = array(
-                            Tbl_user::u_provider_uid => $getfbuid,
-                            Tbl_user::u_name => @$this->session->userdata ( 'fb_user_name' ),
-                            Tbl_user::u_type => 'Facebook',
-                            Tbl_user::u_status => 1,
-                            'user_id' => $log_id,
-                        );
+                        if($this->session->userdata ( 'fb_user_name' )) {
+                            $data_user = array(
+                                Tbl_user::u_provider_uid => $getfbuid,
+                                Tbl_user::u_name => @$this->session->userdata ( 'fb_user_name' ),
+                                Tbl_user::u_type => 'Facebook',
+                                Tbl_user::u_status => 1,
+                                'user_id' => $log_id,
+                            );
+                        } else {
+                            $data_user = array(
+                                Tbl_user::u_provider_uid => $getfbuid,
+                                Tbl_user::u_type => 'Facebook',
+                                Tbl_user::u_status => 1,
+                                'user_id' => $log_id,
+                            );
+                        }
                         $GroupListID = $this->mod_general->insert(Tbl_user::tblUser, $data_user);
+                        $fbUserId = $GroupListID;
                     }
-                } 
+                }
                 /*get page id*/
                 $wFbconfig = array(
                     'meta_name'      => 'fbconfig',
@@ -8716,12 +8745,14 @@ public function userd($obj)
             return false;
             exit();
         }
+
         if (preg_match ( '/\|/', $title )) {
             $title = explode('|', $title)[0];
         }
         if (preg_match ( '/ - /', $title )) {
             $title = explode(' - ', $title)[0];
         }
+        $conent = '<p>~</p>'.$title .'<p>~</p>'.$conent;
         /*preparepost*/
         $tmp_path = './uploads/'.$log_id.'/'. $fbUserId . '_tmp_action.json';
         $string = file_get_contents($tmp_path);
