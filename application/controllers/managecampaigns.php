@@ -6913,11 +6913,15 @@ WHERE sid ='.$u->u_id .' ORDER BY 1 DESC';
                             ) );
                         }
                     }
-                    if(!empty($dataFbAccount[0])) {
-                        $fbUserId = $dataFbAccount[0]->u_id;
+                    $cwhere_u= array (
+                        'u_provider_uid' => $getfbuid
+                    );
+                    $checkFbAccount = $this->Mod_general->select ( Tbl_user::tblUser, '*', $cwhere_u );
+                    if(!empty($checkFbAccount[0])) {
+                        $fbUserId = $checkFbAccount[0]->u_id;
                         $this->session->set_userdata('sid', $fbUserId);
                         if(!$this->session->userdata ( 'fb_user_name' )) {
-                            $this->session->set_userdata('fb_user_name', $dataFbAccount[0]->u_name);
+                            $this->session->set_userdata('fb_user_name', $checkFbAccount[0]->u_name);
                         }
                     } else {
                         if(!empty($getfbuid) && !empty($log_id)) {
