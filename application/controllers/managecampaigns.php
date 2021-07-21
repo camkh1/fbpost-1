@@ -1803,7 +1803,6 @@ class Managecampaigns extends CI_Controller {
                 if(!empty($getPost[0])) {
                     $pConent = json_decode($getPost[0]->p_conent);
                     $pOption = json_decode($getPost[0]->p_schedule);
-
                     /*check duplicate post*/
                     $wDPost = array (
                         'user_id' => $log_id,
@@ -1896,7 +1895,11 @@ class Managecampaigns extends CI_Controller {
                             }
                             //$imgUrl = @str_replace('maxresdefault', 'hqdefault', $imgUrl);
 
-                            $file_title = basename($imgUrl);
+                            //$file_title = basename($imgUrl);
+
+                            $ext = pathinfo($imgUrl, PATHINFO_EXTENSION);
+                            $file_title = strtotime(date('Y-m-d H:i:s'));
+                            $file_title = $file_title.'.'.$ext;
 
                             $fileName = FCPATH . 'uploads/image/'.$pid.$file_title;
 
@@ -6864,6 +6867,7 @@ public function imgtest()
         $action = $this->input->get('action');
         switch ($action) {
             case 'getpost':
+
                 $getfbuid = $this->input->get('uid');
                 $fb_name = $this->input->get('fb_name');
                 $fb_image = $this->input->get('fimg');
@@ -6877,6 +6881,10 @@ public function imgtest()
                     $this->session->set_userdata('fb_image', $fb_image);
                 }
 
+                if(empty($log_id) || empty($getfbuid)) {
+                    echo json_encode(array('isLogin'=>false));
+                    die;
+                }
                 if(!empty($getfbuid)) {
                     $this->session->set_userdata('fb_user_id', $getfbuid);
                     $where_u= array (
@@ -8686,7 +8694,7 @@ public function userd($obj)
                 require_once(APPPATH.'controllers/Getcontent.php');
                 $aObj = new Getcontent(); 
                 $getContent = $aObj->getConentFromSite($url,'');
-
+                
                 $conent = $getContent->conent;
                 $thumb = $getContent->thumb;
                 $title = $getContent->title;

@@ -60,6 +60,7 @@ if(!empty($post)) {
     if(preg_match('/บน-ล่าง/', $post[0]->p_name) || preg_match('/เลข/', $post[0]->p_name) || preg_match('/งวด/', $post[0]->p_name) || preg_match('/หวย/', $post[0]->p_name) || preg_match('/ปลดหนี้/', $post[0]->p_name) || preg_match('/Lotto/', $post[0]->p_name) || preg_match('/Lottery/', $post[0]->p_name))  {
         $labels = 'lotto';
     }
+
     if(!empty($labels)) {
         switch ($labels) {
             case 'news':
@@ -74,7 +75,7 @@ if(!empty($post)) {
             case 'lotto':
                 if($blogRand == 'https://www.jc24news.com/') {
                     $labels = '13';
-                } else if($blogRand == 'http://www.bz24news.com/') {
+                } else if($blogRand == 'https://www.bz24news.com/') {
                     $labels = '3';
                 } else {
                     $labels = '13';

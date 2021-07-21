@@ -1529,22 +1529,10 @@ public function get_video_id($param, $videotype = '')
                 mkdir($structure, 0777, true);
             }
             
-            $array = pathinfo($file_path);
-            $file_title = $array['filename'];
-            $ext = $array['extension'];
-            if (preg_match('/jpg/', $ext)) {
-                $ext = '.jpg';
-            }
-            if (preg_match('/png/', $ext)) {
-                $ext = '.png';
-            }
-            if (preg_match('/png/', $ext)) {
-                $ext = '.png';
-            }
-            if (preg_match('/jpeg/', $ext)) {
-                $ext = '.jpeg';
-            }
-            $fileName = FCPATH . 'uploads/image/'.$file_title.$ext;
+            $ext = pathinfo($file_path, PATHINFO_EXTENSION);
+            $file_title = strtotime(date('Y-m-d H:i:s'));
+            $file_title = $file_title.'.'.$ext;
+            $fileName = FCPATH . 'uploads/image/'.$file_title;
             //$fileName = FCPATH . 'uploads/image/'.$file_title;
             @copy($file_path, $fileName);
             $file_path = $fileName;
