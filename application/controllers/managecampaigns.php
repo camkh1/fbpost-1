@@ -6920,7 +6920,7 @@ WHERE sid ='.$u->u_id .' ORDER BY 1 DESC';
                             $this->session->set_userdata('fb_user_name', $dataFbAccount[0]->u_name);
                         }
                     } else {
-                        if($this->session->userdata ( 'fb_user_name' )) {
+                        if(!empty($getfbuid) && !empty($log_id)) {
                             $data_user = array(
                                 Tbl_user::u_provider_uid => $getfbuid,
                                 Tbl_user::u_name => @$this->session->userdata ( 'fb_user_name' ),
@@ -6928,16 +6928,9 @@ WHERE sid ='.$u->u_id .' ORDER BY 1 DESC';
                                 Tbl_user::u_status => 1,
                                 'user_id' => $log_id,
                             );
-                        } else {
-                            $data_user = array(
-                                Tbl_user::u_provider_uid => $getfbuid,
-                                Tbl_user::u_type => 'Facebook',
-                                Tbl_user::u_status => 1,
-                                'user_id' => $log_id,
-                            );
+                            $GroupListID = $this->mod_general->insert(Tbl_user::tblUser, $data_user);
+                            $fbUserId = $GroupListID;
                         }
-                        $GroupListID = $this->mod_general->insert(Tbl_user::tblUser, $data_user);
-                        $fbUserId = $GroupListID;
                     }
                 }
                 /*get page id*/
