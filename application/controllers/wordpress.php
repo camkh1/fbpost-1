@@ -131,8 +131,25 @@ class Wordpress extends CI_Controller
                 );
                 $updates = $this->Mod_general->update( Tbl_posts::tblName,$dataPostInstert, $whereUp);
                 if($updates) {
-                    $setUrl = base_url() . 'wordpress/wait';
-                    redirect($setUrl);
+                    //$setUrl = base_url() . 'wordpress/wait';
+                    //redirect($setUrl);
+
+                     /*check next post*/
+                    $whereNext = array (
+                        'user_id' => $log_id,
+                        'u_id' => $sid,
+                        'p_post_to' => 1,
+                    );
+                    $nextPost = $this->Mod_general->select ( Tbl_posts::tblName, 'p_id', $whereNext );
+                    if(!empty($nextPost[0])) {
+                        $p_id = $nextPost[0]->p_id;
+                        echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/yturl?pid='.$p_id.'&action=postblog";}, 30 );</script>'; 
+                            die;
+                    } else {
+                        $setUrl = base_url() . 'managecampaigns';
+                        redirect($setUrl);                        
+                    }
+                    /*End check next post*/
                 }
             }
             /*End update post*/
@@ -187,6 +204,8 @@ class Wordpress extends CI_Controller
     }
     public function wait()
     {
+        echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=post&pid='.$AddToPost.'";}, 10 );</script>';
+                            exit();
         date_default_timezone_set("Asia/Phnom_Penh");
         $log_id = $this->session->userdata ( 'user_id' );
         $user = $this->session->userdata ( 'email' );

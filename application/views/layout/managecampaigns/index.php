@@ -296,20 +296,17 @@ function parse_query_string(query) {
     <?php
     if(!empty($socialList)):
     $Mod_general = new Mod_general ();
+	$subfixArr = explode('|', $suffix);  
      foreach ($socialList as $value):
+     	$subTitle = $subfixArr[mt_rand(0, count($subfixArr) - 1)];
+    	$txtRan = ['สาธุ🙏🙏🙏','รวยๆ🙏🙏🙏','รอ','OK'];
+     	$randtext = $txtRan[mt_rand(0, count($txtRan) - 1)];
+	    $subTitle = str_replace('randtxt', $randtext, $subTitle);
+	    $subTitle = str_replace('randnum', rand(1,9).rand(1,9), $subTitle);
     	$content = json_decode($value->p_conent);
     	$getLink = $content->link;
     	$picture = @$content->picture;
     	$uploaded = true;
-
-    	$subfixArr = explode('|', $suffix);
-        $subTitle = $subfixArr[mt_rand(0, count($subfixArr) - 1)];
-        $txtRan = ['สาธุ🙏🙏🙏','รวยๆ🙏🙏🙏','รอ','OK'];
-        $randtext = $txtRan[mt_rand(0, count($txtRan) - 1)];
-        $subTitle = str_replace('randtxt', $randtext, $subTitle);
-        $subTitle = str_replace('randnum', rand(1,9).rand(1,9), $subTitle);
-
-
     	if (!@preg_match('/http/', @$picture)):
     		preg_match("/^(?:http(?:s)?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:(?:watch)?\?(?:.*&)?v(?:i)?=|(?:embed|v|vi|user)\/))([^\?&\"'>]+)/", $getLink, $matches);
             if (!empty($matches[1])):
