@@ -24,15 +24,31 @@ $titles = '';
 $thumb = '';
 $pid = '';
 
-$sitePpost = $autopost->site_to_post;
-$k = array_rand($sitePpost);
-$blogRand = $sitePpost[$k];
+// $sitePpost = $autopost->site_to_post;
+// $k = array_rand($sitePpost);
+// $blogRand = $sitePpost[$k];
+$blogRand = !empty($query_fb->wp_url)? $query_fb->wp_url : '';
 $site = @$_GET['site'];
 $action = @$_GET['action'];
+$imgid = @$_GET['imgid'];
 if(!empty($site)) {
     $blogRand = $site;
 }
 //$labels = [];
+
+if($action == 'shareToGroup' ) {
+    $count = @!empty($_GET['count'])? $_GET['count']:0;
+    if((count($group_list) != $count)) {
+        $GroupName = $group_list[$count]->sg_name;
+        $GroupID = $group_list[$count]->sg_page_id;
+    }
+    if(!empty($count)) {
+        if((count($group_list) == $count)) {
+            echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'wordpress/wait";}, 3 );</script>';
+            die;
+        }
+    }
+}
 if(!empty($post)) {
     $pConent = json_decode($post[0]->p_conent);
     $content = html_entity_decode(html_entity_decode(stripslashes(trim($pConent->message))));
@@ -42,20 +58,24 @@ if(!empty($post)) {
     preg_match_all('/\[youtube id="(.*?)"\]/i', $content, $matches, PREG_SET_ORDER);
     if ( !empty( $matches ) && !empty( $matches[0] ) && !empty( $matches[0][1] ) ) {
       foreach( $matches as $k=>$v ) {
-        $embeded_code = '[embedyt] https://www.youtube.com/watch?v='.$v[1].'[/embedyt]';
+        $embeded_code = '<p>​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​</p> <iframe width="727" height="409" src="https://www.youtube.com/embed/'.$v[1].'" title="YouTube video player" frameborder="0"></iframe> <p>​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​</p>';
         $content = str_replace($v[0], $embeded_code, $content);
       }
     }
 
     $pSchedule = json_decode($post[0]->p_schedule);
-    $titles = preg_replace('/\s+/', '<sp>', $post[0]->p_name);;
+    $titles = html_entity_decode(str_replace('\\', '', $post[0]->p_name));
+    $titles = preg_replace('/\s+/', '<sp>', $titles);
+    //echo $titles;die;
     $pid = $post[0]->p_id;
     $content = htmlentities($content);
 
     $content = str_replace('/\n/g', '<br>', $content);
     $content = trim(preg_replace('/\s+/', '<sp>', $content));    
     $thumb = $pConent->picture;
-    $content = '<p><img src="'.$thumb.'"/></p>' . $content;
+    
+    $postLink = $pConent->link;
+    //$content = '<p><img src="'.$thumb.'"/></p>' . $content;
     $labels = @$pSchedule->label;
     if(preg_match('/บน-ล่าง/', $post[0]->p_name) || preg_match('/เลข/', $post[0]->p_name) || preg_match('/งวด/', $post[0]->p_name) || preg_match('/หวย/', $post[0]->p_name) || preg_match('/ปลดหนี้/', $post[0]->p_name) || preg_match('/Lotto/', $post[0]->p_name) || preg_match('/Lottery/', $post[0]->p_name))  {
         $labels = 'lotto';
@@ -84,7 +104,7 @@ if(!empty($post)) {
             case 'entertainment':
                 if($blogRand == 'https://www.jc24news.com/') {
                     $labels = '3';
-                } else if($blogRand == 'http://www.bz24news.com/') {
+                } else if($blogRand == 'https://www.bz24news.com/') {
                     $labels = '4';
                 } else {
                     $labels = '1';
@@ -112,8 +132,13 @@ if(!empty($post)) {
     </div>
     Please wait...
 </div>
+
+<?php if($action == 'shareToGroup'):?>
+    <input type="hidden" value="<?php echo @$GroupName;?>" id="gName" />
+<?php endif;?>
+
 <code id="codeB" style="width:300px;overflow:hidden;display:none"></code>
-    <code id="examplecode5" style="width:300px;overflow:hidden;display:none">var codedefault2=&quot;SET !EXTRACT_TEST_POPUP NO\n SET !TIMEOUT_PAGE 300\n SET !ERRORIGNORE YES\n SET !TIMEOUT_STEP 0.1\n&quot;;var wm=Components.classes[&quot;@mozilla.org/appshell/window-mediator;1&quot;].getService(Components.interfaces.nsIWindowMediator);var window=wm.getMostRecentWindow(&quot;navigator:browser&quot;);const XMLHttpRequest = Components.Constructor(&quot;@mozilla.org/xmlextras/xmlhttprequest;1&quot;);var homeUrl = &quot;<?php echo base_url();?>&quot;,add_post_url = &quot;<?php echo @$blogRand;?>&quot;,titles = &quot;&quot;,contents = &quot;&quot;,thumb = &quot;&quot;,pid = &quot;<?php echo @$pid;?>&quot;,labels = [<?php echo @$labels;?>]<?php if(empty($link) && $action == 'postblog'):?>,fileupload = &quot;<?php echo @$fileupload;?>&quot;,imgname=&quot;<?php echo @$imgname;?>&quot;,imgext=&quot;<?php echo @$imgext;?>&quot;<?php endif;?>;</code>
+    <code id="examplecode5" style="width:300px;overflow:hidden;display:none">var codedefault2=&quot;CODE: SET !EXTRACT_TEST_POPUP NO\n SET !TIMEOUT_PAGE 300\n SET !ERRORIGNORE YES\n SET !TIMEOUT_STEP 1\n&quot;;var wm=Components.classes[&quot;@mozilla.org/appshell/window-mediator;1&quot;].getService(Components.interfaces.nsIWindowMediator);var window=wm.getMostRecentWindow(&quot;navigator:browser&quot;);const XMLHttpRequest = Components.Constructor(&quot;@mozilla.org/xmlextras/xmlhttprequest;1&quot;);var homeUrl = &quot;<?php echo base_url();?>&quot;,add_post_url = &quot;<?php echo @$blogRand;?>&quot;,titles = &quot;&quot;,contents = &quot;&quot;,thumb = &quot;&quot;,pid = &quot;<?php echo @$pid;?>&quot;,labels = [<?php echo @$labels;?>]<?php if(empty($link) && $action == 'uploadimage'):?>,fileupload = &quot;<?php echo @$fileupload;?>&quot;,imgname=&quot;<?php echo @$imgname;?>&quot;,imgext=&quot;<?php echo @$imgext;?>&quot;<?php endif;?>,imgid = &quot;<?php echo @$imgid;?>&quot;,fpid = &quot;<?php echo @$query_fb->id;?>&quot;,pagetype = &quot;<?php echo @$query_fb->pageType;?>&quot;<?php if($action == 'shareToGroup'):?>,count = &quot;<?php echo @$count;?>&quot;<?php endif;?>;</code>
     <script type="text/javascript">
         function runcode(codes) {
             var str = $("#examplecode5").text();
@@ -154,8 +179,23 @@ if(!empty($post)) {
     <?php if(empty($link) && $action == 'postwp'):?>
         load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/postToWordpress');
     <?php endif;?>
-    <?php if(empty($link) && $action == 'postblog'):?>
-        load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/uploadToWordpress');
+    <?php if(!empty($_GET['pid']) && $action == 'shareToPage'):?>
+        load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/shareLinkToPage');
+    <?php endif;?>
+    <?php if(!empty($_GET['pid']) && $action == 'shareToGroup'):?>
+        load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/sharePageLastPostToPageGroup');
+    <?php endif;?>
+    <?php if(empty($link) && $action == 'postblog'||empty($link) && $action == 'uploadimage'):?>
+        <?php if(!empty($blogRand)):?>
+            load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/uploadToWordpress');
+        <?php else:?>
+            if (confirm('No wp site url set, please go to setting to setup url!')) {
+              // Save it!
+              window.location.href = '<?php echo base_url();?>/managecampaigns/setting';
+            } else {
+              // Do nothing!
+            }
+        <?php endif;?>
     <?php endif;?>
     }, 2000 );
     </script>
