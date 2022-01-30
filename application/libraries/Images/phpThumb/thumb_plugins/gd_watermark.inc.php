@@ -83,9 +83,10 @@ class GdWatermarkLib
 			$stamp_height = $new_mask_height;
 			$stamp_image = $new_mask_image;
 		}
-		
+
 		switch($mask_position) 
 		{
+
 			case 'ct':
 			// Center top
 			$start_width = round(($canvas_width - $stamp_width) / 2);

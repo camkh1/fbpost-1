@@ -139,16 +139,88 @@ if(!empty($post)) {
                 </div>
                 <div class="widget-content">
                     <form method="post" id="validate" class="form-horizontal row-border" enctype="multipart/form-data">
-                    <input type="text" id="link" class="form-control post-option" name="link" placeholder="URL" /> 
-                
+                     
                     <div class="form-group">
-                        <div class="col-md-12 clearfix">
+                        <div class="col-md-6">
+                            <input type="text" id="link" class="form-control post-option" name="link" placeholder="URL" />
+                        </div>
+                        <div class="col-md-6">
                             <input id="title" type="text" name="title"  class="form-control" placeholder="Title" />
                         </div>
                     </div>
                     <div class="form-group">
-                        <div class="col-md-12 clearfix">
-                            <input id="image" type="text" name="thumb"  class="form-control" placeholder="Image url" />
+                        <div class="col-md-2">
+                            <input id="image" type="text" name="thumb[]"  class="form-control" placeholder="Image url" />
+                               <label class="control-label">Thumbnail: </label> 
+                               <label class="radio-inline" style="padding-top: 0px;">
+                                  <input class="uniform" name="asThumb[0]" value="set" checked="checked" type="radio">
+                                  Yes 
+                               </label>
+                               <label class="radio-inline" style="padding-top: 0px;">
+                                  <input class="uniform" name="asThumb[0]" value="no" type="radio">
+                                  No 
+                               </label>
+                               
+                        </div>
+                        <div class="col-md-2">
+                            <input id="image" type="text" name="thumb[]"  class="form-control" placeholder="Set Image url array 0" />
+                            <label class="control-label">Thumbnail: </label> 
+                            <label class="radio-inline" style="padding-top: 0px;">
+                              <input class="uniform" name="asThumb[1]" value="set" checked="checked" type="radio">
+                              Yes 
+                            </label>
+                            <label class="radio-inline" style="padding-top: 0px;">
+                              <input class="uniform" name="asThumb[1]" value="no" type="radio">
+                              No 
+                            </label>
+                        </div>
+                        <div class="col-md-2">
+                            <input id="image" type="text" name="thumb[]"  class="form-control" placeholder="Image url array 1" />
+                            <label class="control-label">Thumbnail: </label> 
+                            <label class="radio-inline" style="padding-top: 0px;">
+                              <input class="uniform" name="asThumb[2]" value="set" checked="checked" type="radio">
+                              Yes 
+                            </label>
+                            <label class="radio-inline" style="padding-top: 0px;">
+                              <input class="uniform" name="asThumb[2]" value="no" type="radio">
+                              No 
+                            </label>
+                        </div>
+                        <div class="col-md-2">
+                            <input id="image" type="text" name="thumb[]"  class="form-control" placeholder="Image url array 2" />
+                            <label class="control-label">Thumbnail: </label> 
+                            <label class="radio-inline" style="padding-top: 0px;">
+                              <input class="uniform" name="asThumb[3]" value="set" checked="checked" type="radio">
+                              Yes 
+                            </label>
+                            <label class="radio-inline" style="padding-top: 0px;">
+                              <input class="uniform" name="asThumb[3]" value="no" type="radio">
+                              No 
+                            </label>
+                        </div>
+                        <div class="col-md-2">
+                            <input id="image" type="text" name="thumb[]"  class="form-control" placeholder="Image url array 3" />
+                            <label class="control-label">Thumbnail: </label> 
+                            <label class="radio-inline" style="padding-top: 0px;">
+                              <input class="uniform" name="asThumb[4]" value="set" checked="checked" type="radio">
+                              Yes 
+                            </label>
+                            <label class="radio-inline" style="padding-top: 0px;">
+                              <input class="uniform" name="asThumb[4]" value="no" type="radio">
+                              No 
+                            </label>
+                        </div>
+                        <div class="col-md-2">
+                            <input id="image" type="text" name="thumb[]"  class="form-control" placeholder="Image url array 4" />
+                            <label class="control-label">Thumbnail: </label> 
+                            <label class="radio-inline" style="padding-top: 0px;">
+                              <input class="uniform" name="asThumb[5]" value="set" checked="checked" type="radio">
+                              Yes 
+                            </label>
+                            <label class="radio-inline" style="padding-top: 0px;">
+                              <input class="uniform" name="asThumb[5]" value="no" type="radio">
+                              No 
+                            </label>
                         </div>
                     </div>
                     <div class="form-group">

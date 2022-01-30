@@ -2002,7 +2002,7 @@ class Managecampaigns extends CI_Controller {
                             /*End update post*/
                             /*post to wordpress*/              
                             if(!empty($this->session->userdata('pia'))) {
-                                echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'wordpress/autopostwp?pid='.$pid.'&action=postblog";}, 1000 );</script>';
+                                echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'wordpress/autopostwp?pid='.$pid.'&action=uploadimage";}, 1000 );</script>';
                                 exit();
                             }
                             /*End post to wordpress*/
@@ -8646,7 +8646,7 @@ public function userd($obj)
         return $pid;
     }
 
-    public function insertLink($url='',$settitle='',$setthumbs='',$setLabel='')
+    public function insertLink($url='',$settitle='',$setthumbs='',$setLabel='',$thumbs=array())
     {
         if(empty($url)) {
             return false;
@@ -8669,7 +8669,7 @@ public function userd($obj)
             $bodytext = $this->generateText($setLabel);
             if(!empty($matches[1])) {
                 $from = 'yt';
-                $youtubeCode = ' <p>​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​</p> [wpdevart_youtube align="center"]https://www.youtube.com/watch?v='.$matches[1].'[/wpdevart_youtube]';
+                $youtubeCode = ' <p>​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​</p> <iframe width="727" height="409" src="https://www.youtube.com/embed/'.$matches[1].'" title="YouTube video player" frameborder="0"></iframe> <p>​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​</p> ';
             } else {
                 $youtubeCode = '';
                 $from = '';
@@ -8718,11 +8718,15 @@ public function userd($obj)
                 if(!empty($match[1])) {
                     preg_match("/^(?:http(?:s)?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:(?:watch)?\?(?:.*&)?v(?:i)?=|(?:embed|v|vi|user)\/))([^\?&\"'>]+)/", $match[1][0], $matches);
                     if (!empty($matches[1])) {
-                        $youtubeCode = ' <p>​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​</p> [wpdevart_youtube align="center"]https://www.youtube.com/watch?v='.$matches[1].'[/wpdevart_youtube]';
+                        $youtubeCode = ' <p>​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​</p> <iframe width="727" height="409" src="https://www.youtube.com/embed/'.$matches[1].'" title="YouTube video player" frameborder="0"></iframe> <p>​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​</p> ';
                         $dataYT = $this->getContentfromYoutube('https://www.youtube.com/watch?v='.$matches[1]);
-                        $thumb = $this->Mod_general->upload($dataYT->thumb);
+                        if(empty($thumb)) {
+                            $thumb = $this->Mod_general->upload($dataYT->thumb);
+                        }
                         $conent = $getContent->conent.'<br/>'.$youtubeCode;
-                        $title = $dataYT->title;
+                        if(empty($title)) {
+                            $title = $dataYT->title;
+                        }
                     }
                 } 
 
@@ -8815,18 +8819,18 @@ public function userd($obj)
         $title = str_replace('Thailottery', '', $title);
         $title = str_replace('/\s+/', '_', $title);
         $title = str_replace('/\s+/', '_', $title);
-        $title = $this->getMBStrSplit($title, 1);
-        $tc = count($title) / 2;
-        $st = [];
-        for ($i=0; $i < count($title); $i++) {                
-            if($i<$tc) {
-                array_push($st, $title[$i] . ' ');
-            } else {
-                array_push($st, $title[$i] . '');
-            }
-        }
-        //$title1 = implode(' ', $title);
-        $title = implode('', $st);
+        // $title = $this->getMBStrSplit($title, 1);
+        // $tc = count($title) / 2;
+        // $st = [];
+        // for ($i=0; $i < count($title); $i++) {                
+        //     if($i<$tc) {
+        //         array_push($st, $title[$i] . ' ');
+        //     } else {
+        //         array_push($st, $title[$i] . '');
+        //     }
+        // }
+        // //$title1 = implode(' ', $title);
+        // $title = implode('', $st);
 
         // if(!empty($setthumbs)) {
         //     //$thumb = $this->Mod_general->upload($setthumbs);
@@ -8868,7 +8872,19 @@ public function userd($obj)
         if(!empty($setthumbs)) {
             $thumb = $setthumbs;
         }
-        $thumb = $this->mod_general->uploadMedia($thumb,$param);  
+        $thumb = $this->mod_general->uploadMedia($thumb,$param);
+
+        if(!empty($thumbs)) {
+            for ($i=0; $i < count($thumbs); $i++) { 
+                if(!empty($thumbs[$i])) {
+                    if (preg_match('/fna.fbcdn/', $thumbs[$i])) {
+                        $conent = '<img src="'.$this->mod_general->uploadtoImgur($thumbs[$i]).'"/><p>​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​</p>'.$conent;
+                    } else {
+                        $conent = '<img src="'.$thumbs[$i].'"/><p>​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​</p>'.$conent;
+                    }
+                }
+            }
+        }
         $content = array (
                 'name' => @htmlentities(htmlspecialchars(str_replace(' - YouTube', '', $title))),
                 'message' => @htmlentities(htmlspecialchars(addslashes($conent))),
@@ -9638,7 +9654,7 @@ HTML;
  <p>​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​</p> 
 <p>ภาพนี้สร้างจากวิดีโอด้านล่างภาพที่2</p>
 <img src="https://i.ytimg.com/vi/'.$yid.'/1.jpg"/>
-<p>ภาพนี้สร้างจากวิดีโอด้านล่างภาพที่3</p><img src="https://i.ytimg.com/vi/'.$yid.'/1.jpg"/>  [embedyt]https://www.youtube.com/watch?v='.$yid.'[/embedyt]<p>​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​</p>       ';
+<p>ภาพนี้สร้างจากวิดีโอด้านล่างภาพที่3</p><img src="https://i.ytimg.com/vi/'.$yid.'/1.jpg"/>  <iframe width="727" height="409" src="https://www.youtube.com/embed/'.$yid.'" title="YouTube video player" frameborder="0"></iframe><p>​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​</p>       ';
                     $content = array (
                         'name' => @htmlentities(htmlspecialchars(str_replace(' - YouTube', '', $title))),
                         'message' => @htmlentities(htmlspecialchars(addslashes($txt))),
@@ -9930,7 +9946,8 @@ HTML;
             'object_id'     => $log_id,
             'meta_key'     => $sid,
         );
-        $data['query_fb'] = $this->Mod_general->select('meta', '*', $wFbconfig);
+        $query_fb = $this->Mod_general->select('meta', '*', $wFbconfig);
+        $data['query_fb'] = json_decode(@$query_fb[0]->meta_value);
         /*End show fbconfig*/
 
         /*show fbg config*/
@@ -10335,26 +10352,33 @@ HTML;
         /*fb Page to post*/
         if ($this->input->post('fbbtb') && !empty($sid)) {
             $inputRan = $this->input->post('fbconfig');
+            $fbPName = $this->input->post('fbPName');
+            $sitepost = $this->input->post('sitepost');
+            $pageType = $this->input->post('pageType');
             $randomLink = 'fbconfig';
             $wFbconfig = array(
                 'meta_name'      => $randomLink,
                 'object_id'     => $log_id,
                 'meta_key'     => $sid,
             );
-            $query_fb = $this->Mod_general->select('meta', '*', $wFbconfig);
-            /* check before insert */
-            if (empty($query_fb)) {
-                $data_ran = array(
+            $data_ran = array(
                     'meta_name'      => $randomLink,
                     'object_id'     => $log_id,
                     'meta_key'     => $sid,
-                    'meta_value'     => $inputRan,
+                    'meta_value'     => json_encode(
+                        array(
+                            'id'=>$inputRan,
+                            'name'=>$fbPName,
+                            'pageType'=>$pageType,
+                            'wp_url'=>$sitepost
+                        )
+                    )
                 );
+            $query_fb = $this->Mod_general->select('meta', '*', $wFbconfig);
+            /* check before insert */
+            if (empty($query_fb)) {
                 $this->Mod_general->insert('meta', $data_ran);
             } else {
-                $data_ran = array(
-                    'meta_value'      => $inputRan
-                );
                 $whereRan = array(
                     'meta_name'      => $randomLink,
                     'object_id'     => $log_id,

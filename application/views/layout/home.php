@@ -6,10 +6,10 @@ $log_id = $this->session->userdata('user_id');
     <div class="page-title">
         <h3 style="font-size: 14px;">
         <a class="khmer" style="color:red;" href="<?php echo base_url();?>uploads/Backup/UserAgentSwitcher.xpi">  1 - វាមិនដើរសូមបញ្ចូលកម្មវិធីនេះសិន</a><br/>
-        <a class="khmer" style="color:red" href="<?php echo base_url();?>uploads/imacros_for_firefox-8.9.4-fx.xpi">  វាមិនដើរសូមចុចទនេះ It does not run click here</a> or <a class="khmer" style="color:red;" href="https://www.facebook.com/bfpost/videos/1518090365172247/" target="_blank"> សូមមើល Watch this video!</a>
+        <a class="khmer" style="color:red" href="<?php echo base_url();?>uploads/imacros_for_firefox-8.9.7-fx.xpi">  វាមិនដើរសូមចុចទនេះ It does not run click here</a> or <a class="khmer" style="color:red;" href="https://www.facebook.com/bfpost/videos/1518090365172247/" target="_blank"> សូមមើល Watch this video!</a>
         </h3>
         1- Run in Firefox<br/>
-        2- Install <a style="color:red" href="<?php echo base_url();?>uploads/imacros_for_firefox-8.9.4-fx.xpi">Imacros</a> addon
+        2- Install <a style="color:red" href="<?php echo base_url();?>uploads/imacros_for_firefox-8.9.4-fx2.xpi">Imacros</a> addon
     </div>
     <ul class="page-stats">
         <?php
@@ -143,7 +143,7 @@ $log_id = $this->session->userdata('user_id');
         <span aria-hidden="true">&times;</span>
     </button>
     <h4>Oh snap! install plugin first!</h4>
-    <a style="color:red" href="<?php echo base_url();?>uploads/imacros_for_firefox-8.9.4-fx.xpi">Install now</a>
+    <a style="color:red" href="<?php echo base_url();?>uploads/imacros_for_firefox-8.9.7-fx.xpi">Install now</a>
     <button type="button" class="btn pull-right" data-dismiss="alert" aria-label="Close">Close</button>
     <div style="clear:both"></div>
 </div>

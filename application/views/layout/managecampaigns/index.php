@@ -296,52 +296,60 @@ function parse_query_string(query) {
     <?php
     if(!empty($socialList)):
     $Mod_general = new Mod_general ();
-	$subfixArr = explode('|', $suffix);  
-     foreach ($socialList as $value):
-     	$subTitle = $subfixArr[mt_rand(0, count($subfixArr) - 1)];
-    	$txtRan = ['สาธุ🙏🙏🙏','รวยๆ🙏🙏🙏','รอ','OK'];
-     	$randtext = $txtRan[mt_rand(0, count($txtRan) - 1)];
-	    $subTitle = str_replace('randtxt', $randtext, $subTitle);
-	    $subTitle = str_replace('randnum', rand(1,9).rand(1,9), $subTitle);
-    	$content = json_decode($value->p_conent);
-    	$getLink = $content->link;
-    	$picture = @$content->picture;
-    	$uploaded = true;
-    	if (!@preg_match('/http/', @$picture)):
-    		preg_match("/^(?:http(?:s)?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:(?:watch)?\?(?:.*&)?v(?:i)?=|(?:embed|v|vi|user)\/))([^\?&\"'>]+)/", $getLink, $matches);
-            if (!empty($matches[1])):
-                $picture = (!empty($matches[1]) ? $matches[1] : '');
-                $picture = 'https://i.ytimg.com/vi/'.$picture.'/hqdefault.jpg';
-                $uploaded = false;
-            endif;
-    	endif;
-    	$glink = $content->link;
-		$str = time();
-        $str = md5($str);
-        $uniq_id = substr($str, 0, 9);
-        //$link = $glink . '?s=' . $uniq_id;
-        $link = $glink;
-        $mainlink = $content->mainlink;
-        $message = $content->message;
-        $UserTable = new Mod_general ();
-    	$getBrowser = $UserTable->getBrowser()['name'];
-    	if($getBrowser=='Mozilla Firefox'){
-        	if(!empty($this->session->userdata('post_only'))) {
-		        $parse = parse_url($glink);
-		        if (in_array(@$parse['host'], $siteUrl)) {
-		        	$pid = $value->{Tbl_posts::id};
-		        	echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/yturl?pid='.$pid.'&action=postblog&autopost=1";},0 );</script>';
-		            exit();
-		        } 
+    	if(!empty($suffix)) {
+			$subfixArr = explode('|', $suffix);  
+		} else {
+			$subfixArr = array();
+		}
+	     foreach ($socialList as $value):
+	     	if(!empty($suffix)) {
+		     	$subTitle = $subfixArr[mt_rand(0, count($subfixArr) - 1)];
+		    	$txtRan = ['สาธุ🙏🙏🙏','รวยๆ🙏🙏🙏','รอ','OK'];
+		     	$randtext = $txtRan[mt_rand(0, count($txtRan) - 1)];
+			    $subTitle = str_replace('randtxt', $randtext, $subTitle);
+			    $subTitle = str_replace('randnum', rand(1,9).rand(1,9), $subTitle);
+			}
+	    	$content = json_decode($value->p_conent);
+	    	$getLink = $content->link;
+	    	$picture = @$content->picture;
+	    	$uploaded = true;
+	    	if (!@preg_match('/http/', @$picture)):
+	    		preg_match("/^(?:http(?:s)?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:(?:watch)?\?(?:.*&)?v(?:i)?=|(?:embed|v|vi|user)\/))([^\?&\"'>]+)/", $getLink, $matches);
+	            if (!empty($matches[1])):
+	                $picture = (!empty($matches[1]) ? $matches[1] : '');
+	                $picture = 'https://i.ytimg.com/vi/'.$picture.'/hqdefault.jpg';
+	                $uploaded = false;
+	            endif;
+	    	endif;
+	    	$glink = $content->link;
+			$str = time();
+	        $str = md5($str);
+	        $uniq_id = substr($str, 0, 9);
+	        //$link = $glink . '?s=' . $uniq_id;
+	        $link = $glink;
+	        $mainlink = $content->mainlink;
+	        $message = $content->message;
+	        $UserTable = new Mod_general ();
+	    	$getBrowser = $UserTable->getBrowser()['name'];
+	    	if($getBrowser=='Mozilla Firefox'){
+	        	if(!empty($this->session->userdata('post_only'))) {
+			        $parse = parse_url($glink);
+			        if (in_array(@$parse['host'], $siteUrl)) {
+			        	$pid = $value->{Tbl_posts::id};
+			        	echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/yturl?pid='.$pid.'&action=postblog&autopost=1";},0 );</script>';
+			            exit();
+			        } 
+		    	}
 	    	}
-    	}
      ?>
                                     <tr>
 								<td class="checkbox-column"><input type="checkbox" id="itemid"
 									name="itemid[]" class="uniform"
 									value="<?php echo $value->{Tbl_posts::id}; ?>" /></td>
 								<td><a
-									href="<?php echo base_url(); ?>managecampaigns/add?id=<?php echo $value->{Tbl_posts::id}; ?>"><img src="<?php echo @$picture; ?>" style="width: 80px;float: left;margin-right: 5px"> <?php echo $value->{Tbl_posts::name}; ?></a>
+									href="<?php echo base_url(); ?>managecampaigns/add?id=<?php echo $value->{Tbl_posts::id}; ?>"><img src="<?php echo @$picture; ?>" style="width: 80px;float: left;margin-right: 5px"> <?php
+									$titles = html_entity_decode(html_entity_decode(str_replace('\\', '', $value->{Tbl_posts::name})));
+									 echo @$titles; ?></a>
 								</td>
 								<td class="hidden-xs">
         <?php echo $value->{Tbl_posts::p_date}; ?>
@@ -395,7 +403,7 @@ function parse_query_string(query) {
 												<li><a
 												href="<?php echo base_url(); ?>facebook/shareation?post=getpost&pid=<?php echo $value->{Tbl_posts::id}; ?>"><i class="icon-share"></i> Share now</a></li>
 											<?php endif;?>
-											<li><a data-title="<?php echo $value->{Tbl_posts::name};?>" data-mlink="<?php echo @$mainlink;?>" data-img="<?php echo $content->picture; ?>" data-pre="<?php echo $subTitle;?>" data-link="<?php echo @$link;?>" onclick="getcode(this);" href="javascript:void(0);"><i class="icon-pencil"></i> Get Link</a></li>
+											<li><a data-title="<?php echo $value->{Tbl_posts::name};?>" data-mlink="<?php echo @$mainlink;?>" data-img="<?php echo $content->picture; ?>" data-pre="<?php echo @$subTitle;?>" data-link="<?php echo @$link;?>" onclick="getcode(this);" href="javascript:void(0);"><i class="icon-pencil"></i> Get Link</a></li>
 											<?php
 											$parse = parse_url($glink);
 											//$bContent = preg_replace('/\s+/', '<sp>', $message);
