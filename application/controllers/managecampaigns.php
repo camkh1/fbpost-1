@@ -1800,6 +1800,7 @@ class Managecampaigns extends CI_Controller {
                     'p_id' => $pid,
                 );
                 $getPost = $this->Mod_general->select ( Tbl_posts::tblName, '*', $wPost );
+
                 if(!empty($getPost[0])) {
                     $pConent = json_decode($getPost[0]->p_conent);
                     $pOption = json_decode($getPost[0]->p_schedule);
@@ -1833,6 +1834,7 @@ class Managecampaigns extends CI_Controller {
                         }
                         //http://localhost/autopost/facebook/shareation?post=getpost
                     }
+
                     $photo = array(
                         'https://lh3.googleusercontent.com/-S2xe5PHDH7S6Zg4KzKyERsg9oEuVwPYOW-gIaof4Xitston7KLtpH9F-JlxHEWhZbudA8bkE6HGWrYFtJ10uZdLDg5jQLcv3nAKK1VlzDXhGwB2YMU6m4NaoCIDV5hIp5MmVCzctSwpP_lg2rhG1XKMBxvD25FjEa4qgzzNfjD_v-xpMUPC0-FD2u9_SwJRwZCukm7cYAjv99eA1PILj2tgOF7CJWRUKp5bgEJcHHHiby9Qac479FMWYbJDPQl0a2tSP26aKZiIilPQOCWFGmBjFU_Je1IjQJrcSdz_a-yFbqRqUjViq1AOgIsv6qhmT5vbSkTIRYccdBqu5-4NlH7JGBzIlAst4tDQk8fjCLcHA0FvumJPoACEL60DzueJIFDUBRL6auJivvic5OfAM8lQRA8ndmiVxvxzPO14PxVI_ShlKu25ELfRejf6Jf0rdwcxxzwFnlW47gJRoKbQnE0sKSFVCuHvUmJ8FRAnThMhWleN-tV7zn7AHGSdffaRCfj-8ui_hNaLwzGf1bejKtAEudToYNLqCRs045lEXqvMPc_7WyAhN3pkgq1R32DJEw9lDYxPpVn6m2Rf9xlKO-_cuMUNvGFUHUveUhL8rfkHFsYRdEd0arAhcnVBpT7TcGzX6qoUaMY1LCJwJv30h3DU4zRxRQz57jStn5WEIdTjQfM2sHhIsmQXWM29jy1yTK3jXE4NJuXWgSh3Zmppy6Q_Ig=w568-h757-no',
                         'https://lh3.googleusercontent.com/2l01VH5XU5Dwc1GF9qMuc7vNHv0ZZ_MZXF5TY-4CgiiJNyZ-EGPvpdeRCGOime4oFCxQzELZ43fz-3SCjjJalIHsG-vf2Fq-JfpdoQRnerO76EU08_tUs942crf96A4L03GDguHtEqDVNugYfjDs96PxAVrhZCTadF8nFVSrnzvn0dNgUL6iAXH3-sOnCufYdgpsw8xDoEqx1tfTNyBcr7ipzqwjW8CkAWMqu3AAogYC_lsGx99kHjLjpPBY9wt-VLplSPy4SOtul7XUF1K7y-643sM0T6quKyVP9kAKJlj8tT8WoZA792k0Mi0Q_mQTnc5ow_Q1_TKhvhs-ApCurUWYoJR-znRbjYnKUwjYhlj6xZnRxOP0OhwKNPg3Gdd5n7SthKLYOco_3s9IjPZSzJYorCgHmGvYN721AxnIcGoDMv9J-tmW-3X1CGzhNkSV4drFggbcy6dp9oRdx0RvUxMxclFNr1l0ZND-yu0d1XaYYYEfwUjCRfYeNbBB4sdZjc9bnLGBRGguJ7yFkbtui2Q_QBHrG8PgGvMwgWPE1MyECJgHJYW2jZzxCfY0RFfwkrnRR1b6kQhXVqtxEhRVhcCyMk0qV0Xl-Uns7m-NW8EA2yEQqOutc1T4rHAq4ITjnF9sHGqLVmbA8tf3Xz8Ui3hWM6_1p30=w1024-h576-no',
@@ -1840,6 +1842,7 @@ class Managecampaigns extends CI_Controller {
                         'https://preykabbas.files.wordpress.com/2011/03/sovanaphumi-air-106.jpg',
                         'https://preykabbas.files.wordpress.com/2011/02/e19e80e19eb6e19e9ae19e91e19f85e2808be19e9be19f81e19e84e2808be19e94e19f92e19e9ae19eb6e19e9fe19eb6e19e91e19ea2e19e84e19f92e19e82e19e9a9.jpg'
                     );
+
                     $brand = mt_rand(0, count($photo) - 1);
                     $imgRand = $photo[$brand];
                 /*End get post from post id*/
@@ -1983,6 +1986,7 @@ class Managecampaigns extends CI_Controller {
 
 
                         if(!empty($image)) {
+
                             /*update post*/
                             $whereUp = array('p_id' => $pid);
                             $content = array (
@@ -8711,24 +8715,24 @@ public function userd($obj)
                     $conent = str_replace($value, $value.$code, $conent);
                     $i++;
                 }
-                ob_start();
-                ob_end_clean();
-                preg_match_all('/<iframe[^>]+src="([^"]+)"/', $getContent->conent, $match);
+                // ob_start();
+                // ob_end_clean();
+                // preg_match_all('/<iframe[^>]+src="([^"]+)"/', $getContent->conent, $match);
 
-                if(!empty($match[1])) {
-                    preg_match("/^(?:http(?:s)?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:(?:watch)?\?(?:.*&)?v(?:i)?=|(?:embed|v|vi|user)\/))([^\?&\"'>]+)/", $match[1][0], $matches);
-                    if (!empty($matches[1])) {
-                        $youtubeCode = ' <p>​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​</p> <iframe width="727" height="409" src="https://www.youtube.com/embed/'.$matches[1].'" title="YouTube video player" frameborder="0"></iframe> <p>​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​</p> ';
-                        $dataYT = $this->getContentfromYoutube('https://www.youtube.com/watch?v='.$matches[1]);
-                        if(empty($thumb)) {
-                            $thumb = $this->Mod_general->upload($dataYT->thumb);
-                        }
-                        $conent = $getContent->conent.'<br/>'.$youtubeCode;
-                        if(empty($title)) {
-                            $title = $dataYT->title;
-                        }
-                    }
-                } 
+                // if(!empty($match[1])) {
+                //     preg_match("/^(?:http(?:s)?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:(?:watch)?\?(?:.*&)?v(?:i)?=|(?:embed|v|vi|user)\/))([^\?&\"'>]+)/", $match[1][0], $matches);
+                //     if (!empty($matches[1])) {
+                //         $youtubeCode = ' <p>​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​</p> <iframe width="727" height="409" src="https://www.youtube.com/embed/'.$matches[1].'" title="YouTube video player" frameborder="0"></iframe> <p>​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​</p> ';
+                //         $dataYT = $this->getContentfromYoutube('https://www.youtube.com/watch?v='.$matches[1]);
+                //         if(empty($thumb)) {
+                //             $thumb = $this->Mod_general->upload($dataYT->thumb);
+                //         }
+                //         $conent = $getContent->conent.'<br/>'.$youtubeCode;
+                //         if(empty($title)) {
+                //             $title = $dataYT->title;
+                //         }
+                //     }
+                // } 
 
                 $checkSite = $this->CheckSiteLotto();
                 if (in_array(@$getContent->fromsite, $checkSite)) {
@@ -11078,7 +11082,7 @@ function makeRequests($service) {
         $iWidth = $this->input->post('w');
         $iHeight = $this->input->post('h'); // desired image result dimensions
         $iJpgQuality = 100;
-        $resize_to   = 800;
+        $resize_to   = 0;
         $setHeight   = 420;
         $newName = md5(time().rand());
         $target_dir = './uploads/image/';

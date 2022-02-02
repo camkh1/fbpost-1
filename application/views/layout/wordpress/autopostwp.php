@@ -180,10 +180,16 @@ if(!empty($post)) {
         load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/postToWordpress');
     <?php endif;?>
     <?php if(!empty($_GET['pid']) && $action == 'shareToPage'):?>
-        load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/shareLinkToPage');
+        setTimeout(function() {
+            load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/shareLinkToPage');
+        }, 1000 * 10);
     <?php endif;?>
-    <?php if(!empty($_GET['pid']) && $action == 'shareToGroup'):?>
-        load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/sharePageLastPostToPageGroup');
+    <?php if($action == 'shareToGroup'):?>
+        // setTimeout(function() {
+        //     load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/sharePageLastPostToGroup');
+        //     //load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/sharePageLastPostToPageGroup');
+        // }, 1000 * 10);
+        load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/sharePageLastPostToGroup');
     <?php endif;?>
     <?php if(empty($link) && $action == 'postblog'||empty($link) && $action == 'uploadimage'):?>
         <?php if(!empty($blogRand)):?>

@@ -250,100 +250,9 @@ class Wordpress extends CI_Controller
             $title = trim(@$this->input->post ( 'title' ));
             $thumbs = @$this->input->post ( 'thumb' );
             $asThumb = @$this->input->post ( 'asThumb' );
-            $setArr = array();
-            if(!empty($thumbs)) {
-                for ($i=0; $i < count($thumbs); $i++) { 
-                    if(!empty($thumbs[$i])) {
-                        if($asThumb[$i] == 'set') {
-                            array_push($setArr, $thumbs[$i]);
-                        }
-                    }
-                }
-                $count = count($setArr);
-                $setWeight = 1200;
-                $setHeight = 635;
-                for ($j=0; $j < count($setArr); $j++) {
-                    if(!empty($setArr[$j])) {
-                        switch ($count) {
-                            case 1:
-                                $thumb = $this->mod_general->mergeImages('',$this->mod_general->crop_image($setArr[$j],$setWeight,($setHeight-95)),'lt');
-                                $textPosition = 45;
-                                $bgPosition = 'cb';
-                                break;
-                            case 2:
-                                if($j==0) {
-                                    $setThumb = $this->mod_general->mergeImages('',$this->mod_general->crop_image($setArr[$j],($setWeight/2)-1,$setHeight),'lt');
-                                } else {
-                                    $thumb = $this->mod_general->mergeImages($setThumb,$this->mod_general->crop_image($setArr[$j],($setWeight/2)-1,$setHeight),'rb');
-                                }
-                                $textPosition = 45;
-                                $bgPosition = 'cb';
-                                break;
-                            case 3:
-                                if($j==0) {
-                                    $setThumb = $this->mod_general->mergeImages('',$this->mod_general->crop_image($setArr[$j],($setWeight/3)-1,$setHeight),'lt');
-                                } else if($j==1) {
-                                    $setThumb = $this->mod_general->mergeImages($setThumb,$this->mod_general->crop_image($setArr[$j],($setWeight/3)-1,$setHeight),'cc');
-                                } else {
-                                    $thumb = $this->mod_general->mergeImages($setThumb,$this->mod_general->crop_image($setArr[$j],($setWeight/3)-1,$setHeight),'rt');
-                                }
-                                $textPosition = 45;
-                                $bgPosition = 'cb';
-                                break;
-                            case 4:
-                                if($j==0) {
-                                    $setThumb = $this->mod_general->mergeImages('',$this->mod_general->crop_image($setArr[$j],(($setWeight/2)-1),(($setHeight/2)-1)),'lt');
-                                } else if($j==1) {
-                                    $setThumb = $this->mod_general->mergeImages($setThumb,$this->mod_general->crop_image($setArr[$j],(($setWeight/2)-1),(($setHeight/2)-1)),"rt");
-                                } else if($j==2) {
-                                    $setThumb = $this->mod_general->mergeImages($setThumb,$this->mod_general->crop_image($setArr[$j],(($setWeight/2)-1),(($setHeight/2)-1)),'lb');
-                                }  else {
-                                    $thumb = $this->mod_general->mergeImages($setThumb,$this->mod_general->crop_image($setArr[$j],(($setWeight/2)-1),(($setHeight/2)-1)),'rb');
-                                }
-                                $textPosition = 30;
-                                $bgPosition = 'cb';
-                                break;
-                            case 5:
-                                $padding = 1;
-                                if($j==0) {
-                                    $setThumb = $this->mod_general->mergeImages('',$this->mod_general->crop_image($setArr[$j],(($setWeight/3)-1),(($setHeight/2)-$padding)),'lt');
-                                } else if($j==1) {
-                                    $setThumb = $this->mod_general->mergeImages($setThumb,$this->mod_general->crop_image($setArr[$j],(($setWeight/3)-1),(($setHeight/2)-$padding)),'ct');
-                                } else if($j==2) {
-                                    $setThumb = $this->mod_general->mergeImages($setThumb,$this->mod_general->crop_image($setArr[$j],(($setWeight/3)-1),(($setHeight/2)-$padding)),'rt');
-                                }  else if($j==3) {
-                                    $setThumb = $this->mod_general->mergeImages($setThumb,$this->mod_general->crop_image($setArr[$j],(($setWeight/2)-1),(($setHeight/2)-$padding)),'lb');
-                                } else {
-                                    $thumb = $this->mod_general->mergeImages($setThumb,$this->mod_general->crop_image($setArr[$j],(($setWeight/2)-1),(($setHeight/2)-$padding)),'rb');
-                                }
-                                $textPosition = 30;
-                                $bgPosition = 'cb';
-                                break;
-                            case 6:
-                                if($j==0) {
-                                    $setThumb = $this->mod_general->mergeImages('',$this->mod_general->crop_image($setArr[$j],(($setWeight/3)-1),(($setHeight/2)-1)),'lt');
-                                } else if($j==1) {
-                                    $setThumb = $this->mod_general->mergeImages($setThumb,$this->mod_general->crop_image($setArr[$j],(($setWeight/3)-1),(($setHeight/2)-1)),'ct');
-                                } else if($j==2) {
-                                    $setThumb = $this->mod_general->mergeImages($setThumb,$this->mod_general->crop_image($setArr[$j],(($setWeight/3)-1),(($setHeight/2)-1)),'rt');
-                                } else if($j==3) {
-                                    $setThumb = $this->mod_general->mergeImages($setThumb,$this->mod_general->crop_image($setArr[$j],(($setWeight/2)-1),(($setHeight/2)-1)),'lb');
-                                } else if($j==4) {
-                                    $setThumb = $this->mod_general->mergeImages($setThumb,$this->mod_general->crop_image($setArr[$j],(($setWeight/3)-1),(($setHeight/2)-1)),'cb');
-                                } else {
-                                    $thumb = $this->mod_general->mergeImages($setThumb,$this->mod_general->crop_image($setArr[$j],(($setWeight/3)-1),(($setHeight/2)-1)),'rb');
-                                }
-                                $textPosition = 313;
-                                $bgPosition = 'cc';
-                                break;
-                            default:
-                                # code...
-                                break;
-                        }
-                        
-                    }
-                }
-                $thumb = $this->mod_general->watermarktextAndLogo($thumb,$bgPosition,$textPosition);
+            $thumb = $this->imageMerge($thumbs,$asThumb);
+            if(empty($thumb)) {
+                $thumb = '';
             }
             $label = @$this->input->post ( 'label' );
             require_once(APPPATH.'controllers/managecampaigns.php');
@@ -356,6 +265,105 @@ class Wordpress extends CI_Controller
             }
         }
         $this->load->view('wordpress/post', $data);
+    }
+    public function imageMerge($thumbs=array(),$asThumb=array())
+    {
+        $setArr = array();
+        if(!empty($thumbs[0])) {
+            for ($i=0; $i < count($thumbs); $i++) { 
+                if(!empty($thumbs[$i])) {
+                    if($asThumb[$i] == 'set') {
+                        array_push($setArr, $thumbs[$i]);
+                    }
+                }
+            }
+            $count = count($setArr);
+            $setWeight = 1200;
+            $setHeight = 635;
+            for ($j=0; $j < count($setArr); $j++) {
+                if(!empty($setArr[$j])) {
+                    switch ($count) {
+                        case 1:
+                            $thumb = $this->mod_general->mergeImages('',$this->mod_general->crop_image($setArr[$j],$setWeight,($setHeight-95)),'lt');
+                            $textPosition = 45;
+                            $bgPosition = 'cb';
+                            break;
+                        case 2:
+                            if($j==0) {
+                                $setThumb = $this->mod_general->mergeImages('',$this->mod_general->crop_image($setArr[$j],($setWeight/2)-1,$setHeight),'lt');
+                            } else {
+                                $thumb = $this->mod_general->mergeImages($setThumb,$this->mod_general->crop_image($setArr[$j],($setWeight/2)-1,$setHeight),'rb');
+                            }
+                            $textPosition = 30;
+                            $bgPosition = 'cb';
+                            break;
+                        case 3:
+                            if($j==0) {
+                                $setThumb = $this->mod_general->mergeImages('',$this->mod_general->crop_image($setArr[$j],($setWeight/3)-1,$setHeight),'lt');
+                            } else if($j==1) {
+                                $setThumb = $this->mod_general->mergeImages($setThumb,$this->mod_general->crop_image($setArr[$j],($setWeight/3)-1,$setHeight),'cc');
+                            } else {
+                                $thumb = $this->mod_general->mergeImages($setThumb,$this->mod_general->crop_image($setArr[$j],($setWeight/3)-1,$setHeight),'rt');
+                            }
+                            $textPosition = 30;
+                            $bgPosition = 'cb';
+                            break;
+                        case 4:
+                            if($j==0) {
+                                $setThumb = $this->mod_general->mergeImages('',$this->mod_general->crop_image($setArr[$j],(($setWeight/2)-1),(($setHeight/2)-1)),'lt');
+                            } else if($j==1) {
+                                $setThumb = $this->mod_general->mergeImages($setThumb,$this->mod_general->crop_image($setArr[$j],(($setWeight/2)-1),(($setHeight/2)-1)),"rt");
+                            } else if($j==2) {
+                                $setThumb = $this->mod_general->mergeImages($setThumb,$this->mod_general->crop_image($setArr[$j],(($setWeight/2)-1),(($setHeight/2)-1)),'lb');
+                            }  else {
+                                $thumb = $this->mod_general->mergeImages($setThumb,$this->mod_general->crop_image($setArr[$j],(($setWeight/2)-1),(($setHeight/2)-1)),'rb');
+                            }
+                            $textPosition = 30;
+                            $bgPosition = 'cb';
+                            break;
+                        case 5:
+                            $padding = 1;
+                            if($j==0) {
+                                $setThumb = $this->mod_general->mergeImages('',$this->mod_general->crop_image($setArr[$j],(($setWeight/3)-1),(($setHeight/2)-$padding)),'lt');
+                            } else if($j==1) {
+                                $setThumb = $this->mod_general->mergeImages($setThumb,$this->mod_general->crop_image($setArr[$j],(($setWeight/3)-1),(($setHeight/2)-$padding)),'ct');
+                            } else if($j==2) {
+                                $setThumb = $this->mod_general->mergeImages($setThumb,$this->mod_general->crop_image($setArr[$j],(($setWeight/3)-1),(($setHeight/2)-$padding)),'rt');
+                            }  else if($j==3) {
+                                $setThumb = $this->mod_general->mergeImages($setThumb,$this->mod_general->crop_image($setArr[$j],(($setWeight/2)-1),(($setHeight/2)-$padding)),'lb');
+                            } else {
+                                $thumb = $this->mod_general->mergeImages($setThumb,$this->mod_general->crop_image($setArr[$j],(($setWeight/2)-1),(($setHeight/2)-$padding)),'rb');
+                            }
+                            $textPosition = 30;
+                            $bgPosition = 'cb';
+                            break;
+                        case 6:
+                            if($j==0) {
+                                $setThumb = $this->mod_general->mergeImages('',$this->mod_general->crop_image($setArr[$j],(($setWeight/3)-1),(($setHeight/2)-1)),'lt');
+                            } else if($j==1) {
+                                $setThumb = $this->mod_general->mergeImages($setThumb,$this->mod_general->crop_image($setArr[$j],(($setWeight/3)-1),(($setHeight/2)-1)),'ct');
+                            } else if($j==2) {
+                                $setThumb = $this->mod_general->mergeImages($setThumb,$this->mod_general->crop_image($setArr[$j],(($setWeight/3)-1),(($setHeight/2)-1)),'rt');
+                            } else if($j==3) {
+                                $setThumb = $this->mod_general->mergeImages($setThumb,$this->mod_general->crop_image($setArr[$j],(($setWeight/2)-1),(($setHeight/2)-1)),'lb');
+                            } else if($j==4) {
+                                $setThumb = $this->mod_general->mergeImages($setThumb,$this->mod_general->crop_image($setArr[$j],(($setWeight/3)-1),(($setHeight/2)-1)),'cb');
+                            } else {
+                                $thumb = $this->mod_general->mergeImages($setThumb,$this->mod_general->crop_image($setArr[$j],(($setWeight/3)-1),(($setHeight/2)-1)),'rb');
+                            }
+                            $textPosition = 30;
+                            $bgPosition = 'cb';
+                            break;
+                        default:
+                            # code...
+                            break;
+                    }
+                    
+                }
+            }
+            $thumb = $this->mod_general->watermarktextAndLogo($thumb,$bgPosition,$textPosition);
+        }
+        return @$thumb;
     }
     public function wait()
     {

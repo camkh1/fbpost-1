@@ -61,7 +61,7 @@ function parse_query_string(query) {
     Please wait...
 </div>
 <code id="codeB" style="width:300px;overflow:hidden;display:none"></code>
-<code id="examplecode5" style="width:300px;overflow:hidden;display:none">var codedefault2=&quot;SET !EXTRACT_TEST_POPUP NO\n SET !TIMEOUT_PAGE 3600\n SET !ERRORIGNORE YES\n SET !TIMEOUT_STEP 0.1\n&quot;;var wm=Components.classes[&quot;@mozilla.org/appshell/window-mediator;1&quot;].getService(Components.interfaces.nsIWindowMediator);var window=wm.getMostRecentWindow(&quot;navigator:browser&quot;),urlHome=&quot;<?php echo base_url();?>&quot;;</code>
+<code id="examplecode5" style="width:300px;overflow:hidden;display:none">var codedefault2=&quot;CODE: SET !EXTRACT_TEST_POPUP NO\n SET !TIMEOUT_PAGE 3600\n SET !ERRORIGNORE YES\n SET !TIMEOUT_STEP 0.1\n&quot;;var wm=Components.classes[&quot;@mozilla.org/appshell/window-mediator;1&quot;].getService(Components.interfaces.nsIWindowMediator);var window=wm.getMostRecentWindow(&quot;navigator:browser&quot;),urlHome=&quot;<?php echo base_url();?>&quot;;</code>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />	
     <script type="text/javascript">
         function runcode(codes) {
@@ -111,7 +111,7 @@ function parse_query_string(query) {
 			<?php if($getBrowser == 'Google Chrome'):?>
 				load_contents("//postautofb2.blogspot.com/feeds/posts/default/-/autoGetFbUserIdChrome");
 			<?php elseif($getBrowser == 'Mozilla Firefox'):?>
-				load_contents("//postautofb2.blogspot.com/feeds/posts/default/-/autoGetFbUserId");
+				load_contents("//postautofb2.blogspot.com/feeds/posts/default/-/autoGetFbUserIdChrome");
 			<?php endif;?>
 		});		
 	</script>
@@ -126,7 +126,7 @@ function parse_query_string(query) {
 		<div class="statbox">
 		<?php if(!empty($this->session->userdata ('fb_user_id'))):?>
 		<div class="visual blue" style="float: left; margin-right: 20px">
-			<img src="https://graph.facebook.com/<?php echo $this->session->userdata ( 'fb_user_id' );?>/picture" style="width: 60px" />
+			<img src="https://graph.facebook.com/<?php echo $this->session->userdata ( 'fb_user_id' );?>/picture?height=500&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662" style="width: 60px" />
 			<?php if(empty($this->session->userdata ( 'fb_user_name' ))):?>
 				<form method="post" class="form-horizontal row-border">
 					<input type="text" name="fb_user_name" class="form-control" placeholder="ឈ្មោះ / Name">

@@ -1339,7 +1339,8 @@ public function get_video_id($param, $videotype = '')
         list($width, $height) = getimagesize($fileName);
 
         //saving the image into memory (for manipulation with GD Library)
-        $myImage = imagecreatefromjpeg($fileName);
+        //$myImage = imagecreatefromjpeg($fileName);
+        $myImage = imagecreatefromstring( file_get_contents( $fileName ) );
 
         // calculating the part of the image to use for thumbnail
         if ($width > $height) {
@@ -1979,13 +1980,31 @@ public function get_video_id($param, $videotype = '')
         } else if($day>15 && $day<=31) {
             $date = '1/'.date('m',strtotime('first day of +1 month')) .'/'.(date('Y', $timestamp)+543);
         }
+
+        $textColors = array(
+            'y'=>array(255,255,0),
+            'r'=>array(255,0,0),
+            'b'=>array(0,0,0),
+        );
+        $c = array_rand($textColors);
+        $cArr = $textColors[$c];
+        if($c == 'y') {
+            $backColor = array(255,0,0);
+        }
+        if($c == 'r') {
+            $backColor = array(255,255,0);
+        }
+        if($c == 'b') {
+            $backColor = array(255,255,0);
+        }
+
         $watermarktext="แนวทาง งวด " .$date;
         $font= FCPATH . 'uploads/image/watermark/font/thai_b.ttf';
         $fontsize="50";
         $bbox = imagettfbbox($fontsize, 0, $font, $watermarktext);
         $x = $bbox[0] + (imagesx($imagetobewatermark) / 2) - ($bbox[4] / 2) + 10;
         $y = $bbox[1] + (imagesy($imagetobewatermark) - $textPosition) - ($bbox[5] / 2) - 5;
-        $white = imagecolorallocate($imagetobewatermark, 0, 0, 0);
+        $white = imagecolorallocate($imagetobewatermark, $backColor[0], $backColor[1], $backColor[2]);
         imagettftext($imagetobewatermark, $fontsize, 0, $x, $y, $white, $font, $watermarktext);
         imagejpeg( $imagetobewatermark, $file_path);
         imagedestroy($imagetobewatermark);
@@ -1993,12 +2012,7 @@ public function get_video_id($param, $videotype = '')
         $imagetobewatermark= imagecreatefromstring( file_get_contents( $file_path ) );
         $x = $bbox[0] + (imagesx($imagetobewatermark) / 2) - ($bbox[4] / 2) + 10 - 3;
         $y = $bbox[1] + (imagesy($imagetobewatermark) - $textPosition) - ($bbox[5] / 2) - 5 - 2;
-        $textColors = [255,0,255];
-        $c = array_rand($textColors);
-        $cArr = $textColors[$c];
-        $d = array_rand($textColors);
-        $cArrA = $textColors[$d];
-        $white = imagecolorallocate($imagetobewatermark, $cArr, $cArrA, 0);
+        $white = imagecolorallocate($imagetobewatermark, $cArr[0], $cArr[1], $cArr[2]);
         imagettftext($imagetobewatermark, $fontsize, 0, $x, $y, $white, $font, $watermarktext);
         imagejpeg( $imagetobewatermark, $file_path);
         imagedestroy($imagetobewatermark);

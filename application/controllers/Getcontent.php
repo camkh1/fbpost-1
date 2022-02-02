@@ -2824,6 +2824,10 @@ $link =  $desc->find('a', 0)->href;
                 foreach(@$html->find('.quads-location') as $item) {
                     $item->outertext = '';
                 }
+                foreach(@$html->find('.shareit') as $item) {
+                    $item->outertext = '';
+                }
+
                 $html->save();
 
                 $content = $this->gEntry($html,'.entry-content');
@@ -2832,6 +2836,9 @@ $link =  $desc->find('a', 0)->href;
                 }
                 if(empty($content)) {
                     $content = $this->gEntry($html,'.post');
+                }
+                if (preg_match ( '/huaythai.me/', $url )) {
+                    $content = preg_replace('/<iframe\b[^>]*(.*?)iframe>/is', "", $content);
                 }               
                 if(empty($obj->thumb)) {
                     $obj->thumb = @$html->find('.wp-post-image',0)->src;
@@ -2843,7 +2850,6 @@ $link =  $desc->find('a', 0)->href;
                         
                     }
                 }
-
                 $obj->vid = '';
                 $obj->conent = $content;
                 $obj->fromsite = $parse['host'];
