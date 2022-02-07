@@ -1234,6 +1234,105 @@ public function get_video_id($param, $videotype = '')
             }
         }
     }
+    public function imageMerge($thumbs=array(),$asThumb=array())
+    {
+        $setArr = array();
+        if(!empty($thumbs[0])) {
+            // for ($i=0; $i < count($thumbs); $i++) { 
+            //     if(!empty($thumbs[$i])) {
+            //         if($asThumb[$i] == 'set') {
+            //             array_push($setArr, $thumbs[$i]);
+            //         }
+            //     }
+            // }
+            $count = count($thumbs);
+            $setWeight = 1200;
+            $setHeight = 635;
+            for ($j=0; $j < count($thumbs); $j++) {
+                if(!empty($thumbs[$j])) {
+                    switch ($count) {
+                        case 1:
+                            $thumb = $this->mergeImages('',$this->crop_image($thumbs[$j],$setWeight,($setHeight-95)),'lt');
+                            $textPosition = 45;
+                            $bgPosition = 'cb';
+                            break;
+                        case 2:
+                            if($j==0) {
+                                $setThumb = $this->mergeImages('',$this->crop_image($thumbs[$j],($setWeight/2)-1,$setHeight),'lt');
+                            } else {
+                                $thumb = $this->mergeImages($setThumb,$this->crop_image($thumbs[$j],($setWeight/2)-1,$setHeight),'rb');
+                            }
+                            $textPosition = 30;
+                            $bgPosition = 'cb';
+                            break;
+                        case 3:
+                            if($j==0) {
+                                $setThumb = $this->mergeImages('',$this->crop_image($thumbs[$j],($setWeight/3)-1,$setHeight),'lt');
+                            } else if($j==1) {
+                                $setThumb = $this->mergeImages($setThumb,$this->crop_image($thumbs[$j],($setWeight/3)-1,$setHeight),'cc');
+                            } else {
+                                $thumb = $this->mergeImages($setThumb,$this->crop_image($thumbs[$j],($setWeight/3)-1,$setHeight),'rt');
+                            }
+                            $textPosition = 30;
+                            $bgPosition = 'cb';
+                            break;
+                        case 4:
+                            if($j==0) {
+                                $setThumb = $this->mergeImages('',$this->crop_image($thumbs[$j],(($setWeight/2)-1),(($setHeight/2)-1)),'lt');
+                            } else if($j==1) {
+                                $setThumb = $this->mergeImages($setThumb,$this->crop_image($thumbs[$j],(($setWeight/2)-1),(($setHeight/2)-1)),"rt");
+                            } else if($j==2) {
+                                $setThumb = $this->mergeImages($setThumb,$this->crop_image($thumbs[$j],(($setWeight/2)-1),(($setHeight/2)-1)),'lb');
+                            }  else {
+                                $thumb = $this->mergeImages($setThumb,$this->crop_image($thumbs[$j],(($setWeight/2)-1),(($setHeight/2)-1)),'rb');
+                            }
+                            $textPosition = 30;
+                            $bgPosition = 'cb';
+                            break;
+                        case 5:
+                            $padding = 1;
+                            if($j==0) {
+                                $setThumb = $this->mergeImages('',$this->crop_image($thumbs[$j],(($setWeight/3)-1),(($setHeight/2)-$padding)),'lt');
+                            } else if($j==1) {
+                                $setThumb = $this->mergeImages($setThumb,$this->crop_image($thumbs[$j],(($setWeight/3)-1),(($setHeight/2)-$padding)),'ct');
+                            } else if($j==2) {
+                                $setThumb = $this->mergeImages($setThumb,$this->crop_image($thumbs[$j],(($setWeight/3)-1),(($setHeight/2)-$padding)),'rt');
+                            }  else if($j==3) {
+                                $setThumb = $this->mergeImages($setThumb,$this->crop_image($thumbs[$j],(($setWeight/2)-1),(($setHeight/2)-$padding)),'lb');
+                            } else {
+                                $thumb = $this->mergeImages($setThumb,$this->crop_image($thumbs[$j],(($setWeight/2)-1),(($setHeight/2)-$padding)),'rb');
+                            }
+                            $textPosition = 30;
+                            $bgPosition = 'cb';
+                            break;
+                        case 6:
+                            if($j==0) {
+                                $setThumb = $this->mergeImages('',$this->crop_image($thumbs[$j],(($setWeight/3)-1),(($setHeight/2)-1)),'lt');
+                            } else if($j==1) {
+                                $setThumb = $this->mergeImages($setThumb,$this->crop_image($thumbs[$j],(($setWeight/3)-1),(($setHeight/2)-1)),'ct');
+                            } else if($j==2) {
+                                $setThumb = $this->mergeImages($setThumb,$this->crop_image($thumbs[$j],(($setWeight/3)-1),(($setHeight/2)-1)),'rt');
+                            } else if($j==3) {
+                                $setThumb = $this->mergeImages($setThumb,$this->crop_image($thumbs[$j],(($setWeight/2)-1),(($setHeight/2)-1)),'lb');
+                            } else if($j==4) {
+                                $setThumb = $this->mergeImages($setThumb,$this->crop_image($thumbs[$j],(($setWeight/3)-1),(($setHeight/2)-1)),'cb');
+                            } else {
+                                $thumb = $this->mergeImages($setThumb,$this->crop_image($thumbs[$j],(($setWeight/3)-1),(($setHeight/2)-1)),'rb');
+                            }
+                            $textPosition = 30;
+                            $bgPosition = 'cb';
+                            break;
+                        default:
+                            # code...
+                            break;
+                    }
+                    
+                }
+            }
+            $thumb = $this->watermarktextAndLogo($thumb,$bgPosition,$textPosition);
+        }
+        return @$thumb;
+    }
     function watermark($photo_id) {
         $user_id = $this->session->userdata('user_id');
         if ($user_id) {
@@ -1313,6 +1412,8 @@ public function get_video_id($param, $videotype = '')
     }
     public function crop_image($imgSrc,$thumbW=300,$thumbH=300)
     {
+        echo $imgSrc;
+        echo '<br/>';
         $ext = pathinfo($imgSrc, PATHINFO_EXTENSION);
         if (preg_match('/fna.fbcdn/', $imgSrc)) {
             $ext = 'jpg';
@@ -1329,12 +1430,17 @@ public function get_video_id($param, $videotype = '')
             $file_title = strtotime(date('Y-m-d H:i:s'));
             $file_title = $file_title.(rand(100,10000)).'.'.$ext;
             $fileName = FCPATH . 'uploads/image/'.$file_title;
-            $content = @file_get_contents($imgSrc);
+            $arrContextOptions=array(
+                "ssl"=>array(
+                    "verify_peer"=>false,
+                    "verify_peer_name"=>false,
+                ),
+            );
+            $content = file_get_contents($imgSrc, false, stream_context_create($arrContextOptions));
             $fp = fopen($fileName, "w");
             fwrite($fp, $content);
             fclose($fp);
         }
-
         //getting the image dimensions
         list($width, $height) = getimagesize($fileName);
 

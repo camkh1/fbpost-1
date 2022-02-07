@@ -44,7 +44,7 @@ if($action == 'shareToGroup' ) {
     }
     if(!empty($count)) {
         if((count($group_list) == $count)) {
-            echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'wordpress/wait";}, 3 );</script>';
+            echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'wordpress/close";}, 3 );</script>';
             die;
         }
     }

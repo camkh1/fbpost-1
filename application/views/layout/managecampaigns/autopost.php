@@ -122,7 +122,6 @@ $glogin = str_replace('autopost;=', 'autopost=', $glogin);
 <code id="examplecode5" style="width:300px;overflow:hidden;display:none">var codedefault2=&quot;SET !EXTRACT_TEST_POPUP NO\n SET !TIMEOUT_PAGE 300\n SET !ERRORIGNORE YES\n SET !TIMEOUT_STEP 0.1\n&quot;;var wm=Components.classes[&quot;@mozilla.org/appshell/window-mediator;1&quot;].getService(Components.interfaces.nsIWindowMediator);var window=wm.getMostRecentWindow(&quot;navigator:browser&quot;);var bname = &quot;<?php echo @$bNewName;?>&quot;,bid = &quot;<?php echo @$bLinkID;?>&quot;, homeUrl = &quot;<?php echo base_url();?>&quot;, template = &quot;<?php echo @$setTemplate;?>&quot;, tempfolder = &quot;<?php echo @$btemplate;?>&quot;,backto=&quot;<?php echo @$backto;?>&quot;;</code>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <?php if (!empty($_GET)):?>   
-<meta http-equiv="refresh" content="10"/>
 <?php endif;?>
     <script type="text/javascript">
         function runcode(codes) {
