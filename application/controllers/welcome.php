@@ -14,6 +14,7 @@ class Welcome extends CI_Controller {
     }
 
     public function index() {
+        $backto = $this->session->userdata ( 'backto' );
         if(!empty($_GET['id'])) {
             $ci = get_instance();
             $account_url = $ci->config->item('account_url');
@@ -40,14 +41,24 @@ class Welcome extends CI_Controller {
                     define('is_admin', false);
                 }
                 /*End set admin*/
-                redirect(base_url() . 'home/index');
+                if($backto) {
+                    redirect($backto);
+                } else {
+                    redirect(base_url() . 'home/index');
+                }
+                
             } else {
                 $ci = get_instance();
                 $account_url = $ci->config->item('account_url');
                 redirect($account_url . '?continue=' . urlencode(base_url()));
             }
         } else if(empty($_GET['id']) && $this->session->userdata('user_id')) {
-            redirect(base_url() . 'home/index');
+            //redirect(base_url() . 'home/index');
+            if($backto) {
+                redirect($backto);
+            } else {
+                redirect(base_url() . 'home/index');
+            }
         } else {
             $ci = get_instance();
             $account_url = $ci->config->item('account_url');
@@ -101,7 +112,12 @@ class Welcome extends CI_Controller {
         }
         $user = $this->session->userdata('email');
         if ($user) {
-            redirect(base_url() . 'home');
+            if($backto) {
+                redirect($backto);
+            } else {
+                redirect(base_url() . 'home/index');
+            }
+            //redirect(base_url() . 'home');
         } else {
             //$this->load->view('login', $data);
             //redirect(base_url() . 'hauth');
@@ -165,6 +181,65 @@ class Welcome extends CI_Controller {
         } else {
             $this->load->view('login', $data);
         }
+    }
+    public function fblogin()
+    {
+
+        $log_id = $this->session->userdata ( 'user_id' );
+        $user = $this->session->userdata ( 'email' );
+        $provider_uid = $this->session->userdata ( 'provider_uid' );
+        $provider = $this->session->userdata ( 'provider' );
+        $gemail = $this->session->userdata ('gemail');
+        $fbUserId = $this->session->userdata('fb_user_id');
+        $sid = $this->session->userdata ( 'sid' );
+        $data ['title'] = 'Login to Facebook';
+
+
+        $backto = $this->input->get('backto');
+        $back = $this->input->get('back');
+        $data['backto'] = $backto;
+        $this->session->set_userdata('backto', $backto);
+
+        $fbuid = $this->input->get('fbuid', TRUE);
+        $fbname = $this->input->get('fbname', TRUE);
+        
+        if($fbuid) {
+            $checkFbId = $this->mod_general->select(
+                Tbl_user::tblUser,
+                $field = '*',
+                $where = array(Tbl_user::u_provider_uid=>$fbuid,'user_id' => $log_id)
+            );
+            if(empty($checkFbId[0])) {
+                $fbUserId = $checkFbId[0]->u_id;
+                $data_user = array(
+                    Tbl_user::u_provider_uid => $fbuid,
+                    Tbl_user::u_name => @$this->session->userdata ( 'fb_user_name' ),
+                    Tbl_user::u_type => 'Facebook',
+                    Tbl_user::u_status => 1,
+                    'user_id' => $log_id,
+                );
+                $GroupListID = $this->mod_general->insert(Tbl_user::tblUser, $data_user);
+            } else {
+                $fbUserId = $checkFbId[0]->u_id;
+                $this->session->set_userdata('sid', $fbUserId);
+                $this->session->set_userdata('fb_user_name', $fbname);
+                $whereU = array(
+                    Tbl_user::u_provider_uid => $fbuid,                    
+                    'user_id' => $log_id,
+                );
+                $data_user = array(
+                    Tbl_user::u_name => @$fbname,
+                );
+                $this->mod_general->update(Tbl_user::tblUser, $data_user,$whereU);
+            } 
+            $this->session->set_userdata('fb_user_id', $fbuid);
+            if($back) {
+                echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.$back.'";}, 100 );</script>';
+            }
+            //redirect('managecampaigns', 'location');
+        }
+
+        $this->load->view('fblogin', $data);
     }
     
     public function adderrorlog(){

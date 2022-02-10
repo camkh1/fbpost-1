@@ -17,6 +17,7 @@ date_default_timezone_set('Asia/Phnom_Penh');
 //$config['base_url']	= 'http://192.168.1.101/test/php/CI/photo';
 $config['base_url']	= 'http://localhost/fbpost/';
 $config['account_url']	= 'http://localhost/accounts';
+$config['current_url']	= (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
 //$config['account_url']	= 'http://accounts.poroman.website';
 $config['website_name']	= 'AutoPost.com';
 //$config['g_user'] = 'kicklogan1@gmail.com';

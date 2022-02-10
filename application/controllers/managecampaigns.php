@@ -6849,6 +6849,15 @@ public function imgtest()
         $fbUserId = $this->session->userdata('fb_user_id');
         $sid = $this->session->userdata ( 'sid' );
         $post_only = $this->session->userdata ( 'post_only' );
+
+        if(empty($fbUserId)) {
+            $ci = get_instance();
+            $current_url = $ci->config->item('current_url');//
+            $backUrl = base_url().'welcome/fblogin?backto='.urlencode($current_url);
+            redirect($backUrl);
+            die;
+        }
+        
         
         $obj = new stdClass();
         $obj->log_id = $log_id;
@@ -8697,6 +8706,7 @@ public function userd($obj)
     public function insertLink($url='',$settitle='',$setthumbs='',$setLabel='',$thumbs=array())
     {
         if(empty($url)) {
+            echo 'no url';
             return false;
             exit();
         }
@@ -8795,10 +8805,13 @@ public function userd($obj)
                     'meta_name'     => $log_id . 'sitelink',
                 );
                 $lastID = $this->Mod_general->insert('meta', $data_blog);
+            } else {
+                echo 'The is already posted';
             }
             $from = 'site';
         }
         if(empty($conent)) {
+            echo 'no content';
             return false;
             exit();
         }
@@ -8921,7 +8934,6 @@ public function userd($obj)
             $thumb = $setthumbs;
         }
         $thumb = $this->mod_general->uploadMedia($thumb,$param);
-
         if(!empty($thumbs)) {
             for ($i=0; $i < count($thumbs); $i++) { 
                 if(!empty($thumbs[$i])) {
@@ -9148,26 +9160,77 @@ function strip_tags_content($text, $tags = '', $invert = FALSE) {
             /*End clean up for 3 days ago*/
             redirect(base_url() . 'managecampaigns/autopostfb?action=yt');
         }
-        echo '<meta http-equiv="refresh" content="30">';
+        //echo '<meta http-equiv="refresh" content="30">';
     }
 
-    public function wpfeed($url='')
+    public function wpfeed($url='',$limit=2)
     {
-        $limit = rand(1, 5);
+        $this->load->library ( 'html_dom' );
         $rss = simplexml_load_file($url);
-
         $cnt = 0;
         $addImage = '';
+        $contentAdd = '';
         $conArr = [];
         $setArr = array();
         foreach($rss->channel->item as $val){
             $content = $val->children("content", true);
-            array_push($conArr, $content);
+            $title = $val->title;
+            $link = $val->guid;
+            $cArr = array(
+                'content'=>$content,
+                'title'=>$title,
+                'link'=>$link,
+            );
+            array_push($conArr, $cArr);
         }
         shuffle($conArr);
         foreach($conArr as $val){
-            $content = $val;
-            if('ihere.tv')
+            $content = (string) $val['content'];
+            $title = (string) $val['title'];
+            $link = (string) $val['link'];
+            echo $link.'<br/>';
+            $str = <<<HTML
+$content
+HTML;
+            $desc = str_get_html($str);
+            $huaythai = $data_lazy = false;
+            if (preg_match('/data-layzr/', $desc)) {
+                $data_lazy = true;
+            }
+            if (preg_match('/huaythai/', $url)) {
+                $huaythai = true;
+            }
+            $i=0;
+            foreach($desc->find('img') as $isrc) {
+                if($huaythai && $i==0) {
+                    $desc->outertext = '';
+                    $desc->save();
+                } else {
+                    if($data_lazy) {
+                        $scrs = $isrc->attr['data-layzr'];
+                        $isrc->attr['data-layzr'] = '';
+                        $isrc->attr['data-layzr-srcset'] = '';
+                        $isrc->attr['sizes'] = '';
+                        $isrc->attr['class'] = 'post-image';
+                    } else {
+                        $scrs = $isrc->src;
+                    }
+                    $scrs = strtok($scrs, "?");
+                    $isrc->src = $scrs;
+                }
+                
+                //$item->outertext = '';
+                $i++;
+            }
+            foreach($desc->find('ul') as $item) {
+                $desc->outertext = '';
+            }
+            $desc->save();
+            if (preg_match('/huaythai/', $url)) {
+                $desc = preg_replace('/<iframe.*?\/iframe>/i','', $desc);
+            }
+            $desc = preg_replace('#<a.*?>(.*?)</a>#i', '\1', $desc);
+            //image
             if (preg_match('/ihere.tv/', $url)) {
                 $regex = '/< *img[^>]*data-layzr *= *["\']?([^"\']*)/';
             } else {
@@ -9179,13 +9242,21 @@ function strip_tags_content($text, $tags = '', $invert = FALSE) {
                 $i=0;
                 foreach ($ImgSrc as $image) {
                     $imagedd = strtok($image, "?");
-                    if($i==0) {
-                        array_push($setArr, $imagedd);
+                    if (preg_match('/huaythai/', $url)) {
+                        if($i==1) {
+                            array_push($setArr, $imagedd);
+                        }
+                    } else {
+                        if($i==0) {
+                            array_push($setArr, $imagedd);
+                        }
                     }
+                    
                     $addImage = '<img src="'.$imagedd.'"/><p>​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​</p>'.$addImage;
                     $i++;
                 }
             }
+            $contentAdd = '<h3>'.$title.'</h3>'.$contentAdd.'<p>---</p>'.$desc;
             $cnt++;
 
             // End with the number of items you want to display.
@@ -9195,7 +9266,7 @@ function strip_tags_content($text, $tags = '', $invert = FALSE) {
         }
         $data = array(
             'thumbs' => $setArr,
-            'image_content' => $addImage,
+            'image_content' => $contentAdd,
         );
         return $data;
     }
@@ -9780,7 +9851,8 @@ function strip_tags_content($text, $tags = '', $invert = FALSE) {
                     );
                     $k = array_rand($feed);
                     $rssRand = $feed[$k];
-                    $wpContent = $this->wpfeed($rssRand);
+                    $limit = rand(1, 3);
+                    $wpContent = $this->wpfeed($rssRand,$limit);
                     $thumbs = $wpContent['thumbs'];
                     $image_content = $wpContent['image_content'];
                     array_push($thumbs, 'https://i.ytimg.com/vi/'.$yid.'/hqdefault.jpg');
@@ -9793,9 +9865,10 @@ function strip_tags_content($text, $tags = '', $invert = FALSE) {
                     $string = file_get_contents($tmp_path);
                     $json_a = json_decode($string);
 
-                    $txt = $this->generateText() . '<p>ภาพนี้สร้างจากวิดีโอด้านล่างภาพที่1</p>
-        <img src="https://i.ytimg.com/vi/'.$yid.'/hq720.jpg"/>  
-         <p>​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​</p> '.$image_content.'  <iframe width="727" height="409" src="https://www.youtube.com/embed/'.$yid.'" title="YouTube video player" frameborder="0"></iframe><p>​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​</p>       ';
+        //             $txt = $this->generateText() . '<p>ภาพนี้สร้างจากวิดีโอด้านล่างภาพที่1</p>
+        // <img src="https://i.ytimg.com/vi/'.$yid.'/hq720.jpg"/>  
+        //  <p>​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​</p> '.$image_content.'  <iframe width="727" height="409" src="https://www.youtube.com/embed/'.$yid.'" title="YouTube video player" frameborder="0"></iframe><p>​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​</p>       ';
+                    $txt = '<p>​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​</p>       '.$image_content.'  <iframe width="727" height="409" src="https://www.youtube.com/embed/'.$yid.'" title="YouTube video player" frameborder="0"></iframe><p>​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​</p>       ';
                     $content = array (
                         'name' => @htmlentities(htmlspecialchars(str_replace(' - YouTube', '', $title))),
                         'message' => @htmlentities(htmlspecialchars(addslashes($txt))),

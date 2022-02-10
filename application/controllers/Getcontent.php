@@ -1105,9 +1105,25 @@ $link =  $desc->find('a', 0)->href;
                         $label[] = $labels->plaintext;
                     } 
                 }
+                foreach($html->find('#read-complete') as $item) {
+                    $item->outertext = '';
+                }
+                foreach($html->find('.side-article') as $item) {
+                    $item->outertext = '';
+                }
+                foreach($html->find('ul') as $item) {
+                    $item->outertext = '';
+                }
+                $html->save();
                 $obj->label = implode(',', $label);
                 /*End get label*/
-                $content = $this->gEntry($html,'.content-main .h4-content-lh');                
+                //$content = $this->gEntry($html,'#contents .content-detail');
+                $content = '';
+                foreach($html->find('.content-detail') as $index => $contents) {
+                    if($index != $last && $index !=0) {
+                        $content = $content. $contents->innertext;
+                    } 
+                }            
                 $htmlContent = str_get_html($content);
                 foreach($htmlContent->find('.row') as $item) {
                     $item->outertext = '';
@@ -1135,28 +1151,28 @@ $link =  $desc->find('a', 0)->href;
                 preg_match_all( $regex, $content, $matches );
                 $ImgSrc = array_pop($matches);
                 // reversing the matches array
-                if(!empty($ImgSrc)) {
-                    foreach ($ImgSrc as $image) {
-                        $imagedd = strtok($image, "?");
-                        $file_title = basename($imagedd);
-                        $fileName = FCPATH . 'uploads/image/'.$file_title;
-                        @copy($imagedd, $fileName);   
-                        $images = $this->mod_general->uploadtoImgur($fileName);
-                        if(empty($images)) {
-                            $apiKey = '76e9b194c1bdc616d4f8bb6cf295ce51';
-                            $images = $this->Mod_general->uploadToImgbb($fileName, $apiKey);
-                            if($images) {
-                                @unlink($fileName);
-                            }
-                        } else {
-                            $gimage = @$images; 
-                            @unlink($fileName);
-                        }
-                        if(!empty($gimage)) {
-                            $htmlContent = str_replace($image,$gimage,$htmlContent);
-                        }
-                    }
-                }
+                // if(!empty($ImgSrc)) {
+                //     foreach ($ImgSrc as $image) {
+                //         $imagedd = strtok($image, "?");
+                //         $file_title = basename($imagedd);
+                //         $fileName = FCPATH . 'uploads/image/'.$file_title;
+                //         @copy($imagedd, $fileName);   
+                //         $images = $this->mod_general->uploadtoImgur($fileName);
+                //         if(empty($images)) {
+                //             $apiKey = '76e9b194c1bdc616d4f8bb6cf295ce51';
+                //             $images = $this->Mod_general->uploadToImgbb($fileName, $apiKey);
+                //             if($images) {
+                //                 @unlink($fileName);
+                //             }
+                //         } else {
+                //             $gimage = @$images; 
+                //             @unlink($fileName);
+                //         }
+                //         if(!empty($gimage)) {
+                //             $htmlContent = str_replace($image,$gimage,$htmlContent);
+                //         }
+                //     }
+                // }
                 $obj->vid = '';
                 $obj->conent = $htmlContent;
                 $obj->fromsite = $parse['host'];
@@ -2857,6 +2873,14 @@ $link =  $desc->find('a', 0)->href;
                         $obj->thumb = @$this->get_the_image($content)['url'];
                         
                     }
+                }
+                $title = @explode('–', $obj->title);
+                if(!empty($title[0])) {
+                    $title = $title[0];
+                }
+                
+                if (preg_match ( '/&#8211;/', $obj->title )) {
+                    $obj->title = explode('&#8211;', $obj->title)[0];
                 }
                 $obj->vid = '';
                 $obj->conent = $content;
