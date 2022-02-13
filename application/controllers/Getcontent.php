@@ -1273,12 +1273,53 @@ $link =  $desc->find('a', 0)->href;
             case 'www.one31.net':
                 /*get label*/
                 $obj->label = 'ข่าว';
-                $content = $this->gEntry($html,'.box-newsdetail .newsdetail-txt');                
+                //$html = str_replace('\u003Cp\u003E','',$html);
+                preg_match_all('/null,1,"https:([^>]+)",0,"og:type"/', $html, $thumMatch);
+                //var_dump($thumMatch);
+                if(!empty($thumMatch[1])) {
+                    if(!empty($thumMatch[1][0])) {
+                        $thumbs = $thumMatch[1][0];
+                        $thumbs = str_replace('u002F','/',$thumbs);
+                        $thumbs = str_replace('\\','',$thumbs);
+                        $thumbs = 'https:'.$thumbs;
+                        $obj->thumb = $thumbs;
+                    }
+                }
+                
+                preg_match_all('/content:\"([^>]+)",thumbnail/', $html, $match);
+                if(!empty($match[1])) {
+                    if(!empty($match[1][0])) {
+                        $content = (string) $match[1][0];
+                        $content = html_entity_decode($content);
+                        $content = str_replace('\u003Cp\u003E','',$content);
+                        $content = str_replace('u002F','/',$content);
+                        $content = str_replace('\u003C','<',$content);
+                        $content = str_replace('\u003E','>',$content);
+                        $content = str_replace('\u003E','>',$content);
+                        $content = str_replace('\r\n','<br/>',$content);
+                        $content = str_replace('\\','',$content);
+                        $str = <<<HTML
+$content
+HTML;
+$desc = str_get_html($str);
+                        foreach($desc->find('ul') as $item) {
+                            $item->outertext = '';
+                        }
+                        $desc->save();
+                        //$content = html_entity_decode(html_entity_decode(stripslashes(trim($content))));
+                        $obj->conent = $desc;
+                    }
+                }
+                //$content = $this->gEntry($html,'.news-detail');
+
                 $obj->vid = '';
-                $obj->conent = $content;
                 $obj->fromsite = $parse['host'];
                 $obj->site = 'site';
-                return $obj;
+                if(!empty($obj->conent)) {
+                    return $obj;
+                } else {
+                    return array();
+                }
                 break;
             case 'www.thaismiletopic.com':
                 /*get label*/

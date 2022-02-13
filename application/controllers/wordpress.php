@@ -256,6 +256,7 @@ class Wordpress extends CI_Controller
             $thumbs = @$this->input->post ( 'thumb' );
             $asThumb = @$this->input->post ( 'asThumb' );
             $label = @$this->input->post ( 'label' );
+            $addvideo = @$this->input->post ( 'addvideo' );
             if($label == 'lotto') {
                 $thumb = $this->imageMerge($thumbs,$asThumb);
             }
@@ -264,7 +265,7 @@ class Wordpress extends CI_Controller
             }
             require_once(APPPATH.'controllers/managecampaigns.php');
             $Managecampaigns =  new Managecampaigns();
-            $getdata = $Managecampaigns->insertLink($link,$title,$thumb,$label,$thumbs);
+            $getdata = $Managecampaigns->insertLink($link,$title,$thumb,$label,$thumbs,$addvideo);
             if(!empty($getdata)) {
                 //echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=post&pid='.$getdata.'";}, 10 );</script>';
                 echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/yturl?pid='.$getdata.'&action=postblog";}, 10 );</script>';
@@ -287,6 +288,7 @@ class Wordpress extends CI_Controller
             $count = count($setArr);
             $setWeight = 1200;
             $setHeight = 635;
+            $thumb = '';
             for ($j=0; $j < count($setArr); $j++) {
                 if(!empty($setArr[$j])) {
                     switch ($count) {
@@ -371,7 +373,9 @@ class Wordpress extends CI_Controller
                     
                 }
             }
-            $thumb = $this->mod_general->watermarktextAndLogo($thumb,$bgPosition,$textPosition);
+            if(!empty($thumb)) {
+                $thumb = $this->mod_general->watermarktextAndLogo($thumb,$bgPosition,$textPosition);
+            }
         }
         return @$thumb;
     }

@@ -105,6 +105,7 @@ function parse_query_string(query) {
 <?php if(empty($this->session->userdata ( 'fb_user_id' ))):
 	$UserTable = new Mod_general ();
     $getBrowser = $UserTable->getBrowser()['name'];
+    
 	?>  
 	<script type="text/javascript">
 		$( document ).ready(function() {
@@ -295,6 +296,7 @@ function parse_query_string(query) {
 						<tbody>
     <?php
     if(!empty($socialList)):
+    	$site = !empty($query_fb->wp_url)? $query_fb->wp_url : '';
     $Mod_general = new Mod_general ();
     	if(!empty($suffix)) {
 			$subfixArr = explode('|', $suffix);  
@@ -327,7 +329,18 @@ function parse_query_string(query) {
 	        $uniq_id = substr($str, 0, 9);
 	        //$link = $glink . '?s=' . $uniq_id;
 	        $link = $glink;
-	        $mainlink = $content->mainlink;
+	        $pid = $value->{Tbl_posts::id};
+	        if(!empty($content->mainlink)) {
+	        	$parse = parse_url($glink);
+	        	$site_parse = parse_url($site);
+	        	if ($parse["host"] != $site_parse["host"]) {
+		        	echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'wordpress/autopostwp?pid='.$pid.'&action=uploadimage";}, 30 );</script>';
+		        	die;
+		        }
+	        }
+	        $mainlink = @$content->mainlink;
+	        
+	        
 	        $message = $content->message;
 	        $UserTable = new Mod_general ();
 	    	$getBrowser = $UserTable->getBrowser()['name'];
@@ -335,7 +348,7 @@ function parse_query_string(query) {
 	        	if(!empty($this->session->userdata('post_only'))) {
 			        $parse = parse_url($glink);
 			        if (in_array(@$parse['host'], $siteUrl)) {
-			        	$pid = $value->{Tbl_posts::id};
+			        	
 			        	echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/yturl?pid='.$pid.'&action=postblog&autopost=1";},0 );</script>';
 			            exit();
 			        } 

@@ -656,7 +656,9 @@ if(!empty($post)) {
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-md-6 control-label"> Label</label>
+                        <div class="col-md-6">
+                            <textarea class="form-control" name="addvideo" placeholder="Add Video Embed code" style="height:30px"></textarea>
+                        </div>
                         <div class="col-md-6">
                             <select name="label" class="select2" style="width: 100%">                       
                                 <option value="lotto">Lotto</option>
