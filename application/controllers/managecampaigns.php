@@ -5702,8 +5702,8 @@ HTML;
                             if (preg_match("/http/", $imgUrl) && preg_match('/ytimg.com/', $imgUrl)) {
                                 copy($imgUrl, $fileName);      
                                 $param = array(
-                                    'btnplayer'=>$json_a->btnplayer,
-                                    'playerstyle'=>$json_a->playerstyle,
+                                    'btnplayer'=>0,
+                                    'playerstyle'=>0,
                                     'imgcolor'=>$json_a->imgcolor,
                                     'txtadd'=>$json_a->txtadd,
                                     'filter_brightness'=>$json_a->filter_brightness,
@@ -5947,7 +5947,7 @@ HTML;
                             }
                             /*End Check true image*/
                             $param = array(
-                                'btnplayer'=>@$pOption->btnplayer,
+                                'btnplayer'=>0,
                                 'playerstyle'=>@$pOption->playerstyle,
                                 'imgcolor'=>@$pOption->imgcolor,
                                 'txtadd'=>@$pOption->txtadd,
@@ -8922,7 +8922,7 @@ public function userd($obj)
         // } 
         if($from == 'yt') {
             $param = array(
-                'btnplayer'=>1,
+                'btnplayer'=>0,
                 'playerstyle'=>0,
                 'imgcolor'=>0,
                 'txtadd'=>'',
@@ -9678,7 +9678,7 @@ HTML;
                 if (preg_match("/http/", $imgUrl) && preg_match('/ytimg.com/', $imgUrl)) {
                     @copy($imgUrl, $fileName);      
                     $param = array(
-                        'btnplayer'=>$pOption->btnplayer,
+                        'btnplayer'=>0,
                         'playerstyle'=>$pOption->playerstyle,
                         'imgcolor'=>$pOption->imgcolor,
                         'txtadd'=>$pOption->txtadd,

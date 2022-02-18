@@ -374,7 +374,7 @@ class Wordpress extends CI_Controller
                 }
             }
             if(!empty($thumb)) {
-                $thumb = $this->mod_general->watermarktextAndLogo($thumb,$bgPosition,$textPosition);
+                //$thumb = $this->mod_general->watermarktextAndLogo($thumb,$bgPosition,$textPosition);
             }
         }
         return @$thumb;

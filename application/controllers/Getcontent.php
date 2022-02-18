@@ -572,7 +572,13 @@ $link =  $desc->find('a', 0)->href;
         if (preg_match ( '/เลขเด็ด/', $url )) {
             $url = str_replace('เลขเด็ด', 'xn--22c0ba9d0gc4c', $url);
         }
-        $html = file_get_html ( $url );
+        $arrContextOptions=array(
+            "ssl"=>array(
+                "verify_peer"=>false,
+                "verify_peer_name"=>false,
+            ),
+        );
+        $html = file_get_html ( $url, false, stream_context_create($arrContextOptions));
         $obj = new stdClass();
         $obj->description = '';
         //$obj->title = @$html->find ( 'title', 0 )->innertext;
@@ -611,6 +617,8 @@ $link =  $desc->find('a', 0)->href;
             $setHost = 'blogspot';
         } else if(preg_match ( '/wp-includes/', $html ) && preg_match ( '/wp-content/', $html )){
             $setHost = 'wp';
+        } else if(preg_match ( '/kapook.com/', $url )){
+            $setHost = 'kapook.com';
         } else if(count($siam)==1) {
             $setHost = 'www.siamnews.com';
         } else {
@@ -1320,6 +1328,15 @@ $desc = str_get_html($str);
                 } else {
                     return array();
                 }
+                break;
+            case 'kapook.com':
+                /*get label*/
+                $content = $this->gEntry($html,'#main_article .content');
+                $obj->vid = '';
+                $obj->conent = $content;
+                $obj->fromsite = $parse['host'];
+                $obj->site = 'site';
+                return $obj;
                 break;
             case 'www.thaismiletopic.com':
                 /*get label*/
@@ -3039,6 +3056,7 @@ $desc = str_get_html($str);
         $content = preg_replace("/<a(.*?)>/", "<a$1 target=\"_blank\">", $content);
         $content = preg_replace('#<a.*?>(.*?)</a>#i', '\1', $content);
         $content = preg_replace( '/(<[^>]+) srcset=".*?"/i', "$1", $content );
+        $content = str_replace('data-src="//', 'src="https://', $content);
         $content = preg_replace( '/(<[^>]+) data-src=".*?"/i', "$1", $content );
         $content = preg_replace( '/(<[^>]+) data-srcset=".*?"/i', "$1", $content );
         $content = preg_replace( '/(<[^>]+) data-sizes=".*?"/i', "$1", $content );

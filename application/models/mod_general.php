@@ -1702,12 +1702,15 @@ public function get_video_id($param, $videotype = '')
                 $file_title = $file_titles[0];
                 $fileName = $file_path;
             } else {
-                $ch = curl_init($file_path);
-                $fp = fopen($fileName, 'wb');
-                curl_setopt($ch, CURLOPT_FILE, $fp);
-                curl_setopt($ch, CURLOPT_HEADER, 0);
-                curl_exec($ch);
-                curl_close($ch);
+                $arrContextOptions=array(
+                    "ssl"=>array(
+                        "verify_peer"=>false,
+                        "verify_peer_name"=>false,
+                    ),
+                );
+                $content = file_get_contents($file_path, false, stream_context_create($arrContextOptions));
+                $fp = fopen($fileName, "w");
+                fwrite($fp, $content);
                 fclose($fp);
             }
             $file_path = $fileName;
