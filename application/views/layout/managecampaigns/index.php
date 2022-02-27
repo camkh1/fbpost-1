@@ -334,8 +334,8 @@ function parse_query_string(query) {
 	        	$parse = parse_url($glink);
 	        	$site_parse = parse_url($site);
 	        	if ($parse["host"] != $site_parse["host"]) {
-		        	echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'wordpress/autopostwp?pid='.$pid.'&action=uploadimage";}, 30 );</script>';
-		        	die;
+		        	echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'wordpress/autopostwp?pid='.$pid.'&action=uploadimage";}, 1000*20 );</script>';
+		        	//die;
 		        }
 	        }
 	        $mainlink = @$content->mainlink;

@@ -281,7 +281,11 @@ class Wordpress extends CI_Controller
             for ($i=0; $i < count($thumbs); $i++) { 
                 if(!empty($thumbs[$i])) {
                     if($asThumb[$i] == 'set') {
-                        array_push($setArr, $thumbs[$i]);
+                        if (preg_match('/fna.fbcdn/', $thumbs[$i])) {
+                            array_push($setArr, $thumbs[$i]);
+                        } else {
+                            array_push($setArr, strtok($thumbs[$i], '?'));
+                        }
                     }
                 }
             }
@@ -294,7 +298,7 @@ class Wordpress extends CI_Controller
                     switch ($count) {
                         case 1:
                             $thumb = $this->mod_general->mergeImages('',$this->mod_general->crop_image($setArr[$j],$setWeight,($setHeight-95)),'lt');
-                            $textPosition = 45;
+                            $textPosition = 40;
                             $bgPosition = 'cb';
                             break;
                         case 2:
@@ -314,7 +318,7 @@ class Wordpress extends CI_Controller
                             } else {
                                 $thumb = $this->mod_general->mergeImages($setThumb,$this->mod_general->crop_image($setArr[$j],($setWeight/3)-1,$setHeight),'rt');
                             }
-                            $textPosition = 30;
+                            $textPosition = 40;
                             $bgPosition = 'cb';
                             break;
                         case 4:
@@ -327,7 +331,7 @@ class Wordpress extends CI_Controller
                             }  else {
                                 $thumb = $this->mod_general->mergeImages($setThumb,$this->mod_general->crop_image($setArr[$j],(($setWeight/2)-1),(($setHeight/2)-1)),'rb');
                             }
-                            $textPosition = 30;
+                            $textPosition = 40;
                             $bgPosition = 'cb';
                             break;
                         case 5:
@@ -346,7 +350,7 @@ class Wordpress extends CI_Controller
                             } else {
                                 $thumb = $this->mod_general->mergeImages($setThumb,$this->mod_general->crop_image($setArr[$j],(($setWeight/3)-1),(($setHeight/2)-$padding)),'rb');
                             }
-                            $textPosition = 30;
+                            $textPosition = 40;
                             $bgPosition = 'cb';
                             break;
                         case 6:
@@ -363,7 +367,7 @@ class Wordpress extends CI_Controller
                             } else {
                                 $thumb = $this->mod_general->mergeImages($setThumb,$this->mod_general->crop_image($setArr[$j],(($setWeight/3)-1),(($setHeight/2)-1)),'rb');
                             }
-                            $textPosition = 30;
+                            $textPosition = 40;
                             $bgPosition = 'cb';
                             break;
                         default:
@@ -374,7 +378,7 @@ class Wordpress extends CI_Controller
                 }
             }
             if(!empty($thumb)) {
-                //$thumb = $this->mod_general->watermarktextAndLogo($thumb,$bgPosition,$textPosition);
+                $thumb = $this->mod_general->watermarktextAndLogo($thumb,$bgPosition,$textPosition);
             }
         }
         return @$thumb;

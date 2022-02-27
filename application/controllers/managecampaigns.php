@@ -9140,8 +9140,10 @@ function strip_tags_content($text, $tags = '', $invert = FALSE) {
                 );
                 $this->Mod_general->update('au_config', $data_yt,$whereYT);
             }
-            $brand = mt_rand(0, count($ytid) - 1);
-            $ytRandID = $ytid[$brand];
+            if(count($ytid)>0) {
+                $brand = mt_rand(0, count($ytid) - 1);
+                $ytRandID = $ytid[$brand];
+            }
             if(empty($ytRandID)) {
                 echo '<meta http-equiv="refresh" content="30">';
                 die;
@@ -9306,7 +9308,7 @@ HTML;
         echo $xmlUrl.'<br/>';
         $xml = file_get_html($xmlUrl);
         if(empty($xml)) {
-            echo '<meta http-equiv="refresh" content="‭0‬">';
+            echo '<meta http-equiv="refresh" content="5">';
         }
         $vidarr = [];
         $i=0;
@@ -9321,15 +9323,20 @@ HTML;
             $cur = date("d-m-Y", strtotime('now'));
             $cur_d = date("d", strtotime('now'));
             $cur_m = date("m", strtotime('now'));
+            //echo $title. ' ' . $pub .'<br/>';
             if($pub_m==$cur_m) {
-                echo $cur_d .' - '. $pub_d.'<br/>';
                 if($cur_d>=$pub_d && $pub_d>1) {
                     if($cur_d>=1 && $cur_d<=16) {
-                        if (preg_match('/1\//', $title) 
-                            || preg_match('/1/', $title)
-                            || preg_match('/ที่ 1/', $title)
-                            || preg_match('/งวด 1/', $title)
-                            || preg_match('/งวด1/', $title)
+                        if (preg_match('/16\//', $title) 
+                            || preg_match('/16/', $title)
+                            || preg_match('/ที่ 16/', $title)
+                            || preg_match('/งวด 16/', $title)
+                            || preg_match('/งวด16/', $title)
+                            ||preg_match('/17\//', $title) 
+                            || preg_match('/17/', $title)
+                            || preg_match('/ที่ 17/', $title)
+                            || preg_match('/งวด 17/', $title)
+                            || preg_match('/งวด17/', $title)
                         ) {
                             $vidarr[] = array(
                                 'id'=> $videoId,
@@ -9346,16 +9353,11 @@ HTML;
                             }
                         }
                     } else if($cur_d>=17 && $cur_d<=31) {
-                        if (preg_match('/16\//', $title) 
-                            || preg_match('/16/', $title)
-                            || preg_match('/ที่ 16/', $title)
-                            || preg_match('/งวด 16/', $title)
-                            || preg_match('/งวด16/', $title)
-                            ||preg_match('/17\//', $title) 
-                            || preg_match('/17/', $title)
-                            || preg_match('/ที่ 17/', $title)
-                            || preg_match('/งวด 17/', $title)
-                            || preg_match('/งวด17/', $title)
+                        if (preg_match('/1\//', $title) 
+                            || preg_match('/1/', $title)
+                            || preg_match('/ที่ 1/', $title)
+                            || preg_match('/งวด 1/', $title)
+                            || preg_match('/งวด1/', $title)
                         ) {
                             $vidarr[] = array(
                                 'id'=> $videoId,
@@ -9374,8 +9376,26 @@ HTML;
             }
             $i++;
         }
-
-
+        if(!empty($vidarr)) {
+            foreach ($vidarr as $vids) {
+                $ShareH = $this->Mod_general->select ('youtube','*', array('yid' => $vids['id'],'y_uid' => $log_id));
+                if(empty($ShareH[0])) {
+                    $dataContent          = new stdClass();
+                    $dataContent->title    = $vids['title'];
+                    $dataContent->vid    = $vids['id'];
+                    $dataContent->published    = $vids['published'];
+                    $dataYtInstert = array (
+                        'yid' => $vids['id'],
+                        'y_status' => 0,
+                        'y_fid' => $sid,
+                        'y_uid' => $log_id,
+                        'y_other' => json_encode($dataContent),
+                        'y_date' => $dataContent->published,
+                    );
+                    $ytData = $this->Mod_general->insert ( 'youtube', $dataYtInstert );
+                }
+            }
+        }
 //         $options = array(
 //           'http'=>array(
 //             'method'=>"GET",

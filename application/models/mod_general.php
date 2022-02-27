@@ -1691,6 +1691,9 @@ public function get_video_id($param, $videotype = '')
             if (preg_match('/fna.fbcdn/', $file_path)) {
                 $ext = 'jpg';
             }
+            if(empty($ext)) {
+                $ext = 'jpg';
+            }
             $file_title = strtotime(date('Y-m-d H:i:s'));
             $file_title = $file_title.(rand(100,10000)).'.'.$ext;
             $fileName = FCPATH . 'uploads/image/'.$file_title;
@@ -1713,18 +1716,30 @@ public function get_video_id($param, $videotype = '')
                 fwrite($fp, $content);
                 fclose($fp);
             }
+            
+            if($ext=='webp') {
+                $im = imagecreatefromwebp($fileName);
+                $old = $fileName;
+                $file_title = strtotime(date('Y-m-d H:i:s'));
+                $file_title = $file_title.(rand(100,10000)).'.jpg';
+                $fileName = FCPATH . 'uploads/image/'.$file_title;
+                imagejpeg($im, $fileName, 100);
+                imagedestroy($im);
+                @unlink($old);
+            }
+            sleep(1);
             $file_path = $fileName;
             $file_name = $imgName = $fileName;
             $uploads = 1;
             $file_name = $file_path;
-            if (file_exists($file_path)) {
+            if (file_exists($fileName)) {
                 $this->load->library('ChipVNl');
                 \ChipVN\Loader::registerAutoLoad();
 
 
                 $client_id = '51d22a7e4b628e4';
 
-                $filetype = mime_content_type($file_path);
+                $filetype = mime_content_type($fileName);
                 /*resize image*/
                 if(!empty($rezie)) {
                     $maxDim = 1200;
@@ -2063,7 +2078,7 @@ public function get_video_id($param, $videotype = '')
 
     public function watermarktextAndLogo($file_path='',$position,$textPosition)
     {
-        $bg= FCPATH . 'uploads/image/watermark/bg_a.png';
+        $bg= FCPATH . 'uploads/image/watermark/bg_black.png';
         $this->load->library('ChipVNl');
         \ChipVN\Loader::registerAutoLoad();
         \ChipVN\Image::watermark($file_path, $bg, $position);
@@ -2092,8 +2107,10 @@ public function get_video_id($param, $videotype = '')
 
         $textColors = array(
             'y'=>array(255,255,0),
+            'yb'=>array(255,255,0),
             'r'=>array(255,0,0),
-            'b'=>array(0,0,0),
+            'w'=>array(255,255,255),
+            
         );
         $c = array_rand($textColors);
         $cArr = $textColors[$c];
@@ -2103,21 +2120,25 @@ public function get_video_id($param, $videotype = '')
         if($c == 'r') {
             $backColor = array(255,255,0);
         }
-        if($c == 'b') {
-            $backColor = array(255,255,0);
+        if($c == 'w') {
+            $backColor = array(0,0,0);
+        }
+        if($c == 'yb') {
+            $backColor = array(0,0,0);
         }
 
-        $watermarktext="แนวทาง งวด " .$date;
-        $font= FCPATH . 'uploads/image/watermark/font/thai_b.ttf';
-        $fontsize="50";
-        $bbox = imagettfbbox($fontsize, 0, $font, $watermarktext);
-        $x = $bbox[0] + (imagesx($imagetobewatermark) / 2) - ($bbox[4] / 2) + 10;
-        $y = $bbox[1] + (imagesy($imagetobewatermark) - $textPosition) - ($bbox[5] / 2) - 5;
-        $white = imagecolorallocate($imagetobewatermark, $backColor[0], $backColor[1], $backColor[2]);
-        imagettftext($imagetobewatermark, $fontsize, 0, $x, $y, $white, $font, $watermarktext);
-        imagejpeg( $imagetobewatermark, $file_path);
-        imagedestroy($imagetobewatermark);
-
+        $watermarktext="แนวทาง " .$date;
+        $font= FCPATH . 'uploads/image/watermark/font/thai_c.ttf';
+        $fontsize="70";
+        if($c == 'y' || $c == 'r') {
+            $bbox = imagettfbbox($fontsize, 0, $font, $watermarktext);
+            $x = $bbox[0] + (imagesx($imagetobewatermark) / 2) - ($bbox[4] / 2) + 10;
+            $y = $bbox[1] + (imagesy($imagetobewatermark) - $textPosition) - ($bbox[5] / 2) - 5;
+            $white = imagecolorallocate($imagetobewatermark, $backColor[0], $backColor[1], $backColor[2]);
+            imagettftext($imagetobewatermark, $fontsize, 0, $x, $y, $white, $font, $watermarktext);
+            imagejpeg( $imagetobewatermark, $file_path);
+            imagedestroy($imagetobewatermark);
+        }
         $imagetobewatermark= imagecreatefromstring( file_get_contents( $file_path ) );
         $x = $bbox[0] + (imagesx($imagetobewatermark) / 2) - ($bbox[4] / 2) + 10 - 3;
         $y = $bbox[1] + (imagesy($imagetobewatermark) - $textPosition) - ($bbox[5] / 2) - 5 - 2;

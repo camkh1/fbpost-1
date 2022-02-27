@@ -693,32 +693,27 @@ if(!empty($post)) {
                     </div>
                 </div>
                 <div class="widget-content">
-                    <div class="col-md-3">
-                        <ul class="list-group">
-                            <li class="list-group-item no-padding"> 
-                                <a href="https://web.facebook.com/thainews/" class="list-group-item" target="_blank">Thainews 01</a>
-                                <a href="https://web.facebook.com/KhaoYouLike/" class="list-group-item" target="_blank">Thainews 02</a>
-                                <a href="https://web.facebook.com/khaosod/" class="list-group-item" target="_blank">Khaosod</a>
-                                <a href="https://www.amarintv.com/news/latest" class="list-group-item" target="_blank">AMARINTVHD</a>
-                                <a href="https://web.facebook.com/siamnews/" class="list-group-item" target="_blank">Siamnews</a>
-                                <a href="https://web.facebook.com/teeneedotcom" class="list-group-item" target="_blank">Teenee</a>
-                                <a href="https://web.facebook.com/linetodayth/" class="list-group-item" target="_blank">Linetoday</a>
-                                <a href="https://web.facebook.com/onenews31/" class="list-group-item" target="_blank">Onenews31</a>
-                                <a href="https://web.facebook.com/SanookEveryday/" class="list-group-item" target="_blank">Sanook</a>
-                                <a href="https://web.facebook.com/SanookEveryday/" class="list-group-item" target="_blank">Sanook</a>
-                                <a href="https://web.facebook.com/share2877/" class="list-group-item" target="_blank">share2877</a>
-                                <a href="https://web.facebook.com/TnewsTV/" class="list-group-item" target="_blank">TnewsTV</a>
-                                <a href="https://web.facebook.com/jarm/" class="list-group-item" target="_blank">Jarm</a>
-                                <a href="https://web.facebook.com/fna69" class="list-group-item" target="_blank">fna69</a>
-                                <a href="http://tdaily.us/" class="list-group-item" target="_blank">tdaily</a>
-                                <a href="http://www.khreality.com/" class="list-group-item" target="_blank">Khreality</a>
-                                
-                            </li> 
-                        </ul>
+                    <div class="col-md-12">
+                        <a href="https://web.facebook.com/thainews/" class="btn btn-primary" target="_blank">Thainews 01</a>
+                                <a href="https://web.facebook.com/KhaoYouLike/" class="btn btn-primary" target="_blank">Thainews 02</a>
+                                <a href="https://web.facebook.com/khaosod/" class="btn btn-primary" target="_blank">Khaosod</a>
+                                <a href="https://www.amarintv.com/news/latest" class="btn btn-primary" target="_blank">AMARINTVHD</a>
+                                <a href="https://web.facebook.com/siamnews/" class="btn btn-primary" target="_blank">Siamnews</a>
+                                <a href="https://web.facebook.com/teeneedotcom" class="btn btn-primary" target="_blank">Teenee</a>
+                                <a href="https://web.facebook.com/linetodayth/" class="btn btn-primary" target="_blank">Linetoday</a>
+                                <a href="https://web.facebook.com/onenews31/" class="btn btn-primary" target="_blank">Onenews31</a>
+                                <a href="https://web.facebook.com/SanookEveryday/" class="btn btn-primary" target="_blank">Sanook</a>
+                                <a href="https://web.facebook.com/SanookEveryday/" class="btn btn-primary" target="_blank">Sanook</a>
+                                <a href="https://web.facebook.com/share2877/" class="btn btn-primary" target="_blank">share2877</a>
+                                <a href="https://web.facebook.com/TnewsTV/" class="btn btn-primary" target="_blank">TnewsTV</a>
+                                <a href="https://web.facebook.com/jarm/" class="btn btn-primary" target="_blank">Jarm</a>
+                                <a href="https://web.facebook.com/fna69" class="btn btn-primary" target="_blank">fna69</a>
+                                <a href="http://tdaily.us/" class="btn btn-primary" target="_blank">tdaily</a>
+                                <a href="http://www.khreality.com/" class="btn btn-primary" target="_blank">Khreality</a>
+                                <a href="www.postsod.com" class="btn btn-primary" target="_blank">www.postsod.com (សុខភាព)</a>
+                                <a href="sharesod.com" class="btn btn-primary" target="_blank">sharesod.com (ទិកនិក)</a>
+                                <a href="burmese.dvb.no" class="btn btn-primary" target="_blank">burmese.dvb.no (ភូមា)</a>
                     </div>
-                    <div class="col-md-3"></div>
-                    <div class="col-md-3"></div>
-                    <div class="col-md-3"></div>
                     <div class="clearfix"></div>
                 </div>
             </div>
