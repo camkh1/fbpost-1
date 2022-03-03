@@ -609,6 +609,7 @@ $link =  $desc->find('a', 0)->href;
             $thumb = '';
         }
         $obj->thumb = $thumb;
+        $obj->url = $url;
         $parse = parse_url($url);
         //echo $parse['host'];
         $checkSite = $html->find('#main #Blog1 .post');
@@ -619,6 +620,10 @@ $link =  $desc->find('a', 0)->href;
             $setHost = 'wp';
         } else if(preg_match ( '/kapook.com/', $url )){
             $setHost = 'kapook.com';
+        } else if(preg_match ( '/thainewsonline.co/', $url )){
+            $setHost = 'tnews';
+        } else if(preg_match ( '/tnews.co.th/', $url )){
+            $setHost = 'tnews';
         } else if(count($siam)==1) {
             $setHost = 'www.siamnews.com';
         } else {
@@ -1104,7 +1109,7 @@ $link =  $desc->find('a', 0)->href;
                 $obj->site = 'site';
                 return $obj;
                 break;
-            case 'www.tnews.co.th':
+            case 'tnews':
                 /*get label*/
                 $label = [];
                 $last = count($html->find('.breadcrumb li')) - 1;

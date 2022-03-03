@@ -64,8 +64,19 @@ if(!empty($post)) {
     }
 
     $pSchedule = json_decode($post[0]->p_schedule);
-    $titles = html_entity_decode(str_replace('\\', '', $post[0]->p_name));
-    $titles = preg_replace('/\s+/', '<sp>', $titles);
+    if(empty($link) && $action == 'postwp'):
+        $titles = html_entity_decode(str_replace('\\', '', trim($post[0]->p_name)));
+        $titles = preg_replace('/\s+/', '<sp>', $titles);
+        $titles = preg_replace('/[\s]+/mu', '<sp>', $titles);
+        $titles = str_replace("&nbsp;", "<sp>", $titles);
+        $titles = str_replace(" ", "<sp>", $titles);
+    else:
+        $titles = html_entity_decode(str_replace('\\', '', trim($pConent->name)));
+        $titles = preg_replace('/\s+/', '<sp>', $titles);
+        $titles = preg_replace('/[\s]+/mu', '<sp>', $titles);
+        $titles = str_replace("&nbsp;", "<sp>", $titles);
+        $titles = str_replace(" ", "<sp>", $titles);
+    endif;
     //echo $titles;die;
     $pid = $post[0]->p_id;
     $content = htmlentities($content);

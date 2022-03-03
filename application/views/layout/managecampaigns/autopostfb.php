@@ -145,9 +145,10 @@ $fb_user_id = $this->session->userdata ( 'fb_user_id' );
  if($this->input->get('action') =='posttoblog'):
     $pause = @$this->input->get('pause');
     if(empty($pause)):?>
-        <script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "<?php echo base_url();?>managecampaigns/autopostfb?action=yt&post_only=1";},10);</script>
+        <script language="javascript" type="text/javascript">window.setTimeout( function(){
+            //window.location = "<?php echo base_url();?>managecampaigns/autopostfb?action=posttoblog";},10);</script>
     <?php exit(); else:?>
-        <script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "<?php echo base_url();?>managecampaigns/autopostfb?action=yt&post_only=1";},60*60*1000);</script>
+        <script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "<?php echo base_url();?>managecampaigns/autopostfb?action=posttoblog";},60*60*1000);</script>
     <?php exit(); endif;?>
 <?php endif;?>
                 <form class="form-horizontal row-border" method="post">

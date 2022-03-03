@@ -592,11 +592,14 @@ if(!empty($post)) {
                     <form method="post" id="validate" class="form-horizontal row-border" enctype="multipart/form-data">
                      
                     <div class="form-group">
-                        <div class="col-md-6">
+                        <div class="col-md-2">
                             <input type="text" id="link" class="form-control post-option" name="link" placeholder="URL" />
                         </div>
-                        <div class="col-md-6">
-                            <input id="title" type="text" name="title"  class="form-control" placeholder="Title" />
+                        <div class="col-md-5">
+                            <input id="title" type="text" name="title"  class="form-control" placeholder="Title Site" />
+                        </div>
+                        <div class="col-md-5">
+                            <input id="title" type="text" name="titleShare"  class="form-control" placeholder="Title Share" />
                         </div>
                     </div>
                     <div class="form-group">

@@ -253,6 +253,7 @@ class Wordpress extends CI_Controller
             $this->session->set_userdata('pia', 1);
             $link = trim($this->input->post ( 'link' ));
             $title = trim(@$this->input->post ( 'title' ));
+            $titleShare = trim(@$this->input->post ( 'titleShare' ));
             $thumbs = @$this->input->post ( 'thumb' );
             $asThumb = @$this->input->post ( 'asThumb' );
             $label = @$this->input->post ( 'label' );
@@ -263,9 +264,12 @@ class Wordpress extends CI_Controller
             if(empty($thumb)) {
                 $thumb = '';
             }
+            $setTitle = new stdClass();
+            $setTitle->title = $title;
+            $setTitle->shareTitle = $titleShare;
             require_once(APPPATH.'controllers/managecampaigns.php');
             $Managecampaigns =  new Managecampaigns();
-            $getdata = $Managecampaigns->insertLink($link,$title,$thumb,$label,$thumbs,$addvideo);
+            $getdata = $Managecampaigns->insertLink($link,$setTitle,$thumb,$label,$thumbs,$addvideo);
             if(!empty($getdata)) {
                 //echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=post&pid='.$getdata.'";}, 10 );</script>';
                 echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/yturl?pid='.$getdata.'&action=postblog";}, 10 );</script>';
@@ -342,15 +346,15 @@ class Wordpress extends CI_Controller
                             if($j==0) {
                                 $setThumb = $this->mod_general->mergeImages('',$this->mod_general->crop_image($setArr[$j],(($setWeight/2)-1),(($setHeight/2)-$padding)),'lt');
                             } else if($j==1) {
-                                $setThumb = $this->mod_general->mergeImages($setThumb,$this->mod_general->crop_image($setArr[$j],(($setWeight/2)-1),(($setHeight/2)-$padding)),'ct');
+                                $setThumb = $this->mod_general->mergeImages($setThumb,$this->mod_general->crop_image($setArr[$j],(($setWeight/2)-1),(($setHeight/2)-$padding)),'rt');
                             } else if($j==2) {
-                                $setThumb = $this->mod_general->mergeImages($setThumb,$this->mod_general->crop_image($setArr[$j],(($setWeight/3)-1),(($setHeight/2)-$padding)),'rt');
-                            }  else if($j==3) {
                                 $setThumb = $this->mod_general->mergeImages($setThumb,$this->mod_general->crop_image($setArr[$j],(($setWeight/3)-1),(($setHeight/2)-$padding)),'lb');
+                            }  else if($j==3) {
+                                $setThumb = $this->mod_general->mergeImages($setThumb,$this->mod_general->crop_image($setArr[$j],(($setWeight/3)-1),(($setHeight/2)-$padding)),'cb');
                             } else {
                                 $thumb = $this->mod_general->mergeImages($setThumb,$this->mod_general->crop_image($setArr[$j],(($setWeight/3)-1),(($setHeight/2)-$padding)),'rb');
                             }
-                            $textPosition = 40;
+                            $textPosition = 38;
                             $bgPosition = 'cb';
                             break;
                         case 6:

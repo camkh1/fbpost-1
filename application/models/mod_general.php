@@ -1441,6 +1441,29 @@ public function get_video_id($param, $videotype = '')
             fwrite($fp, $content);
             fclose($fp);
         }
+        if(!file_exists($fileName)) {
+            if (preg_match('/fbpost\\\uploads/', $imgSrc)) {
+                //@copy($imgSrc, $fileName);
+                $file_titles = basename($imgSrc);
+                $file_titles = explode('.', $file_titles);
+                $file_title = $file_titles[0];
+                $fileName = $imgSrc;
+            } else {
+                $file_title = strtotime(date('Y-m-d H:i:s'));
+                $file_title = $file_title.(rand(100,10000)).'.'.$ext;
+                $fileName = FCPATH . 'uploads/image/'.$file_title;
+                $arrContextOptions=array(
+                    "ssl"=>array(
+                        "verify_peer"=>false,
+                        "verify_peer_name"=>false,
+                    ),
+                );
+                $content = file_get_contents($imgSrc, false, stream_context_create($arrContextOptions));
+                $fp = fopen($fileName, "w");
+                fwrite($fp, $content);
+                fclose($fp);
+            }
+        }
         //getting the image dimensions
         list($width, $height) = getimagesize($fileName);
 
@@ -2130,8 +2153,8 @@ public function get_video_id($param, $videotype = '')
         $watermarktext="แนวทาง " .$date;
         $font= FCPATH . 'uploads/image/watermark/font/thai_c.ttf';
         $fontsize="70";
+        $bbox = imagettfbbox($fontsize, 0, $font, $watermarktext);
         if($c == 'y' || $c == 'r') {
-            $bbox = imagettfbbox($fontsize, 0, $font, $watermarktext);
             $x = $bbox[0] + (imagesx($imagetobewatermark) / 2) - ($bbox[4] / 2) + 10;
             $y = $bbox[1] + (imagesy($imagetobewatermark) - $textPosition) - ($bbox[5] / 2) - 5;
             $white = imagecolorallocate($imagetobewatermark, $backColor[0], $backColor[1], $backColor[2]);

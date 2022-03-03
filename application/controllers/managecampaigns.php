@@ -791,7 +791,12 @@ class Managecampaigns extends CI_Controller {
             'meta_key'     => $sid,
         );
         $query_fb = $this->Mod_general->select('meta', '*', $wFbconfig);
-        $data['query_fb'] = $accounts = json_decode($query_fb[0]->meta_value);
+        if(!empty($query_fb[0])) {
+            $dataFb = $query_fb[0]->meta_value;
+        } else {
+            $dataFb = array();
+        }
+        $data['query_fb'] = $accounts = @json_decode($dataFb);
         /*End show fbconfig*/
         
         
@@ -7769,6 +7774,7 @@ WHERE sid ='.$u->u_id .' ORDER BY 1 DESC';
                 $amoungArr = array(
                     'b3xuy0oppj',
                     '55iiaexrdq',
+                    'lsbpwmedu4',
                 );
                 $k = array_rand($amoungArr);
                 $amoung = $this->amung($amoungArr[$k],1,true);
@@ -8534,9 +8540,10 @@ die;
                     $RanChoose = array(
                         //'site',
                         //'site',
-                        'yt',
-                        'yt',
+                        'line',
+                        'line',
                         'amung',
+                        'yt',
                     );
                     $l = array_rand($RanChoose);
                     $getChoose = $RanChoose[$l];
@@ -8551,6 +8558,9 @@ die;
                             break;
                         case 'site':
                             echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=site";}, 1000 );</script>';
+                            break;
+                        case 'line':
+                            echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=line";}, 1000 );</script>';
                             break;
                         default:
                             # code...
@@ -8576,6 +8586,17 @@ die;
                 }
                 $this->userd($obj);
                 break;
+            case 'line':
+                $link = $this->feed_line();
+                if(!empty($link)) {
+                    $getdata = $this->insertLink($link,'','','news','','');
+                    if(!empty($getdata)) {
+                        echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/yturl?pid='.$getdata.'&action=postblog";}, 10 );</script>';
+                        exit();
+                    }
+                }
+                die;
+                break;
             default:
                 # code...
                 break;
@@ -8583,6 +8604,80 @@ die;
         $this->load->view ( 'managecampaigns/autopostfb', $data );
     }
 
+public function feed_line($label='100275:40')
+{
+    $log_id = $this->session->userdata ( 'user_id' );
+    $user = $this->session->userdata ( 'email' );
+    $provider_uid = $this->session->userdata ( 'provider_uid' );
+    $provider = $this->session->userdata ( 'provider' );
+    $gemail = $this->session->userdata ('gemail');
+    $fbUserId = $this->session->userdata('fb_user_id');
+    $sid = $this->session->userdata ( 'sid' );   
+    $url = 'https://today.line.me/webapi/trending/category/mostView/listings/module:5ef092870f2384080e54ad26?offset=0&length=40&country=th&targetContent=ALL&categories='.$label.'&trendingEventPeriod=ONE_HOUR';
+    $this->load->library ( 'html_dom' );
+    $options = array(
+        'http'=>array(
+        'method'=>"GET",
+        'header'=>"Accept-language: en\r\n" .
+                  "Cookie: foo=bar\r\n" .  // check function.stream-context-create on php.net
+                  "User-Agent: Mozilla/5.0 (Linux; U; Android 2.2) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1\r\n" // i.e. An iPad 
+        )
+    );
+
+    $context = stream_context_create($options);
+    $file = file_get_contents($url, false, $context);
+    $obj = json_decode($file);
+    if(!empty($obj)) {
+        foreach ($obj->items as $key => $items) {
+            //title
+            //id
+            //publisher
+            //publisherId
+            //publishTimeUnix
+            //contentType
+            //thumbnail
+            // $title = $items->title;
+            // $id = $items->id;
+            // $publisher = $items->publisher;
+            // $publisherId = $items->publisherId;
+            // $publishTimeUnix = $items->publishTimeUnix;
+            // $contentType = $items->contentType;
+            // $thumbnail = $items->thumbnail;
+            // $categoryName = $items->categoryName;
+            // $viewCount = $items->viewCount;
+            $link = $items->url->url;
+            /*check duplicate*/
+            $whereDupA = array(
+                'object_id'      => $link,
+                'meta_name'     => $log_id . 'sitelink',
+            );
+            $queryCheckDup = $this->Mod_general->select('meta', '*', $whereDupA);
+            /*check duplicate*/
+            if(empty($queryCheckDup)) {
+                return $link;
+                break;
+            }
+            // echo '<pre>';
+            // print_r($items);
+            // echo '</pre>';
+        }
+    }
+    die;
+
+// $str = <<< HTML
+// '.$file.'
+// HTML;
+//                         $html = str_get_html($str);
+//                         $html = explode("var ytInitialData = '", $html);
+//                         $html = explode("';", $html[1]);
+//                         $jsons = $html[0];
+//                         echo '<script>';
+//                         echo 'const myJSON = JSON.parse("'.$jsons.'");console.log(myJSON);';
+//                         echo '</script>';
+//                         die;
+                        
+        // $article = $html->find('a.compact-media-item-metadata-content');
+}
 public function userd($obj)
 {
     $where_u= array (
@@ -8748,7 +8843,7 @@ public function userd($obj)
             $conent = $bodytext.'<p>'.$youtubeCode.'</p>';
             
         } else {
-                    /*check duplicate*/
+            /*check duplicate*/
             $whereDupA = array(
                 'object_id'      => $url,
                 'meta_name'     => $log_id . 'sitelink',
@@ -8761,14 +8856,16 @@ public function userd($obj)
                 require_once(APPPATH.'controllers/Getcontent.php');
                 $aObj = new Getcontent(); 
                 $getContent = $aObj->getConentFromSite($url,'');
-                
                 $conent = $getContent->conent;
                 $thumb = $getContent->thumb;
                 $title = $getContent->title;
+                $fromsite = $getContent->fromsite;
+                $fromURL = $getContent->url;
                 $youtubeCode = '';
 
                 $conent = $this->insertAd($conent, '      <p> ​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​</p>', $pos = 1);
-                $conent = strip_tags($conent,'<img><p>');
+                //echo $conent;die;
+                $conent = strip_tags($conent,'<img><p><iframe><ul><br/>');
                 $txt = '';
                 $pattern = "|(<img .*?>)|";
                 preg_match_all($pattern, $conent, $matches);
@@ -8781,6 +8878,7 @@ public function userd($obj)
                     $conent = str_replace($value, $value.$code, $conent);
                     $i++;
                 }
+                
                 // ob_start();
                 // ob_end_clean();
                 // preg_match_all('/<iframe[^>]+src="([^"]+)"/', $getContent->conent, $match);
@@ -8809,7 +8907,6 @@ public function userd($obj)
                     }
                     $conent = $bodytext.'<br/>'.$youtubeCode;
                 }
-
                 /*update link status*/
                 $data_blog = array(
                     'meta_key'      => date('Y-m-d'),
@@ -8825,6 +8922,7 @@ public function userd($obj)
         }
         if(empty($conent)) {
             echo 'no content';
+            echo '<meta http-equiv="refresh" content="30">';
             return false;
             exit();
         }
@@ -8835,7 +8933,13 @@ public function userd($obj)
         if (preg_match ( '/ - /', $title )) {
             $title = explode(' - ', $title)[0];
         }
+
         $conent = '<p>~</p>'.$title .'<p>~</p>'.$conent.$addvideo;
+        if(!empty($setLabel)){
+            if($setLabel == 'news'|| $setLabel == 'entertainment') {
+                $conent = '<p>~</p>'.$title .'<p>~</p>'.$conent.$addvideo .'<br/>_____________<br/>ขอขอบคุณข้อมูลจาก '.@$this->remove_http($fromURL);
+            }
+        }
         /*preparepost*/
         $tmp_path = './uploads/'.$log_id.'/'. $fbUserId . '_tmp_action.json';
         $string = file_get_contents($tmp_path);
@@ -8887,8 +8991,8 @@ public function userd($obj)
         $file_tmp_name = $fbUserId . '_tmp_action.json';
         $this->json($tmp_path,$file_tmp_name, $schedule);
         /*End save tmp data post*/
-        if(!empty($settitle)) {
-            $title = $settitle;
+        if(!empty($settitle->title)) {
+            $title = $settitle->title;
         } 
         $title = str_replace('Thailottery', '', $title);
         $title = str_replace('/\s+/', '_', $title);
@@ -8958,8 +9062,13 @@ public function userd($obj)
                 }
             }
         }
+        if(!empty($settitle->shareTitle)) {
+            $shareTitle = $settitle->shareTitle;
+        } else {
+            $shareTitle = $title;
+        }
         $content = array (
-                'name' => @htmlentities(htmlspecialchars(str_replace(' - YouTube', '', $title))),
+                'name' => @htmlentities(htmlspecialchars(str_replace(' - YouTube', '', $shareTitle))),
                 'message' => @htmlentities(htmlspecialchars(addslashes($conent))),
                 'caption' => '',
                 'link' => $url,
@@ -8991,7 +9100,15 @@ public function userd($obj)
            return $AddToPost;
         }
     }
-
+function remove_http($url) {
+   $disallowed = array('http://www.', 'https://www.','http://', 'https://');
+   foreach($disallowed as $d) {
+      if(strpos($url, $d) === 0) {
+         return str_replace($d, '', $url);
+      }
+   }
+   return $url;
+}
 function strip_tags_content($text, $tags = '', $invert = FALSE) {
 
   preg_match_all('/<(.+?)[\s]*\/?[\s]*>/si', trim($tags), $tags);
@@ -11618,6 +11735,7 @@ function makeRequests($service) {
                 }
 
             }
+
             // if($pos == 0){
             //   $pos = rand (1, $count - 1);
             // }
