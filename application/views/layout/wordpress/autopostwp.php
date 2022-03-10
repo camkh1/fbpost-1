@@ -22,7 +22,7 @@ $log_id = $this->session->userdata ( 'user_id' );
 $contents = '';
 $titles = '';
 $thumb = '';
-$pid = '';
+$pid = @!empty($_GET['pid'])? $_GET['pid']:0;;
 
 // $sitePpost = $autopost->site_to_post;
 // $k = array_rand($sitePpost);
@@ -31,6 +31,7 @@ $blogRand = !empty($query_fb->wp_url)? $query_fb->wp_url : '';
 $site = @$_GET['site'];
 $action = @$_GET['action'];
 $imgid = @$_GET['imgid'];
+$story_fbid = @$_GET['fbid'];
 if(!empty($site)) {
     $blogRand = $site;
 }
@@ -45,6 +46,19 @@ if($action == 'shareToGroup' ) {
     if(!empty($count)) {
         if((count($group_list) == $count)) {
             echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'wordpress/close";}, 3 );</script>';
+            die;
+        }
+    }
+}
+if($action == 'shareToPage' ) {
+    $count = @!empty($_GET['count'])? $_GET['count']:0;
+    if((count($page_list) != $count)) {
+        $pageName = $page_list[$count]->sg_name;
+        $pageID = $page_list[$count]->sg_page_id;
+    }
+    if(!empty($count)) {
+        if((count($page_list) == $count)) {
+            echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'wordpress/autopostwp?action=shareToGroup&pid='.$pid.'";}, 3 );</script>';
             die;
         }
     }
@@ -64,20 +78,24 @@ if(!empty($post)) {
     }
 
     $pSchedule = json_decode($post[0]->p_schedule);
+    $pConent = json_decode($post[0]->p_conent);
     if(empty($link) && $action == 'postwp'):
         $titles = html_entity_decode(str_replace('\\', '', trim($post[0]->p_name)));
-        $titles = preg_replace('/\s+/', '<sp>', $titles);
-        $titles = preg_replace('/[\s]+/mu', '<sp>', $titles);
-        $titles = str_replace("&nbsp;", "<sp>", $titles);
-        $titles = str_replace(" ", "<sp>", $titles);
+        // $titles = preg_replace('/\s+/', '<sp>', $titles);
+        // $titles = preg_replace('/[\s]+/mu', '<sp>', $titles);
+        // $titles = str_replace("&nbsp;", "<sp>", $titles);
+        // $titles = str_replace(" ", "<sp>", $titles);
     else:
-        $titles = html_entity_decode(str_replace('\\', '', trim($pConent->name)));
-        $titles = preg_replace('/\s+/', '<sp>', $titles);
-        $titles = preg_replace('/[\s]+/mu', '<sp>', $titles);
-        $titles = str_replace("&nbsp;", "<sp>", $titles);
-        $titles = str_replace(" ", "<sp>", $titles);
+        if(!empty($pConent->name)) {
+            $titles = html_entity_decode(str_replace('\\', '', trim($pConent->name)));
+        } else {
+            $titles = html_entity_decode(str_replace('\\', '', trim($post[0]->p_name)));
+        }
+        // $titles = preg_replace('/\s+/', '<sp>', $titles);
+        // $titles = preg_replace('/[\s]+/mu', '<sp>', $titles);
+        // $titles = str_replace("&nbsp;", "<sp>", $titles);
+        // $titles = str_replace(" ", "<sp>", $titles);
     endif;
-    //echo $titles;die;
     $pid = $post[0]->p_id;
     $content = htmlentities($content);
 
@@ -146,10 +164,11 @@ if(!empty($post)) {
 
 <?php if($action == 'shareToGroup'):?>
     <input type="hidden" value="<?php echo @$GroupName;?>" id="gName" />
+    <input type="hidden" value="<?php echo @$GroupID;?>" id="groupID" />
 <?php endif;?>
 
 <code id="codeB" style="width:300px;overflow:hidden;display:none"></code>
-    <code id="examplecode5" style="width:300px;overflow:hidden;display:none">var codedefault2=&quot;CODE: SET !EXTRACT_TEST_POPUP NO\n SET !TIMEOUT_PAGE 300\n SET !ERRORIGNORE YES\n SET !TIMEOUT_STEP 1\n&quot;;var wm=Components.classes[&quot;@mozilla.org/appshell/window-mediator;1&quot;].getService(Components.interfaces.nsIWindowMediator);var window=wm.getMostRecentWindow(&quot;navigator:browser&quot;);const XMLHttpRequest = Components.Constructor(&quot;@mozilla.org/xmlextras/xmlhttprequest;1&quot;);var homeUrl = &quot;<?php echo base_url();?>&quot;,add_post_url = &quot;<?php echo @$blogRand;?>&quot;,titles = &quot;&quot;,contents = &quot;&quot;,thumb = &quot;&quot;,pid = &quot;<?php echo @$pid;?>&quot;,labels = [<?php echo @$labels;?>]<?php if(empty($link) && $action == 'uploadimage'):?>,fileupload = &quot;<?php echo @$fileupload;?>&quot;,imgname=&quot;<?php echo @$imgname;?>&quot;,imgext=&quot;<?php echo @$imgext;?>&quot;<?php endif;?>,imgid = &quot;<?php echo @$imgid;?>&quot;,fpid = &quot;<?php echo @$query_fb->id;?>&quot;,pagetype = &quot;<?php echo @$query_fb->pageType;?>&quot;<?php if($action == 'shareToGroup'):?>,count = &quot;<?php echo @$count;?>&quot;<?php endif;?>;</code>
+    <code id="examplecode5" style="width:300px;overflow:hidden;display:none">var codedefault2=&quot;CODE: SET !EXTRACT_TEST_POPUP NO\n SET !TIMEOUT_PAGE 300\n SET !ERRORIGNORE YES\n SET !TIMEOUT_STEP 1\n&quot;;var wm=Components.classes[&quot;@mozilla.org/appshell/window-mediator;1&quot;].getService(Components.interfaces.nsIWindowMediator);var window=wm.getMostRecentWindow(&quot;navigator:browser&quot;);const XMLHttpRequest = Components.Constructor(&quot;@mozilla.org/xmlextras/xmlhttprequest;1&quot;);var homeUrl = &quot;<?php echo base_url();?>&quot;,add_post_url = &quot;<?php echo @$blogRand;?>&quot;,titles = &quot;&quot;,contents = &quot;&quot;,thumb = &quot;&quot;,pid = &quot;<?php echo @$pid;?>&quot;,labels = [<?php echo @$labels;?>]<?php if(empty($link) && $action == 'uploadimage'):?>,fileupload = &quot;<?php echo @$fileupload;?>&quot;,imgname=&quot;<?php echo @$imgname;?>&quot;,imgext=&quot;<?php echo @$imgext;?>&quot;<?php endif;?>,imgid = &quot;<?php echo @$imgid;?>&quot;,fpid = &quot;<?php echo @$query_fb->id;?>&quot;,story_fbid = &quot;<?php echo @$story_fbid;?>&quot;,pagetype = &quot;<?php echo @$query_fb->pageType;?>&quot;,count = &quot;<?php echo @$count;?>&quot;,page_share_id = &quot;<?php echo @$pageID;?>&quot;;</code>
     <script type="text/javascript">
         function runcode(codes) {
             var str = $("#examplecode5").text();
@@ -190,17 +209,25 @@ if(!empty($post)) {
     <?php if(empty($link) && $action == 'postwp'):?>
         load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/postToWordpress');
     <?php endif;?>
+    <?php if(!empty($_GET['pid']) && $action == 'shareLinkToProfile'):?>
+        setTimeout(function() {
+            load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/shareLinkToProfile');
+        }, 1000 * 1);
+    <?php endif;?>
     <?php if(!empty($_GET['pid']) && $action == 'shareToPage'):?>
         setTimeout(function() {
             load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/shareLinkToPage');
-        }, 1000 * 10);
+        }, 1000 * 1);
     <?php endif;?>
     <?php if($action == 'shareToGroup'):?>
         // setTimeout(function() {
         //     load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/sharePageLastPostToGroup');
         //     //load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/sharePageLastPostToPageGroup');
         // }, 1000 * 10);
+        //
         load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/sharePageLastPostToGroup');
+        //load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/sharePageLastPostToGroup_mobile');
+        
     <?php endif;?>
     <?php if(empty($link) && $action == 'postblog'||empty($link) && $action == 'uploadimage'):?>
         <?php if(!empty($blogRand)):?>
@@ -235,7 +262,8 @@ if(!empty($post)) {
                 
                     <div class="form-group">
                         <div class="col-md-12 clearfix">
-                            <input id="title" onclick="this.focus(); this.select()" type="text" name=""  class="form-control" value="<?php echo htmlspecialchars_decode(@$titles);?>" />
+                            <input id="title" type="text" name=""  class="form-control" value="<?php echo htmlspecialchars_decode(@$titles);?>" />
+                            <input id="page_title" type="text"  class="form-control" value="<?php echo @$query_fb->name;?>" />
                         </div>
                     </div>
                     <div class="form-group">

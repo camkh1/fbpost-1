@@ -8542,6 +8542,8 @@ die;
                         //'site',
                         'line',
                         'line',
+                        'line',
+                        'line',
                         'amung',
                         'yt',
                     );
@@ -8937,7 +8939,7 @@ public function userd($obj)
         $conent = '<p>~</p>'.$title .'<p>~</p>'.$conent.$addvideo;
         if(!empty($setLabel)){
             if($setLabel == 'news'|| $setLabel == 'entertainment') {
-                $conent = '<p>~</p>'.$title .'<p>~</p>'.$conent.$addvideo .'<br/>_____________<br/>ขอขอบคุณข้อมูลจาก '.@$this->remove_http($fromURL);
+                $conent = $conent.$addvideo .'<br/>_____________<br/>ขอขอบคุณข้อมูลจาก '.@$this->remove_http($fromURL);
             }
         }
         /*preparepost*/

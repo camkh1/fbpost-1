@@ -44,6 +44,8 @@
                     <li><a href="<?php echo base_url() . 'Facebook/invitelikepage?action=1'; ?>"><i class="icon-facebook"></i> Invite Your Friends To Like Your Page</a></li>
                     <li><a href="<?php echo base_url() . 'Facebook/addfriendgroup?action=1'; ?>"><i class="icon-facebook"></i> Invite Your Friends To Join Your Group</a></li>
                     <li class="divider"></li> 
+                    <li> <a href="<?php echo base_url() . 'Facebook/pages'; ?>"><i class="icon-facebook"></i> Facebook Pages</a> </li>
+                    <li class="divider"></li> 
                     <li><a href="javascript:;"><i class="icon-plus"></i> Extraction tools</a></li>
                     <li><a href="<?php echo base_url() . 'Facebook/checknum'; ?>"><i class="icon-phone"></i> Get public phone numbers of all Facebook friends</a></li>
                     <li><a href="<?php echo base_url() . 'Facebook/friendlist';?>"><i class="icon-th-list"></i> Get Friend list</a></li>

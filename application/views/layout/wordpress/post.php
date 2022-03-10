@@ -667,6 +667,7 @@ if(!empty($post)) {
                                 <option value="lotto">Lotto</option>
                                 <option value="news">News</option>
                                 <option value="entertainment">Entertainment</option>
+                                <option value="otherlotto">Other Lotto</option>
                             </select>             
                         </div>                                   
                     </div>

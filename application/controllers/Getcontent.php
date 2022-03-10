@@ -1124,6 +1124,9 @@ $link =  $desc->find('a', 0)->href;
                 foreach($html->find('.side-article') as $item) {
                     $item->outertext = '';
                 }
+                foreach($html->find('.affaliate-image') as $item) {
+                    $item->outertext = '';
+                }
                 foreach($html->find('ul') as $item) {
                     $item->outertext = '';
                 }
@@ -1136,7 +1139,7 @@ $link =  $desc->find('a', 0)->href;
                     if($index != $last && $index !=0) {
                         $content = $content. $contents->innertext;
                     } 
-                }            
+                }          
                 $htmlContent = str_get_html($content);
                 foreach($htmlContent->find('.row') as $item) {
                     $item->outertext = '';
@@ -3006,7 +3009,18 @@ $desc = str_get_html($str);
             if(!empty($imgarr[$i])) {
                 $item->outertext = '<img src="'.$imgarr[$i].'"/>';
             } else {
-                $item->outertext = '';
+                $attrs = 'data-src';
+                $datascr = @$item->find ('iframe',0)->$attrs;
+                $imgsx = @$item->find ('iframe',0)->src;
+                // foreach($item->find('iframe') as $srcs) {
+                // }
+                if(!empty($datascr)) {
+                    $item->outertext = '<iframe class="video-facebook video-iframe" data-src="'.$datascr.'" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>';
+                } else if(!empty($imgsx)) {
+                    $item->outertext = '<iframe width="727" height="409" src="'.$imgsx.'" title="YouTube video player" frameborder="0"></iframe>';
+                } else {
+                    $item->outertext = '';
+                }
             }
             $i++;
         }

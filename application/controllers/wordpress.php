@@ -91,7 +91,16 @@ class Wordpress extends CI_Controller
             $data['group_list'] = $this->Mod_general->select ( Tbl_social_group::tblName, '*', $where_uGroup );
             /*End get group*/
         }
-                    
+        if($action == 'shareToPage') {
+            /*get page id*/
+            $where_page = array (
+                    Tbl_social_group::socail_id => $sid,
+                    Tbl_social_group::status => 1,
+                    Tbl_social_group::type => 'page' 
+            );
+            $data['page_list'] = $this->Mod_general->select ( Tbl_social_group::tblName, '*', $where_page );
+            /*End get page id*/
+        }            
 
         if(!empty($getPost[0])) {
             if(!empty($this->input->get('unlink'))) {
@@ -187,7 +196,7 @@ class Wordpress extends CI_Controller
                 $updates = $this->Mod_general->update( Tbl_posts::tblName,$dataPostInstert, $whereUp);
                 if($updates) {
                     if(!empty($accounts->id)) {
-                        echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'wordpress/autopostwp?pid='.$pid.'&action=shareToPage";}, 5 );</script>';
+                        echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'wordpress/autopostwp?pid='.$pid.'&action=shareLinkToProfile";}, 5 );</script>';
                         die;
                     } else {
                         echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'wordpress/close";}, 5 );</script>';
@@ -258,8 +267,8 @@ class Wordpress extends CI_Controller
             $asThumb = @$this->input->post ( 'asThumb' );
             $label = @$this->input->post ( 'label' );
             $addvideo = @$this->input->post ( 'addvideo' );
-            if($label == 'lotto') {
-                $thumb = $this->imageMerge($thumbs,$asThumb);
+            if($label == 'lotto'||$label == 'otherlotto') {
+                $thumb = $this->imageMerge($thumbs,$asThumb,$label);
             }
             if(empty($thumb)) {
                 $thumb = '';
@@ -278,7 +287,7 @@ class Wordpress extends CI_Controller
         }
         $this->load->view('wordpress/post', $data);
     }
-    public function imageMerge($thumbs=array(),$asThumb=array())
+    public function imageMerge($thumbs=array(),$asThumb=array(),$label)
     {
         $setArr = array();
         if(!empty($thumbs[0])) {
@@ -382,7 +391,9 @@ class Wordpress extends CI_Controller
                 }
             }
             if(!empty($thumb)) {
-                $thumb = $this->mod_general->watermarktextAndLogo($thumb,$bgPosition,$textPosition);
+                if($label == 'lotto') {
+                    $thumb = $this->mod_general->watermarktextAndLogo($thumb,$bgPosition,$textPosition);
+                }
             }
         }
         return @$thumb;
