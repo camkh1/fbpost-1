@@ -68,6 +68,9 @@ class Wordpress extends CI_Controller
         /*End show fbconfig*/
 
         $action = $this->input->get('action');
+        if($action == 'photopageshare') {
+            $data['photoDetail'] = $this->photopageshare();
+        }
         if($action == 'shareToGroup') {
             /*get group*/
             // $wGList = array (
@@ -91,7 +94,7 @@ class Wordpress extends CI_Controller
             $data['group_list'] = $this->Mod_general->select ( Tbl_social_group::tblName, '*', $where_uGroup );
             /*End get group*/
         }
-        if($action == 'shareToPage') {
+        if($action == 'shareToPage' OR $action == 'photopageshare') {
             /*get page id*/
             $where_page = array (
                     Tbl_social_group::socail_id => $sid,
@@ -246,6 +249,49 @@ class Wordpress extends CI_Controller
         $this->load->view('wordpress/autopostwp', $data);
     }
 
+    public function photopageshare()
+    {
+        $path    = FCPATH . 'uploads/phptos/';
+        $files = array_diff(scandir($path), array('.', '..'));
+        $imageArr = array();
+        foreach ($files as $key => $value) {
+            //var_dump($value);
+            $f_type = pathinfo($value, PATHINFO_EXTENSION);
+            if ($f_type== "gif" OR $f_type== "png" OR $f_type== "jpeg" OR $f_type== "jpg" OR $f_type== "JPEG" OR $f_type== "JPG" OR $f_type== "PNG" OR $f_type== "GIF")
+            {
+                array_push($imageArr, $value);
+            }
+        }
+        $imageRan = $imageArr[mt_rand(0, count($imageArr) - 1)];
+        $get_info = pathinfo($imageRan);
+        $image_name = $get_info['filename'];
+        $image_path = $path.$imageRan;
+        $image_path = str_replace('\\', '\\\\', $image_path);
+        $image_path = str_replace('/', '\\\\', $image_path);
+        $setData = new stdClass;
+        if(file_exists($image_path)) {
+            $setData->image = $image_path;
+            $txt_file = $path.$image_name.'.txt';
+            if(file_exists($txt_file)) {
+                $fh = fopen($txt_file,'r');
+                while ($line = fgets($fh)) {
+                  // <... Do your work with the line ...>
+                  $setData->text = $line;
+                }
+                fclose($fh);
+                //$setData->text = $image_path;
+            } else {
+                $txt_file = $path.'default.txt';
+                $fh = fopen($txt_file,'r');
+                while ($line = fgets($fh)) {
+                  // <... Do your work with the line ...>
+                  $setData->text = $line;
+                }
+                fclose($fh);
+            }
+        }
+        return $setData;
+    }
     public function post()
     {
         $log_id = $this->session->userdata ( 'user_id' );
@@ -267,18 +313,31 @@ class Wordpress extends CI_Controller
             $asThumb = @$this->input->post ( 'asThumb' );
             $label = @$this->input->post ( 'label' );
             $addvideo = @$this->input->post ( 'addvideo' );
+            $btnplayer = @$this->input->post ( 'btnplayer' );
+            $imagetext = @$this->input->post ( 'imagetext' );
             if($label == 'lotto'||$label == 'otherlotto') {
-                $thumb = $this->imageMerge($thumbs,$asThumb,$label);
+                $thumb = $this->imageMerge($thumbs,$asThumb,$label,$btnplayer,$imagetext);
+            } else {
+                if(!empty($asThumb)) {
+                   $thumb =  $thumbs[0];
+                }
             }
             if(empty($thumb)) {
                 $thumb = '';
             }
-            $setTitle = new stdClass();
-            $setTitle->title = $title;
-            $setTitle->shareTitle = $titleShare;
+            $setDataPost = new stdClass();
+            $setDataPost->link = $link;
+            $setDataPost->thumb = $thumb;
+            $setDataPost->thumbs = $thumbs;
+            $setDataPost->title = $title;
+            $setDataPost->label = $label;
+            $setDataPost->shareTitle = $titleShare;
+            $setDataPost->addvideo = $addvideo;
+            $setDataPost->btnplayer = $btnplayer;
+            $setDataPost->imagetext = $imagetext;
             require_once(APPPATH.'controllers/managecampaigns.php');
             $Managecampaigns =  new Managecampaigns();
-            $getdata = $Managecampaigns->insertLink($link,$setTitle,$thumb,$label,$thumbs,$addvideo);
+            $getdata = $Managecampaigns->insertLink($setDataPost);
             if(!empty($getdata)) {
                 //echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=post&pid='.$getdata.'";}, 10 );</script>';
                 echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/yturl?pid='.$getdata.'&action=postblog";}, 10 );</script>';
@@ -287,7 +346,7 @@ class Wordpress extends CI_Controller
         }
         $this->load->view('wordpress/post', $data);
     }
-    public function imageMerge($thumbs=array(),$asThumb=array(),$label)
+    public function imageMerge($thumbs=array(),$asThumb=array(),$label,$btnplayer='',$imagetext='')
     {
         $setArr = array();
         if(!empty($thumbs[0])) {
@@ -392,7 +451,7 @@ class Wordpress extends CI_Controller
             }
             if(!empty($thumb)) {
                 if($label == 'lotto') {
-                    $thumb = $this->mod_general->watermarktextAndLogo($thumb,$bgPosition,$textPosition);
+                    $thumb = $this->mod_general->watermarktextAndLogo($thumb,$bgPosition,$textPosition,$btnplayer,$imagetext);
                 }
             }
         }

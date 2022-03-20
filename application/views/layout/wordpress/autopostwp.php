@@ -28,10 +28,13 @@ $pid = @!empty($_GET['pid'])? $_GET['pid']:0;;
 // $k = array_rand($sitePpost);
 // $blogRand = $sitePpost[$k];
 $blogRand = !empty($query_fb->wp_url)? $query_fb->wp_url : '';
+$wp_cate = '';
+
 $site = @$_GET['site'];
 $action = @$_GET['action'];
 $imgid = @$_GET['imgid'];
 $story_fbid = @$_GET['fbid'];
+
 if(!empty($site)) {
     $blogRand = $site;
 }
@@ -53,8 +56,14 @@ if($action == 'shareToGroup' ) {
 if($action == 'shareToPage' ) {
     $count = @!empty($_GET['count'])? $_GET['count']:0;
     if((count($page_list) != $count)) {
-        $pageName = $page_list[$count]->sg_name;
-        $pageID = $page_list[$count]->sg_page_id;
+        if(@$query_fb->id == $page_list[$count]->sg_page_id) {
+            $count = $count + 1;
+            echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'wordpress/autopostwp?action=shareToPage&pid='.$pid.'&fbid='.$story_fbid.'&count='.$count.'";}, 3 );</script>';
+            die;
+        } else {
+            $pageName = $page_list[$count]->sg_name;
+            $pageID = $page_list[$count]->sg_page_id;
+        }
     }
     if(!empty($count)) {
         if((count($page_list) == $count)) {
@@ -63,6 +72,30 @@ if($action == 'shareToPage' ) {
         }
     }
 }
+if($action == 'photopageshare' ) {
+    $count = @!empty($_GET['count'])? $_GET['count']:0;
+    $pageName = @$page_list[$count]->sg_name;
+    $pageID = @$page_list[$count]->sg_page_id;
+    if($query_fb->pageType =='profile' && $count == 1 || empty($pageID)) {
+        echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'wordpress/autopostwp?action=shareToGroup";}, 3 );</script>';
+        die;
+    }
+    if(!empty($count)) {
+        if(@$query_fb->id == $page_list[$count]->sg_page_id) {
+            $count = $count + 1;
+            echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'wordpress/autopostwp?action=photopageshare&count='.$count.'";}, 3 );</script>';
+            die;
+        } else {
+            $pageName = $page_list[$count]->sg_name;
+            $pageID = $page_list[$count]->sg_page_id;
+        }
+        if((count($page_list) == $count)) {
+            echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'wordpress/autopostwp?action=shareToGroup";}, 3 );</script>';
+            die;
+        }
+    }
+}
+
 if(!empty($post)) {
     $pConent = json_decode($post[0]->p_conent);
     $content = html_entity_decode(html_entity_decode(stripslashes(trim($pConent->message))));
@@ -96,6 +129,8 @@ if(!empty($post)) {
         // $titles = str_replace("&nbsp;", "<sp>", $titles);
         // $titles = str_replace(" ", "<sp>", $titles);
     endif;
+    $titles = str_replace("​&​q​u​o​t​;", '"', $titles);
+    $titles = str_replace("&nbsp;", '"', $titles);
     $pid = $post[0]->p_id;
     $content = htmlentities($content);
 
@@ -105,13 +140,13 @@ if(!empty($post)) {
     
     $postLink = $pConent->link;
     //$content = '<p><img src="'.$thumb.'"/></p>' . $content;
-    $labels = @$pSchedule->label;
+    $setLabels = @$pSchedule->label;
     if(preg_match('/บน-ล่าง/', $post[0]->p_name) || preg_match('/เลข/', $post[0]->p_name) || preg_match('/งวด/', $post[0]->p_name) || preg_match('/หวย/', $post[0]->p_name) || preg_match('/ปลดหนี้/', $post[0]->p_name) || preg_match('/Lotto/', $post[0]->p_name) || preg_match('/Lottery/', $post[0]->p_name))  {
-        $labels = 'lotto';
+        $setLabels = 'lotto';
     }
 
-    if(!empty($labels)) {
-        switch ($labels) {
+    if(!empty($setLabels)) {
+        switch ($setLabels) {
             case 'news':
                 if($blogRand == 'https://www.jc24news.com/') {
                     $labels = '1';
@@ -145,6 +180,19 @@ if(!empty($post)) {
         }
     }
 }
+
+
+if(!empty($query_fb->wp_cate)) {
+    $wp_cate = explode(',', $query_fb->wp_cate);
+    if(!empty($wp_cate)) {
+        for ($i=0; $i < count($wp_cate); $i++) { 
+            $labelAr = explode('|', $wp_cate[$i]);
+            if(@$labelAr[0] == @$setLabels) {
+                $label = $labelAr[1];
+            }
+        }
+    }
+}
  if ($this->session->userdata('user_type') != 4) { ?>
     <style>
         .radio-inline{}
@@ -166,9 +214,11 @@ if(!empty($post)) {
     <input type="hidden" value="<?php echo @$GroupName;?>" id="gName" />
     <input type="hidden" value="<?php echo @$GroupID;?>" id="groupID" />
 <?php endif;?>
-
+<?php if($action == 'photopageshare'):?>
+    <input type="hidden" value="<?php echo @$photoDetail->text;?>" id="phto_title" />
+<?php endif;?>
 <code id="codeB" style="width:300px;overflow:hidden;display:none"></code>
-    <code id="examplecode5" style="width:300px;overflow:hidden;display:none">var codedefault2=&quot;CODE: SET !EXTRACT_TEST_POPUP NO\n SET !TIMEOUT_PAGE 300\n SET !ERRORIGNORE YES\n SET !TIMEOUT_STEP 1\n&quot;;var wm=Components.classes[&quot;@mozilla.org/appshell/window-mediator;1&quot;].getService(Components.interfaces.nsIWindowMediator);var window=wm.getMostRecentWindow(&quot;navigator:browser&quot;);const XMLHttpRequest = Components.Constructor(&quot;@mozilla.org/xmlextras/xmlhttprequest;1&quot;);var homeUrl = &quot;<?php echo base_url();?>&quot;,add_post_url = &quot;<?php echo @$blogRand;?>&quot;,titles = &quot;&quot;,contents = &quot;&quot;,thumb = &quot;&quot;,pid = &quot;<?php echo @$pid;?>&quot;,labels = [<?php echo @$labels;?>]<?php if(empty($link) && $action == 'uploadimage'):?>,fileupload = &quot;<?php echo @$fileupload;?>&quot;,imgname=&quot;<?php echo @$imgname;?>&quot;,imgext=&quot;<?php echo @$imgext;?>&quot;<?php endif;?>,imgid = &quot;<?php echo @$imgid;?>&quot;,fpid = &quot;<?php echo @$query_fb->id;?>&quot;,story_fbid = &quot;<?php echo @$story_fbid;?>&quot;,pagetype = &quot;<?php echo @$query_fb->pageType;?>&quot;,count = &quot;<?php echo @$count;?>&quot;,page_share_id = &quot;<?php echo @$pageID;?>&quot;;</code>
+    <code id="examplecode5" style="width:300px;overflow:hidden;display:none">var codedefault2=&quot;CODE: SET !EXTRACT_TEST_POPUP NO\n SET !TIMEOUT_PAGE 300\n SET !ERRORIGNORE YES\n SET !TIMEOUT_STEP 1\n&quot;;var wm=Components.classes[&quot;@mozilla.org/appshell/window-mediator;1&quot;].getService(Components.interfaces.nsIWindowMediator);var window=wm.getMostRecentWindow(&quot;navigator:browser&quot;);const XMLHttpRequest = Components.Constructor(&quot;@mozilla.org/xmlextras/xmlhttprequest;1&quot;);var homeUrl = &quot;<?php echo base_url();?>&quot;,add_post_url = &quot;<?php echo @$blogRand;?>&quot;,titles = &quot;&quot;,contents = &quot;&quot;,thumb = &quot;&quot;,pid = &quot;<?php echo @$pid;?>&quot;,labels = [<?php echo @$label;?>]<?php if(empty($link) && $action == 'uploadimage'):?>,fileupload = &quot;<?php echo @$fileupload;?>&quot;,imgname=&quot;<?php echo @$imgname;?>&quot;,imgext=&quot;<?php echo @$imgext;?>&quot;<?php endif;?>,imgid = &quot;<?php echo @$imgid;?>&quot;,fpid = &quot;<?php echo @$query_fb->id;?>&quot;,story_fbid = &quot;<?php echo @$story_fbid;?>&quot;,pagetype = &quot;<?php echo @$query_fb->pageType;?>&quot;,count = &quot;<?php echo @$count;?>&quot;,page_share_id = &quot;<?php echo @$pageID;?>&quot;,photos = &quot;<?php echo @$photoDetail->image;?>&quot;;</code>
     <script type="text/javascript">
         function runcode(codes) {
             var str = $("#examplecode5").text();
@@ -211,13 +261,31 @@ if(!empty($post)) {
     <?php endif;?>
     <?php if(!empty($_GET['pid']) && $action == 'shareLinkToProfile'):?>
         setTimeout(function() {
+            <?php if(@$query_fb->pageType =='profile'):?>
             load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/shareLinkToProfile');
-        }, 1000 * 1);
+            //window.location = "<?php echo base_url();?>wordpress/autopostwp?action=shareToPage&pid=<?php echo @$pid;?>";
+            <?php else:?>
+                load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/shareLinkToProfile');
+                //window.location = "<?php echo base_url();?>wordpress/autopostwp?action=shareToPage&pid=<?php echo @$pid;?>";
+            //load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/shareLinkToPage_business');
+            <?php endif;?>
+        }, 1000 * 300);
     <?php endif;?>
     <?php if(!empty($_GET['pid']) && $action == 'shareToPage'):?>
         setTimeout(function() {
-            load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/shareLinkToPage');
-        }, 1000 * 1);
+            <?php if(!empty($pageID)):?>
+            load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/shareLinkToPage_mobile');
+            <?php else:?>
+                window.location = "<?php echo base_url();?>wordpress/autopostwp?action=shareToGroup&pid=<?php echo @$pid;?>";
+            //load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/shareLinkToPage_business');
+            <?php endif;?>
+            //load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/shareLinkToPage_business');
+        }, 1000 * <?php if(empty(@$count)):?>3<?php else:?>3<?php endif;?>);
+    <?php endif;?>
+    <?php if(!empty($_GET['pid']) && $action == 'shareToMainPage'):?>
+        setTimeout(function() {
+            load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/shareToMainPage');
+        }, 1000 * 3);
     <?php endif;?>
     <?php if($action == 'shareToGroup'):?>
         // setTimeout(function() {
@@ -241,6 +309,9 @@ if(!empty($post)) {
             }
         <?php endif;?>
     <?php endif;?>
+    <?php if($action == 'photopageshare' && !empty($photoDetail->image)): ?>
+        load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/uploadPhotoToPage');
+    <?php endif;?>
     }, 2000 );
     </script>
     <div class="row">
@@ -263,7 +334,7 @@ if(!empty($post)) {
                     <div class="form-group">
                         <div class="col-md-12 clearfix">
                             <input id="title" type="text" name=""  class="form-control" value="<?php echo htmlspecialchars_decode(@$titles);?>" />
-                            <input id="page_title" type="text"  class="form-control" value="<?php echo @$query_fb->name;?>" />
+                            <input id="page_title" type="hidden"  class="form-control" value="<?php echo @$query_fb->name;?>" />
                         </div>
                     </div>
                     <div class="form-group">

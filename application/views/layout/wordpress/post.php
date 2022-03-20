@@ -672,9 +672,20 @@ if(!empty($post)) {
                         </div>                                   
                     </div>
                     <div class="form-group">
-                        <div class="col-md-12 clearfix">
+                        <div class="col-md-10">
+                            <label class="checkbox"> 
+                                <input value="1" type="checkbox" name="btnplayer">
+                                <b>BTN Player</b>
+                            </label>
+                            <label class="checkbox"> 
+                                <input value="1" type="checkbox" name="imagetext">
+                                <b>Random Image Text</b>
+                            </label>
+                        </div>
+                        <div class="col-md-2">
                             <input id="sumbmit" type="submit"class="btn pull-right" value="Post" />
                         </div>
+                        <div class="clearfix"></div>
                     </div>
                     </form>
                     <div class="clearfix"></div>

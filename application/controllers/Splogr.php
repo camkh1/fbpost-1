@@ -243,19 +243,18 @@ class Splogr extends CI_Controller
             case 'www.alibaba.com':
                 //$script = @$html->find('script',25)->innertext;
                 $perPages = @explode('"total":', $html);
-
                 $perPage = @explode(',', $perPages[1]);
                 $totalP = @$perPage[0];
 
-                $cPageArr = @explode('"current":', $perPages[1]);
+                $cPageArr = @explode('"current":', $html);
                 $cPage = @explode(',', $cPageArr[1]);
                 $currentPage = @$cPage[0];
                 
                 $nexts = @explode('/', $site_url);
                 $last = @count($nexts) - 1;
                 //$totalPost = count(($html->find('.l-main-content .m-gallery-product-item-wrap')));
-                foreach($html->find('.l-main-content .m-gallery-product-item-wrap') as $e) {
-                    $link = $e->find('.item-info .title a',0)->href;
+                foreach($html->find('.app-ppc-list .elements-title-normal') as $e) {
+                    $link = $e->href;
                     $where_u = array(
                         'uid' => $log_id,
                         'link' => $link,
@@ -278,10 +277,9 @@ class Splogr extends CI_Controller
                         // return $this->fromAlibaba($link,$get);
                         // break;
                     } else {
-                        continue;
+                        //continue;
                     }
                 }
-                
                 $setNextNew = ((int) $currentPage + 1) . '.html';
                 $setNext = str_replace($nexts[$last], $setNextNew, $site_url);
                 $dataLink = array(

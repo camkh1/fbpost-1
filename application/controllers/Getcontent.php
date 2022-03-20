@@ -2559,7 +2559,6 @@ $desc = str_get_html($str);
                 }
                 $html->save();
                 $content = $this->gEntry($html,'.articleContent article');
-
                 $obj->vid = '';
                 $content = html_entity_decode(html_entity_decode(stripslashes(trim($content))));
                 $obj->conent = $content;
@@ -3007,7 +3006,11 @@ $desc = str_get_html($str);
         $i=0;
         foreach($html->find('figure') as $item) {
             if(!empty($imgarr[$i])) {
-                $item->outertext = '<img src="'.$imgarr[$i].'"/>';
+                if(@getimagesize($imgarr[$i])){
+                    $item->outertext = '<img src="'.$imgarr[$i].'"/>';
+                }else{
+                    $item->outertext = '';
+                }
             } else {
                 $attrs = 'data-src';
                 $datascr = @$item->find ('iframe',0)->$attrs;

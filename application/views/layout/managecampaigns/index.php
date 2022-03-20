@@ -252,6 +252,8 @@ function parse_query_string(query) {
 									<li><a
 										href="<?php echo base_url(); ?>managecampaigns?progress=1"><i class="icon-share"></i> Post in progress</a></li>
 									<li><a
+										href="<?php echo base_url(); ?>managecampaigns?showby=<?php echo !empty($this->session->userdata ( 'user_id' )) ? $this->session->userdata ( 'user_id' ) : ''; ?>"><i class="icon-pencil"></i> Show All post by User: <?php echo !empty($this->session->userdata ( 'user_id' )) ? $this->session->userdata ( 'user_id' ) : ''; ?></a></li>
+										<li><a
 										href="<?php echo base_url(); ?>managecampaigns?progress=clear"><i class="icon-pencil"></i> Post list</a></li>
 								</ul>
 							</div>
@@ -313,6 +315,7 @@ function parse_query_string(query) {
 			}
 	    	$content = json_decode($value->p_conent);
 	    	$getLink = $content->link;
+	    	$shareTitle = $content->name;
 	    	$picture = @$content->picture;
 	    	$uploaded = true;
 	    	if (!@preg_match('/http/', @$picture)):
@@ -361,7 +364,7 @@ function parse_query_string(query) {
 									value="<?php echo $value->{Tbl_posts::id}; ?>" /></td>
 								<td><a
 									href="<?php echo base_url(); ?>managecampaigns/add?id=<?php echo $value->{Tbl_posts::id}; ?>"><img src="<?php echo @$picture; ?>" style="width: 80px;float: left;margin-right: 5px"> <?php
-									$titles = html_entity_decode(html_entity_decode(str_replace('\\', '', $value->{Tbl_posts::name})));
+									$titles = html_entity_decode(html_entity_decode(str_replace('\\', '', $shareTitle)));
 									 echo @$titles; ?></a>
 								</td>
 								<td class="hidden-xs">
@@ -416,7 +419,7 @@ function parse_query_string(query) {
 												<li><a
 												href="<?php echo base_url(); ?>facebook/shareation?post=getpost&pid=<?php echo $value->{Tbl_posts::id}; ?>"><i class="icon-share"></i> Share now</a></li>
 											<?php endif;?>
-											<li><a data-title="<?php echo $value->{Tbl_posts::name};?>" data-mlink="<?php echo @$mainlink;?>" data-img="<?php echo $content->picture; ?>" data-pre="<?php echo @$subTitle;?>" data-link="<?php echo @$link;?>" onclick="getcode(this);" href="javascript:void(0);"><i class="icon-pencil"></i> Get Link</a></li>
+											<li><a data-title="<?php echo @$shareTitle;?>" data-mlink="<?php echo @$mainlink;?>" data-img="<?php echo $content->picture; ?>" data-pre="<?php echo @$subTitle;?>" data-link="<?php echo @$link;?>" onclick="getcode(this);" href="javascript:void(0);"><i class="icon-pencil"></i> Get Link</a></li>
 											<?php
 											$parse = parse_url($glink);
 											//$bContent = preg_replace('/\s+/', '<sp>', $message);

@@ -670,16 +670,25 @@ class Managecampaigns extends CI_Controller {
             if(!empty($this->input->get('progress') == 1)) {
                 $this->session->set_userdata('progress', 1);
             }
+            if(!empty($this->input->get('showby'))) {
+                $this->session->set_userdata('showby', $this->input->get('showby'));
+            }
             if(!empty($this->input->get('progress') == 'clear')) {
                 $this->session->unset_userdata('progress');
+                $this->session->unset_userdata('showby');
                 redirect(base_url().'managecampaigns');
             }
-
-            $where_so = array (
-                'user_id' => $log_id,
-                'u_id' => $fbUserId,
-                'p_post_status'=>0
-            );
+            if(!empty($this->session->userdata ( 'showby' ))) {
+                $where_so = array (
+                    'user_id' => $this->session->userdata ( 'showby' )
+                );
+            } else {
+                $where_so = array (
+                    'user_id' => $log_id,
+                    'u_id' => $fbUserId,
+                    'p_post_status'=>0
+                );
+            }
 
             if(!empty($this->session->userdata ( 'progress' ))) {
                 $oneDaysAgo = date('Y-m-d h:m:s', strtotime('today', strtotime(date('Y-m-d'))));
@@ -720,6 +729,7 @@ class Managecampaigns extends CI_Controller {
                 if(!empty($pprogress)) {
                     $where_so['where_in'] = array('p_id' => $pprogress);
                 }
+
             }
         
             $this->load->library ( 'pagination' );
@@ -7792,7 +7802,9 @@ WHERE sid ='.$u->u_id .' ORDER BY 1 DESC';
                     $fistLink = '';
                     $i=0;
                     foreach ($glink as $key => $gurls) {
-                        $setLink = $this->insertLink($key);
+                        $setDataPost = new stdClass();
+                        $setDataPost->link = $key;
+                        $setLink = $this->insertLink($setDataPost);
                         if(!empty($setLink)) {
                             echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=post&pid='.$setLink.'";}, 10 );</script>';
                             break;
@@ -8501,6 +8513,10 @@ die;
                 if(!empty($pia)) {
                     $this->session->set_userdata('pia', 1);
                 }
+                if (date('H') ==7 || date('H') ==13 || date('H') ==21) {
+                    echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'wordpress/autopostwp?action=photopageshare";}, 3 );</script>';
+                    die;
+                }
                 if (date('H') <= 22 && date('H') > 4 && date('H') !='00') {
                     $pia = $this->session->userdata ( 'pia' );
                     if(empty($pia)) {
@@ -8544,8 +8560,8 @@ die;
                         'line',
                         'line',
                         'line',
-                        'amung',
-                        'yt',
+                        //'amung',
+                        //'yt',
                     );
                     $l = array_rand($RanChoose);
                     $getChoose = $RanChoose[$l];
@@ -8591,7 +8607,10 @@ die;
             case 'line':
                 $link = $this->feed_line();
                 if(!empty($link)) {
-                    $getdata = $this->insertLink($link,'','','news','','');
+                    $setDataPost = new stdClass();
+                    $setDataPost->link = $link;
+                    $setDataPost->label = 'news';
+                    $getdata = $this->insertLink($setDataPost);
                     if(!empty($getdata)) {
                         echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/yturl?pid='.$getdata.'&action=postblog";}, 10 );</script>';
                         exit();
@@ -8811,9 +8830,25 @@ public function userd($obj)
         }
         return $pid;
     }
-
-    public function insertLink($url='',$settitle='',$setthumbs='',$setLabel='',$thumbs=array(),$addvideo='')
+    /*
+    $setDataPost->link = $link;
+    $setDataPost->thumb = $thumb;
+    $setDataPost->title = $title;
+    $setDataPost->label = $label;
+    $setDataPost->shareTitle = $titleShare;
+    $setDataPost->addvideo = $addvideo;
+    $setDataPost->btnplayer = $btnplayer;
+    $setDataPost->imagetext = $imagetext;
+    //$link,$setDataPost,$thumb,$label,$thumbs,$addvideo
+    */
+    public function insertLink($setDataPost)
     {
+        $url = @$setDataPost->link;
+        $setthumbs = @$setDataPost->thumb;
+        $thumbs = @$setDataPost->thumbs;
+        $setLabel = @$setDataPost->label;
+        $label = @$setDataPost->label;
+        $addvideo = @$setDataPost->addvideo;
         if(empty($url)) {
             echo 'no url';
             return false;
@@ -8841,20 +8876,43 @@ public function userd($obj)
                 $youtubeCode = '';
                 $from = '';
             }
-            
-            $conent = $bodytext.'<p>'.$youtubeCode.'</p>';
+            $conent = $bodytext;
+            if(!empty($thumbs)) {
+                for ($i=0; $i < count($thumbs); $i++) { 
+                    if(!empty($thumbs[$i])) {
+                        if (preg_match('/fna.fbcdn/', $thumbs[$i])) {
+                            $setImage = $this->mod_general->uploadMedia($thumbs[$i],$param);
+                            
+                        } else {
+                            $setImage = $thumbs[$i];
+                        }
+                        if($this->UR_exists($setImage)) {
+                            $conent = $conent.'<img src="'.$setImage.'"/><p> ​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​</p>';
+                        }
+                    }
+                }
+            }
+            $conent = $conent.'<p>'.$youtubeCode.'</p>';
             
         } else {
             /*check duplicate*/
             $whereDupA = array(
                 'object_id'      => $url,
                 'meta_name'     => $log_id . 'sitelink',
-                'meta_key'      => date('Y-m-d'),
             );
             $queryCheckDup = $this->Mod_general->select('meta', '*', $whereDupA);
             /*check duplicate*/
 
             if(empty($queryCheckDup[0])) {
+                /*update link status*/
+                $data_blog = array(
+                    'meta_key'      => date('Y-m-d'),
+                    'object_id'      => $url,
+                    'meta_value'     => 1,
+                    'meta_name'     => $log_id . 'sitelink',
+                );
+                $this->Mod_general->insert('meta', $data_blog);
+                /*End update link status*/
                 require_once(APPPATH.'controllers/Getcontent.php');
                 $aObj = new Getcontent(); 
                 $getContent = $aObj->getConentFromSite($url,'');
@@ -8899,7 +8957,21 @@ public function userd($obj)
                 //         }
                 //     }
                 // } 
-
+                if(!empty($thumbs)) {
+                    for ($i=0; $i < count($thumbs); $i++) { 
+                        if(!empty($thumbs[$i])) {
+                            if (preg_match('/fna.fbcdn/', $thumbs[$i])) {
+                                $setImage = $this->mod_general->uploadMedia($thumbs[$i],$param);
+                                
+                            } else {
+                                $setImage = $thumbs[$i];
+                            }
+                            if($this->UR_exists($setImage)) {
+                                $conent = $conent.'<img src="'.$setImage.'"/><p> ​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​</p>';
+                            }
+                        }
+                    }
+                }
                 $checkSite = $this->CheckSiteLotto();
                 if (in_array(@$getContent->fromsite, $checkSite)) {
                     if(strlen (strip_tags($getContent->conent))<250) {
@@ -8909,14 +8981,14 @@ public function userd($obj)
                     }
                     $conent = $bodytext.'<br/>'.$youtubeCode;
                 }
-                /*update link status*/
-                $data_blog = array(
-                    'meta_key'      => date('Y-m-d'),
-                    'object_id'      => $url,
-                    'meta_value'     => 1,
-                    'meta_name'     => $log_id . 'sitelink',
-                );
-                $lastID = $this->Mod_general->insert('meta', $data_blog);
+                // /*update link status*/
+                // $data_blog = array(
+                //     'meta_key'      => date('Y-m-d'),
+                //     'object_id'      => $url,
+                //     'meta_value'     => 1,
+                //     'meta_name'     => $log_id . 'sitelink',
+                // );
+                // $lastID = $this->Mod_general->insert('meta', $data_blog);
             } else {
                 echo 'The is already posted';
             }
@@ -8936,7 +9008,7 @@ public function userd($obj)
             $title = explode(' - ', $title)[0];
         }
 
-        $conent = '<p>~</p>'.$title .'<p>~</p>'.$conent.$addvideo;
+        $conent = '<p>~</p>'.$title .'<p> ​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​</p>'.$conent.$addvideo;
         if(!empty($setLabel)){
             if($setLabel == 'news'|| $setLabel == 'entertainment') {
                 $conent = $conent.$addvideo .'<br/>_____________<br/>ขอขอบคุณข้อมูลจาก '.@$this->remove_http($fromURL);
@@ -8993,18 +9065,21 @@ public function userd($obj)
         $file_tmp_name = $fbUserId . '_tmp_action.json';
         $this->json($tmp_path,$file_tmp_name, $schedule);
         /*End save tmp data post*/
-        if(!empty($settitle->title)) {
-            $title = $settitle->title;
+        if(!empty($setDataPost->title)) {
+            $title = $setDataPost->title;
         } 
         $title = str_replace('Thailottery', '', $title);
         $title = str_replace('/\s+/', '_', $title);
         $title = str_replace('/\s+/', '_', $title);
-        // $title = $this->getMBStrSplit($title, 1);
+        $title = str_replace('&quot;', '', $title);
+        $title = $this->getMBStrSplit(trim($title), 1);
+        $title = implode('​', $title);
+        // var_dump($title1);die;
         // $tc = count($title) / 2;
         // $st = [];
         // for ($i=0; $i < count($title); $i++) {                
         //     if($i<$tc) {
-        //         array_push($st, $title[$i] . ' ');
+        //         array_push($st, $title[$i] . '​');
         //     } else {
         //         array_push($st, $title[$i] . '');
         //     }
@@ -9053,30 +9128,30 @@ public function userd($obj)
             $thumb = $setthumbs;
         }
         $thumb = $this->mod_general->uploadMedia($thumb,$param);
-        if(!empty($thumbs)) {
-            for ($i=0; $i < count($thumbs); $i++) { 
-                if(!empty($thumbs[$i])) {
-                    if (preg_match('/fna.fbcdn/', $thumbs[$i])) {
-                        $conent = '<img src="'.$this->mod_general->uploadtoImgur($thumbs[$i]).'"/>      <p> ​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​</p>'.$conent;
-                    } else {
-                        $conent = '<img src="'.$thumbs[$i].'"/>      <p> ​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​</p>'.$conent;
-                    }
-                }
-            }
-        }
-        if(!empty($settitle->shareTitle)) {
-            $shareTitle = $settitle->shareTitle;
+        if(!empty($setDataPost->shareTitle)) {
+            $shareTitle = $setDataPost->shareTitle;
         } else {
             $shareTitle = $title;
         }
+
+        require_once(APPPATH.'controllers/Splogr.php');
+        $aObj = new Splogr(); 
+        $enContent = $aObj->getpost(1);
+        $enTxt = preg_replace('/\r\n|\r/', "\n", $enContent["content"][0]["content"]);
+        $enTitle = $enContent["content"][0]["title"];
+        $enTitles = explode(' - ', $enTitle);
+        if(!empty($enTitles[0])) {
+            $enTitle = $enTitles[0];
+        }
+        $conent = $conent . '<p>'.$enTitle.'</p><p>'.$enTxt.'</p>';
         $content = array (
-                'name' => @htmlentities(htmlspecialchars(str_replace(' - YouTube', '', $shareTitle))),
-                'message' => @htmlentities(htmlspecialchars(addslashes($conent))),
-                'caption' => '',
-                'link' => $url,
-                'mainlink' => $url,
-                'picture' => @$thumb,                            
-                'vid' => '',                          
+            'name' => @htmlentities(htmlspecialchars(str_replace(' - YouTube', '', $shareTitle))),
+            'message' => @htmlentities(htmlspecialchars(addslashes($conent))),
+            'caption' => '',
+            'link' => $url,
+            'mainlink' => $url,
+            'picture' => @$thumb,                            
+            'vid' => '',                          
         );
         /*End preparepost*/
         if($post_only) {
@@ -9101,6 +9176,10 @@ public function userd($obj)
         if($AddToPost) {
            return $AddToPost;
         }
+    }
+    function UR_exists($url){
+       $headers=get_headers($url);
+       return stripos($headers[0],"200 OK")?true:false;
     }
 function remove_http($url) {
    $disallowed = array('http://www.', 'https://www.','http://', 'https://');
@@ -10719,6 +10798,7 @@ HTML;
             $inputRan = $this->input->post('fbconfig');
             $fbPName = $this->input->post('fbPName');
             $sitepost = $this->input->post('sitepost');
+            $sitecate = $this->input->post('sitecate');
             $pageType = $this->input->post('pageType');
             $randomLink = 'fbconfig';
             $wFbconfig = array(
@@ -10735,7 +10815,8 @@ HTML;
                             'id'=>$inputRan,
                             'name'=>$fbPName,
                             'pageType'=>$pageType,
-                            'wp_url'=>$sitepost
+                            'wp_url'=>$sitepost,
+                            'wp_cate'=>$sitecate
                         )
                     )
                 );
@@ -11444,7 +11525,7 @@ function makeRequests($service) {
         $iHeight = $this->input->post('h'); // desired image result dimensions
         $iJpgQuality = 100;
         $resize_to   = 0;
-        $setHeight   = 420;
+        $setHeight   = $iHeight;
         $newName = md5(time().rand());
         $target_dir = './uploads/image/';
         if(!empty($_FILES["image_file"]["name"])) {
@@ -11462,7 +11543,7 @@ function makeRequests($service) {
         if(!empty($sTempFileName)) {
             if (file_exists($sTempFileName) && filesize($sTempFileName) > 0) {
                 @chmod($sTempFileName, 0644);
-                $aSize = getimagesize($sTempFileName); // try to obtain image info
+                list($width, $height, $type, $attr) = $aSize = getimagesize($sTempFileName); // try to obtain image info
                 if (!$aSize) {
                     @unlink($sTempFileName);
                     return;
@@ -11497,7 +11578,7 @@ function makeRequests($service) {
                 // copy and resize part of an image with resampling
                 $x_a = $this->input->post('x1');
                 $y_a = $this->input->post('y1');
-                imagecopyresampled($vDstImg, $vImg, 0, 0, (int)$x_a, (int)$y_a, $iWidth, $iHeight, (int)$iWidth, (int)$iHeight);
+                imagecopyresampled($vDstImg, $vImg, 0, 0, (int)$x_a, (int)$y_a, $iWidth, $iHeight, $width, $height);
 
                 // define a result image filename
                 $sResultFileName = $sTempFileName . $sExt;
@@ -11505,7 +11586,6 @@ function makeRequests($service) {
                 // output image to file
                 imagejpeg($vDstImg, $sResultFileName, $iJpgQuality);
                 @unlink($sTempFileName);
-
                 if ($resize_to > 0) {
                     /*resize image*/
                     $maxDim = $resize_to;
