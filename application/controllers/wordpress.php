@@ -145,6 +145,7 @@ class Wordpress extends CI_Controller
         }
         if(!empty($getPost[0]) && !empty($this->input->get('img'))) {
             $img = $this->input->get('img');
+            
             $img = str_replace('http:', 'https:', $img);
             $site = $this->input->get('site');
             $imgid = $this->input->get('imgid');
@@ -369,7 +370,18 @@ class Wordpress extends CI_Controller
                 if(!empty($setArr[$j])) {
                     switch ($count) {
                         case 1:
-                            $thumb = $this->mod_general->mergeImages('',$this->mod_general->crop_image($setArr[$j],$setWeight,($setHeight-95)),'lt');
+                            //$thumb = $this->mod_general->mergeImages('',$this->mod_general->crop_image($setArr[$j],$setWeight,($setHeight-95)),'lt');
+                            $param = array(
+                                'btnplayer'=>0,
+                                'playerstyle'=>0,
+                                'imgcolor'=>0,
+                                'txtadd'=>'',
+                                'filter_brightness'=>0,
+                                'filter_contrast'=>0,
+                                'img_rotate'=>'',
+                                'no_need_upload'=>1,
+                            );
+                            $thumb = $this->mod_general->uploadMedia($setArr[$j],$param);
                             $textPosition = 40;
                             $bgPosition = 'cb';
                             break;

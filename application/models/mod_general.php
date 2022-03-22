@@ -1412,8 +1412,6 @@ public function get_video_id($param, $videotype = '')
     }
     public function crop_image($imgSrc,$thumbW=300,$thumbH=300)
     {
-        echo $imgSrc;
-        echo '<br/>';
         $ext = pathinfo($imgSrc, PATHINFO_EXTENSION);
         if (preg_match('/fna.fbcdn/', $imgSrc)) {
             $ext = 'jpg';
