@@ -1441,6 +1441,32 @@ public function get_video_id($param, $videotype = '')
             fwrite($fp, $content);
             fclose($fp);
         }
+<<<<<<< HEAD
+=======
+        if(!file_exists($fileName)) {
+            if (preg_match('/fbpost\\\uploads/', $imgSrc)) {
+                //@copy($imgSrc, $fileName);
+                $file_titles = basename($imgSrc);
+                $file_titles = explode('.', $file_titles);
+                $file_title = $file_titles[0];
+                $fileName = $imgSrc;
+            } else {
+                $file_title = strtotime(date('Y-m-d H:i:s'));
+                $file_title = $file_title.(rand(100,10000)).'.'.$ext;
+                $fileName = FCPATH . 'uploads/image/'.$file_title;
+                $arrContextOptions=array(
+                    "ssl"=>array(
+                        "verify_peer"=>false,
+                        "verify_peer_name"=>false,
+                    ),
+                );
+                $content = file_get_contents($imgSrc, false, stream_context_create($arrContextOptions));
+                $fp = fopen($fileName, "w");
+                fwrite($fp, $content);
+                fclose($fp);
+            }
+        }
+>>>>>>> 7d0313eaab6f7d5f6e7ab7003d7e9f55b8eadca2
         //getting the image dimensions
         list($width, $height) = getimagesize($fileName);
 
@@ -1690,6 +1716,12 @@ public function get_video_id($param, $videotype = '')
             $ext = pathinfo($file_path, PATHINFO_EXTENSION);
             if (preg_match('/fna.fbcdn/', $file_path)) {
                 $ext = 'jpg';
+<<<<<<< HEAD
+=======
+            }
+            if(empty($ext)) {
+                $ext = 'jpg';
+>>>>>>> 7d0313eaab6f7d5f6e7ab7003d7e9f55b8eadca2
             }
             $file_title = strtotime(date('Y-m-d H:i:s'));
             $file_title = $file_title.(rand(100,10000)).'.'.$ext;
@@ -1702,6 +1734,7 @@ public function get_video_id($param, $videotype = '')
                 $file_title = $file_titles[0];
                 $fileName = $file_path;
             } else {
+<<<<<<< HEAD
                 $ch = curl_init($file_path);
                 $fp = fopen($fileName, 'wb');
                 curl_setopt($ch, CURLOPT_FILE, $fp);
@@ -1710,18 +1743,43 @@ public function get_video_id($param, $videotype = '')
                 curl_close($ch);
                 fclose($fp);
             }
+=======
+                $arrContextOptions=array(
+                    "ssl"=>array(
+                        "verify_peer"=>false,
+                        "verify_peer_name"=>false,
+                    ),
+                );
+                $content = file_get_contents($file_path, false, stream_context_create($arrContextOptions));
+                $fp = fopen($fileName, "w");
+                fwrite($fp, $content);
+                fclose($fp);
+            }
+            
+            if($ext=='webp') {
+                $im = imagecreatefromwebp($fileName);
+                $old = $fileName;
+                $file_title = strtotime(date('Y-m-d H:i:s'));
+                $file_title = $file_title.(rand(100,10000)).'.jpg';
+                $fileName = FCPATH . 'uploads/image/'.$file_title;
+                imagejpeg($im, $fileName, 100);
+                imagedestroy($im);
+                @unlink($old);
+            }
+            sleep(1);
+>>>>>>> 7d0313eaab6f7d5f6e7ab7003d7e9f55b8eadca2
             $file_path = $fileName;
             $file_name = $imgName = $fileName;
             $uploads = 1;
             $file_name = $file_path;
-            if (file_exists($file_path)) {
+            if (file_exists($fileName)) {
                 $this->load->library('ChipVNl');
                 \ChipVN\Loader::registerAutoLoad();
 
 
                 $client_id = '51d22a7e4b628e4';
 
-                $filetype = mime_content_type($file_path);
+                $filetype = mime_content_type($fileName);
                 /*resize image*/
                 if(!empty($rezie)) {
                     $maxDim = 1200;
@@ -2058,6 +2116,7 @@ public function get_video_id($param, $videotype = '')
         return $file_a;
     }
 
+<<<<<<< HEAD
     public function watermarktextAndLogo($file_path='',$position,$textPosition)
     {
         $bg= FCPATH . 'uploads/image/watermark/bg_a.png';
@@ -2073,6 +2132,26 @@ public function get_video_id($param, $videotype = '')
         $this->load->library('ChipVNl');
         \ChipVN\Loader::registerAutoLoad();
         \ChipVN\Image::watermark($file_path, $setTextImage, 'lt');
+=======
+    public function watermarktextAndLogo($file_path='',$position,$textPosition,$btnplayer='',$imagetext='')
+    {
+        if(!empty($imagetext)) {
+           $bg= FCPATH . 'uploads/image/watermark/bg_black.png';
+            $this->load->library('ChipVNl');
+            \ChipVN\Loader::registerAutoLoad();
+            \ChipVN\Image::watermark($file_path, $bg, $position);
+
+            $mydir = FCPATH . 'uploads/image/watermark/randtext'; 
+            $myfiles = array_diff(scandir($mydir), array('.', '..')); 
+            $k = array_rand($myfiles);
+            $textImage = $myfiles[$k];
+            $setTextImage= $mydir.'/'.$textImage;
+            $this->load->library('ChipVNl');
+            \ChipVN\Loader::registerAutoLoad();
+            \ChipVN\Image::watermark($file_path, $setTextImage, 'lt'); 
+        }
+        
+>>>>>>> 7d0313eaab6f7d5f6e7ab7003d7e9f55b8eadca2
 
         // $bg= FCPATH . 'uploads/image/watermark/bg_a.png';
         $imagetobewatermark= imagecreatefromstring( file_get_contents( $file_path ) );
@@ -2089,8 +2168,15 @@ public function get_video_id($param, $videotype = '')
 
         $textColors = array(
             'y'=>array(255,255,0),
+<<<<<<< HEAD
             'r'=>array(255,0,0),
             'b'=>array(0,0,0),
+=======
+            'yb'=>array(255,255,0),
+            'r'=>array(255,0,0),
+            'w'=>array(255,255,255),
+            
+>>>>>>> 7d0313eaab6f7d5f6e7ab7003d7e9f55b8eadca2
         );
         $c = array_rand($textColors);
         $cArr = $textColors[$c];
@@ -2100,6 +2186,7 @@ public function get_video_id($param, $videotype = '')
         if($c == 'r') {
             $backColor = array(255,255,0);
         }
+<<<<<<< HEAD
         if($c == 'b') {
             $backColor = array(255,255,0);
         }
@@ -2115,6 +2202,27 @@ public function get_video_id($param, $videotype = '')
         imagejpeg( $imagetobewatermark, $file_path);
         imagedestroy($imagetobewatermark);
 
+=======
+        if($c == 'w') {
+            $backColor = array(0,0,0);
+        }
+        if($c == 'yb') {
+            $backColor = array(0,0,0);
+        }
+
+        $watermarktext="แนวทาง " .$date;
+        $font= FCPATH . 'uploads/image/watermark/font/thai_c.ttf';
+        $fontsize="70";
+        $bbox = imagettfbbox($fontsize, 0, $font, $watermarktext);
+        if($c == 'y' || $c == 'r') {
+            $x = $bbox[0] + (imagesx($imagetobewatermark) / 2) - ($bbox[4] / 2) + 10;
+            $y = $bbox[1] + (imagesy($imagetobewatermark) - $textPosition) - ($bbox[5] / 2) - 5;
+            $white = imagecolorallocate($imagetobewatermark, $backColor[0], $backColor[1], $backColor[2]);
+            imagettftext($imagetobewatermark, $fontsize, 0, $x, $y, $white, $font, $watermarktext);
+            imagejpeg( $imagetobewatermark, $file_path);
+            imagedestroy($imagetobewatermark);
+        }
+>>>>>>> 7d0313eaab6f7d5f6e7ab7003d7e9f55b8eadca2
         $imagetobewatermark= imagecreatefromstring( file_get_contents( $file_path ) );
         $x = $bbox[0] + (imagesx($imagetobewatermark) / 2) - ($bbox[4] / 2) + 10 - 3;
         $y = $bbox[1] + (imagesy($imagetobewatermark) - $textPosition) - ($bbox[5] / 2) - 5 - 2;

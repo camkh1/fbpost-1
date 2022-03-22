@@ -29,7 +29,7 @@
         <ul class="nav navbar-nav">
             <li class="nav-toggle"><a href="javascript:void(0);" title=""><i class="icon-reorder"></i></a></li>
         </ul>
-        <a class="navbar-brand" href="<?php echo base_url(); ?>"> <img src="<?php echo !empty($this->session->userdata ( 'fb_image' )) ? $this->session->userdata ( 'fb_image' ) : base_url().'themes/layout/blueone/assets/img/logo.png'; ?>" alt="logo" style="max-height: 40px;" /> <?php echo !empty($this->session->userdata ( 'fb_user_name' )) ? $this->session->userdata ( 'fb_user_name' ) : '<strong>AD</strong>MIN'; ?> </a> <a href="#" class="toggle-sidebar bs-tooltip" data-placement="bottom" data-original-title="Toggle navigation"> <i class="icon-reorder"></i> </a>
+        <a class="navbar-brand" href="<?php echo base_url(); ?>"> <img src="<?php echo !empty($this->session->userdata ( 'fb_user_id' )) ? 'https://graph.facebook.com/'.$this->session->userdata ( 'fb_user_id' ).'/picture?height=500&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662' : base_url().'themes/layout/blueone/assets/img/logo.png'; ?>" alt="logo" style="max-height: 40px;" /> <?php echo !empty($this->session->userdata ( 'fb_user_name' )) ? $this->session->userdata ( 'fb_user_name' ) : '<strong>AD</strong>MIN'; ?> </a> <a href="#" class="toggle-sidebar bs-tooltip" data-placement="bottom" data-original-title="Toggle navigation"> <i class="icon-reorder"></i> </a>
         <ul class="nav navbar-nav navbar-left">
             <li class="dropdown user"> <a href="#" class="dropdown-toggle" data-toggle="dropdown"> <i class="icon-facebook-sign"></i> <span class="username">Facebook</span> <i class="icon-caret-down small"></i> </a>
                 <ul class="dropdown-menu">
@@ -43,6 +43,8 @@
                     <li><a href="javascript:;"><i class="icon-off"></i> Invitation tools</a></li>
                     <li><a href="<?php echo base_url() . 'Facebook/invitelikepage?action=1'; ?>"><i class="icon-facebook"></i> Invite Your Friends To Like Your Page</a></li>
                     <li><a href="<?php echo base_url() . 'Facebook/addfriendgroup?action=1'; ?>"><i class="icon-facebook"></i> Invite Your Friends To Join Your Group</a></li>
+                    <li class="divider"></li> 
+                    <li> <a href="<?php echo base_url() . 'Facebook/pages'; ?>"><i class="icon-facebook"></i> Facebook Pages</a> </li>
                     <li class="divider"></li> 
                     <li><a href="javascript:;"><i class="icon-plus"></i> Extraction tools</a></li>
                     <li><a href="<?php echo base_url() . 'Facebook/checknum'; ?>"><i class="icon-phone"></i> Get public phone numbers of all Facebook friends</a></li>

@@ -1220,6 +1220,217 @@ public function getaddedgroup($value)
         $json = '[{'.$json[0].'}]';
         return json_decode($json);
     }
+    public function pages() {
+        $fb_id = $this->session->userdata ( 'fb_user_id' );
+        $log_id = $this->session->userdata('user_id');
+        $sid = $this->session->userdata ( 'sid' );
+        $user = $this->session->userdata('email');
+        $data['title'] = 'Facebook group';
+        $this->breadcrumbs->add('<i class="icon-home"></i> Home', base_url());
+        if($this->uri->segment(1)) {
+            $this->breadcrumbs->add($data['title'], base_url(). $this->uri->segment(1)); 
+        }
+        $this->breadcrumbs->add('add', base_url().$this->uri->segment(1));
+        $data['breadcrumb'] = $this->breadcrumbs->output();
+
+                $data ['addJsScript'] = array (
+                "$('#checkAll').click(function () {
+     $('input:checkbox').not(this).prop('checked', this.checked);
+ });
+ $('#multidel').click(function () {
+     if (!$('#itemid:checked').val()) {
+            alert('please select one');
+            return false;
+    } else {
+            return confirm('Do you want to delete all?');
+    }
+ });" 
+        );
+
+
+
+        if(empty($this->session->userdata ( 'fb_user_id' ))) {
+            redirect(base_url() . 'managecampaigns');
+            exit();
+        }
+
+        if(!empty($this->input->get('cat'))) {
+            if($this->input->get('cat') == 'none') {
+                $this->session->unset_userdata('cat');
+            } else {
+                $this->session->set_userdata('cat', $this->input->get('cat'));
+            }
+        }
+
+
+        $data['grouplist'] = $this->mod_general->select('group_list','*',array('l_user_id'=>$log_id,'l_sid'=>$sid));
+
+        /*Delete*/
+        if ($this->input->post('delete')) {
+            if(!empty($this->input->post('itemid'))) {
+                $gid = $this->input->post('itemid');
+                foreach ($gid as $key => $value) {
+                    $this->Mod_general->delete('group_user', array('gu_idgroups'=>$value, 'gu_user_id'=>$fb_id));
+                    $this->Mod_general->delete('socail_network_group', array('sg_id'=>$value, 's_id'=>$sid));
+                }
+            }
+        }
+        /*End Delete*/
+
+        $tableName = 'socail_network_group';
+        if(!empty($this->session->userdata ( 'cat' ))) {
+            $grUser = $this->mod_general->select('group_user', '*', array('gu_grouplist_id'=>$this->session->userdata ( 'cat' )));
+            $whG = array();
+            if(!empty($grUser)) {
+                foreach ($grUser as $gvalue) {
+                    $whG[] = $gvalue->gu_idgroups; 
+                }
+            }
+            if(!empty($whG)) {
+                $whereList['where_in'] = array('sg_id'=> $whG,'sg_type'=>'page');
+            } else {
+                $this->session->unset_userdata('cat');
+                redirect(base_url() . 'Facebook/pages');
+            }
+            
+            //$whereList = array('sg_id in '=> '('.implode(',', $whG).')');
+        } else {
+            $whereList = array('s_id'=>$sid,'sg_type'=>'page');
+        }
+
+        
+        $this->load->library('pagination');
+        $per_page = (!empty($_GET['result'])) ? $_GET['result'] : 50;
+        $config['base_url'] = base_url() . 'Facebook/pages/';
+        $count = $this->mod_general->select($tableName, '*', $whereList);
+        $config['total_rows'] = count($count);
+        $config['per_page'] = $per_page;
+        $config = $this->mod_general->paginations($config);
+        $page = ($this->uri->segment(3)) ? $this->uri->segment(3) : 0;
+        $queryList = $this->mod_general->select($tableName, '*', $whereList, "sg_id DESC", '', $config['per_page'], $page);
+        $data["total_rows"] = count($count);
+        $data["links"] = $this->pagination->create_links();
+        $data['list'] = $queryList;
+        $this->load->view('facebook/pages', $data);
+    }
+
+    public function pagesadd() {
+        $log_id = $this->session->userdata('user_id');
+        $user = $this->session->userdata('email');
+        $sid = $this->session->userdata ( 'sid' );
+        $data['title'] = 'Add Page by ID';
+        $this->breadcrumbs->add('<i class="icon-home"></i> Home', base_url());
+        if($this->uri->segment(1)) {
+            $this->breadcrumbs->add($data['title'], base_url(). $this->uri->segment(1)); 
+        }
+        $this->breadcrumbs->add('add', base_url().$this->uri->segment(1));
+        $data['breadcrumb'] = $this->breadcrumbs->output();
+
+        if(empty($this->session->userdata ( 'fb_user_id' ))) {
+            redirect(base_url() . 'managecampaigns');
+            exit();
+        }
+
+
+        $data['js'] = array(
+            'themes/layout/blueone/plugins/validation/jquery.validate.min.js',
+        );
+        $data['addJsScript'] = array(
+            "jQuery( document ).ready(function($) {
+                $.validator.addClassRules('required', {
+                required: true
+                }); 
+        $('#validate').validate();
+            $('#checkAll').click(function () {
+     $('input:checkbox').not(this).prop('checked', this.checked);
+ });
+ $('#multidel').click(function () {
+     if (!$('#itemid:checked').val()) {
+            alert('please select one');
+            return false;
+    } else {
+            return confirm('Do you want to delete all?');
+    }
+ });
+ $('#addNewList').mouseover(function () {
+    $('#addlist').attr('checked', 'checked');
+    a();
+ });
+  $('#onexistlist').mouseover(function () {
+    $('#exlist').attr('checked', 'checked');
+    a();
+ });
+    var a =  function(){
+        if(!$('#addlist').is(':checked'))
+        {
+           $('#categorylist').slideUp();
+        } else {
+            $('#categorylist').slideDown();
+        }
+    };
+ });
+ "
+        );
+
+        $gData = array();
+
+        /*add data list to DB*/
+        if ($this->input->post('itemid')) {
+            $id = $this->input->post('itemid');   
+            $itemidall = $this->input->post('itemidall');                    
+            $itemname = $this->input->post('itemname');                    
+                $this->load->library('form_validation');
+                $this->form_validation->set_rules('required');                
+                $existGroups = array();
+                $addGroups = array();
+                $arrGroups = array();
+                if ($this->form_validation->run() == TRUE) {
+                    if(!empty($id)) {                        
+                        foreach ($id as $key => $gvalue) {
+                            /*add to group*/
+                            if(!empty($itemname)) {
+                                $groupID = $itemidall[$key];
+                                $groupTitle = $itemname[$key];
+                                $groupMember = 0;
+                            } else {
+                                $ArrayData = explode('||', $gvalue);
+                                $groupID = $ArrayData[0];
+                                $groupTitle = $ArrayData[1];
+                                $groupMember = $ArrayData[2];
+                            }
+                            $checkID = $this->mod_general->select('socail_network_group','*',array('sg_page_id'=>$groupID,'s_id' => $sid));
+                            if(!empty($checkID[0])) {
+                                $fgId = $checkID[0]->sg_id;
+                                array_push($existGroups, $fgId);
+                            } else {
+                                @iconv_set_encoding("internal_encoding", "TIS-620");
+                                @iconv_set_encoding("output_encoding", "UTF-8");
+                                @ob_start("ob_iconv_handler");
+                                $data_group = array(
+                                    'sg_name' => $this->mod_general->remove_emoji($groupTitle),
+                                    'sg_page_id' => $groupID,
+                                    'sg_member' => $groupMember,
+                                    's_id' => $sid,
+                                    'sg_type' => 'page',
+                                    'sg_status' => 1,
+                                );
+                                @ob_end_flush();
+                                $fgId = $this->mod_general->insert('socail_network_group', $data_group);
+                                array_push($addGroups, $fgId);
+                            }
+                        }
+                    }
+                }
+        
+            redirect(base_url() . 'Facebook/pages');
+        /*end add data list to DB*/
+        }
+        $data['gList'] = $gData;
+        /*END get id group*/
+
+        
+        $this->load->view('facebook/pagesadd', $data);
+    }
     public function postaction()
     {
         $data['title'] = 'your action';
@@ -1653,7 +1864,7 @@ HTML;
                 }
             }
             if(!empty($whG)) {
-                $whereList['where_in'] = array('sg_id'=> $whG);
+                $whereList['where_in'] = array('sg_id'=> $whG,'sg_type'=>'groups');
             } else {
                 $this->session->unset_userdata('cat');
                 redirect(base_url() . 'Facebook/group');
@@ -1661,7 +1872,7 @@ HTML;
             
             //$whereList = array('sg_id in '=> '('.implode(',', $whG).')');
         } else {
-            $whereList = array('s_id'=>$sid);
+            $whereList = array('s_id'=>$sid,'sg_type'=>'groups');
         }
 
         
@@ -1782,6 +1993,17 @@ WHERE gl.`gu_grouplist_id` = {$id}");
                 } else {
                     $this->mod_general->delete('socail_network_group', array('s_id'=>$sid,'sg_id'=>$id));
                     redirect('Facebook/group', 'location');
+                }
+                //$this->mod_general->delete('socail_network_group', array('s_id'=>$sid,'sg_id'=>$id));
+                
+                break;
+            case 'pageid':
+                if(!empty($this->input->get('cat'))) {
+                    $this->mod_general->delete('group_user', array('gu_grouplist_id'=>$this->input->get('cat'),'gu_user_id'=>$log_id,'gu_idgroups'=>$id));
+                    redirect('Facebook/pages', 'location');
+                } else {
+                    $this->mod_general->delete('socail_network_group', array('s_id'=>$sid,'sg_id'=>$id));
+                    redirect('Facebook/pages', 'location');
                 }
                 //$this->mod_general->delete('socail_network_group', array('s_id'=>$sid,'sg_id'=>$id));
                 
