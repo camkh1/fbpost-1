@@ -580,6 +580,19 @@ $link =  $desc->find('a', 0)->href;
         if(empty($obj->title)) {
             $obj->title = @$html->find ( 'title', 0 )->innertext;
         }
+        if(preg_match ( '/ - /', $obj->title )){
+            $setitle = explode(' - ', $obj->title);
+            if(!empty($setitle[0])) {
+                $obj->title = $setitle[0];
+            }
+        }
+        if(preg_match ( '/ – /', $obj->title )){
+            $setitle = explode(' – ', $obj->title);
+            if(!empty($setitle[0])) {
+                $title = explode(' – ', $obj->title);
+                $obj->title = @$title[0];
+            }
+        }
         $og_image = @$html->find ( 'meta [property=og:image]', 0 )->content;
         $image_src = @$html->find ( 'link [rel=image_src]', 0 )->href;
         if (! empty ( $image_src )) {
@@ -1092,9 +1105,25 @@ $link =  $desc->find('a', 0)->href;
                         $label[] = $labels->plaintext;
                     } 
                 }
+                foreach($html->find('#read-complete') as $item) {
+                    $item->outertext = '';
+                }
+                foreach($html->find('.side-article') as $item) {
+                    $item->outertext = '';
+                }
+                foreach($html->find('ul') as $item) {
+                    $item->outertext = '';
+                }
+                $html->save();
                 $obj->label = implode(',', $label);
                 /*End get label*/
-                $content = $this->gEntry($html,'.content-main .h4-content-lh');                
+                //$content = $this->gEntry($html,'#contents .content-detail');
+                $content = '';
+                foreach($html->find('.content-detail') as $index => $contents) {
+                    if($index != $last && $index !=0) {
+                        $content = $content. $contents->innertext;
+                    } 
+                }            
                 $htmlContent = str_get_html($content);
                 foreach($htmlContent->find('.row') as $item) {
                     $item->outertext = '';
@@ -1122,28 +1151,28 @@ $link =  $desc->find('a', 0)->href;
                 preg_match_all( $regex, $content, $matches );
                 $ImgSrc = array_pop($matches);
                 // reversing the matches array
-                if(!empty($ImgSrc)) {
-                    foreach ($ImgSrc as $image) {
-                        $imagedd = strtok($image, "?");
-                        $file_title = basename($imagedd);
-                        $fileName = FCPATH . 'uploads/image/'.$file_title;
-                        @copy($imagedd, $fileName);   
-                        $images = $this->mod_general->uploadtoImgur($fileName);
-                        if(empty($images)) {
-                            $apiKey = '76e9b194c1bdc616d4f8bb6cf295ce51';
-                            $images = $this->Mod_general->uploadToImgbb($fileName, $apiKey);
-                            if($images) {
-                                @unlink($fileName);
-                            }
-                        } else {
-                            $gimage = @$images; 
-                            @unlink($fileName);
-                        }
-                        if(!empty($gimage)) {
-                            $htmlContent = str_replace($image,$gimage,$htmlContent);
-                        }
-                    }
-                }
+                // if(!empty($ImgSrc)) {
+                //     foreach ($ImgSrc as $image) {
+                //         $imagedd = strtok($image, "?");
+                //         $file_title = basename($imagedd);
+                //         $fileName = FCPATH . 'uploads/image/'.$file_title;
+                //         @copy($imagedd, $fileName);   
+                //         $images = $this->mod_general->uploadtoImgur($fileName);
+                //         if(empty($images)) {
+                //             $apiKey = '76e9b194c1bdc616d4f8bb6cf295ce51';
+                //             $images = $this->Mod_general->uploadToImgbb($fileName, $apiKey);
+                //             if($images) {
+                //                 @unlink($fileName);
+                //             }
+                //         } else {
+                //             $gimage = @$images; 
+                //             @unlink($fileName);
+                //         }
+                //         if(!empty($gimage)) {
+                //             $htmlContent = str_replace($image,$gimage,$htmlContent);
+                //         }
+                //     }
+                // }
                 $obj->vid = '';
                 $obj->conent = $htmlContent;
                 $obj->fromsite = $parse['host'];
@@ -1244,7 +1273,57 @@ $link =  $desc->find('a', 0)->href;
             case 'www.one31.net':
                 /*get label*/
                 $obj->label = 'ข่าว';
-                $content = $this->gEntry($html,'.box-newsdetail .newsdetail-txt');                
+                //$html = str_replace('\u003Cp\u003E','',$html);
+                preg_match_all('/null,1,"https:([^>]+)",0,"og:type"/', $html, $thumMatch);
+                //var_dump($thumMatch);
+                if(!empty($thumMatch[1])) {
+                    if(!empty($thumMatch[1][0])) {
+                        $thumbs = $thumMatch[1][0];
+                        $thumbs = str_replace('u002F','/',$thumbs);
+                        $thumbs = str_replace('\\','',$thumbs);
+                        $thumbs = 'https:'.$thumbs;
+                        $obj->thumb = $thumbs;
+                    }
+                }
+                
+                preg_match_all('/content:\"([^>]+)",thumbnail/', $html, $match);
+                if(!empty($match[1])) {
+                    if(!empty($match[1][0])) {
+                        $content = (string) $match[1][0];
+                        $content = html_entity_decode($content);
+                        $content = str_replace('\u003Cp\u003E','',$content);
+                        $content = str_replace('u002F','/',$content);
+                        $content = str_replace('\u003C','<',$content);
+                        $content = str_replace('\u003E','>',$content);
+                        $content = str_replace('\u003E','>',$content);
+                        $content = str_replace('\r\n','<br/>',$content);
+                        $content = str_replace('\\','',$content);
+                        $str = <<<HTML
+$content
+HTML;
+$desc = str_get_html($str);
+                        foreach($desc->find('ul') as $item) {
+                            $item->outertext = '';
+                        }
+                        $desc->save();
+                        //$content = html_entity_decode(html_entity_decode(stripslashes(trim($content))));
+                        $obj->conent = $desc;
+                    }
+                }
+                //$content = $this->gEntry($html,'.news-detail');
+
+                $obj->vid = '';
+                $obj->fromsite = $parse['host'];
+                $obj->site = 'site';
+                if(!empty($obj->conent)) {
+                    return $obj;
+                } else {
+                    return array();
+                }
+                break;
+            case 'hilight.kapook.com':
+                /*get label*/
+                $content = $this->gEntry($html,'#main_article .content');
                 $obj->vid = '';
                 $obj->conent = $content;
                 $obj->fromsite = $parse['host'];
@@ -2819,6 +2898,10 @@ $link =  $desc->find('a', 0)->href;
                 foreach(@$html->find('.quads-location') as $item) {
                     $item->outertext = '';
                 }
+                foreach(@$html->find('.shareit') as $item) {
+                    $item->outertext = '';
+                }
+
                 $html->save();
 
                 $content = $this->gEntry($html,'.entry-content');
@@ -2827,6 +2910,9 @@ $link =  $desc->find('a', 0)->href;
                 }
                 if(empty($content)) {
                     $content = $this->gEntry($html,'.post');
+                }
+                if (preg_match ( '/huaythai.me/', $url )) {
+                    $content = preg_replace('/<iframe\b[^>]*(.*?)iframe>/is', "", $content);
                 }               
                 if(empty($obj->thumb)) {
                     $obj->thumb = @$html->find('.wp-post-image',0)->src;
@@ -2838,7 +2924,14 @@ $link =  $desc->find('a', 0)->href;
                         
                     }
                 }
-
+                $title = @explode('–', $obj->title);
+                if(!empty($title[0])) {
+                    $title = $title[0];
+                }
+                
+                if (preg_match ( '/&#8211;/', $obj->title )) {
+                    $obj->title = explode('&#8211;', $obj->title)[0];
+                }
                 $obj->vid = '';
                 $obj->conent = $content;
                 $obj->fromsite = $parse['host'];
@@ -2955,6 +3048,7 @@ $link =  $desc->find('a', 0)->href;
         $content = preg_replace("/<a(.*?)>/", "<a$1 target=\"_blank\">", $content);
         $content = preg_replace('#<a.*?>(.*?)</a>#i', '\1', $content);
         $content = preg_replace( '/(<[^>]+) srcset=".*?"/i', "$1", $content );
+        $content = str_replace('data-src="//', 'src="https://', $content);
         $content = preg_replace( '/(<[^>]+) data-src=".*?"/i', "$1", $content );
         $content = preg_replace( '/(<[^>]+) data-srcset=".*?"/i', "$1", $content );
         $content = preg_replace( '/(<[^>]+) data-sizes=".*?"/i', "$1", $content );

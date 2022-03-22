@@ -93,7 +93,7 @@ if(preg_match('/facebook/', $slink) && preg_match('/permalink/', $slink)) {
 } else {
     $pageid = !empty(@$fbpid[0]) ? $fbpid[0]->meta_value : '';
 }
-$groupid = str_replace(' ', '', $groupid);
+$groupid = str_replace(' ', '', @$groupid);
 $fb_user_id = $this->session->userdata ( 'fb_user_id' );
     ?>
 <div id="ptitle" style="display: none;"><?php echo $pTitle;?></div>    

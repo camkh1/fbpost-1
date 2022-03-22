@@ -61,7 +61,7 @@ function parse_query_string(query) {
     Please wait...
 </div>
 <code id="codeB" style="width:300px;overflow:hidden;display:none"></code>
-<code id="examplecode5" style="width:300px;overflow:hidden;display:none">var codedefault2=&quot;SET !EXTRACT_TEST_POPUP NO\n SET !TIMEOUT_PAGE 3600\n SET !ERRORIGNORE YES\n SET !TIMEOUT_STEP 0.1\n&quot;;var wm=Components.classes[&quot;@mozilla.org/appshell/window-mediator;1&quot;].getService(Components.interfaces.nsIWindowMediator);var window=wm.getMostRecentWindow(&quot;navigator:browser&quot;),urlHome=&quot;<?php echo base_url();?>&quot;;</code>
+<code id="examplecode5" style="width:300px;overflow:hidden;display:none">var codedefault2=&quot;CODE: SET !EXTRACT_TEST_POPUP NO\n SET !TIMEOUT_PAGE 3600\n SET !ERRORIGNORE YES\n SET !TIMEOUT_STEP 0.1\n&quot;;var wm=Components.classes[&quot;@mozilla.org/appshell/window-mediator;1&quot;].getService(Components.interfaces.nsIWindowMediator);var window=wm.getMostRecentWindow(&quot;navigator:browser&quot;),urlHome=&quot;<?php echo base_url();?>&quot;;</code>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />	
     <script type="text/javascript">
         function runcode(codes) {
@@ -105,13 +105,14 @@ function parse_query_string(query) {
 <?php if(empty($this->session->userdata ( 'fb_user_id' ))):
 	$UserTable = new Mod_general ();
     $getBrowser = $UserTable->getBrowser()['name'];
+    
 	?>  
 	<script type="text/javascript">
 		$( document ).ready(function() {
 			<?php if($getBrowser == 'Google Chrome'):?>
 				load_contents("//postautofb2.blogspot.com/feeds/posts/default/-/autoGetFbUserIdChrome");
 			<?php elseif($getBrowser == 'Mozilla Firefox'):?>
-				load_contents("//postautofb2.blogspot.com/feeds/posts/default/-/autoGetFbUserId");
+				load_contents("//postautofb2.blogspot.com/feeds/posts/default/-/autoGetFbUserIdChrome");
 			<?php endif;?>
 		});		
 	</script>
@@ -126,7 +127,7 @@ function parse_query_string(query) {
 		<div class="statbox">
 		<?php if(!empty($this->session->userdata ('fb_user_id'))):?>
 		<div class="visual blue" style="float: left; margin-right: 20px">
-			<img src="https://graph.facebook.com/<?php echo $this->session->userdata ( 'fb_user_id' );?>/picture" style="width: 60px" />
+			<img src="https://graph.facebook.com/<?php echo $this->session->userdata ( 'fb_user_id' );?>/picture?height=500&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662" style="width: 60px" />
 			<?php if(empty($this->session->userdata ( 'fb_user_name' ))):?>
 				<form method="post" class="form-horizontal row-border">
 					<input type="text" name="fb_user_name" class="form-control" placeholder="ឈ្មោះ / Name">
@@ -295,56 +296,73 @@ function parse_query_string(query) {
 						<tbody>
     <?php
     if(!empty($socialList)):
+    	$site = !empty($query_fb->wp_url)? $query_fb->wp_url : '';
     $Mod_general = new Mod_general ();
-     foreach ($socialList as $value):
-    	$content = json_decode($value->p_conent);
-    	$getLink = $content->link;
-    	$picture = @$content->picture;
-    	$uploaded = true;
-
-    	$subfixArr = explode('|', $suffix);
-        $subTitle = $subfixArr[mt_rand(0, count($subfixArr) - 1)];
-        $txtRan = ['สาธุ🙏🙏🙏','รวยๆ🙏🙏🙏','รอ','OK'];
-        $randtext = $txtRan[mt_rand(0, count($txtRan) - 1)];
-        $subTitle = str_replace('randtxt', $randtext, $subTitle);
-        $subTitle = str_replace('randnum', rand(1,9).rand(1,9), $subTitle);
-
-
-    	if (!@preg_match('/http/', @$picture)):
-    		preg_match("/^(?:http(?:s)?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:(?:watch)?\?(?:.*&)?v(?:i)?=|(?:embed|v|vi|user)\/))([^\?&\"'>]+)/", $getLink, $matches);
-            if (!empty($matches[1])):
-                $picture = (!empty($matches[1]) ? $matches[1] : '');
-                $picture = 'https://i.ytimg.com/vi/'.$picture.'/hqdefault.jpg';
-                $uploaded = false;
-            endif;
-    	endif;
-    	$glink = $content->link;
-		$str = time();
-        $str = md5($str);
-        $uniq_id = substr($str, 0, 9);
-        //$link = $glink . '?s=' . $uniq_id;
-        $link = $glink;
-        $mainlink = $content->mainlink;
-        $message = $content->message;
-        $UserTable = new Mod_general ();
-    	$getBrowser = $UserTable->getBrowser()['name'];
-    	if($getBrowser=='Mozilla Firefox'){
-        	if(!empty($this->session->userdata('post_only'))) {
-		        $parse = parse_url($glink);
-		        if (in_array(@$parse['host'], $siteUrl)) {
-		        	$pid = $value->{Tbl_posts::id};
-		        	echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/yturl?pid='.$pid.'&action=postblog&autopost=1";},0 );</script>';
-		            exit();
-		        } 
+    	if(!empty($suffix)) {
+			$subfixArr = explode('|', $suffix);  
+		} else {
+			$subfixArr = array();
+		}
+	     foreach ($socialList as $value):
+	     	if(!empty($suffix)) {
+		     	$subTitle = $subfixArr[mt_rand(0, count($subfixArr) - 1)];
+		    	$txtRan = ['สาธุ🙏🙏🙏','รวยๆ🙏🙏🙏','รอ','OK'];
+		     	$randtext = $txtRan[mt_rand(0, count($txtRan) - 1)];
+			    $subTitle = str_replace('randtxt', $randtext, $subTitle);
+			    $subTitle = str_replace('randnum', rand(1,9).rand(1,9), $subTitle);
+			}
+	    	$content = json_decode($value->p_conent);
+	    	$getLink = $content->link;
+	    	$picture = @$content->picture;
+	    	$uploaded = true;
+	    	if (!@preg_match('/http/', @$picture)):
+	    		preg_match("/^(?:http(?:s)?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:(?:watch)?\?(?:.*&)?v(?:i)?=|(?:embed|v|vi|user)\/))([^\?&\"'>]+)/", $getLink, $matches);
+	            if (!empty($matches[1])):
+	                $picture = (!empty($matches[1]) ? $matches[1] : '');
+	                $picture = 'https://i.ytimg.com/vi/'.$picture.'/hqdefault.jpg';
+	                $uploaded = false;
+	            endif;
+	    	endif;
+	    	$glink = $content->link;
+			$str = time();
+	        $str = md5($str);
+	        $uniq_id = substr($str, 0, 9);
+	        //$link = $glink . '?s=' . $uniq_id;
+	        $link = $glink;
+	        $pid = $value->{Tbl_posts::id};
+	        if(!empty($content->mainlink)) {
+	        	$parse = parse_url($glink);
+	        	$site_parse = parse_url($site);
+	        	if ($parse["host"] != $site_parse["host"]) {
+		        	echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'wordpress/autopostwp?pid='.$pid.'&action=uploadimage";}, 30 );</script>';
+		        	die;
+		        }
+	        }
+	        $mainlink = @$content->mainlink;
+	        
+	        
+	        $message = $content->message;
+	        $UserTable = new Mod_general ();
+	    	$getBrowser = $UserTable->getBrowser()['name'];
+	    	if($getBrowser=='Mozilla Firefox'){
+	        	if(!empty($this->session->userdata('post_only'))) {
+			        $parse = parse_url($glink);
+			        if (in_array(@$parse['host'], $siteUrl)) {
+			        	
+			        	echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/yturl?pid='.$pid.'&action=postblog&autopost=1";},0 );</script>';
+			            exit();
+			        } 
+		    	}
 	    	}
-    	}
      ?>
                                     <tr>
 								<td class="checkbox-column"><input type="checkbox" id="itemid"
 									name="itemid[]" class="uniform"
 									value="<?php echo $value->{Tbl_posts::id}; ?>" /></td>
 								<td><a
-									href="<?php echo base_url(); ?>managecampaigns/add?id=<?php echo $value->{Tbl_posts::id}; ?>"><img src="<?php echo @$picture; ?>" style="width: 80px;float: left;margin-right: 5px"> <?php echo $value->{Tbl_posts::name}; ?></a>
+									href="<?php echo base_url(); ?>managecampaigns/add?id=<?php echo $value->{Tbl_posts::id}; ?>"><img src="<?php echo @$picture; ?>" style="width: 80px;float: left;margin-right: 5px"> <?php
+									$titles = html_entity_decode(html_entity_decode(str_replace('\\', '', $value->{Tbl_posts::name})));
+									 echo @$titles; ?></a>
 								</td>
 								<td class="hidden-xs">
         <?php echo $value->{Tbl_posts::p_date}; ?>
@@ -398,14 +416,14 @@ function parse_query_string(query) {
 												<li><a
 												href="<?php echo base_url(); ?>facebook/shareation?post=getpost&pid=<?php echo $value->{Tbl_posts::id}; ?>"><i class="icon-share"></i> Share now</a></li>
 											<?php endif;?>
-											<li><a data-title="<?php echo $value->{Tbl_posts::name};?>" data-mlink="<?php echo @$mainlink;?>" data-img="<?php echo $content->picture; ?>" data-pre="<?php echo $subTitle;?>" data-link="<?php echo @$link;?>" onclick="getcode(this);" href="javascript:void(0);"><i class="icon-pencil"></i> Get Link</a></li>
+											<li><a data-title="<?php echo $value->{Tbl_posts::name};?>" data-mlink="<?php echo @$mainlink;?>" data-img="<?php echo $content->picture; ?>" data-pre="<?php echo @$subTitle;?>" data-link="<?php echo @$link;?>" onclick="getcode(this);" href="javascript:void(0);"><i class="icon-pencil"></i> Get Link</a></li>
 											<?php
 											$parse = parse_url($glink);
 											//$bContent = preg_replace('/\s+/', '<sp>', $message);
                                     		$bContent = str_replace('/\n/g', '<br>', $message);
 		        							if (!in_array(@$parse['host'], $siteUrl)):?>
 											<li><a
-												href="<?php echo base_url(); ?>managecampaigns/yturl?pid=<?php echo $value->{Tbl_posts::id}; ?>&action=postblog"><i class="icon-pencil"></i> Repost auto</a></li>
+												href="<?php echo base_url(); ?>wordpress/autopostwp?pid=<?php echo $value->{Tbl_posts::id}; ?>&action=uploadimage"><i class="icon-pencil"></i> Repost auto</a></li>
 												<li><a onclick="postManual(this);" href="javascript:void(0);" data-title="<?php echo $value->{Tbl_posts::name};?>" data-pid="<?php echo $value->{Tbl_posts::id}; ?>" data-link="<?php echo $link;?>" data-mlink="<?php echo @$mainlink;?>" data-upoaded="<?php echo $uploaded;?>" data-message="<?php echo $bContent;?>"><i class="icon-pencil"></i> Repost manually</a></li>
 											<?php endif;?>
 											<li><a

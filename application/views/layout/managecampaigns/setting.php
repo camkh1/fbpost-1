@@ -444,7 +444,7 @@ $btemplate = "D:&bsol;&bsol;PROGRAM&bsol;&bsol;templates&bsol;&bsol;";
                         </div>
                         <!-- End blog link -->
                         <!-- fb account counfig -->
-                        <div class="widget box widget-closed">
+                        <div class="widget box">
                             <div class="widget-header">
                                 <h4><i class="icon-reorder"></i> Each account config</h4>
                                 <div class="toolbar no-padding">
@@ -454,15 +454,36 @@ $btemplate = "D:&bsol;&bsol;PROGRAM&bsol;&bsol;templates&bsol;&bsol;";
                             <div class="widget-content">
                                 <form class="form-horizontal row-border" action="" method="post">
                                     <div class="form-group"> 
+                                        <div class="col-md-6"> 
+                                            <input class="form-control required" name="fbconfig" type="text" value="<?php echo !empty($query_fb)? $query_fb->id : '';?>"> 
+                                            <span class="help-block">fb Page ID</span> 
+                                        </div>
+                                        <div class="col-md-6"> 
+                                            <input class="form-control required" name="fbPName" type="text" value="<?php echo !empty($query_fb)? $query_fb->name : '';?>"> 
+                                            <span class="help-block">fb Page Name</span> 
+                                        </div>
+                                        <div class="col-md-12">
+                                            <label class="radio-inline">
+                                                <input type="radio" value="normal" name="pageType" <?php echo (@$query_fb->pageType =='normal') ? 'checked': '';?> />
+                                                <i class="subtopmenu hangmeas">Normal</i>
+                                            </label> 
+                                            <label class="radio-inline">
+                                                <input type="radio" value="profile" name="pageType" <?php echo (@$query_fb->pageType =='profile') ? 'checked': '';?>/>
+                                                <i class="subtopmenu hangmeas">Profile</i>
+                                            </label>
+                                        </div>
+                                        
+                                    </div>
+                                    <div class="form-group"> 
                                         <div class="col-md-12"> 
-                                            <input class="form-control required" name="fbconfig" type="text" value="<?php echo !empty($query_fb[0])? $query_fb[0]->meta_value : '';?>"> 
-                                            <span class="help-block">fb Page to post.</span> 
+                                            <input class="form-control" name="fbgconfig" type="text" value="<?php echo !empty($query_fbg[0])? $query_fbg[0]->meta_value : '';?>"> 
+                                            <span class="help-block">fb Group to post.</span> 
                                         </div> 
                                     </div>
                                     <div class="form-group"> 
                                         <div class="col-md-12"> 
-                                            <input class="form-control required" name="fbgconfig" type="text" value="<?php echo !empty($query_fbg[0])? $query_fbg[0]->meta_value : '';?>"> 
-                                            <span class="help-block">fb Group to post.</span> 
+                                            <input class="form-control" name="sitepost" type="text" value="<?php echo !empty($query_fb->wp_url)? $query_fb->wp_url : '';?>"> 
+                                            <span class="help-block">URL site to wp post.</span> 
                                         </div> 
                                     </div>
                                     <div class="form-actions"> 

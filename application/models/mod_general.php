@@ -65,6 +65,10 @@ class Mod_general extends CI_Model
         $query = $this->db->get();
         return $query->result();
     }
+    function sql($sql) { 
+        $query = $this->db->query($sql);
+        return $query->result();
+    }
     
     function insert($table, $data = array()) {
         $this->load->database('default', true);
@@ -1230,6 +1234,105 @@ public function get_video_id($param, $videotype = '')
             }
         }
     }
+    public function imageMerge($thumbs=array(),$asThumb=array())
+    {
+        $setArr = array();
+        if(!empty($thumbs[0])) {
+            // for ($i=0; $i < count($thumbs); $i++) { 
+            //     if(!empty($thumbs[$i])) {
+            //         if($asThumb[$i] == 'set') {
+            //             array_push($setArr, $thumbs[$i]);
+            //         }
+            //     }
+            // }
+            $count = count($thumbs);
+            $setWeight = 1200;
+            $setHeight = 635;
+            for ($j=0; $j < count($thumbs); $j++) {
+                if(!empty($thumbs[$j])) {
+                    switch ($count) {
+                        case 1:
+                            $thumb = $this->mergeImages('',$this->crop_image($thumbs[$j],$setWeight,($setHeight-95)),'lt');
+                            $textPosition = 45;
+                            $bgPosition = 'cb';
+                            break;
+                        case 2:
+                            if($j==0) {
+                                $setThumb = $this->mergeImages('',$this->crop_image($thumbs[$j],($setWeight/2)-1,$setHeight),'lt');
+                            } else {
+                                $thumb = $this->mergeImages($setThumb,$this->crop_image($thumbs[$j],($setWeight/2)-1,$setHeight),'rb');
+                            }
+                            $textPosition = 30;
+                            $bgPosition = 'cb';
+                            break;
+                        case 3:
+                            if($j==0) {
+                                $setThumb = $this->mergeImages('',$this->crop_image($thumbs[$j],($setWeight/3)-1,$setHeight),'lt');
+                            } else if($j==1) {
+                                $setThumb = $this->mergeImages($setThumb,$this->crop_image($thumbs[$j],($setWeight/3)-1,$setHeight),'cc');
+                            } else {
+                                $thumb = $this->mergeImages($setThumb,$this->crop_image($thumbs[$j],($setWeight/3)-1,$setHeight),'rt');
+                            }
+                            $textPosition = 30;
+                            $bgPosition = 'cb';
+                            break;
+                        case 4:
+                            if($j==0) {
+                                $setThumb = $this->mergeImages('',$this->crop_image($thumbs[$j],(($setWeight/2)-1),(($setHeight/2)-1)),'lt');
+                            } else if($j==1) {
+                                $setThumb = $this->mergeImages($setThumb,$this->crop_image($thumbs[$j],(($setWeight/2)-1),(($setHeight/2)-1)),"rt");
+                            } else if($j==2) {
+                                $setThumb = $this->mergeImages($setThumb,$this->crop_image($thumbs[$j],(($setWeight/2)-1),(($setHeight/2)-1)),'lb');
+                            }  else {
+                                $thumb = $this->mergeImages($setThumb,$this->crop_image($thumbs[$j],(($setWeight/2)-1),(($setHeight/2)-1)),'rb');
+                            }
+                            $textPosition = 30;
+                            $bgPosition = 'cb';
+                            break;
+                        case 5:
+                            $padding = 1;
+                            if($j==0) {
+                                $setThumb = $this->mergeImages('',$this->crop_image($thumbs[$j],(($setWeight/3)-1),(($setHeight/2)-$padding)),'lt');
+                            } else if($j==1) {
+                                $setThumb = $this->mergeImages($setThumb,$this->crop_image($thumbs[$j],(($setWeight/3)-1),(($setHeight/2)-$padding)),'ct');
+                            } else if($j==2) {
+                                $setThumb = $this->mergeImages($setThumb,$this->crop_image($thumbs[$j],(($setWeight/3)-1),(($setHeight/2)-$padding)),'rt');
+                            }  else if($j==3) {
+                                $setThumb = $this->mergeImages($setThumb,$this->crop_image($thumbs[$j],(($setWeight/2)-1),(($setHeight/2)-$padding)),'lb');
+                            } else {
+                                $thumb = $this->mergeImages($setThumb,$this->crop_image($thumbs[$j],(($setWeight/2)-1),(($setHeight/2)-$padding)),'rb');
+                            }
+                            $textPosition = 30;
+                            $bgPosition = 'cb';
+                            break;
+                        case 6:
+                            if($j==0) {
+                                $setThumb = $this->mergeImages('',$this->crop_image($thumbs[$j],(($setWeight/3)-1),(($setHeight/2)-1)),'lt');
+                            } else if($j==1) {
+                                $setThumb = $this->mergeImages($setThumb,$this->crop_image($thumbs[$j],(($setWeight/3)-1),(($setHeight/2)-1)),'ct');
+                            } else if($j==2) {
+                                $setThumb = $this->mergeImages($setThumb,$this->crop_image($thumbs[$j],(($setWeight/3)-1),(($setHeight/2)-1)),'rt');
+                            } else if($j==3) {
+                                $setThumb = $this->mergeImages($setThumb,$this->crop_image($thumbs[$j],(($setWeight/2)-1),(($setHeight/2)-1)),'lb');
+                            } else if($j==4) {
+                                $setThumb = $this->mergeImages($setThumb,$this->crop_image($thumbs[$j],(($setWeight/3)-1),(($setHeight/2)-1)),'cb');
+                            } else {
+                                $thumb = $this->mergeImages($setThumb,$this->crop_image($thumbs[$j],(($setWeight/3)-1),(($setHeight/2)-1)),'rb');
+                            }
+                            $textPosition = 30;
+                            $bgPosition = 'cb';
+                            break;
+                        default:
+                            # code...
+                            break;
+                    }
+                    
+                }
+            }
+            $thumb = $this->watermarktextAndLogo($thumb,$bgPosition,$textPosition);
+        }
+        return @$thumb;
+    }
     function watermark($photo_id) {
         $user_id = $this->session->userdata('user_id');
         if ($user_id) {
@@ -1306,6 +1409,64 @@ public function get_video_id($param, $videotype = '')
             $data_result = array();
         }
         return $data_result;
+    }
+    public function crop_image($imgSrc,$thumbW=300,$thumbH=300)
+    {
+        echo $imgSrc;
+        echo '<br/>';
+        $ext = pathinfo($imgSrc, PATHINFO_EXTENSION);
+        if (preg_match('/fna.fbcdn/', $imgSrc)) {
+            $ext = 'jpg';
+        }
+        
+        //$fileName = FCPATH . 'uploads/image/'.$file_title;
+        if (preg_match('/fbpost\\\uploads/', $imgSrc)) {
+            //@copy($imgSrc, $fileName);
+            $file_titles = basename($imgSrc);
+            $file_titles = explode('.', $file_titles);
+            $file_title = $file_titles[0];
+            $fileName = $imgSrc;
+        } else {
+            $file_title = strtotime(date('Y-m-d H:i:s'));
+            $file_title = $file_title.(rand(100,10000)).'.'.$ext;
+            $fileName = FCPATH . 'uploads/image/'.$file_title;
+            $arrContextOptions=array(
+                "ssl"=>array(
+                    "verify_peer"=>false,
+                    "verify_peer_name"=>false,
+                ),
+            );
+            $content = file_get_contents($imgSrc, false, stream_context_create($arrContextOptions));
+            $fp = fopen($fileName, "w");
+            fwrite($fp, $content);
+            fclose($fp);
+        }
+        //getting the image dimensions
+        list($width, $height) = getimagesize($fileName);
+
+        //saving the image into memory (for manipulation with GD Library)
+        //$myImage = imagecreatefromjpeg($fileName);
+        $myImage = imagecreatefromstring( file_get_contents( $fileName ) );
+
+        // calculating the part of the image to use for thumbnail
+        if ($width > $height) {
+          $y = 0;
+          $x = ($width - $height) / 2;
+          $smallestSide = $height;
+        } else {
+          $x = 0;
+          $y = ($height - $width) / 2;
+          $smallestSide = $width;
+        }
+
+        // copying the part into thumbnail
+        $thumb = imagecreatetruecolor((int) $thumbW, (int) $thumbH);
+        imagecopyresampled($thumb, $myImage, 0, 0, $x, $y, (int) $thumbW, (int) $thumbH, $smallestSide, $smallestSide);
+
+        imagedestroy( $myImage );
+        imagejpeg( $thumb, $fileName ); // adjust format as needed
+        imagedestroy( $thumb );
+        return $fileName;
     }
     function resize_image($url, $imgsize, $height = '') {
         if (preg_match('/blogspot/', $url)) {
@@ -1519,30 +1680,36 @@ public function get_video_id($param, $videotype = '')
 
     public function uploadMedia($file_path='', $param=array(),$rezie=1)
        {
+
         if(!empty($file_path)) {
             $structure = FCPATH . 'uploads/image/';
             if (!file_exists($structure)) {
                 mkdir($structure, 0777, true);
             }
             
-            $array = pathinfo($file_path);
-            $file_title = $array['filename'];
-            $ext = $array['extension'];
-            if (preg_match('/jpg/', $ext)) {
-                $ext = '.jpg';
+            $ext = pathinfo($file_path, PATHINFO_EXTENSION);
+            if (preg_match('/fna.fbcdn/', $file_path)) {
+                $ext = 'jpg';
             }
-            if (preg_match('/png/', $ext)) {
-                $ext = '.png';
-            }
-            if (preg_match('/png/', $ext)) {
-                $ext = '.png';
-            }
-            if (preg_match('/jpeg/', $ext)) {
-                $ext = '.jpeg';
-            }
-            $fileName = FCPATH . 'uploads/image/'.$file_title.$ext;
+            $file_title = strtotime(date('Y-m-d H:i:s'));
+            $file_title = $file_title.(rand(100,10000)).'.'.$ext;
+            $fileName = FCPATH . 'uploads/image/'.$file_title;
             //$fileName = FCPATH . 'uploads/image/'.$file_title;
-            @copy($file_path, $fileName);
+            if (preg_match('/fbpost\\\uploads/', $file_path)) {
+                //@copy($file_path, $fileName);
+                $file_titles = basename($file_path);
+                $file_titles = explode('.', $file_titles);
+                $file_title = $file_titles[0];
+                $fileName = $file_path;
+            } else {
+                $ch = curl_init($file_path);
+                $fp = fopen($fileName, 'wb');
+                curl_setopt($ch, CURLOPT_FILE, $fp);
+                curl_setopt($ch, CURLOPT_HEADER, 0);
+                curl_exec($ch);
+                curl_close($ch);
+                fclose($fp);
+            }
             $file_path = $fileName;
             $file_name = $imgName = $fileName;
             $uploads = 1;
@@ -1717,7 +1884,8 @@ public function get_video_id($param, $videotype = '')
                     $btnPosition = 'cc';
                     $btnPath = FCPATH . '/uploads/image/watermark/btn/btn-'.rand(1,15).'.png';
                     \ChipVN\Image::watermark($file_path, $btnPath, $btnPosition);                    
-                }          
+                }  
+                $image = $file_path;     
                 /*upload to picasa*/
                 // $service  = 'Picasa';
                 // $uploader = \ChipVN\Image_Uploader::factory($service);
@@ -1859,11 +2027,109 @@ public function get_video_id($param, $videotype = '')
         // }
         /*End upload*/
     }
+
+    /**
+    ct = center top
+    cc = center center
+    lt = left top
+    rt = right top
+    lb = left bottom
+    rb = right bottom
+    cb = center bottom
+    */
+    public function mergeImages($file_a='',$file_b,$position)
+    {
+        if(empty($file_a)) {
+            $width = 1200;
+            $height = 635;
+            $file_title = strtotime('now');
+            $file_title = $file_title.(rand(100,10000)).'.jpg';
+            $file_a = FCPATH . 'uploads/image/'.$file_title;
+            $im = imagecreatetruecolor($width, $height);
+            $color = imagecolorallocate($im, 0, 0, 0);
+            imagefill($im, 0, 0, $color);
+            imagejpeg( $im, $file_a); // adjust format as needed
+            imagedestroy( $im );
+        }
+        $this->load->library('ChipVNl');
+        \ChipVN\Loader::registerAutoLoad();
+        \ChipVN\Image::watermark($file_a, $file_b, $position);
+        @unlink($file_b);
+        return $file_a;
+    }
+
+    public function watermarktextAndLogo($file_path='',$position,$textPosition)
+    {
+        $bg= FCPATH . 'uploads/image/watermark/bg_a.png';
+        $this->load->library('ChipVNl');
+        \ChipVN\Loader::registerAutoLoad();
+        \ChipVN\Image::watermark($file_path, $bg, $position);
+
+        $mydir = FCPATH . 'uploads/image/watermark/randtext'; 
+        $myfiles = array_diff(scandir($mydir), array('.', '..')); 
+        $k = array_rand($myfiles);
+        $textImage = $myfiles[$k];
+        $setTextImage= $mydir.'/'.$textImage;
+        $this->load->library('ChipVNl');
+        \ChipVN\Loader::registerAutoLoad();
+        \ChipVN\Image::watermark($file_path, $setTextImage, 'lt');
+
+        // $bg= FCPATH . 'uploads/image/watermark/bg_a.png';
+        $imagetobewatermark= imagecreatefromstring( file_get_contents( $file_path ) );
+
+        $day = date('d');
+        $m = date('m');
+        $y = date('Y');
+        $timestamp = time();
+        if($day>=1 && $day<16) {
+            $date = '16'.'/'.$m .'/'.(date('Y', $timestamp)+543);
+        } else if($day>15 && $day<=31) {
+            $date = '1/'.date('m',strtotime('first day of +1 month')) .'/'.(date('Y', $timestamp)+543);
+        }
+
+        $textColors = array(
+            'y'=>array(255,255,0),
+            'r'=>array(255,0,0),
+            'b'=>array(0,0,0),
+        );
+        $c = array_rand($textColors);
+        $cArr = $textColors[$c];
+        if($c == 'y') {
+            $backColor = array(255,0,0);
+        }
+        if($c == 'r') {
+            $backColor = array(255,255,0);
+        }
+        if($c == 'b') {
+            $backColor = array(255,255,0);
+        }
+
+        $watermarktext="แนวทาง งวด " .$date;
+        $font= FCPATH . 'uploads/image/watermark/font/thai_b.ttf';
+        $fontsize="50";
+        $bbox = imagettfbbox($fontsize, 0, $font, $watermarktext);
+        $x = $bbox[0] + (imagesx($imagetobewatermark) / 2) - ($bbox[4] / 2) + 10;
+        $y = $bbox[1] + (imagesy($imagetobewatermark) - $textPosition) - ($bbox[5] / 2) - 5;
+        $white = imagecolorallocate($imagetobewatermark, $backColor[0], $backColor[1], $backColor[2]);
+        imagettftext($imagetobewatermark, $fontsize, 0, $x, $y, $white, $font, $watermarktext);
+        imagejpeg( $imagetobewatermark, $file_path);
+        imagedestroy($imagetobewatermark);
+
+        $imagetobewatermark= imagecreatefromstring( file_get_contents( $file_path ) );
+        $x = $bbox[0] + (imagesx($imagetobewatermark) / 2) - ($bbox[4] / 2) + 10 - 3;
+        $y = $bbox[1] + (imagesy($imagetobewatermark) - $textPosition) - ($bbox[5] / 2) - 5 - 2;
+        $white = imagecolorallocate($imagetobewatermark, $cArr[0], $cArr[1], $cArr[2]);
+        imagettftext($imagetobewatermark, $fontsize, 0, $x, $y, $white, $font, $watermarktext);
+        imagejpeg( $imagetobewatermark, $file_path);
+        imagedestroy($imagetobewatermark);
+        return $file_path;
+    }
     /* returns the shortened url */
     function get_bitly_short_url($url, $login, $appkey, $format = 'txt') {
         $connectURL = 'http://api.bit.ly/v3/shorten?login=' . $login . '&apiKey=' . $appkey . '&uri=' . urlencode ( $url ) . '&format=' . $format;
         return $this->curl_get_result ( $connectURL );
     }
+
     /* returns a result form url */
     function curl_get_result($url) {
         $ch = curl_init ();
