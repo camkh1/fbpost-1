@@ -8910,7 +8910,7 @@ public function userd($obj)
                         } else {
                             $setImage = $thumbs[$i];
                         }
-                        if($this->UR_exists($setImage)) {
+                        if($this->UR_exists($setImage) && !preg_match('/localhost/', $setImage)) {
                             $conent = $conent.'<img src="'.$setImage.'"/><p> ​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​</p>';
                         }
                     }
@@ -11708,7 +11708,7 @@ function makeRequests($service) {
                 // copy and resize part of an image with resampling
                 $x_a = $this->input->post('x1');
                 $y_a = $this->input->post('y1');
-                imagecopyresampled($vDstImg, $vImg, 0, 0, (int)$x_a, (int)$y_a, $iWidth, $iHeight, $width, $height);
+                imagecopyresampled($vDstImg, $vImg, 0, 0, (int)$x_a, (int)$y_a, $iWidth, $iHeight, $iWidth, $iHeight);
 
                 // define a result image filename
                 $sResultFileName = $sTempFileName . $sExt;

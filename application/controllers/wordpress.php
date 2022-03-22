@@ -68,12 +68,9 @@ class Wordpress extends CI_Controller
         /*End show fbconfig*/
 
         $action = $this->input->get('action');
-<<<<<<< HEAD
-=======
         if($action == 'photopageshare') {
             $data['photoDetail'] = $this->photopageshare();
         }
->>>>>>> 7d0313eaab6f7d5f6e7ab7003d7e9f55b8eadca2
         if($action == 'shareToGroup') {
             /*get group*/
             // $wGList = array (
@@ -97,9 +94,6 @@ class Wordpress extends CI_Controller
             $data['group_list'] = $this->Mod_general->select ( Tbl_social_group::tblName, '*', $where_uGroup );
             /*End get group*/
         }
-<<<<<<< HEAD
-                    
-=======
         if($action == 'shareToPage' OR $action == 'photopageshare') {
             /*get page id*/
             $where_page = array (
@@ -110,7 +104,6 @@ class Wordpress extends CI_Controller
             $data['page_list'] = $this->Mod_general->select ( Tbl_social_group::tblName, '*', $where_page );
             /*End get page id*/
         }            
->>>>>>> 7d0313eaab6f7d5f6e7ab7003d7e9f55b8eadca2
 
         if(!empty($getPost[0])) {
             if(!empty($this->input->get('unlink'))) {
@@ -152,6 +145,7 @@ class Wordpress extends CI_Controller
         }
         if(!empty($getPost[0]) && !empty($this->input->get('img'))) {
             $img = $this->input->get('img');
+            
             $img = str_replace('http:', 'https:', $img);
             $site = $this->input->get('site');
             $imgid = $this->input->get('imgid');
@@ -206,11 +200,7 @@ class Wordpress extends CI_Controller
                 $updates = $this->Mod_general->update( Tbl_posts::tblName,$dataPostInstert, $whereUp);
                 if($updates) {
                     if(!empty($accounts->id)) {
-<<<<<<< HEAD
-                        echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'wordpress/autopostwp?pid='.$pid.'&action=shareToPage";}, 5 );</script>';
-=======
                         echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'wordpress/autopostwp?pid='.$pid.'&action=shareLinkToProfile";}, 5 );</script>';
->>>>>>> 7d0313eaab6f7d5f6e7ab7003d7e9f55b8eadca2
                         die;
                     } else {
                         echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'wordpress/close";}, 5 );</script>';
@@ -319,18 +309,11 @@ class Wordpress extends CI_Controller
             $this->session->set_userdata('pia', 1);
             $link = trim($this->input->post ( 'link' ));
             $title = trim(@$this->input->post ( 'title' ));
-<<<<<<< HEAD
-=======
             $titleShare = trim(@$this->input->post ( 'titleShare' ));
->>>>>>> 7d0313eaab6f7d5f6e7ab7003d7e9f55b8eadca2
             $thumbs = @$this->input->post ( 'thumb' );
             $asThumb = @$this->input->post ( 'asThumb' );
             $label = @$this->input->post ( 'label' );
             $addvideo = @$this->input->post ( 'addvideo' );
-<<<<<<< HEAD
-            if($label == 'lotto') {
-                $thumb = $this->imageMerge($thumbs,$asThumb);
-=======
             $btnplayer = @$this->input->post ( 'btnplayer' );
             $imagetext = @$this->input->post ( 'imagetext' );
             if($label == 'lotto'||$label == 'otherlotto') {
@@ -339,16 +322,10 @@ class Wordpress extends CI_Controller
                 if(!empty($asThumb)) {
                    $thumb =  $thumbs[0];
                 }
->>>>>>> 7d0313eaab6f7d5f6e7ab7003d7e9f55b8eadca2
             }
             if(empty($thumb)) {
                 $thumb = '';
             }
-<<<<<<< HEAD
-            require_once(APPPATH.'controllers/managecampaigns.php');
-            $Managecampaigns =  new Managecampaigns();
-            $getdata = $Managecampaigns->insertLink($link,$title,$thumb,$label,$thumbs,$addvideo);
-=======
             $setDataPost = new stdClass();
             $setDataPost->link = $link;
             $setDataPost->thumb = $thumb;
@@ -362,7 +339,6 @@ class Wordpress extends CI_Controller
             require_once(APPPATH.'controllers/managecampaigns.php');
             $Managecampaigns =  new Managecampaigns();
             $getdata = $Managecampaigns->insertLink($setDataPost);
->>>>>>> 7d0313eaab6f7d5f6e7ab7003d7e9f55b8eadca2
             if(!empty($getdata)) {
                 //echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=post&pid='.$getdata.'";}, 10 );</script>';
                 echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/yturl?pid='.$getdata.'&action=postblog";}, 10 );</script>';
@@ -371,26 +347,18 @@ class Wordpress extends CI_Controller
         }
         $this->load->view('wordpress/post', $data);
     }
-<<<<<<< HEAD
-    public function imageMerge($thumbs=array(),$asThumb=array())
-=======
     public function imageMerge($thumbs=array(),$asThumb=array(),$label,$btnplayer='',$imagetext='')
->>>>>>> 7d0313eaab6f7d5f6e7ab7003d7e9f55b8eadca2
     {
         $setArr = array();
         if(!empty($thumbs[0])) {
             for ($i=0; $i < count($thumbs); $i++) { 
                 if(!empty($thumbs[$i])) {
                     if($asThumb[$i] == 'set') {
-<<<<<<< HEAD
-                        array_push($setArr, $thumbs[$i]);
-=======
                         if (preg_match('/fna.fbcdn/', $thumbs[$i])) {
                             array_push($setArr, $thumbs[$i]);
                         } else {
                             array_push($setArr, strtok($thumbs[$i], '?'));
                         }
->>>>>>> 7d0313eaab6f7d5f6e7ab7003d7e9f55b8eadca2
                     }
                 }
             }
@@ -402,12 +370,19 @@ class Wordpress extends CI_Controller
                 if(!empty($setArr[$j])) {
                     switch ($count) {
                         case 1:
-                            $thumb = $this->mod_general->mergeImages('',$this->mod_general->crop_image($setArr[$j],$setWeight,($setHeight-95)),'lt');
-<<<<<<< HEAD
-                            $textPosition = 45;
-=======
+                            //$thumb = $this->mod_general->mergeImages('',$this->mod_general->crop_image($setArr[$j],$setWeight,($setHeight-95)),'lt');
+                            $param = array(
+                                'btnplayer'=>0,
+                                'playerstyle'=>0,
+                                'imgcolor'=>0,
+                                'txtadd'=>'',
+                                'filter_brightness'=>0,
+                                'filter_contrast'=>0,
+                                'img_rotate'=>'',
+                                'no_need_upload'=>1,
+                            );
+                            $thumb = $this->mod_general->uploadMedia($setArr[$j],$param);
                             $textPosition = 40;
->>>>>>> 7d0313eaab6f7d5f6e7ab7003d7e9f55b8eadca2
                             $bgPosition = 'cb';
                             break;
                         case 2:
@@ -427,11 +402,7 @@ class Wordpress extends CI_Controller
                             } else {
                                 $thumb = $this->mod_general->mergeImages($setThumb,$this->mod_general->crop_image($setArr[$j],($setWeight/3)-1,$setHeight),'rt');
                             }
-<<<<<<< HEAD
-                            $textPosition = 30;
-=======
                             $textPosition = 40;
->>>>>>> 7d0313eaab6f7d5f6e7ab7003d7e9f55b8eadca2
                             $bgPosition = 'cb';
                             break;
                         case 4:
@@ -444,11 +415,7 @@ class Wordpress extends CI_Controller
                             }  else {
                                 $thumb = $this->mod_general->mergeImages($setThumb,$this->mod_general->crop_image($setArr[$j],(($setWeight/2)-1),(($setHeight/2)-1)),'rb');
                             }
-<<<<<<< HEAD
-                            $textPosition = 30;
-=======
                             $textPosition = 40;
->>>>>>> 7d0313eaab6f7d5f6e7ab7003d7e9f55b8eadca2
                             $bgPosition = 'cb';
                             break;
                         case 5:
@@ -459,17 +426,6 @@ class Wordpress extends CI_Controller
                             if($j==0) {
                                 $setThumb = $this->mod_general->mergeImages('',$this->mod_general->crop_image($setArr[$j],(($setWeight/2)-1),(($setHeight/2)-$padding)),'lt');
                             } else if($j==1) {
-<<<<<<< HEAD
-                                $setThumb = $this->mod_general->mergeImages($setThumb,$this->mod_general->crop_image($setArr[$j],(($setWeight/2)-1),(($setHeight/2)-$padding)),'ct');
-                            } else if($j==2) {
-                                $setThumb = $this->mod_general->mergeImages($setThumb,$this->mod_general->crop_image($setArr[$j],(($setWeight/3)-1),(($setHeight/2)-$padding)),'rt');
-                            }  else if($j==3) {
-                                $setThumb = $this->mod_general->mergeImages($setThumb,$this->mod_general->crop_image($setArr[$j],(($setWeight/3)-1),(($setHeight/2)-$padding)),'lb');
-                            } else {
-                                $thumb = $this->mod_general->mergeImages($setThumb,$this->mod_general->crop_image($setArr[$j],(($setWeight/3)-1),(($setHeight/2)-$padding)),'rb');
-                            }
-                            $textPosition = 30;
-=======
                                 $setThumb = $this->mod_general->mergeImages($setThumb,$this->mod_general->crop_image($setArr[$j],(($setWeight/2)-1),(($setHeight/2)-$padding)),'rt');
                             } else if($j==2) {
                                 $setThumb = $this->mod_general->mergeImages($setThumb,$this->mod_general->crop_image($setArr[$j],(($setWeight/3)-1),(($setHeight/2)-$padding)),'lb');
@@ -479,7 +435,6 @@ class Wordpress extends CI_Controller
                                 $thumb = $this->mod_general->mergeImages($setThumb,$this->mod_general->crop_image($setArr[$j],(($setWeight/3)-1),(($setHeight/2)-$padding)),'rb');
                             }
                             $textPosition = 38;
->>>>>>> 7d0313eaab6f7d5f6e7ab7003d7e9f55b8eadca2
                             $bgPosition = 'cb';
                             break;
                         case 6:
@@ -496,11 +451,7 @@ class Wordpress extends CI_Controller
                             } else {
                                 $thumb = $this->mod_general->mergeImages($setThumb,$this->mod_general->crop_image($setArr[$j],(($setWeight/3)-1),(($setHeight/2)-1)),'rb');
                             }
-<<<<<<< HEAD
-                            $textPosition = 30;
-=======
                             $textPosition = 40;
->>>>>>> 7d0313eaab6f7d5f6e7ab7003d7e9f55b8eadca2
                             $bgPosition = 'cb';
                             break;
                         default:
@@ -511,13 +462,9 @@ class Wordpress extends CI_Controller
                 }
             }
             if(!empty($thumb)) {
-<<<<<<< HEAD
-                $thumb = $this->mod_general->watermarktextAndLogo($thumb,$bgPosition,$textPosition);
-=======
                 if($label == 'lotto') {
                     $thumb = $this->mod_general->watermarktextAndLogo($thumb,$bgPosition,$textPosition,$btnplayer,$imagetext);
                 }
->>>>>>> 7d0313eaab6f7d5f6e7ab7003d7e9f55b8eadca2
             }
         }
         return @$thumb;
