@@ -1124,9 +1124,12 @@ $link =  $desc->find('a', 0)->href;
                 foreach($html->find('.side-article') as $item) {
                     $item->outertext = '';
                 }
+<<<<<<< HEAD
+=======
                 foreach($html->find('.affaliate-image') as $item) {
                     $item->outertext = '';
                 }
+>>>>>>> 7d0313eaab6f7d5f6e7ab7003d7e9f55b8eadca2
                 foreach($html->find('ul') as $item) {
                     $item->outertext = '';
                 }
@@ -1139,7 +1142,11 @@ $link =  $desc->find('a', 0)->href;
                     if($index != $last && $index !=0) {
                         $content = $content. $contents->innertext;
                     } 
+<<<<<<< HEAD
+                }            
+=======
                 }          
+>>>>>>> 7d0313eaab6f7d5f6e7ab7003d7e9f55b8eadca2
                 $htmlContent = str_get_html($content);
                 foreach($htmlContent->find('.row') as $item) {
                     $item->outertext = '';
@@ -1337,7 +1344,11 @@ $desc = str_get_html($str);
                     return array();
                 }
                 break;
+<<<<<<< HEAD
+            case 'hilight.kapook.com':
+=======
             case 'kapook.com':
+>>>>>>> 7d0313eaab6f7d5f6e7ab7003d7e9f55b8eadca2
                 /*get label*/
                 $content = $this->gEntry($html,'#main_article .content');
                 $obj->vid = '';
@@ -3040,7 +3051,11 @@ $desc = str_get_html($str);
         $content = preg_replace('#<a.*?>(.*?)</a>#i', '\1', $content);
         $content = preg_replace( '/(<[^>]+) srcset=".*?"/i', "$1", $content );
         $content = str_replace('data-src="//', 'src="https://', $content);
+<<<<<<< HEAD
+        $content = preg_replace( '/(<[^>]+) data-src=".*?"/i', "$1", $content );
+=======
         $content = str_replace('data-src', 'src', $content);
+>>>>>>> 7d0313eaab6f7d5f6e7ab7003d7e9f55b8eadca2
         $content = preg_replace( '/(<[^>]+) data-srcset=".*?"/i', "$1", $content );
         $content = preg_replace( '/(<[^>]+) data-sizes=".*?"/i', "$1", $content );
         $content = preg_replace( '/(<[^>]+) data-pagespeed-url-hash=".*?"/i', "$1", $content );

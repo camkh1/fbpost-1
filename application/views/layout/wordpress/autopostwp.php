@@ -29,11 +29,21 @@ $pid = @!empty($_GET['pid'])? $_GET['pid']:0;;
 $blogRand = !empty($query_fb->wp_url)? $query_fb->wp_url : '';
 $wp_cate = '';
 
+<<<<<<< HEAD
+// $sitePpost = $autopost->site_to_post;
+// $k = array_rand($sitePpost);
+// $blogRand = $sitePpost[$k];
+$blogRand = !empty($query_fb->wp_url)? $query_fb->wp_url : '';
+$site = @$_GET['site'];
+$action = @$_GET['action'];
+$imgid = @$_GET['imgid'];
+=======
 $site = @$_GET['site'];
 $action = @$_GET['action'];
 $imgid = @$_GET['imgid'];
 $story_fbid = @$_GET['fbid'];
 
+>>>>>>> 7d0313eaab6f7d5f6e7ab7003d7e9f55b8eadca2
 if(!empty($site)) {
     $blogRand = $site;
 }
@@ -68,6 +78,8 @@ if($action == 'shareToGroup' ) {
         }
     }
 }
+<<<<<<< HEAD
+=======
 if($action == 'shareToPage' ) {
     $count = @!empty($_GET['count'])? $_GET['count']:0;
     if((count($page_list) != $count)) {
@@ -111,6 +123,7 @@ if($action == 'photopageshare' ) {
     }
 }
 
+>>>>>>> 7d0313eaab6f7d5f6e7ab7003d7e9f55b8eadca2
 if(!empty($post)) {
     $pConent = json_decode($post[0]->p_conent);
     $content = html_entity_decode(html_entity_decode(stripslashes(trim($pConent->message))));
@@ -126,6 +139,11 @@ if(!empty($post)) {
     }
 
     $pSchedule = json_decode($post[0]->p_schedule);
+<<<<<<< HEAD
+    $titles = html_entity_decode(str_replace('\\', '', $post[0]->p_name));
+    $titles = preg_replace('/\s+/', '<sp>', $titles);
+    //echo $titles;die;
+=======
     $pConent = json_decode($post[0]->p_conent);
     if(empty($link) && $action == 'postwp'):
         $titles = html_entity_decode(str_replace('\\', '', trim($post[0]->p_name)));
@@ -146,6 +164,7 @@ if(!empty($post)) {
     endif;
     $titles = str_replace("​&​q​u​o​t​;", '"', $titles);
     $titles = str_replace("&nbsp;", '"', $titles);
+>>>>>>> 7d0313eaab6f7d5f6e7ab7003d7e9f55b8eadca2
     $pid = $post[0]->p_id;
     $content = htmlentities($content);
 
@@ -155,13 +174,22 @@ if(!empty($post)) {
     
     $postLink = $pConent->link;
     //$content = '<p><img src="'.$thumb.'"/></p>' . $content;
+<<<<<<< HEAD
+    $labels = @$pSchedule->label;
+=======
     $setLabels = @$pSchedule->label;
+>>>>>>> 7d0313eaab6f7d5f6e7ab7003d7e9f55b8eadca2
     if(preg_match('/บน-ล่าง/', $post[0]->p_name) || preg_match('/เลข/', $post[0]->p_name) || preg_match('/งวด/', $post[0]->p_name) || preg_match('/หวย/', $post[0]->p_name) || preg_match('/ปลดหนี้/', $post[0]->p_name) || preg_match('/Lotto/', $post[0]->p_name) || preg_match('/Lottery/', $post[0]->p_name))  {
         $setLabels = 'lotto';
     }
 
+<<<<<<< HEAD
+    if(!empty($labels)) {
+        switch ($labels) {
+=======
     if(!empty($setLabels)) {
         switch ($setLabels) {
+>>>>>>> 7d0313eaab6f7d5f6e7ab7003d7e9f55b8eadca2
             case 'news':
                 if($blogRand == 'https://www.jc24news.com/') {
                     $labels = '1';
@@ -227,6 +255,12 @@ if(!empty($query_fb->wp_cate)) {
 
 <?php if($action == 'shareToGroup'):?>
     <input type="hidden" value="<?php echo @$GroupName;?>" id="gName" />
+<<<<<<< HEAD
+<?php endif;?>
+
+<code id="codeB" style="width:300px;overflow:hidden;display:none"></code>
+    <code id="examplecode5" style="width:300px;overflow:hidden;display:none">var codedefault2=&quot;CODE: SET !EXTRACT_TEST_POPUP NO\n SET !TIMEOUT_PAGE 300\n SET !ERRORIGNORE YES\n SET !TIMEOUT_STEP 1\n&quot;;var wm=Components.classes[&quot;@mozilla.org/appshell/window-mediator;1&quot;].getService(Components.interfaces.nsIWindowMediator);var window=wm.getMostRecentWindow(&quot;navigator:browser&quot;);const XMLHttpRequest = Components.Constructor(&quot;@mozilla.org/xmlextras/xmlhttprequest;1&quot;);var homeUrl = &quot;<?php echo base_url();?>&quot;,add_post_url = &quot;<?php echo @$blogRand;?>&quot;,titles = &quot;&quot;,contents = &quot;&quot;,thumb = &quot;&quot;,pid = &quot;<?php echo @$pid;?>&quot;,labels = [<?php echo @$labels;?>]<?php if(empty($link) && $action == 'uploadimage'):?>,fileupload = &quot;<?php echo @$fileupload;?>&quot;,imgname=&quot;<?php echo @$imgname;?>&quot;,imgext=&quot;<?php echo @$imgext;?>&quot;<?php endif;?>,imgid = &quot;<?php echo @$imgid;?>&quot;,fpid = &quot;<?php echo @$query_fb->id;?>&quot;,pagetype = &quot;<?php echo @$query_fb->pageType;?>&quot;<?php if($action == 'shareToGroup'):?>,count = &quot;<?php echo @$count;?>&quot;<?php endif;?>;</code>
+=======
     <input type="hidden" value="<?php echo @$GroupID;?>" id="groupID" />
 <?php endif;?>
 <?php if($action == 'photopageshare'):?>
@@ -234,6 +268,7 @@ if(!empty($query_fb->wp_cate)) {
 <?php endif;?>
 <code id="codeB" style="width:300px;overflow:hidden;display:none"></code>
     <code id="examplecode5" style="width:300px;overflow:hidden;display:none">var codedefault2=&quot;CODE: SET !EXTRACT_TEST_POPUP NO\n SET !TIMEOUT_PAGE 300\n SET !ERRORIGNORE YES\n SET !TIMEOUT_STEP 1\n&quot;;var wm=Components.classes[&quot;@mozilla.org/appshell/window-mediator;1&quot;].getService(Components.interfaces.nsIWindowMediator);var window=wm.getMostRecentWindow(&quot;navigator:browser&quot;);const XMLHttpRequest = Components.Constructor(&quot;@mozilla.org/xmlextras/xmlhttprequest;1&quot;);var homeUrl = &quot;<?php echo base_url();?>&quot;,add_post_url = &quot;<?php echo @$blogRand;?>&quot;,titles = &quot;&quot;,contents = &quot;&quot;,thumb = &quot;&quot;,pid = &quot;<?php echo @$pid;?>&quot;,labels = [<?php echo @$label;?>]<?php if(empty($link) && $action == 'uploadimage'):?>,fileupload = &quot;<?php echo @$fileupload;?>&quot;,imgname=&quot;<?php echo @$imgname;?>&quot;,imgext=&quot;<?php echo @$imgext;?>&quot;<?php endif;?>,imgid = &quot;<?php echo @$imgid;?>&quot;,fpid = &quot;<?php echo @$query_fb->id;?>&quot;,story_fbid = &quot;<?php echo @$story_fbid;?>&quot;,pagetype = &quot;<?php echo @$query_fb->pageType;?>&quot;,count = &quot;<?php echo @$count;?>&quot;,page_share_id = &quot;<?php echo @$pageID;?>&quot;,photos = &quot;<?php echo @$photoDetail->image;?>&quot;;</code>
+>>>>>>> 7d0313eaab6f7d5f6e7ab7003d7e9f55b8eadca2
     <script type="text/javascript">
         function runcode(codes) {
             var str = $("#examplecode5").text();
@@ -274,6 +309,12 @@ if(!empty($query_fb->wp_cate)) {
     <?php if(empty($link) && $action == 'postwp'):?>
         load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/postToWordpress');
     <?php endif;?>
+<<<<<<< HEAD
+    <?php if(!empty($_GET['pid']) && $action == 'shareToPage'):?>
+        setTimeout(function() {
+            load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/shareLinkToPage');
+        }, 1000 * 10);
+=======
     <?php if(!empty($_GET['pid']) && $action == 'shareLinkToProfile'):?>
         setTimeout(function() {
             <?php if(@$query_fb->pageType =='profile'):?>
@@ -325,6 +366,7 @@ if(!empty($query_fb->wp_cate)) {
         setTimeout(function() {
             load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/shareToMainPage');
         }, 1000 * 3);
+>>>>>>> 7d0313eaab6f7d5f6e7ab7003d7e9f55b8eadca2
     <?php endif;?>
     <?php if($action == 'shareToGroup'):?>
         <?php if($option_c=='to_to_group' || $option_c=='to_to_page_to_group'):?>
@@ -336,10 +378,14 @@ if(!empty($query_fb->wp_cate)) {
         //     load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/sharePageLastPostToGroup');
         //     //load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/sharePageLastPostToPageGroup');
         // }, 1000 * 10);
+<<<<<<< HEAD
+        load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/sharePageLastPostToGroup');
+=======
         //
         
         //load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/sharePageLastPostToGroup_mobile');
         
+>>>>>>> 7d0313eaab6f7d5f6e7ab7003d7e9f55b8eadca2
     <?php endif;?>
     <?php if(empty($link) && $action == 'postblog'||empty($link) && $action == 'uploadimage'):?>
         <?php if(!empty($blogRand)):?>
@@ -352,9 +398,12 @@ if(!empty($query_fb->wp_cate)) {
               // Do nothing!
             }
         <?php endif;?>
+<<<<<<< HEAD
+=======
     <?php endif;?>
     <?php if($action == 'photopageshare' && !empty($photoDetail->image)): ?>
         load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/uploadPhotoToPage');
+>>>>>>> 7d0313eaab6f7d5f6e7ab7003d7e9f55b8eadca2
     <?php endif;?>
     }, 2000 );
     </script>

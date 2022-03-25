@@ -537,8 +537,11 @@ $btemplate = "D:&bsol;&bsol;PROGRAM&bsol;&bsol;templates&bsol;&bsol;";
                                         <div class="col-md-12"> 
                                             <input class="form-control" name="sitepost" type="text" value="<?php echo !empty($query_fb->wp_url)? $query_fb->wp_url : '';?>"> 
                                             <span class="help-block">URL site to wp post.</span> 
+<<<<<<< HEAD
+=======
                                             <input class="form-control" name="sitecate" type="text" value="<?php echo !empty(@$query_fb->wp_cate)? $query_fb->wp_cate : '';?>"> 
                                             <span class="help-block">Category: lotto|1,news|2,entertainment|3,otherlotto|4</span> 
+>>>>>>> 7d0313eaab6f7d5f6e7ab7003d7e9f55b8eadca2
                                         </div> 
                                     </div>
 

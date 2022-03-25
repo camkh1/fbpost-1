@@ -109,6 +109,7 @@
 .jcrop-light .jcrop-selection {
   -moz-box-shadow: 0px 0px 15px #999;
   /* Firefox */
+<<<<<<< HEAD
 
   -webkit-box-shadow: 0px 0px 15px #999;
   /* Safari, Chrome */
@@ -359,6 +360,258 @@ function fileSelectHandler() {
         changeImg.push(e.target.result);
         oImage.onload = function () { // onload event handler
 
+=======
+
+  -webkit-box-shadow: 0px 0px 15px #999;
+  /* Safari, Chrome */
+
+  box-shadow: 0px 0px 15px #999;
+  /* CSS3 */
+
+}
+.jcrop-dark .jcrop-selection {
+  -moz-box-shadow: 0px 0px 15px #000;
+  /* Firefox */
+
+  -webkit-box-shadow: 0px 0px 15px #000;
+  /* Safari, Chrome */
+
+  box-shadow: 0px 0px 15px #000;
+  /* CSS3 */
+
+}
+.jcrop-fancy .jcrop-handle.ord-e {
+  -webkit-border-top-left-radius: 0px;
+  -webkit-border-bottom-left-radius: 0px;
+}
+.jcrop-fancy .jcrop-handle.ord-w {
+  -webkit-border-top-right-radius: 0px;
+  -webkit-border-bottom-right-radius: 0px;
+}
+.jcrop-fancy .jcrop-handle.ord-nw {
+  -webkit-border-bottom-right-radius: 0px;
+}
+.jcrop-fancy .jcrop-handle.ord-ne {
+  -webkit-border-bottom-left-radius: 0px;
+}
+.jcrop-fancy .jcrop-handle.ord-sw {
+  -webkit-border-top-right-radius: 0px;
+}
+.jcrop-fancy .jcrop-handle.ord-se {
+  -webkit-border-top-left-radius: 0px;
+}
+.jcrop-fancy .jcrop-handle.ord-s {
+  -webkit-border-top-left-radius: 0px;
+  -webkit-border-top-right-radius: 0px;
+}
+.jcrop-fancy .jcrop-handle.ord-n {
+  -webkit-border-bottom-left-radius: 0px;
+  -webkit-border-bottom-right-radius: 0px;
+}
+.description {
+  margin: 16px 0;
+}
+.jcrop-droptarget canvas {
+  background-color: #f0f0f0;
+}  
+.tooltip {font-family: 'Battambang';font-size: 14px!important;font-weight: 400!important;} 
+ /*End updad with crop*/       
+        .removediv{
+            top: 0px;
+            right: -30px;
+            width: 32px;
+        }
+        .widgets-refresh {
+            top: 37px;
+            right: -61px;
+            width: 32px;
+        }
+    .imgwrap{position: relative;}
+    .imgwrap .btn{position: absolute;top:0;right: 0}
+
+    /*watermark*/
+    .watermarker-wrapper .watermarker-container .resizer{background-image: url("<?php echo base_url();?>uploads/image/watermark/watermark/resize.png");}
+    .icon {width: 25px}
+    .icon-choose {height: 50px;cursor: pointer;border: 1px solid white;float: left;padding: 5px;}
+    .icon-choose:hover {border: 1px solid red}
+    .water-wrap {margin: 10px 5px 5px 10px;border: 1px solid #eee;padding: 3px}
+    fieldset {padding: 10px;border: 1px solid #ddd;}
+    fieldset legend{font-size: 100%;border:none;margin-bottom: 0px;font-weight: bold;width: inherit;}
+    /*End watermark*/
+
+#image,#myCanvas{
+  float:left;
+}
+
+#blur,#grayscale,#brightness,#contrast,#rotate,#invert,#opacity,#saturate,#sepia{
+    width: 300px;
+    margin: 15px;
+   float:left;
+   font-size: 11px;
+ }
+ 
+ div[type=range] {
+  -webkit-appearance: none;
+  width: 100%;
+  margin: 2px 0;
+}
+
+div[type=range] {
+  width: 100%;
+  height: 1px;
+  cursor: pointer;
+  box-shadow: 1px 1px 0.7px #000000, 0px 0px 1px #0d0d0d;
+  background: rgba(191, 102, 192, 0.35);
+  border-radius: 9.2px;
+  border: 0.2px solid #010101;
+}
+.ui-slider .ui-slider-handle {
+  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+  border: 1px solid #000000;
+  height: 5px;
+  width: 22px;
+  border-radius: 12px;
+  background: rgba(255, 42, 109, 0.75);
+  cursor: pointer;
+  -webkit-appearance: none;
+  margin-top: 1.8px;
+}
+
+div[type=range] {
+  width: 100%;
+  height: 1px;
+  cursor: pointer;
+  box-shadow: 1px 1px 0.7px #000000, 0px 0px 1px #0d0d0d;
+  background: rgba(191, 102, 192, 0.35);
+  border-radius: 9.2px;
+  border: 0.2px solid #010101;
+}
+
+div[type=range] {
+  background: rgba(164, 68, 165, 0.35);
+  border: 0.2px solid #010101;
+  border-radius: 18.4px;
+  box-shadow: 1px 1px 0.7px #000000, 0px 0px 1px #0d0d0d;
+}
+div[type=range] {
+  background: rgba(191, 102, 192, 0.35);
+  border: 0.2px solid #010101;
+  border-radius: 18.4px;
+  box-shadow: 1px 1px 0.7px #000000, 0px 0px 1px #0d0d0d;
+}
+div[type=range] {
+  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+  border: 1px solid #000000;
+  height: 5px;
+  width: 22px;
+  border-radius: 12px;
+  cursor: pointer;
+  height: 1px;
+}
+.loadding{border: red solid 1px !important}
+    </style>
+<script type="text/javascript">
+    /**
+ *
+ * HTML5 Image uploader with Jcrop
+ *
+ * Licensed under the MIT license.
+ * http://www.opensource.org/licenses/mit-license.php
+ * 
+ * Copyright 2012, Script Tutorials
+ * http://www.script-tutorials.com/
+ */
+
+// convert bytes into friendly format
+var changeImg = [];
+$.globalEval("var jcrop_api;"); 
+function bytesToSize(bytes) {
+    var sizes = ['Bytes', 'KB', 'MB'];
+    if (bytes == 0) return 'n/a';
+    var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+    return (bytes / Math.pow(1024, i)).toFixed(1) + ' ' + sizes[i];
+};
+
+// check for selected crop region
+function checkForm() {
+    if (parseInt($('#w').val())) return true;
+    $('.error').html('Please select a crop region and then press Upload').show();
+    return false;
+};
+
+// update info by cropping (onChange and onSelect events handler)
+function updateInfo(e) {
+    $('#x1').val(e.x);
+    $('#y1').val(e.y);
+    $('#x2').val(e.x2);
+    $('#y2').val(e.y2);
+    $('#w').val(e.w);
+    $('#h').val(e.h);
+};
+
+// clear info by cropping (onRelease event handler)
+function clearInfo() {
+    $('.info #w').val('');
+    $('.info #h').val('');
+};
+function initJcrop()
+{
+    $('#preview').Jcrop({
+        bgOpacity: 0.5,
+        bgColor: 'white',
+        addClass: 'jcrop-normal',
+        minSize: [200, 104], // min crop size
+        boxWidth: 800,
+        boxHeight: 415,
+        onChange: updateInfo,
+        onSelect: updateInfo,
+    }, function () {
+
+        // use the Jcrop API to get the real image size
+        var bounds = this.getBounds();
+
+        // Store the Jcrop API in the jcrop_api variable
+        jcrop_api = this;
+        jcrop_api.animateTo([200, 104]);
+        jcrop_api.setSelect([0, 0, 400, 208]);
+        jcrop_api.setOptions({
+            bgFade: true
+        });
+        jcrop_api.ui.selection.addClass('jcrop-selection');
+    });
+}
+function fileSelectHandler() {
+    // get selected file
+    var oFile = $('#image_file')[0].files[0];
+    // hide all errors
+    $('.error').hide();
+
+    // check for image type (jpg and png are allowed)
+    var rFilter = /^(image\/jpeg|image\/png)$/i;
+    if (! rFilter.test(oFile.type)) {
+        $('.error').html('Please select a valid image file (jpg and png are allowed)').show();
+        return;
+    }
+
+    // check for file size
+    if (oFile.size > 1000 * 3000) {
+        $('.error').html('You have selected too big file, please select a one smaller image file').show();
+        return;
+    }
+
+    // preview element
+    var oImage = document.getElementById('preview');
+
+    // prepare HTML5 FileReader
+    var oReader = new FileReader();
+        oReader.onload = function(e) {
+
+        // e.target.result contains the DataURL which we can use as a source of the image
+        oImage.src = e.target.result;
+        changeImg.push(e.target.result);
+        oImage.onload = function () { // onload event handler
+
+>>>>>>> 7d0313eaab6f7d5f6e7ab7003d7e9f55b8eadca2
             // display step 2
             $('.step2').fadeIn(500);
 
@@ -592,6 +845,13 @@ if(!empty($post)) {
                     <form method="post" id="validate" class="form-horizontal row-border" enctype="multipart/form-data">
                      
                     <div class="form-group">
+<<<<<<< HEAD
+                        <div class="col-md-6">
+                            <input type="text" id="link" class="form-control post-option" name="link" placeholder="URL" />
+                        </div>
+                        <div class="col-md-6">
+                            <input id="title" type="text" name="title"  class="form-control" placeholder="Title" />
+=======
                         <div class="col-md-2">
                             <input type="text" id="link" class="form-control post-option" name="link" placeholder="URL" />
                         </div>
@@ -600,6 +860,7 @@ if(!empty($post)) {
                         </div>
                         <div class="col-md-5">
                             <input id="title" type="text" name="titleShare"  class="form-control" placeholder="Title Share" />
+>>>>>>> 7d0313eaab6f7d5f6e7ab7003d7e9f55b8eadca2
                         </div>
                     </div>
                     <div class="form-group">
@@ -712,6 +973,30 @@ if(!empty($post)) {
                     </div>
                 </div>
                 <div class="widget-content">
+<<<<<<< HEAD
+                    <div class="col-md-3">
+                        <ul class="list-group">
+                            <li class="list-group-item no-padding"> 
+                                <a href="https://web.facebook.com/thainews/" class="list-group-item" target="_blank">Thainews 01</a>
+                                <a href="https://web.facebook.com/KhaoYouLike/" class="list-group-item" target="_blank">Thainews 02</a>
+                                <a href="https://web.facebook.com/khaosod/" class="list-group-item" target="_blank">Khaosod</a>
+                                <a href="https://www.amarintv.com/news/latest" class="list-group-item" target="_blank">AMARINTVHD</a>
+                                <a href="https://web.facebook.com/siamnews/" class="list-group-item" target="_blank">Siamnews</a>
+                                <a href="https://web.facebook.com/teeneedotcom" class="list-group-item" target="_blank">Teenee</a>
+                                <a href="https://web.facebook.com/linetodayth/" class="list-group-item" target="_blank">Linetoday</a>
+                                <a href="https://web.facebook.com/onenews31/" class="list-group-item" target="_blank">Onenews31</a>
+                                <a href="https://web.facebook.com/SanookEveryday/" class="list-group-item" target="_blank">Sanook</a>
+                                <a href="https://web.facebook.com/SanookEveryday/" class="list-group-item" target="_blank">Sanook</a>
+                                <a href="https://web.facebook.com/share2877/" class="list-group-item" target="_blank">share2877</a>
+                                <a href="https://web.facebook.com/TnewsTV/" class="list-group-item" target="_blank">TnewsTV</a>
+                                <a href="https://web.facebook.com/jarm/" class="list-group-item" target="_blank">Jarm</a>
+                                <a href="https://web.facebook.com/fna69" class="list-group-item" target="_blank">fna69</a>
+                                <a href="http://tdaily.us/" class="list-group-item" target="_blank">tdaily</a>
+                                <a href="http://www.khreality.com/" class="list-group-item" target="_blank">Khreality</a>
+                                
+                            </li> 
+                        </ul>
+=======
                     <div class="col-md-12">
                         <a href="https://web.facebook.com/thainews/" class="btn btn-primary" target="_blank">Thainews 01</a>
                                 <a href="https://web.facebook.com/KhaoYouLike/" class="btn btn-primary" target="_blank">Thainews 02</a>
@@ -732,6 +1017,7 @@ if(!empty($post)) {
                                 <a href="www.postsod.com" class="btn btn-primary" target="_blank">www.postsod.com (សុខភាព)</a>
                                 <a href="sharesod.com" class="btn btn-primary" target="_blank">sharesod.com (ទិកនិក)</a>
                                 <a href="burmese.dvb.no" class="btn btn-primary" target="_blank">burmese.dvb.no (ភូមា)</a>
+>>>>>>> 7d0313eaab6f7d5f6e7ab7003d7e9f55b8eadca2
                     </div>
                     <div class="clearfix"></div>
                 </div>
@@ -1089,6 +1375,7 @@ if(!empty($post)) {
             });
             /*end upload file*/
         });
+<<<<<<< HEAD
     </script>
 <script>
         /*watermarker*/
@@ -1358,6 +1645,277 @@ div[type=range] {
   margin-top: 1.8px;
 }
 
+=======
+    </script>
+<script>
+        /*watermarker*/
+        
+        (function(){
+          
+            $(document).on("click","#getfromlink", function(){
+                var id = $("#upload_form").data('formid');
+                var img = $("#fromlink").val();
+                if(img) {
+                    $("#show_link_"+id).attr("src",img);
+                    $("#image_link_"+id).val(img);
+                    $('#cropModal').modal('hide');
+                }
+            });
+            // $(document).on("mousemove",function(event){
+            //     $("#mousex").val(event.pageX);
+            //     $("#mousey").val(event.pageY);
+            // });
+            $(document).on("click","input[name=watermarkchooser]", function(){
+                var value = $(this).val();
+                switch (value) {
+                  case 'text':
+                    $("#chooseshape").slideUp();
+                    $("#choosesticker").slideUp();
+                    $("#choosetext").slideDown();
+                    break;
+                  case 'shape':
+                    $("#choosesticker").hide();
+                    $("#choosetext").hide();
+                    $("#chooseshape").slideDown();
+                    break;
+                  case 'sticker':
+                    $("#chooseshape").hide();
+                    $("#choosetext").hide();
+                    $("#choosesticker").slideDown();
+                    break; 
+                }
+            });
+
+            $(document).on("click",".icon-choose", function(){
+                var value = $(this).attr('src');
+                getwatermark(value);
+            });
+
+
+            $('select[name=watermark]').change(function () {
+                var value = $(this).val();
+                var setnum = make_id(10);
+                if(value!='') {
+                    num.push({"watermark":setnum, "value":{"image":value,"x1":0,"y1":0,"w":0,"h":0}});
+                    setwatermarker(value,setnum);
+                }
+            });
+        })();
+        
+function getattra(e) {
+    $("#singerimageFist").val(e);
+    $("#imageviewFist").html('<img style="width:100%;height:55px;" src="' + e + '"/>');
+}
+function getwatermark(value) {
+  var setnum = make_id(10);
+  if(value!='') {
+      num.push({"watermark":setnum, "value":{"image":value,"x1":0,"y1":0,"w":0,"h":0}});
+      setwatermarker(value,setnum);
+  }
+}
+function setwatermarker(image,setval) {
+    $("#imagewater").watermarker({
+        imagePath: image,
+        removeIconPath: "<?php echo base_url();?>uploads/image/watermark/watermark/close-icon.png",
+        offsetLeft:30,
+        offsetTop: 40,
+        onChange: updateCoords,
+        onInitialize: updateCoords,
+        containerClass: "myContainer imagecontainer",
+        watermarkImageClass: "myImage superImage",      
+        watermarkerClass: "js-watermark-1 js-watermark",
+        watermarkerDataId: setval,
+        data: {id: setval, "class": "superclass", pepe: "pepe"},        
+        onRemove: function(){
+            for (var i = num.length - 1; i >= 0; --i) {
+                if (num[i].watermark == setval) {
+                    num.splice(i,1);
+                }
+            }
+            if(typeof console !== "undefined" && typeof console.log !== "undefined"){
+                console.log("Removing...");
+            }
+        },
+        onDestroy: function(){
+            if(typeof console !== "undefined" && typeof console.log !== "undefined"){
+                console.log("Destroying...");   
+            }
+        }
+    });
+}
+function updateCoords (coords){
+    $("#posx").val(coords.x);
+    $("#posy").val(coords.y);
+    $("#width").val(coords.width);
+    $("#height").val(coords.height);
+    $("#opacity").val(coords.opacity);  
+    for (var i = 0; i < num.length; i++) {
+        if (num[i].watermark == coords.id) {
+            num[i].value = {"image":coords.imagePath,"x1":coords.x,"y1":coords.y,"w":coords.width,"h":coords.height};
+        }
+    }
+
+    // var image = $('#image').attr('src');
+    //var obj={"watermark":{"image":coords.imagePath,"x1":coords.x,"y1":coords.y,"w":coords.width,"h":coords.height}}
+    var pretty = JSON.stringify(num, undefined, 2);
+    $('#datavalu').val(pretty);
+}
+function make_id(length) {
+   var result           = '';
+   var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+   var charactersLength = characters.length;
+   for ( var i = 0; i < length; i++ ) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+   }
+   return result;
+}
+/*End watermarker*/
+/*filter*/
+function blur() {
+  var blur = $("#blur").slider("value");
+  var grayscale = $("#grayscale").slider("value");
+  var brightness = $("#brightness").slider("value");
+  var contrast = $("#contrast").slider("value");
+  //var rotate = $("#rotate").slider("value");
+  var invert = $("#invert").slider("value");
+  //var opacity = $("#opacity").slider("value");
+  //var saturate = $("#saturate").slider("value");
+  //var sepia = $("#sepia").slider("value");
+  $("#imagewater").css("-webkit-filter", "blur(" + blur + "px)" + "brightness(" + brightness + "%)" + "grayscale(" + grayscale + "%)" + "contrast(" + contrast + "%)" + "invert(" + invert + "%)");
+  $("#imagewater").css("filter", "blur(" + blur + "px)" + "brightness(" + brightness + "%)" + "grayscale(" + grayscale + "%)" + "contrast(" + contrast + "%)" + "invert(" + invert + "%)");
+  for (var i = 0; i < num.length; i++) {
+      if (num[i].mainimage) {
+          num[i].value = {"blur":blur,"grayscale":grayscale,"brightness":brightness,"contrast":contrast,"huerotate":rotate,"invert":invert,"opacity":opacity,"saturate":saturate,"sepia":sepia};
+      }
+  }
+  var pretty = JSON.stringify(num, undefined, 2);
+  $('#datavalu').val(pretty);
+}
+//***********SLIDERS*************//
+
+function getslider() {
+  $("#blur").slider({
+    orientation: "horizontal",
+    min: 0,
+    max: 25,
+    value: 0,
+    slide: blur,
+    change: blur
+  });
+  $("#grayscale").slider({
+    orientation: "horizontal",
+    min: 0,
+    max: 100,
+    value: 0,
+    slide: blur,
+    change: blur
+  });
+  $("#brightness").slider({
+    orientation: "horizontal",
+    min: 100,
+    max: 1000,
+    value: 100,
+    slide: blur,
+    change: blur
+  });
+
+  $("#contrast").slider({
+    orientation: "horizontal",
+    min: 0,
+    max: 1000,
+    value: 100,
+    slide: blur,
+    change: blur
+  });
+  // $("#rotate").slider({
+  //   orientation: "horizontal",
+  //   min: -180,
+  //   max: 180,
+  //   value: 0,
+  //   slide: blur,
+  //   change: blur
+  // });
+
+  // $("#saturate").slider({
+  //   orientation: "horizontal",
+  //   min: 0,
+  //   max: 100,
+  //   value: 1,
+  //   slide: blur,
+  //   change: blur
+  // });
+
+  // $("#sepia").slider({
+  //   orientation: "horizontal",
+  //   min: 0,
+  //   max: 100,
+  //   value: 0,
+  //   slide: blur,
+  //   change: blur
+  // });
+
+  // $("#opacity").slider({
+  //   orientation: "horizontal",
+  //   min: 0,
+  //   max: 100,
+  //   value: 100,
+  //   slide: blur,
+  //   change: blur
+  // });
+
+  $("#invert").slider({
+    orientation: "horizontal",
+    min: 0,
+    max: 100,
+    value: 0,
+    slide: blur,
+    change: blur
+  });
+}
+    </script>
+<style type="text/css">
+    .addfield{margin-top: 7px}
+</style>
+<style>
+        #image,#myCanvas{
+  float:left;
+}
+
+#blur,#grayscale,#brightness,#contrast,#rotate,#invert,#opacity,#saturate,#sepia{
+    width: 300px;
+    margin: 15px;
+   float:left;
+   font-size: 11px;
+ }
+ 
+ div[type=range] {
+  -webkit-appearance: none;
+  width: 100%;
+  margin: 2px 0;
+}
+
+div[type=range] {
+  width: 100%;
+  height: 1px;
+  cursor: pointer;
+  box-shadow: 1px 1px 0.7px #000000, 0px 0px 1px #0d0d0d;
+  background: rgba(191, 102, 192, 0.35);
+  border-radius: 9.2px;
+  border: 0.2px solid #010101;
+}
+.ui-slider .ui-slider-handle {
+  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+  border: 1px solid #000000;
+  height: 5px;
+  width: 22px;
+  border-radius: 12px;
+  background: rgba(255, 42, 109, 0.75);
+  cursor: pointer;
+  -webkit-appearance: none;
+  margin-top: 1.8px;
+}
+
+>>>>>>> 7d0313eaab6f7d5f6e7ab7003d7e9f55b8eadca2
 div[type=range] {
   width: 100%;
   height: 1px;
