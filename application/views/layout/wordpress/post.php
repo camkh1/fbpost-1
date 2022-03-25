@@ -681,6 +681,10 @@ if(!empty($post)) {
                                 <input value="1" type="checkbox" name="imagetext">
                                 <b>Random Image Text</b>
                             </label>
+                            <label class="checkbox"> 
+                                <input value="1" type="checkbox" name="copyfrom" checked>
+                                <b class="khmer">ប្រភព</b>
+                            </label>
                         </div>
                         <div class="col-md-2">
                             <input id="sumbmit" type="submit"class="btn pull-right" value="Post" />

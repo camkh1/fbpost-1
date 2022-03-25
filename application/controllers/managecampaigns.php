@@ -8849,11 +8849,13 @@ public function userd($obj)
         $setLabel = @$setDataPost->label;
         $label = @$setDataPost->label;
         $addvideo = @$setDataPost->addvideo;
-        if(empty($url)) {
+        $title = @$setDataPost->title;
+        if(empty($url) && empty($setthumbs[0])) {
             echo 'no url';
             return false;
             exit();
         }
+
         $log_id = $this->session->userdata ( 'user_id' );
         $user = $this->session->userdata ( 'email' );
         $provider_uid = $this->session->userdata ( 'provider_uid' );
@@ -8862,22 +8864,28 @@ public function userd($obj)
         $fbUserId = $this->session->userdata('fb_user_id');
         $sid = $this->session->userdata ( 'sid' );
         $post_only = $this->session->userdata ( 'post_only' );
+
+        $setThumbArr = array();
+        if(!empty($thumbs[0])) {
+            for ($i=0; $i < count($thumbs); $i++) { 
+                if(!empty($thumbs[$i])) {
+                    array_push($setThumbArr, strtok($thumbs[$i], '?'));
+                }
+            }
+        } 
         preg_match("/^(?:http(?:s)?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:(?:watch)?\?(?:.*&)?v(?:i)?=|(?:embed|v|vi|user)\/))([^\?&\"'>]+)/", $url, $matches);
         if (!empty($matches[1])) {
             $ycontent = $this->getContentfromYoutube($url);
-            $conent = $ycontent->conent;
+            $conent = '';
             $thumb = $ycontent->thumb;
             $title = $ycontent->title;
-            $bodytext = $this->generateText($setLabel);
-            if(!empty($matches[1])) {
-                $from = 'yt';
-                $youtubeCode = '      <p> ​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​</p><iframe width="727" height="409" src="https://www.youtube.com/embed/'.$matches[1].'" title="YouTube video player" frameborder="0"></iframe>      <p> ​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​</p>';
-            } else {
-                $youtubeCode = '';
-                $from = '';
+            $text = $this->generateText($setLabel);
+            if(is_array($text)){
+                $lastText = end(@$text);
             }
-            $conent = $bodytext;
-            if(!empty($thumbs)) {
+            
+            if(count($setThumbArr)>1) {
+                $lastImage = end($thumbs);
                 for ($i=0; $i < count($thumbs); $i++) { 
                     if(!empty($thumbs[$i])) {
                         if (preg_match('/fna.fbcdn/', $thumbs[$i])) {
@@ -8886,79 +8894,26 @@ public function userd($obj)
                         } else {
                             $setImage = $thumbs[$i];
                         }
-                        if($this->UR_exists($setImage) && !preg_match('/localhost/', $setImage)) {
-                            $conent = $conent.'<img src="'.$setImage.'"/><p> ​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​</p>';
+                        if($this->UR_exists($setImage)) {
+                            if(is_array($text)){
+                                if(!empty($text[$i]) && $text[$i] != $lastText) {
+                                    $setText = '<p>'.@$text[$i].'</p><p>​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​</p>';
+                                } else {
+                                    $setText = '<p>​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​</p>';
+                                }
+                                $conent = $conent . $setText . '<img src="'.$setImage.'"/>';
+                            } else {
+                                $conent = $conent . '<img src="'.$setImage.'"/>';
+                            }
                         }
                     }
                 }
-            }
-            $conent = $conent.'<p>'.$youtubeCode.'</p>';
-            
-        } else {
-            /*check duplicate*/
-            $whereDupA = array(
-                'object_id'      => $url,
-                'meta_name'     => $log_id . 'sitelink',
-            );
-            $queryCheckDup = $this->Mod_general->select('meta', '*', $whereDupA);
-            /*check duplicate*/
-
-            if(empty($queryCheckDup[0])) {
-                /*update link status*/
-                $data_blog = array(
-                    'meta_key'      => date('Y-m-d'),
-                    'object_id'      => $url,
-                    'meta_value'     => 1,
-                    'meta_name'     => $log_id . 'sitelink',
-                );
-                $this->Mod_general->insert('meta', $data_blog);
-                /*End update link status*/
-                require_once(APPPATH.'controllers/Getcontent.php');
-                $aObj = new Getcontent(); 
-                $getContent = $aObj->getConentFromSite($url,'');
-                $conent = $getContent->conent;
-                $thumb = $getContent->thumb;
-                $title = $getContent->title;
-                $fromsite = $getContent->fromsite;
-                $fromURL = $getContent->url;
-                $youtubeCode = '';
-
-                $conent = $this->insertAd($conent, '      <p> ​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​</p>', $pos = 1);
-                //echo $conent;die;
-                $conent = strip_tags($conent,'<img><p><iframe><ul><br/>');
-                $txt = '';
-                $pattern = "|(<img .*?>)|";
-                preg_match_all($pattern, $conent, $matches);
-                $i= 0;
-                foreach ($matches[0] as $value) {
-                    $code = '';
-                    if($i % 3 == 0) {
-                        $code = '      <p> ​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​</p>';
-                    }
-                    $conent = str_replace($value, $value.$code, $conent);
-                    $i++;
+                if(!is_array($text)){
+                    $conent = $text.$conent;
                 }
-                
-                // ob_start();
-                // ob_end_clean();
-                // preg_match_all('/<iframe[^>]+src="([^"]+)"/', $getContent->conent, $match);
-
-                // if(!empty($match[1])) {
-                //     preg_match("/^(?:http(?:s)?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:(?:watch)?\?(?:.*&)?v(?:i)?=|(?:embed|v|vi|user)\/))([^\?&\"'>]+)/", $match[1][0], $matches);
-                //     if (!empty($matches[1])) {
-                //         $youtubeCode = ' <p>​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​</p> <iframe width="727" height="409" src="https://www.youtube.com/embed/'.$matches[1].'" title="YouTube video player" frameborder="0"></iframe> <p>​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​</p> ';
-                //         $dataYT = $this->getContentfromYoutube('https://www.youtube.com/watch?v='.$matches[1]);
-                //         if(empty($thumb)) {
-                //             $thumb = $this->Mod_general->upload($dataYT->thumb);
-                //         }
-                //         $conent = $getContent->conent.'<br/>'.$youtubeCode;
-                //         if(empty($title)) {
-                //             $title = $dataYT->title;
-                //         }
-                //     }
-                // } 
-                if(!empty($thumbs)) {
-                    for ($i=0; $i < count($thumbs); $i++) { 
+            } else {
+                if(is_array($text)){
+                    for ($i=0; $i < count($text); $i++) { 
                         if(!empty($thumbs[$i])) {
                             if (preg_match('/fna.fbcdn/', $thumbs[$i])) {
                                 $setImage = $this->mod_general->uploadMedia($thumbs[$i],$param);
@@ -8967,32 +8922,198 @@ public function userd($obj)
                                 $setImage = $thumbs[$i];
                             }
                             if($this->UR_exists($setImage)) {
-                                $conent = $conent.'<img src="'.$setImage.'"/><p> ​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​</p>';
+                                if($text[$i] != $lastText) {
+                                    $conent = $conent . '<p>'.$text[$i].'</p><p>​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​</p><img src="'.$setImage.'"/><p>​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​</p>';
+                                }
+                            }
+                        } else {
+                            if($text[$i] != $lastText) {
+                                $conent = $conent. '<p>'.$text[$i].'</p><p>​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​</p>';
+                            }
+                        }
+                        
+                    }
+                } else {
+                    $conent = $text;
+                }
+                if(count($thumbs)>0) {
+                    for ($i=0; $i < count($thumbs); $i++) { 
+                        
+                    }
+                }
+            }
+            
+
+            if(!empty($matches[1])) {
+                $from = 'yt';
+                $youtubeCode = '      <p> ​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​</p><iframe width="727" height="409" src="https://www.youtube.com/embed/'.$matches[1].'" title="YouTube video player" frameborder="0"></iframe>      <p> ​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​</p>';
+            } else {
+                $youtubeCode = '';
+                $from = '';
+            }
+            // if(!empty($thumbs)) {
+            //     for ($i=0; $i < count($thumbs); $i++) { 
+            //         if(!empty($thumbs[$i])) {
+            //             if (preg_match('/fna.fbcdn/', $thumbs[$i])) {
+            //                 $setImage = $this->mod_general->uploadMedia($thumbs[$i],$param);
+                            
+            //             } else {
+            //                 $setImage = $thumbs[$i];
+            //             }
+            //             if($this->UR_exists($setImage) && !preg_match('/localhost/', $setImage)) {
+            //                 $conent = $conent.'<img src="'.$setImage.'"/><p> ​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​</p>';
+            //             }
+            //         }
+            //     }
+            // }
+            if(!empty($lastText)) {
+                $conent = $conent.'<p>'.$youtubeCode.'</p><p>'.$lastText.'</p>';
+            } else {
+                $conent = $conent.'<p>'.$youtubeCode.'</p>';
+            }
+            
+        } else {
+            if(!empty($url)) {
+                /*check duplicate*/
+                $whereDupA = array(
+                    'object_id'      => $url,
+                    'meta_name'     => $log_id . 'sitelink',
+                );
+                $queryCheckDup = $this->Mod_general->select('meta', '*', $whereDupA);
+                /*check duplicate*/
+
+                if(empty($queryCheckDup[0])) {
+                    /*update link status*/
+                    $data_blog = array(
+                        'meta_key'      => date('Y-m-d'),
+                        'object_id'      => $url,
+                        'meta_value'     => 1,
+                        'meta_name'     => $log_id . 'sitelink',
+                    );
+                    $this->Mod_general->insert('meta', $data_blog);
+                    /*End update link status*/
+                    require_once(APPPATH.'controllers/Getcontent.php');
+                    $aObj = new Getcontent(); 
+                    $getContent = $aObj->getConentFromSite($url,'');
+                    $conent = $getContent->conent;
+                    $thumb = $getContent->thumb;
+                    $title = $getContent->title;
+                    $fromsite = $getContent->fromsite;
+                    $fromURL = $getContent->url;
+                    $youtubeCode = '';
+
+                    $conent = $this->insertAd($conent, '      <p> ​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​</p>', $pos = 1);
+                    //echo $conent;die;
+                    $conent = strip_tags($conent,'<img><p><iframe><ul><br/>');
+                    $txt = '';
+                    $pattern = "|(<img .*?>)|";
+                    preg_match_all($pattern, $conent, $matches);
+                    $i= 0;
+                    foreach ($matches[0] as $value) {
+                        $code = '';
+                        if($i % 3 == 0) {
+                            $code = '      <p> ​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​</p>';
+                        }
+                        $conent = str_replace($value, $value.$code, $conent);
+                        $i++;
+                    }
+                    
+                    // ob_start();
+                    // ob_end_clean();
+                    // preg_match_all('/<iframe[^>]+src="([^"]+)"/', $getContent->conent, $match);
+
+                    // if(!empty($match[1])) {
+                    //     preg_match("/^(?:http(?:s)?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:(?:watch)?\?(?:.*&)?v(?:i)?=|(?:embed|v|vi|user)\/))([^\?&\"'>]+)/", $match[1][0], $matches);
+                    //     if (!empty($matches[1])) {
+                    //         $youtubeCode = ' <p>​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​</p> <iframe width="727" height="409" src="https://www.youtube.com/embed/'.$matches[1].'" title="YouTube video player" frameborder="0"></iframe> <p>​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​</p> ';
+                    //         $dataYT = $this->getContentfromYoutube('https://www.youtube.com/watch?v='.$matches[1]);
+                    //         if(empty($thumb)) {
+                    //             $thumb = $this->Mod_general->upload($dataYT->thumb);
+                    //         }
+                    //         $conent = $getContent->conent.'<br/>'.$youtubeCode;
+                    //         if(empty($title)) {
+                    //             $title = $dataYT->title;
+                    //         }
+                    //     }
+                    // } 
+                    if(!empty($thumbs)) {
+                        for ($i=0; $i < count($thumbs); $i++) { 
+                            if(!empty($thumbs[$i])) {
+                                if (preg_match('/fna.fbcdn/', $thumbs[$i])) {
+                                    $setImage = $this->mod_general->uploadMedia($thumbs[$i],$param);
+                                    
+                                } else {
+                                    $setImage = $thumbs[$i];
+                                }
+                                if($this->UR_exists($setImage)) {
+                                    $conent = $conent.'<img src="'.$setImage.'"/><p> ​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​</p>';
+                                }
+                            }
+                        }
+                    }
+                    $checkSite = $this->CheckSiteLotto();
+                    if (in_array(@$getContent->fromsite, $checkSite)) {
+                        if(strlen (strip_tags($getContent->conent))<250) {
+                            $bodytext = $this->generateText();
+                        } else {
+                            $bodytext = $getContent->conent;
+                        }
+                        $conent = $bodytext.'<br/>'.$youtubeCode;
+                    }
+                    // /*update link status*/
+                    // $data_blog = array(
+                    //     'meta_key'      => date('Y-m-d'),
+                    //     'object_id'      => $url,
+                    //     'meta_value'     => 1,
+                    //     'meta_name'     => $log_id . 'sitelink',
+                    // );
+                    // $lastID = $this->Mod_general->insert('meta', $data_blog);
+                } else {
+                    echo 'The is already posted';
+                }
+                $from = 'site';
+            } else if(!empty($thumbs)) {
+                /*
+                if have only image url then generate text with images
+                */
+                $text = $this->generateText($setLabel);
+                $conent = '';
+                $lastImage = end($thumbs);
+                if(is_array($text)){
+                    $lastText = end(@$text);
+                }
+                for ($i=0; $i < count($thumbs); $i++) { 
+
+                    if(!empty($thumbs[$i])) {
+                        if (preg_match('/fna.fbcdn/', $thumbs[$i])) {
+                            $setImage = $this->mod_general->uploadMedia($thumbs[$i],$param);
+                            
+                        } else {
+                            $setImage = $thumbs[$i];
+                        }
+                        if($this->UR_exists($setImage)) {
+                            if($thumbs[$i] == $lastImage) {
+                                $conent = $conent . '<img src="'.$setImage.'"/><p></p><p>​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​</p>';
+                            } else {
+                                if(is_array($text)){
+                                    if(!empty($text[$i]) && $text[$i] != $lastText) {
+                                        $setText = '<p>'.@$text[$i].'</p><p>​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​</p>';
+                                    } else {
+                                        $setText = '<p>​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​</p>';
+                                    }
+                                    $conent = $conent . $setText . '<img src="'.$setImage.'"/>';
+                                } else {
+                                    $conent = $conent . '<img src="'.$setImage.'"/>';
+                                }
                             }
                         }
                     }
                 }
-                $checkSite = $this->CheckSiteLotto();
-                if (in_array(@$getContent->fromsite, $checkSite)) {
-                    if(strlen (strip_tags($getContent->conent))<250) {
-                        $bodytext = $this->generateText();
-                    } else {
-                        $bodytext = $getContent->conent;
-                    }
-                    $conent = $bodytext.'<br/>'.$youtubeCode;
-                }
-                // /*update link status*/
-                // $data_blog = array(
-                //     'meta_key'      => date('Y-m-d'),
-                //     'object_id'      => $url,
-                //     'meta_value'     => 1,
-                //     'meta_name'     => $log_id . 'sitelink',
-                // );
-                // $lastID = $this->Mod_general->insert('meta', $data_blog);
-            } else {
-                echo 'The is already posted';
+                if(!is_array($text)){
+                    $conent = $text.$conent;
+                } 
+                $conent = $conent.'<p>'.$lastText.'</p><p>​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​</p>';
             }
-            $from = 'site';
         }
         if(empty($conent)) {
             echo 'no content';
@@ -9001,17 +9122,19 @@ public function userd($obj)
             exit();
         }
 
-        if (preg_match ( '/\|/', $title )) {
+        if (preg_match ( '/\|/', @$title )) {
             $title = explode('|', $title)[0];
         }
-        if (preg_match ( '/ - /', $title )) {
+        if (preg_match ( '/ - /', @$title )) {
             $title = explode(' - ', $title)[0];
         }
 
         $conent = '<p>~</p>'.$title .'<p> ​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​</p>'.$conent.$addvideo;
         if(!empty($setLabel)){
             if($setLabel == 'news'|| $setLabel == 'entertainment') {
-                $conent = $conent.$addvideo .'<br/>_____________<br/>ขอขอบคุณข้อมูลจาก '.@$this->remove_http($fromURL);
+                if(!empty(@$setDataPost->copyfrom)) {
+                    $conent = $conent.$addvideo .'<br/>_____________<br/>ขอขอบคุณข้อมูลจาก '.@$this->remove_http($fromURL);
+                }
             }
         }
         /*preparepost*/
@@ -9238,6 +9361,32 @@ function strip_tags_content($text, $tags = '', $invert = FALSE) {
     {
         $txt = '';
         if($type == 'lotto') {
+            $path    = FCPATH . 'uploads/rand_text/';
+            $files = array_diff(scandir($path), array('.', '..'));
+            $txtArr = array();
+            foreach ($files as $key => $value) {
+                //var_dump($value);
+                $f_type = pathinfo($value, PATHINFO_EXTENSION);
+                if ($f_type== "txt")
+                {
+                    array_push($txtArr, $value);
+                }
+            }
+            $txtRan = $txtArr[mt_rand(0, count($txtArr) - 1)];
+            $txt_file = $path . $txtRan;
+            $txt = array();
+            if(file_exists($txt_file)) {
+                $fh = fopen($txt_file,'r');
+                while ($line = fgets($fh)) {
+                  // <... Do your work with the line ...>
+                  //$setData->text = $line;
+                    array_push($txt, $line);
+                }
+                fclose($fh);
+                //$setData->text = $image_path;
+            }
+            return $txt;
+            die;
             $text = array(
                 '       <p>หวยผังเลข มาแล้วเลขดับจากหนังสือหวยดังผังเลขงวดนี้ เลขดับงวดนี้จะให้ตัวไหนมา ดับผังเลขสถิติ ดีมาก ให้ตัวไหน ไม่เคยพลาด ดับทุกงวดต้องติดตามครับ</p><p>เลขดับผังเลข คู่มือการเสี่ยงโชค หาเลขดับที่คนเล่นหวยทุกคนต้องมี เนื่องจากแม่นมาก หาเลขดับได้ดีจริงๆ คิดตามแล้ว ลดต้นทุนได้มากทีเดียว </p>       <p>หนังสือหวยดีๆ แบบนี้ต้องอุดหนุน หาซื้อหนังสือผังเลขได้ตามร้านหนังสือหวย ใกล้บ้านได้เลยครับ อย่าลืมอุดหนุนกันเพื่อเป็นกำลังใจให้ผู้จัดทำนะครับ</p>       <p>หนังสือผังเลขที่มีมาอย่างยาวนาน คู่กับวงการคนเล่นหวยเมืองไทย นอกจากเลขดับแล้ว ในเล่มยังมีหวยอื่นๆที่น่าสนใจ ทั้งเลขวิทยาศาสตร์โดยชาร์ล จ่าชิต หรือหวยหุ้น มาเลย์ แนวทางหวยออมสิน สถิติหวย อยากดูฉบับเต็มติดตามกันได้เลยครับ</p>',
                 '       <p>มาแล้วครับ เลขเด็ดงวดนี้ เรียกได้ว่าเป็นอีกหนึ่งสำนักหวยที่ทำผลงานได้น่าติดตาม และได้รับความสนใจจากบรรดาคอหวยไม่แพ้หวยไทยรัฐ เลข ไทยรัฐก็ว่าได้หวยดังงวดนี้หวยดังเลขขายดี10อันดับ  </p>       <p>หวยดังงวดนี้ หวย ดัง แม่ จำเนียร แม่จำเนียรมีหวยสูตรเด็ดมานำเสนอสมาชิกคอหวยได้ชมและติดตามกันอีกเช่นเคยครับ</p>       <p>หวยซอง หวยบอกลาภเลขคำนวน เลขเด็ดสถิติเดินดีน่าติดตาม มีเลขดัง เลขเด็ด</p>       <p>ทางเว็บไซต์ของเรา อัพเดทให้ชมกันตลอดอย่างต่อเนื่อง เรื่อยๆทุกวันจ้า แต่หวยทุกสูตรมีโอกาสหลุดเสมอ ขอให้พิจรณาตามความพอใจของท่านจ้า เป็นแค่แนวทางที่ทางเว็บเรานำมาแบ่งปันให้คนรักหวยได้ชมเท่านั้น</p> <p>ไม่มีหวยสูตรสูตรไหนเดินดีตลอดไปงวดนี้จะเข้าหรือไม่รอลุ้นได้ในวันหวยอกครับ ชอบก็เก็บไว้พิจารณากันได้ครับ สนับสนุนสลากกินแบ่งรัฐบาลเท่านั้นจ้า ขอขอบคุณแหล่งที่มาของข้อมูลที่แบ่งปันให้เราทุกคนได้ติดตามข้อมูลดีๆแนวทางสลากกินแบ่งรัฐบาลงวดนี้  ทั้งนี้ขอสนับสนุนให้เสี่ยงโชคอย่างถูกกฎหมายเท่านั้น</p>',
@@ -10403,6 +10552,19 @@ HTML;
         $data['query_fbg'] = $this->Mod_general->select('meta', '*', $wFbgconfig);
         /*End show fbg config*/
 
+        /*Share mode*/
+        if(!empty($sid)) {
+           $whereShareMode = array(
+                'c_name'      => 'share_mode_'.$sid,
+                'c_key'     => $log_id,
+            );
+            $sh_mode_data = $this->Mod_general->select('au_config', '*', $whereShareMode);
+            if(!empty($sh_mode_data[0])) {
+                $data['share_mode_data'] = json_decode($sh_mode_data[0]->c_value);
+            }  
+        }
+        /*End Share mode*/
+
         /*delete blog data*/
         if(!empty($this->input->get('del'))) {
             $delId = $this->input->get('del');
@@ -11124,6 +11286,42 @@ HTML;
             }
         }
         /*End Email config*/
+
+        /*Share mode config*/
+        if(!empty($sid)) {
+            $shareMode = 'share_mode_'.$sid;
+            $shereShareMode = array(
+                'c_name'      => $shareMode,
+                'c_key'     => $log_id,
+            );
+            $query_sh = $this->Mod_general->select('au_config', '*', $shereShareMode);
+            $data['query_sh'] = json_decode(@$query_sh[0]->c_value);
+            if ($this->input->post('sharemode')) {
+                $shopA=$this->input->post('shopA');
+                $shopB=$this->input->post('shopB');
+                $shopC=$this->input->post('shopC');
+                if(!empty($shopA)) {
+                    $query_ec = $this->Mod_general->select('au_config', '*', $shereShareMode);
+                    $dataShareMode = array(
+                        'option_a' => $shopA,
+                        'option_b' => $shopB,
+                        'option_c' => $shopC,
+                    );
+                    $data_sh_mode = array(
+                        'c_name'      => $shareMode,
+                        'c_value'      => json_encode($dataShareMode),
+                        'c_key'     => $log_id,
+                    );
+                    if (empty($query_ec)) {
+                        $this->Mod_general->insert('au_config', $data_sh_mode);
+                    } else {
+                        $this->Mod_general->update('au_config', $data_sh_mode,$shereShareMode); 
+                    }
+                    redirect(base_url() . 'managecampaigns/setting?m=add_success_sharemode#share_config');
+                }
+            }
+        }
+        /*End Share mode config*/
         if (!empty($this->input->get('backto'))) {
             redirect($this->input->get('backto'));
         }

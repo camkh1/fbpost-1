@@ -400,6 +400,59 @@ $btemplate = "D:&bsol;&bsol;PROGRAM&bsol;&bsol;templates&bsol;&bsol;";
                             </div>
                         </div>
                         <!-- End Email config -->
+                        <!-- Share mode config -->
+                        <div class="widget box" id="share_config">
+                            <div class="widget-header">
+                                <h4><i class="icon-reorder"></i> Share mode</h4>
+                                <div class="toolbar no-padding">
+                                    <div class="btn-group"> <span class="btn btn-xs widget-collapse"><i class="icon-angle-up"></i></span> </div>
+                                </div>
+                            </div>
+                            <div class="widget-content">
+                                <form class="form-horizontal row-border" action="" method="post">
+                                    <div class="form-group"> 
+                                        <div class="col-md-4"> 
+                                            <label class="radio"> 
+                                                <input class="uniform" id="share_as_bus" name="shopA" value="sh_as_business" type="radio"> To Bussiness 
+                                            </label>
+                                            <label class="radio"> 
+                                                <input class="uniform" id="share_as_sharer" name="shopA" value="sh_as_sharer" type="radio"> Sharer Mode
+                                            </label>
+                                            <label class="radio"> 
+                                                <input class="uniform" id="share_as_page_direct" name="shopA" value="sh_as_page_direct" type="radio"> Page 
+                                            </label>
+                                        </div> 
+                                        <div class="col-md-4"> 
+                                            <label class="radio"> 
+                                                <input class="uniform" id="to_page_opb" name="shopB" value="to_page" type="radio"> to Pages
+                                            </label> 
+                                            <label class="radio"> 
+                                                <input class="uniform" id="to_group_opb" name="shopB" value="to_group" type="radio"> to Groups
+                                            </label>
+                                            <label class="radio"> 
+                                                <input class="uniform" id="to_profile_opb" name="shopB" value="to_profile" type="radio"> to Profile
+                                            </label>
+                                        </div>
+                                        <div class="col-md-4"> 
+                                            <label class="radio"> 
+                                                <input class="uniform" id="to_page_opc" name="shopC" value="to_to_page_to_group" type="radio" <?php if(!empty($share_mode_data->option_c)): if($share_mode_data->option_c =='to_to_page_to_group'): echo 'checked';else: echo '';endif;endif;?>> to Pages => Groups
+                                            </label> 
+                                            <label class="radio"> 
+                                                <input class="uniform" id="to_group_opc" name="shopC" value="to_to_group" type="radio" <?php if(!empty($share_mode_data->option_c)): if($share_mode_data->option_c =='to_to_group'): echo 'checked';else: echo '';endif;endif;?>> to Groups
+                                            </label>
+                                            <label class="radio"> 
+                                                <input class="uniform" id="to_none_opc" name="shopC" value="to_to_none" type="radio" <?php if(!empty($share_mode_data->option_c)): if($share_mode_data->option_c =='to_to_none'): echo 'checked="checked"';else: echo '';endif;endif;?>> None
+                                            </label>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-actions"> 
+                                        <input type="submit" value="Save" class="btn btn-primary pull-right" name="sharemode"> 
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <!-- End Share mode config -->
                     </div>
 
                     <div class="col-md-6">
@@ -729,7 +782,7 @@ $btemplate = "D:&bsol;&bsol;PROGRAM&bsol;&bsol;templates&bsol;&bsol;";
                         </div>
                         <!-- End youtube -->
 
-                        <div class="widget box" id="multifb">
+                        <div class="widget box  widget-closed" id="multifb">
                             <form method="post">
                             <div class="widget-header">
                                 <h4><i class="icon-reorder"></i> Facebook Accounts</h4>
@@ -782,6 +835,82 @@ $btemplate = "D:&bsol;&bsol;PROGRAM&bsol;&bsol;templates&bsol;&bsol;";
     </div>
     <script>
         $( document ).ready(function() {
+            function sh_as_business() {
+                $('#to_page_opb').prop("checked", true);
+                $('#to_group_opb').attr("disabled",true);
+                $('#to_profile_opb').attr("disabled",true);
+                $('#to_page_opb').attr("disabled",false);
+                $('#to_page_opc').attr("disabled",true);
+                $('#to_group_opc').attr("disabled",false);
+            }
+            function sh_as_sharer() {
+                $('#to_page_opb').attr("disabled",false);
+                $('#to_group_opb').attr("disabled",false);
+                $('#to_profile_opb').attr("disabled",false);
+                $('#to_page_opc').attr("disabled",false);
+                $('#to_group_opc').attr("disabled",false);
+                var valb = $('input[name=shopB]:checked').val();
+                if(valb =='to_group') {
+                    $('#to_page_opc').attr("disabled",true);
+                    $('#to_group_opc').attr("disabled",true);
+                } 
+                if(valb =='to_page') {
+                    $('#to_page_opc').attr("disabled",true);
+                    $('#to_group_opc').attr("disabled",false);
+                }
+            }
+            function sh_as_page_direct() {
+                $('#to_page_opc').attr("disabled",true);
+                $('#to_group_opc').attr("disabled",false);
+                $('#to_profile_opb').attr("disabled",true);
+                $('#to_page_opb').attr("disabled",true);
+                $('#to_group_opb').attr("disabled",true);
+                $('#to_group_opb').prop("checked", true);
+            }
+            function to_page() {
+                $('#to_page_opc').attr("disabled",true);
+                $('#to_group_opc').attr("disabled",false);
+            }
+            function to_group() {
+                $('#to_page_opc').attr("disabled",true);
+                $('#to_group_opc').attr("disabled",true);
+            }
+            function to_profile() {
+                $('#to_page_opc').attr("disabled",false);
+                $('#to_group_opc').attr("disabled",false);
+            }
+            <?php if(!empty($share_mode_data->option_a)): if($share_mode_data->option_a =='sh_as_business'):?>$('#share_as_bus').click();sh_as_business();<?php endif;endif;?>
+            <?php if(!empty($share_mode_data->option_a)): if($share_mode_data->option_a =='sh_as_sharer'):?>$('#share_as_sharer').click();sh_as_sharer();<?php endif;endif;?>
+            <?php if(!empty($share_mode_data->option_a)): if($share_mode_data->option_a =='sh_as_page_direct'):?>$('#share_as_page_direct').click();sh_as_page_direct();<?php endif;endif;?>
+            <?php if(!empty($share_mode_data->option_b)): if($share_mode_data->option_b =='to_page'):?>$('#to_page_opb').click();<?php endif;endif;?>
+            <?php if(!empty($share_mode_data->option_b)): if($share_mode_data->option_b =='to_group'):?>$('#to_group_opb').click();<?php endif;endif;?>
+            <?php if(!empty($share_mode_data->option_b)): if($share_mode_data->option_b =='to_profile'):?>$('#to_group_opb').click();<?php endif;endif;?>
+            $("input[name=shopA]").on('change', function() {
+                var vals = $('input[name=shopA]:checked').val();
+                if(vals =='sh_as_business') {
+                    sh_as_business();
+                }
+                if(vals =='sh_as_sharer') {
+                     sh_as_sharer();
+                }
+                if(vals =='sh_as_page_direct') {
+                    sh_as_page_direct();
+                }
+            });
+
+            $("input[name=shopB]").on('change', function() {
+                var valb = $('input[name=shopB]:checked').val();
+                if(valb =='to_group') {
+                    to_group();
+                }
+                if(valb =='to_page') {
+                    to_page();
+                }
+                if(valb =='to_profile') {
+                    to_profile();
+                }
+            });
+
             $("input[name=randomLink]").click(function(){
                 var values = $('#randomLink').serialize();
                 $.ajax({

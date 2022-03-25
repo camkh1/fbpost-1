@@ -2099,23 +2099,19 @@ public function get_video_id($param, $videotype = '')
 
     public function watermarktextAndLogo($file_path='',$position,$textPosition,$btnplayer='',$imagetext='')
     {
+        $this->load->library('ChipVNl');
+        \ChipVN\Loader::registerAutoLoad();
         if(!empty($imagetext)) {
-           $bg= FCPATH . 'uploads/image/watermark/bg_black.png';
-            $this->load->library('ChipVNl');
-            \ChipVN\Loader::registerAutoLoad();
-            \ChipVN\Image::watermark($file_path, $bg, $position);
-
             $mydir = FCPATH . 'uploads/image/watermark/randtext'; 
             $myfiles = array_diff(scandir($mydir), array('.', '..')); 
             $k = array_rand($myfiles);
             $textImage = $myfiles[$k];
             $setTextImage= $mydir.'/'.$textImage;
-            $this->load->library('ChipVNl');
-            \ChipVN\Loader::registerAutoLoad();
             \ChipVN\Image::watermark($file_path, $setTextImage, 'lt'); 
         }
         
-
+        $bg= FCPATH . 'uploads/image/watermark/bg_black.png';
+        \ChipVN\Image::watermark($file_path, $bg, $position);
         // $bg= FCPATH . 'uploads/image/watermark/bg_a.png';
         $imagetobewatermark= imagecreatefromstring( file_get_contents( $file_path ) );
 

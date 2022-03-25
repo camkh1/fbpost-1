@@ -15,8 +15,7 @@
 
 <!-- End watermaker -->
 <link href="https://fonts.googleapis.com/css?family=Battambang" rel="stylesheet">
-
-<?php
+<?php 
 $fbUserId = $this->session->userdata('fb_user_id');
 $log_id = $this->session->userdata ( 'user_id' );
 $contents = '';
@@ -40,7 +39,23 @@ if(!empty($site)) {
 }
 //$labels = [];
 
+if(!empty($share_mode_data->option_a)) {
+    $option_a = $share_mode_data->option_a;
+    $option_b = $share_mode_data->option_b;
+    $option_c = $share_mode_data->option_c;
+} else {
+    $option_a = '';
+    $option_b = '';
+    $option_c = '';
+}
+if($action != 'shareLinkToProfile' ) {
+    echo '<meta http-equiv="refresh" content="30">';
+}
 if($action == 'shareToGroup' ) {
+    if(empty($group_list)) {
+        echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'wordpress/close";}, 3 );</script>';
+            die;
+    }
     $count = @!empty($_GET['count'])? $_GET['count']:0;
     if((count($group_list) != $count)) {
         $GroupName = $group_list[$count]->sg_name;
@@ -56,7 +71,7 @@ if($action == 'shareToGroup' ) {
 if($action == 'shareToPage' ) {
     $count = @!empty($_GET['count'])? $_GET['count']:0;
     if((count($page_list) != $count)) {
-        if(@$query_fb->id == $page_list[$count]->sg_page_id) {
+        if(@$query_fb->id == $page_list[$count]->sg_page_id && $option_a!='sh_as_business') {
             $count = $count + 1;
             echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'wordpress/autopostwp?action=shareToPage&pid='.$pid.'&fbid='.$story_fbid.'&count='.$count.'";}, 3 );</script>';
             die;
@@ -271,10 +286,34 @@ if(!empty($query_fb->wp_cate)) {
             <?php endif;?>
         }, 1000 * 300);
     <?php endif;?>
+    <?php if(!empty($_GET['pid']) && $action == 'shareToPageAsSharer'):?>
+    <?php endif;?>
+    <?php if(!empty($_GET['pid']) && $action == 'shareToGroupAsSharer'):?>
+    <?php endif;?>  
     <?php if(!empty($_GET['pid']) && $action == 'shareToPage'):?>
         setTimeout(function() {
             <?php if(!empty($pageID)):?>
-            load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/shareLinkToPage_mobile');
+                <?php if($option_a=='sh_as_business'):?>
+                    setTimeout(function() {
+                        load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/shareLinkToPage_business');
+                    }, 1000 * <?php if(empty(@$count)):?>3<?php else:?>3<?php endif;?>);
+                <?php endif;?>
+                <?php if($option_a=='sh_as_sharer'):?>
+                    <?php if($option_b=='to_profile'):?>
+                        load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/shareLinkToPage_mobile');
+                    <?php endif;?>
+                    <?php if($option_b=='to_group'):?>
+                        load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/sharerToGroup');
+                    <?php endif;?>
+                    <?php if($option_b=='to_page'):?>
+                        load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/sharerToPage');
+                    <?php endif;?>
+                    //load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/shareLinkToPage_business');
+                <?php endif;?>
+                <?php if($option_a=='sh_as_page_direct'):?>
+                    //load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/shareLinkToPage_business');
+                <?php endif;?>
+            
             <?php else:?>
                 window.location = "<?php echo base_url();?>wordpress/autopostwp?action=shareToGroup&pid=<?php echo @$pid;?>";
             //load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/shareLinkToPage_business');
@@ -288,12 +327,17 @@ if(!empty($query_fb->wp_cate)) {
         }, 1000 * 3);
     <?php endif;?>
     <?php if($action == 'shareToGroup'):?>
+        <?php if($option_c=='to_to_group' || $option_c=='to_to_page_to_group'):?>
+            load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/sharePageLastPostToGroup');
+        <?php else:?>
+            window.location = "<?php echo base_url();?>wordpress/close";
+        <?php endif;?>
         // setTimeout(function() {
         //     load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/sharePageLastPostToGroup');
         //     //load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/sharePageLastPostToPageGroup');
         // }, 1000 * 10);
         //
-        load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/sharePageLastPostToGroup');
+        
         //load_contents('http://postautofb2.blogspot.com/feeds/posts/default/-/sharePageLastPostToGroup_mobile');
         
     <?php endif;?>

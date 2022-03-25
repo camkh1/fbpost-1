@@ -67,6 +67,17 @@ class Wordpress extends CI_Controller
         $data['query_fb'] = $accounts = json_decode($query_fb[0]->meta_value);
         /*End show fbconfig*/
 
+        /*Share mode*/
+        $whereShareMode = array(
+            'c_name'      => 'share_mode_'.$sid,
+            'c_key'     => $log_id,
+        );
+        $sh_mode_data = $this->Mod_general->select('au_config', '*', $whereShareMode);
+        if(!empty($sh_mode_data[0])) {
+            $share_mode_data = $data['share_mode_data'] = json_decode($sh_mode_data[0]->c_value);
+        } 
+        /*End Share mode*/
+
         $action = $this->input->get('action');
         if($action == 'photopageshare') {
             $data['photoDetail'] = $this->photopageshare();
@@ -200,8 +211,30 @@ class Wordpress extends CI_Controller
                 $updates = $this->Mod_general->update( Tbl_posts::tblName,$dataPostInstert, $whereUp);
                 if($updates) {
                     if(!empty($accounts->id)) {
-                        echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'wordpress/autopostwp?pid='.$pid.'&action=shareLinkToProfile";}, 5 );</script>';
-                        die;
+                        if(!empty($share_mode_data->option_a)) {
+                            if($share_mode_data->option_a == 'sh_as_business') {
+                                echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'wordpress/autopostwp?pid='.$pid.'&action=shareToPage";}, 5 );</script>';
+                                die;
+                            }
+                            if($share_mode_data->option_a == 'sh_as_sharer') {
+                                if($share_mode_data->option_b == 'to_profile') {
+                                    echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'wordpress/autopostwp?pid='.$pid.'&action=shareLinkToProfile";}, 5 );</script>';
+                                    die;
+                                }
+                                if($share_mode_data->option_b == 'to_page') {
+                                    echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'wordpress/autopostwp?pid='.$pid.'&action=shareToPageAsSharer";}, 5 );</script>';
+                                    die;
+                                }
+                                if($share_mode_data->option_b == 'to_group') {
+                                    echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'wordpress/autopostwp?pid='.$pid.'&action=shareToGroupAsSharer";}, 5 );</script>';
+                                    die;
+                                }
+                            }
+                            if($share_mode_data->option_a == 'sh_as_page_direct') {
+                                echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'wordpress/autopostwp?pid='.$pid.'&action=shareToPage";}, 5 );</script>';
+                                die;
+                            }
+                        }
                     } else {
                         echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'wordpress/close";}, 5 );</script>';
                         die;
@@ -305,7 +338,7 @@ class Wordpress extends CI_Controller
         $post_only = $this->session->userdata ( 'post_only' );
         $this->load->theme ( 'layout' );
         $data ['title'] = 'Post to Wordpress by Manual';
-        if ($this->input->post ( 'link' )) {
+        if ($this->input->post ( 'thumb' )[0] || $this->input->post ( 'link' )) {
             $this->session->set_userdata('pia', 1);
             $link = trim($this->input->post ( 'link' ));
             $title = trim(@$this->input->post ( 'title' ));
@@ -316,6 +349,7 @@ class Wordpress extends CI_Controller
             $addvideo = @$this->input->post ( 'addvideo' );
             $btnplayer = @$this->input->post ( 'btnplayer' );
             $imagetext = @$this->input->post ( 'imagetext' );
+            $copyfrom = @$this->input->post ( 'copyfrom' );
             if($label == 'lotto'||$label == 'otherlotto') {
                 $thumb = $this->imageMerge($thumbs,$asThumb,$label,$btnplayer,$imagetext);
             } else {
@@ -336,6 +370,7 @@ class Wordpress extends CI_Controller
             $setDataPost->addvideo = $addvideo;
             $setDataPost->btnplayer = $btnplayer;
             $setDataPost->imagetext = $imagetext;
+            $setDataPost->copyfrom = $copyfrom;
             require_once(APPPATH.'controllers/managecampaigns.php');
             $Managecampaigns =  new Managecampaigns();
             $getdata = $Managecampaigns->insertLink($setDataPost);
