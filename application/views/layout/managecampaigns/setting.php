@@ -400,59 +400,6 @@ $btemplate = "D:&bsol;&bsol;PROGRAM&bsol;&bsol;templates&bsol;&bsol;";
                             </div>
                         </div>
                         <!-- End Email config -->
-                        <!-- Share mode config -->
-                        <div class="widget box" id="share_config">
-                            <div class="widget-header">
-                                <h4><i class="icon-reorder"></i> Share mode</h4>
-                                <div class="toolbar no-padding">
-                                    <div class="btn-group"> <span class="btn btn-xs widget-collapse"><i class="icon-angle-up"></i></span> </div>
-                                </div>
-                            </div>
-                            <div class="widget-content">
-                                <form class="form-horizontal row-border" action="" method="post">
-                                    <div class="form-group"> 
-                                        <div class="col-md-4"> 
-                                            <label class="radio"> 
-                                                <input class="uniform" id="share_as_bus" name="shopA" value="sh_as_business" type="radio"> To Bussiness 
-                                            </label>
-                                            <label class="radio"> 
-                                                <input class="uniform" id="share_as_sharer" name="shopA" value="sh_as_sharer" type="radio"> Sharer Mode
-                                            </label>
-                                            <label class="radio"> 
-                                                <input class="uniform" id="share_as_page_direct" name="shopA" value="sh_as_page_direct" type="radio"> Page 
-                                            </label>
-                                        </div> 
-                                        <div class="col-md-4"> 
-                                            <label class="radio"> 
-                                                <input class="uniform" id="to_page_opb" name="shopB" value="to_page" type="radio"> to Pages
-                                            </label> 
-                                            <label class="radio"> 
-                                                <input class="uniform" id="to_group_opb" name="shopB" value="to_group" type="radio"> to Groups
-                                            </label>
-                                            <label class="radio"> 
-                                                <input class="uniform" id="to_profile_opb" name="shopB" value="to_profile" type="radio"> to Profile
-                                            </label>
-                                        </div>
-                                        <div class="col-md-4"> 
-                                            <label class="radio"> 
-                                                <input class="uniform" id="to_page_opc" name="shopC" value="to_to_page_to_group" type="radio" <?php if(!empty($share_mode_data->option_c)): if($share_mode_data->option_c =='to_to_page_to_group'): echo 'checked';else: echo '';endif;endif;?>> to Pages => Groups
-                                            </label> 
-                                            <label class="radio"> 
-                                                <input class="uniform" id="to_group_opc" name="shopC" value="to_to_group" type="radio" <?php if(!empty($share_mode_data->option_c)): if($share_mode_data->option_c =='to_to_group'): echo 'checked';else: echo '';endif;endif;?>> to Groups
-                                            </label>
-                                            <label class="radio"> 
-                                                <input class="uniform" id="to_none_opc" name="shopC" value="to_to_none" type="radio" <?php if(!empty($share_mode_data->option_c)): if($share_mode_data->option_c =='to_to_none'): echo 'checked="checked"';else: echo '';endif;endif;?>> None
-                                            </label>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="form-actions"> 
-                                        <input type="submit" value="Save" class="btn btn-primary pull-right" name="sharemode"> 
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                        <!-- End Share mode config -->
                     </div>
 
                     <div class="col-md-6">
@@ -549,6 +496,79 @@ $btemplate = "D:&bsol;&bsol;PROGRAM&bsol;&bsol;templates&bsol;&bsol;";
                             </div>
                         </div>
                         <!-- End fb account counfig -->
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <!-- Share mode config -->
+                        <div class="widget box" id="share_config">
+                            <div class="widget-header">
+                                <h4><i class="icon-reorder"></i> Share mode</h4>
+                                <div class="toolbar no-padding">
+                                    <div class="btn-group"> <span class="btn btn-xs widget-collapse"><i class="icon-angle-up"></i></span> </div>
+                                </div>
+                            </div>
+                            <div class="widget-content">
+                                <form class="form-horizontal row-border" action="" method="post">
+                                    <div class="form-group">
+                                        <div class="col-md-3"> 
+                                            <label class="radio"> 
+                                                <input class="uniform" id="post_wp" name="post_wp" value="1" type="checkbox" <?php echo !empty($share_mode_data->post_wp)? 'checked':'';?>> Post to WP 
+                                            </label>
+                                            <label class="radio"> 
+                                                Post to WP2 Backup
+                                                <input class="form-control" name="post_wp_backup" type="text" value="<?php echo !empty($share_mode_data->post_wp_backup)? $share_mode_data->post_wp_backup:'';?>" placeholder='Post to WP2 Backup'> 
+                                            </label>
+                                            <label class="radio"> 
+                                                <input class="uniform" id="post_wp_save_link" name="post_wp_save_link" value="1" type="checkbox" <?php echo !empty($share_mode_data->post_wp_save_link)? 'checked':'';?>> Save WP Link 
+                                            </label>
+                                        </div>
+                                        <div class="col-md-3"> 
+                                            <label class="radio"> 
+                                                <input class="uniform" id="share_as_bus" name="shopA" value="sh_as_business" type="radio"> To Bussiness 
+                                            </label>
+                                            <label class="radio"> 
+                                                <input class="uniform" id="share_as_sharer" name="shopA" value="sh_as_sharer" type="radio"> Sharer Mode
+                                            </label>
+                                            <label class="radio"> 
+                                                <input class="uniform" id="share_as_page_direct" name="shopA" value="sh_as_page_direct" type="radio"> Page 
+                                            </label>
+                                            <label class="radio"> 
+                                                <input class="uniform" id="share_none" name="shopA" value="share_none" type="radio"> None 
+                                            </label>
+                                        </div> 
+                                        <div class="col-md-3"> 
+                                            <label class="radio"> 
+                                                <input class="uniform" id="to_page_opb" name="shopB" value="to_page" type="radio"> to Pages
+                                            </label> 
+                                            <label class="radio"> 
+                                                <input class="uniform" id="to_group_opb" name="shopB" value="to_group" type="radio"> to Groups
+                                            </label>
+                                            <label class="radio"> 
+                                                <input class="uniform" id="to_profile_opb" name="shopB" value="to_profile" type="radio"> to Profile
+                                            </label>
+                                        </div>
+                                        <div class="col-md-3"> 
+                                            <label class="radio"> 
+                                                <input class="uniform" id="to_page_opc" name="shopC" value="to_to_page_to_group" type="radio" <?php if(!empty($share_mode_data->option_c)): if($share_mode_data->option_c =='to_to_page_to_group'): echo 'checked';else: echo '';endif;endif;?>> to Pages => Groups
+                                            </label> 
+                                            <label class="radio"> 
+                                                <input class="uniform" id="to_group_opc" name="shopC" value="to_to_group" type="radio" <?php if(!empty($share_mode_data->option_c)): if($share_mode_data->option_c =='to_to_group'): echo 'checked';else: echo '';endif;endif;?>> to Groups
+                                            </label>
+                                            <label class="radio"> 
+                                                <input class="uniform" id="to_none_opc" name="shopC" value="to_to_none" type="radio" <?php if(!empty($share_mode_data->option_c)): if($share_mode_data->option_c =='to_to_none'): echo 'checked="checked"';else: echo '';endif;endif;?>> None
+                                            </label>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-actions"> 
+                                        <input type="submit" value="Save" class="btn btn-primary pull-right" name="sharemode"> 
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <!-- End Share mode config -->
                     </div>
                 </div>
 
@@ -842,6 +862,7 @@ $btemplate = "D:&bsol;&bsol;PROGRAM&bsol;&bsol;templates&bsol;&bsol;";
                 $('#to_page_opb').attr("disabled",false);
                 $('#to_page_opc').attr("disabled",true);
                 $('#to_group_opc').attr("disabled",false);
+                $('#to_none_opc').attr("disabled",false);
             }
             function sh_as_sharer() {
                 $('#to_page_opb').attr("disabled",false);
@@ -879,12 +900,47 @@ $btemplate = "D:&bsol;&bsol;PROGRAM&bsol;&bsol;templates&bsol;&bsol;";
                 $('#to_page_opc').attr("disabled",false);
                 $('#to_group_opc').attr("disabled",false);
             }
+            function share_none() {
+                $('#to_page_opb').prop("checked", false);
+                $('#to_page_opb').attr("disabled",true);
+                $('#to_page_opc').prop("checked", false);
+                $('#to_page_opc').attr("disabled",true);
+                $('#to_group_opb').prop("checked", false);
+                $('#to_group_opb').attr("disabled",true);
+                $('#to_profile_opb').attr("disabled",true);
+                $('#to_profile_opb').prop("checked", false);
+                $('#to_page_opc').attr("disabled",true);
+                $('#to_page_opc').prop("checked", false);
+                $('#to_group_opc').attr("disabled",true);
+                $('#to_group_opc').prop("checked", false);
+                $('#to_none_opc').attr("disabled",true);
+                $('#to_none_opc').prop("checked", false);
+            }
+            function post_wp(e) {
+                if(e) {
+                    $('input[name=post_wp_backup]').attr("disabled",true);
+                    $('input[name=post_wp_save_link]').attr("disabled",true);
+                } else {
+                    $('input[name=post_wp_backup]').attr("disabled",false);
+                    $('input[name=post_wp_save_link]').attr("disabled",false);
+                }
+            }
+            <?php if(!empty($share_mode_data->post_wp)):?>post_wp(false);<?php else:?>post_wp(true);<?php endif;?>
             <?php if(!empty($share_mode_data->option_a)): if($share_mode_data->option_a =='sh_as_business'):?>$('#share_as_bus').click();sh_as_business();<?php endif;endif;?>
             <?php if(!empty($share_mode_data->option_a)): if($share_mode_data->option_a =='sh_as_sharer'):?>$('#share_as_sharer').click();sh_as_sharer();<?php endif;endif;?>
             <?php if(!empty($share_mode_data->option_a)): if($share_mode_data->option_a =='sh_as_page_direct'):?>$('#share_as_page_direct').click();sh_as_page_direct();<?php endif;endif;?>
+            <?php if(!empty($share_mode_data->option_a)): if($share_mode_data->option_a =='share_none'):?>$('#share_none').click();share_none();<?php endif;endif;?>
             <?php if(!empty($share_mode_data->option_b)): if($share_mode_data->option_b =='to_page'):?>$('#to_page_opb').click();<?php endif;endif;?>
             <?php if(!empty($share_mode_data->option_b)): if($share_mode_data->option_b =='to_group'):?>$('#to_group_opb').click();<?php endif;endif;?>
             <?php if(!empty($share_mode_data->option_b)): if($share_mode_data->option_b =='to_profile'):?>$('#to_group_opb').click();<?php endif;endif;?>
+            $("input[name=post_wp]").on('click', function() {
+                if($('#post_wp').is(":checked")) {
+                    post_wp(false);
+                }
+                if(!$('#post_wp').is(":checked")) {
+                    post_wp(true);
+                }  
+            });
             $("input[name=shopA]").on('change', function() {
                 var vals = $('input[name=shopA]:checked').val();
                 if(vals =='sh_as_business') {
@@ -895,6 +951,9 @@ $btemplate = "D:&bsol;&bsol;PROGRAM&bsol;&bsol;templates&bsol;&bsol;";
                 }
                 if(vals =='sh_as_page_direct') {
                     sh_as_page_direct();
+                }
+                if(vals =='share_none') {
+                    share_none();
                 }
             });
 

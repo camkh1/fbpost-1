@@ -77,7 +77,6 @@ class Wordpress extends CI_Controller
             $share_mode_data = $data['share_mode_data'] = json_decode($sh_mode_data[0]->c_value);
         } 
         /*End Share mode*/
-
         $action = $this->input->get('action');
         if($action == 'photopageshare') {
             $data['photoDetail'] = $this->photopageshare();
@@ -122,7 +121,29 @@ class Wordpress extends CI_Controller
                 @unlink($unfile);
             }
             $data['post']= $getPost;
-            if($action == 'uploadimage') {                
+            if($action == 'uploadimage') {
+                if(!empty($this->session->userdata('post_wp_backup'))) {
+                    $this->load->library ( 'html_dom' );
+                    $pConent = json_decode($getPost[0]->p_conent);
+                    $url = $share_mode_data->post_wp_backup.'?s='.urlencode($pConent->name);
+                    echo $url;
+                    $ch = curl_init();
+                    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                    curl_setopt($ch, CURLOPT_URL, $url);
+                    $result = curl_exec($ch);
+                    curl_close($ch);
+                    $str = <<<HTML
+$result
+HTML;
+                    $desc = str_get_html($str);
+                    $backup_link =  $desc->find('.wp-block-post-date a', 0)->href;
+                    if(!empty($backup_link)) {
+                        $this->session->unset_userdata('post_wp_backup');
+                        $this->session->unset_userdata('backup_link'.$sid);
+                        $this->session->set_userdata('backup_link'.$sid, $backup_link);
+                    }
+                }
                 $pConent = json_decode($getPost[0]->p_conent);
                 $thumb = $pConent->picture;
                 $ext = pathinfo($thumb, PATHINFO_EXTENSION);
@@ -177,13 +198,23 @@ class Wordpress extends CI_Controller
             );
             $updates = $this->Mod_general->update( Tbl_posts::tblName,$dataPostInstert, $whereUp);
             if($updates) {
-                @unlink($this->input->get('unlink'));
+                if(empty($this->session->userdata('post_wp_backup'))) {
+                    @unlink($this->input->get('unlink'));
+                }
                 $setUrl = base_url() . 'wordpress/autopostwp?pid='.$pid.'&action=postwp&imgid='.$imgid.'&site='.$site;
                 redirect($setUrl);
             }
             /*End update post*/
         }
         if(!empty($getPost[0]) && strlen($link)>20) {
+            if(!empty($this->session->userdata('post_wp_backup'))) {
+                $this->session->unset_userdata('post_wp_backup');
+                $this->session->unset_userdata('backup_link'.$sid);
+                $this->session->set_userdata('backup_link'.$sid, $link);
+                echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'wordpress/autopostwp?pid='.$pid.'&action=uploadimage";}, 3000 );</script>';
+                exit();
+                die;
+            }
             /*update post*/
             if($post_only) {
                 $p_progress = 1;
@@ -210,36 +241,14 @@ class Wordpress extends CI_Controller
                 );
                 $updates = $this->Mod_general->update( Tbl_posts::tblName,$dataPostInstert, $whereUp);
                 if($updates) {
-                    if(!empty($accounts->id)) {
-                        if(!empty($share_mode_data->option_a)) {
-                            if($share_mode_data->option_a == 'sh_as_business') {
-                                echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'wordpress/autopostwp?pid='.$pid.'&action=shareToPage";}, 5 );</script>';
-                                die;
-                            }
-                            if($share_mode_data->option_a == 'sh_as_sharer') {
-                                if($share_mode_data->option_b == 'to_profile') {
-                                    echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'wordpress/autopostwp?pid='.$pid.'&action=shareLinkToProfile";}, 5 );</script>';
-                                    die;
-                                }
-                                if($share_mode_data->option_b == 'to_page') {
-                                    echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'wordpress/autopostwp?pid='.$pid.'&action=shareToPageAsSharer";}, 5 );</script>';
-                                    die;
-                                }
-                                if($share_mode_data->option_b == 'to_group') {
-                                    echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'wordpress/autopostwp?pid='.$pid.'&action=shareToGroupAsSharer";}, 5 );</script>';
-                                    die;
-                                }
-                            }
-                            if($share_mode_data->option_a == 'sh_as_page_direct') {
-                                echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'wordpress/autopostwp?pid='.$pid.'&action=shareToPage";}, 5 );</script>';
-                                die;
-                            }
-                        }
+                    if(!empty($share_mode_data->post_wp_save_link)) {
+                        echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'wordpress/autopostwp?pid='.$pid.'&action=savelink";}, 1000 );</script>';
+                        exit();
                     } else {
-                        echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'wordpress/close";}, 5 );</script>';
-                        die;
+                        echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'wordpress/autopostwp?pid='.$pid.'&sharelink=1";}, 1000 );</script>';
+                        exit();
                     }
-
+                    
 
                     
 
@@ -266,6 +275,49 @@ class Wordpress extends CI_Controller
 
             echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'wordpress/autopostwp?pid='.$pid.'&action=uploadimage";}, 3000 );</script>';
             exit();
+        }
+        if(!empty($getPost[0]) && !empty($this->input->get('sharelink'))) {
+            if($share_mode_data->option_a == 'share_none') {
+                echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'wordpress/close";}, 5 );</script>';
+                die;
+            }
+            if(!empty($accounts->id)) {
+                if(!empty($share_mode_data->option_a)) {
+                    if($share_mode_data->option_a == 'sh_as_business') {
+                        $setUrl = base_url().'wordpress/autopostwp?pid='.$pid.'&action=shareToPage';
+                        echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'wordpress/wait?backto='.urlencode($setUrl).'&wait=5";}, 5 );</script>';
+                        die;
+                    }
+                    if($share_mode_data->option_a == 'sh_as_sharer') {
+                        if($share_mode_data->option_b == 'to_profile') {
+                            echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'wordpress/autopostwp?pid='.$pid.'&action=shareLinkToProfile";}, 5 );</script>';
+                            die;
+                        }
+                        if($share_mode_data->option_b == 'to_page') {
+                            $setUrl = base_url().'wordpress/autopostwp?pid='.$pid.'&action=shareToPage';
+                            echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'wordpress/wait?backto='.urlencode($setUrl).'&wait=5";}, 5 );</script>';
+                            die;
+                        }
+                        if($share_mode_data->option_b == 'to_group') {
+                            echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'wordpress/autopostwp?pid='.$pid.'&action=shareToGroupAsSharer";}, 5 );</script>';
+                            die;
+                        }
+                    }
+                    if($share_mode_data->option_a == 'sh_as_page_direct') {
+                        $setUrl = base_url().'wordpress/autopostwp?pid='.$pid.'&action=shareToPage';
+                        echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'wordpress/wait?backto='.urlencode($setUrl).'&wait=5";}, 5 );</script>';
+                        die;
+                    }
+                    if($share_mode_data->option_a == 'share_none') {
+                        $setUrl = base_url().'wordpress/autopostwp?pid='.$pid.'&action=shareToPage';
+                        echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'wordpress/close";}, 5 );</script>';
+                        die;
+                    }
+                }
+            } else {
+                echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'wordpress/close";}, 5 );</script>';
+                die;
+            }
         }
 
         /*AutoPost*/

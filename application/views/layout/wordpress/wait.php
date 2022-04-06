@@ -104,10 +104,16 @@
     <script>
         $( document ).ready(function() { 
         <?php
+
             $year = $month = $day = $hour = $minute = $second = 0;
             $setDayFormat = $setDay = '';
-
-            $waiting = 20;
+            $backto = urldecode($this->input->get('backto'));
+            $wait = $this->input->get('wait');
+            if(!empty($backto) && !empty($wait)):
+                $waiting = $wait;
+            else:
+                $waiting = 20;
+            endif;
             $styleA = $waiting * (60 * 10);
             $waiting = $waiting * 60;
            ?>
@@ -125,8 +131,12 @@
                   //complete here
                   <?php if(!empty($postAto->autopost)) {
                 if (date('H') <= 23 && date('H') > 4 && date('H') !='00'):?>
-                  window.location = "<?php echo base_url();?>managecampaigns/autopostfb?action=posttoblog&pia=1";
+                    <?php if(!empty($backto) && !empty($wait)):?>
+                        window.location.replace("<?php echo @$backto;?>");
                     <?php else:?>
+                        window.location.replace("<?php echo base_url();?>managecampaigns/autopostfb?action=posttoblog&pia=1");
+                    <?php endif;?>
+                <?php else:?>
                         var openedWindow;
 
                         function openWindow() {
@@ -139,7 +149,7 @@
                         function closeOpenedWindow() {
                           openedWindow.close();
                         }
-                        openWindow();
+                        //openWindow();
                         location.reload();
                 <?php endif;
                 }

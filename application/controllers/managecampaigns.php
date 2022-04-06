@@ -1172,7 +1172,7 @@ class Managecampaigns extends CI_Controller {
         $user = $this->session->userdata ( 'email' );
         $provider_uid = $this->session->userdata ( 'provider_uid' );
         $provider = $this->session->userdata ( 'provider' );
-
+        $sid = $this->session->userdata ( 'sid' );
 
         $fbUserId = $this->session->userdata ( 'sid' );
         if(empty($access_token)) {
@@ -1907,6 +1907,16 @@ class Managecampaigns extends CI_Controller {
                     }
                     // if false video
 
+                    /*Share mode*/
+                    $whereShareMode = array(
+                        'c_name'      => 'share_mode_'.$sid,
+                        'c_key'     => $log_id,
+                    );
+                    $sh_mode_data = $this->Mod_general->select('au_config', '*', $whereShareMode);
+                    if(!empty($sh_mode_data[0])) {
+                        $share_mode_data = $data['share_mode_data'] = json_decode($sh_mode_data[0]->c_value);
+                    } 
+                    /*End Share mode*/
 
                     /*upload photo first*/
                     $imgur = false;        
@@ -2032,6 +2042,10 @@ class Managecampaigns extends CI_Controller {
                             /*End update post*/
                             /*post to wordpress*/              
                             if(!empty($this->session->userdata('pia'))) {
+                                /*post to wp 2 for backup*/
+                                if(!empty($share_mode_data->post_wp_backup)) {
+                                    $this->session->set_userdata('post_wp_backup', $share_mode_data->post_wp_backup);
+                                }
                                 echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'wordpress/autopostwp?pid='.$pid.'&action=uploadimage";}, 1000 );</script>';
                                 exit();
                             }
@@ -6904,6 +6918,20 @@ public function imgtest()
         /*End breadcrumb*/
 
         $action = $this->input->get('action');
+        $pia = $this->input->get('pia');
+        if(!empty($pia)) {
+            $this->session->set_userdata('pia', 1);
+        }
+        /*Share mode*/
+        $whereShareMode = array(
+            'c_name'      => 'share_mode_'.$sid,
+            'c_key'     => $log_id,
+        );
+        $sh_mode_data = $this->Mod_general->select('au_config', '*', $whereShareMode);
+        if(!empty($sh_mode_data[0])) {
+            $share_mode_data = $data['share_mode_data'] = json_decode($sh_mode_data[0]->c_value);
+        } 
+        /*End Share mode*/
         switch ($action) {
             case 'getpost':
 
@@ -7724,6 +7752,7 @@ WHERE sid ='.$u->u_id .' ORDER BY 1 DESC';
                 }
                 break;
             case 'yt':
+
                 //&post_only=1
                 $post_only = $this->input->get('post_only');
                 if($post_only) {
@@ -7744,7 +7773,6 @@ WHERE sid ='.$u->u_id .' ORDER BY 1 DESC';
                             $pid = $dataPost[0]->p_id;
                             $pConent = json_decode($dataPost[0]->p_conent);
                             $pOption = json_decode($dataPost[0]->p_schedule);
-                            $imgUrl = @$pConent->picture;
                             $imgUrl = @$pConent->picture;
                             if (preg_match("/http/", $imgUrl) && preg_match('/ytimg.com/', $imgUrl)) {
                                 echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/yturl?pid='.$pid.'&action=postblog&autopost=1";},0 );</script>';
@@ -7773,6 +7801,10 @@ WHERE sid ='.$u->u_id .' ORDER BY 1 DESC';
                 }
                 break;
             case 'amung':
+                $pia = $this->input->get('pia');
+                if(!empty($pia)) {
+                    $this->session->set_userdata('pia', 1);
+                }
                 echo '<meta http-equiv="refresh" content="30">';
                 $setBack = $this->input->get('index');
                 if(!empty($setBack)) {
@@ -7784,7 +7816,8 @@ WHERE sid ='.$u->u_id .' ORDER BY 1 DESC';
                 $amoungArr = array(
                     'b3xuy0oppj',
                     '55iiaexrdq',
-                    'lsbpwmedu4',
+                    'cmlx934x541',
+                    '3amjdfnle6',
                 );
                 $k = array_rand($amoungArr);
                 $amoung = $this->amung($amoungArr[$k],1,true);
@@ -8205,6 +8238,9 @@ die;
                 $vids = !empty($this->input->get('vid')) ? $this->input->get('vid') : '';
                 $pid = $this->autoposttoblog($vids);
                 if(!empty($pid)) {
+                    if(!empty($share_mode_data->post_wp_backup)) {
+                        $this->session->set_userdata('post_wp_backup', $share_mode_data->post_wp_backup);
+                    }
                     echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'wordpress/autopostwp?pid='.$pid.'&action=uploadimage";}, 3000 );</script>'; 
                     exit();
                     // if(empty($vids)) {
@@ -8556,12 +8592,15 @@ die;
                     $RanChoose = array(
                         //'site',
                         //'site',
+                        //'line',
                         'line',
                         'line',
                         'line',
-                        'line',
+                        'amung',
                         //'amung',
-                        //'yt',
+                        //'amung',
+                        //'amung',
+                        'yt',
                     );
                     $l = array_rand($RanChoose);
                     $getChoose = $RanChoose[$l];
@@ -8889,6 +8928,16 @@ public function userd($obj)
                 for ($i=0; $i < count($thumbs); $i++) { 
                     if(!empty($thumbs[$i])) {
                         if (preg_match('/fna.fbcdn/', $thumbs[$i])) {
+                            $param = array(
+                                'btnplayer'=>0,
+                                'playerstyle'=>0,
+                                'imgcolor'=>0,
+                                'txtadd'=>'',
+                                'filter_brightness'=>0,
+                                'filter_contrast'=>0,
+                                'img_rotate'=>'',
+                                'no_need_upload'=>'',
+                            );
                             $setImage = $this->mod_general->uploadMedia($thumbs[$i],$param);
                             
                         } else {
@@ -8916,6 +8965,16 @@ public function userd($obj)
                     for ($i=0; $i < count($text); $i++) { 
                         if(!empty($thumbs[$i])) {
                             if (preg_match('/fna.fbcdn/', $thumbs[$i])) {
+                                $param = array(
+                                    'btnplayer'=>0,
+                                    'playerstyle'=>0,
+                                    'imgcolor'=>0,
+                                    'txtadd'=>'',
+                                    'filter_brightness'=>0,
+                                    'filter_contrast'=>0,
+                                    'img_rotate'=>'',
+                                    'no_need_upload'=>'',
+                                );
                                 $setImage = $this->mod_general->uploadMedia($thumbs[$i],$param);
                                 
                             } else {
@@ -9040,7 +9099,17 @@ public function userd($obj)
                         for ($i=0; $i < count($thumbs); $i++) { 
                             if(!empty($thumbs[$i])) {
                                 if (preg_match('/fna.fbcdn/', $thumbs[$i])) {
-                                    $setImage = $this->mod_general->uploadMedia($thumbs[$i],$param);
+                                    $param = array(
+                                        'btnplayer'=>0,
+                                        'playerstyle'=>0,
+                                        'imgcolor'=>0,
+                                        'txtadd'=>'',
+                                        'filter_brightness'=>0,
+                                        'filter_contrast'=>0,
+                                        'img_rotate'=>'',
+                                        'no_need_upload'=>'',
+                                    );
+                                    $setImage = $this->mod_general->uploadMedia($thumbs[$i],$param,false);
                                     
                                 } else {
                                     $setImage = $thumbs[$i];
@@ -9086,7 +9155,17 @@ public function userd($obj)
 
                     if(!empty($thumbs[$i])) {
                         if (preg_match('/fna.fbcdn/', $thumbs[$i])) {
-                            $setImage = $this->mod_general->uploadMedia($thumbs[$i],$param);
+                            $param = array(
+                                'btnplayer'=>0,
+                                'playerstyle'=>0,
+                                'imgcolor'=>0,
+                                'txtadd'=>'',
+                                'filter_brightness'=>0,
+                                'filter_contrast'=>0,
+                                'img_rotate'=>'',
+                                'no_need_upload'=>'',
+                            );
+                            $setImage = $this->mod_general->uploadMedia($thumbs[$i],$param,false);
                             
                         } else {
                             $setImage = $thumbs[$i];
@@ -9129,7 +9208,7 @@ public function userd($obj)
             $title = explode(' - ', $title)[0];
         }
 
-        $conent = '<p>~</p>'.$title .'<p> ​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​</p>'.$conent.$addvideo;
+        $conent = $conent.$addvideo;
         if(!empty($setLabel)){
             if($setLabel == 'news'|| $setLabel == 'entertainment') {
                 if(!empty(@$setDataPost->copyfrom)) {
@@ -9301,8 +9380,7 @@ public function userd($obj)
         }
     }
     function UR_exists($url){
-       $headers=get_headers($url);
-       return stripos($headers[0],"200 OK")?true:false;
+       return curl_init($url) !== false;
     }
 function remove_http($url) {
    $disallowed = array('http://www.', 'https://www.','http://', 'https://');
@@ -11300,12 +11378,18 @@ HTML;
                 $shopA=$this->input->post('shopA');
                 $shopB=$this->input->post('shopB');
                 $shopC=$this->input->post('shopC');
+                $post_wp=$this->input->post('post_wp');
+                $post_wp_backup=$this->input->post('post_wp_backup');
+                $post_wp_save_link=$this->input->post('post_wp_save_link');
                 if(!empty($shopA)) {
                     $query_ec = $this->Mod_general->select('au_config', '*', $shereShareMode);
                     $dataShareMode = array(
                         'option_a' => $shopA,
                         'option_b' => $shopB,
                         'option_c' => $shopC,
+                        'post_wp' => $post_wp,
+                        'post_wp_backup' => $post_wp_backup,
+                        'post_wp_save_link' => $post_wp_save_link,
                     );
                     $data_sh_mode = array(
                         'c_name'      => $shareMode,
