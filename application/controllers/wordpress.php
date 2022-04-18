@@ -125,8 +125,11 @@ class Wordpress extends CI_Controller
                 if(!empty($this->session->userdata('post_wp_backup'))) {
                     $this->load->library ( 'html_dom' );
                     $pConent = json_decode($getPost[0]->p_conent);
-                    $url = $share_mode_data->post_wp_backup.'?s='.urlencode($pConent->name);
-                    echo $url;
+                    require_once(APPPATH.'controllers/managecampaigns.php');
+                    $Manage = new Managecampaigns(); 
+                    $searchTitle = $Manage->getMBStrSplit(trim($pConent->name), 1);
+                    $searchTitle = implode('​', $searchTitle);
+                    $url = $share_mode_data->post_wp_backup.'?s='.urlencode($searchTitle);
                     $ch = curl_init();
                     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
                     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -137,7 +140,7 @@ class Wordpress extends CI_Controller
 $result
 HTML;
                     $desc = str_get_html($str);
-                    $backup_link =  $desc->find('.wp-block-post-date a', 0)->href;
+                    $backup_link =  @$desc->find('.wp-block-post-date a', 0)->href;
                     if(!empty($backup_link)) {
                         $this->session->unset_userdata('post_wp_backup');
                         $this->session->unset_userdata('backup_link'.$sid);

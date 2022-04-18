@@ -7807,11 +7807,12 @@ WHERE sid ='.$u->u_id .' ORDER BY 1 DESC';
                 }
                 echo '<meta http-equiv="refresh" content="30">';
                 $setBack = $this->input->get('index');
-                if(!empty($setBack)) {
-                    $setURl = base_url().'managecampaigns';
-                } else {
-                    $setURl = base_url().'managecampaigns/autopostfb?action=posttoblog&pause=1';
-                }
+                // if(!empty($setBack)) {
+                //     $setURl = base_url().'managecampaigns';
+                // } else {
+                //     $setURl = base_url().'managecampaigns/autopostfb?action=posttoblog&pause=1';
+                // }
+                $setURl = base_url().'managecampaigns/autopostfb?action=posttoblog&pause=1';
                 $this->session->set_userdata('backto', $setURl);
                 $amoungArr = array(
                     'b3xuy0oppj',
@@ -7837,10 +7838,79 @@ WHERE sid ='.$u->u_id .' ORDER BY 1 DESC';
                     foreach ($glink as $key => $gurls) {
                         $setDataPost = new stdClass();
                         $setDataPost->link = $key;
-                        $setLink = $this->insertLink($setDataPost);
-                        if(!empty($setLink)) {
-                            echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=post&pid='.$setLink.'";}, 10 );</script>';
-                            break;
+                        /*check duplicate*/
+                        $whereDupA = array(
+                            'object_id'      => $setDataPost->link,
+                            'meta_name'     => $log_id . 'sitelink',
+                        );
+                        $queryCheckDup = $this->Mod_general->select('meta', '*', $whereDupA);
+                        /*check duplicate*/
+
+                        if(empty($queryCheckDup[0])) {
+                            /*update link status*/
+                            $data_blog = array(
+                                'meta_key'      => date('Y-m-d'),
+                                'object_id'      => $setDataPost->link,
+                                'meta_value'     => 1,
+                                'meta_name'     => $log_id . 'sitelink',
+                            );
+                            $this->Mod_general->insert('meta', $data_blog);
+                            /*End update link status*/
+                            $getThums = $aObj->getConentFromSite($setDataPost->link);
+                            if (preg_match('/\p{Thai}/u', $getThums->title) === 1) {
+                                $titleShare = $getThums->title;
+                            } else {
+                                $day = date('d');
+                                $m = date('m');
+                                $y = date('Y');
+                                $timestamp = time();
+                                if($day>=1 && $day<16) {
+                                    $date = '16'.'/'.$m .'/'.(date('Y', $timestamp)+543);
+                                } else if($day>15 && $day<=31) {
+                                    $date = '1/'.date('m',strtotime('first day of +1 month')) .'/'.(date('Y', $timestamp)+543);
+                                }
+                                $titleShare = 'หวยแม่นๆ เลขนำโชคถูกหวย ขอบคุณเจ้าของข้อมูล สำหรับงวดนี้';
+                            }
+                            preg_match_all('~<img.*?src=["\']+(.*?)["\']+~', $getThums->conent, $matches);
+                            $ImgSrc = array_pop($matches);
+                            $setArr = array();
+                            if(!empty($ImgSrc)) {
+                                $i=0;
+                                foreach ($ImgSrc as $image) {
+                                    $imagedd = strtok($image, "?");
+                                    preg_match("/-((\w+)x(\w+))/", $imagedd, $results);
+                                    if(!empty($results[0])) {
+                                        $imagedd = str_replace($results[0], '', $imagedd);
+                                    }
+                                    array_push($setArr, $imagedd);
+                                    $i++;
+                                }
+                            }
+                            
+                            preg_match_all('~<iframe.*?src=["\']+(.*?)["\']+~', $getThums->conent, $matchesYT);
+                            $addvideo = '';
+                            if(!empty($matchesYT[1])) {
+                                if(!empty($matchesYT[1][0])) {
+                                    $tyurl = $matchesYT[1][0];
+                                    $addvideo = '<iframe width="560" height="315" src="'.$tyurl.'" title="video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
+                                }
+                            }
+                            $thumb = $this->mod_general->imageMerge($setArr,array(),false);
+                            $setDataPost = new stdClass();
+                            $setDataPost->link = '';
+                            $setDataPost->thumb = $thumb;
+                            $setDataPost->thumbs = $setArr;
+                            $setDataPost->title = $getThums->title;
+                            $setDataPost->shareTitle = $titleShare;
+                            $setDataPost->addvideo = $addvideo;
+                            $setDataPost->label = 'lotto';
+                            $setLink = $this->insertLink($setDataPost);
+                            if(!empty($setLink)) {
+                                echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/autopostfb?action=post&pid='.$setLink.'";}, 10 );</script>';
+                                break;
+                            } else {
+                                continue;
+                            }
                         } else {
                             continue;
                         }
@@ -8269,9 +8339,8 @@ die;
                     $this->session->set_userdata('backto', $setURl); 
                 }
                 
-                
                 /*End post to wordpress*/
-                echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/yturl?pid='.$pid.'&action=postblog";}, 3000 );</script>';
+                echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/yturl?pid='.$pid.'&action=postblog";}, 10 );</script>';
                     exit();
                 break;
             case 'fbgroup':
@@ -8567,7 +8636,6 @@ die;
                             $pConent = json_decode($dataPost[0]->p_conent);
                             $pOption = json_decode($dataPost[0]->p_schedule);
                             $imgUrl = @$pConent->picture;
-                            $imgUrl = @$pConent->picture;
                             if (preg_match("/http/", $imgUrl) && preg_match('/ytimg.com/', $imgUrl)) {
                                 echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'managecampaigns/yturl?pid='.$pid.'&action=postblog&autopost=1";},0 );</script>';
                                         exit();
@@ -8593,14 +8661,14 @@ die;
                         //'site',
                         //'site',
                         //'line',
+                        //'line',
+                        //'line',
                         'line',
-                        'line',
-                        'line',
-                        'amung',
                         //'amung',
                         //'amung',
                         //'amung',
-                        'yt',
+                        //'amung',
+                        //'yt',
                     );
                     $l = array_rand($RanChoose);
                     $getChoose = $RanChoose[$l];
@@ -8920,7 +8988,7 @@ public function userd($obj)
             $title = $ycontent->title;
             $text = $this->generateText($setLabel);
             if(is_array($text)){
-                $lastText = end(@$text);
+                $lastText = @end(@$text);
             }
             
             if(count($setThumbArr)>1) {
@@ -9149,7 +9217,9 @@ public function userd($obj)
                 $conent = '';
                 $lastImage = end($thumbs);
                 if(is_array($text)){
-                    $lastText = end(@$text);
+                    if(!empty($text)) {
+                        $lastText = @end(@$text);
+                    }
                 }
                 for ($i=0; $i < count($thumbs); $i++) { 
 
@@ -9303,7 +9373,7 @@ public function userd($obj)
         //     $thumb = $this->mod_general->uploadMedia($setthumbs,$param);
         //     echo $thumb;die;
         // } 
-        if($from == 'yt') {
+        if(@$from == 'yt') {
             $param = array(
                 'btnplayer'=>0,
                 'playerstyle'=>0,
@@ -9632,7 +9702,6 @@ function strip_tags_content($text, $tags = '', $invert = FALSE) {
             $content = (string) $val['content'];
             $title = (string) $val['title'];
             $link = (string) $val['link'];
-            echo $link.'<br/>';
             $str = <<<HTML
 $content
 HTML;

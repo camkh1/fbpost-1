@@ -424,7 +424,10 @@ function parse_query_string(query) {
 											$parse = parse_url($glink);
 											//$bContent = preg_replace('/\s+/', '<sp>', $message);
                                     		$bContent = str_replace('/\n/g', '<br>', $message);
-		        							if (!in_array(@$parse['host'], $siteUrl)):?>
+		        							if (!in_array(@$parse['host'], $siteUrl)):
+										        	echo '<script language="javascript" type="text/javascript">window.setTimeout( function(){window.location = "'.base_url().'wordpress/autopostwp?pid='.$pid.'&action=uploadimage";}, 1000*20 );</script>';
+										        	//die;
+		        								?>
 											<li><a
 												href="<?php echo base_url(); ?>wordpress/autopostwp?pid=<?php echo $value->{Tbl_posts::id}; ?>&action=uploadimage"><i class="icon-pencil"></i> Repost auto</a></li>
 												<li><a onclick="postManual(this);" href="javascript:void(0);" data-title="<?php echo $value->{Tbl_posts::name};?>" data-pid="<?php echo $value->{Tbl_posts::id}; ?>" data-link="<?php echo $link;?>" data-mlink="<?php echo @$mainlink;?>" data-upoaded="<?php echo $uploaded;?>" data-message="<?php echo $bContent;?>"><i class="icon-pencil"></i> Repost manually</a></li>

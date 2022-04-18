@@ -309,6 +309,8 @@ class Mod_general extends CI_Model
             'www.bz24news.com',
             'news17times.com',
             'www.jc24news.com',
+            'newzset.com',
+            'ournewsl.com',
             'updatecamp.com',
             'aq24news.com',
             'web.facebook.com',
@@ -1234,7 +1236,7 @@ public function get_video_id($param, $videotype = '')
             }
         }
     }
-    public function imageMerge($thumbs=array(),$asThumb=array())
+    public function imageMerge($thumbs=array(),$asThumb=array(),$setLogo=1)
     {
         $setArr = array();
         if(!empty($thumbs[0])) {
@@ -1329,7 +1331,9 @@ public function get_video_id($param, $videotype = '')
                     
                 }
             }
-            $thumb = $this->watermarktextAndLogo($thumb,$bgPosition,$textPosition);
+            if(!empty($setLogo)) {
+                $thumb = $this->watermarktextAndLogo($thumb,$bgPosition,$textPosition);
+            }
         }
         return @$thumb;
     }
@@ -1462,31 +1466,57 @@ public function get_video_id($param, $videotype = '')
                 fclose($fp);
             }
         }
-        //getting the image dimensions
-        list($width, $height) = getimagesize($fileName);
-
-        //saving the image into memory (for manipulation with GD Library)
-        //$myImage = imagecreatefromjpeg($fileName);
-        $myImage = imagecreatefromstring( file_get_contents( $fileName ) );
-
-        // calculating the part of the image to use for thumbnail
-        if ($width > $height) {
-          $y = 0;
-          $x = ($width - $height) / 2;
-          $smallestSide = $height;
+        $maxDim = $thumbW;
+        list($width, $height, $type, $attr) = getimagesize( $fileName );
+        $target_filename = $fileName;
+        $ratio = $width/$height;
+        if($width<$height) {
+            $new_width = $maxDim;
+            $new_height = $maxDim/$ratio;
         } else {
-          $x = 0;
-          $y = ($height - $width) / 2;
-          $smallestSide = $width;
+            $new_width = $thumbW;
+            $new_height = $thumbH;
         }
+        $src = imagecreatefromstring( file_get_contents( $fileName ) );
+        $dst = imagecreatetruecolor( $new_width, $new_height );
+        imagecopyresampled( $dst, $src, 0, 0, 0, 0, $new_width, $new_height, $width, $height );
+        imagedestroy( $src );
+        imagejpeg( $dst, $fileName ); // adjust format as needed
+        imagedestroy( $dst );
 
-        // copying the part into thumbnail
-        $thumb = imagecreatetruecolor((int) $thumbW, (int) $thumbH);
-        imagecopyresampled($thumb, $myImage, 0, 0, $x, $y, (int) $thumbW, (int) $thumbH, $smallestSide, $smallestSide);
 
-        imagedestroy( $myImage );
-        imagejpeg( $thumb, $fileName ); // adjust format as needed
-        imagedestroy( $thumb );
+
+        $vImg = imagecreatefromstring( file_get_contents( $fileName ) );
+        $vDstImg = @imagecreatetruecolor( $thumbW, $thumbH );
+        imagecopyresampled($vDstImg, $vImg, 0, 0, 0, 0, $thumbW, $thumbH, $thumbW, $thumbH);
+        imagedestroy( $vImg );
+        imagejpeg( $vDstImg, $fileName ); // adjust format as needed
+        imagedestroy( $vDstImg );
+        //getting the image dimensions
+        // list($width, $height) = getimagesize($fileName);
+
+        // //saving the image into memory (for manipulation with GD Library)
+        // //$myImage = imagecreatefromjpeg($fileName);
+        // $myImage = imagecreatefromstring( file_get_contents( $fileName ) );
+
+        // // calculating the part of the image to use for thumbnail
+        // if ($width > $height) {
+        //   $y = 0;
+        //   $x = ($width - $height) / 2;
+        //   $smallestSide = $height;
+        // } else {
+        //   $x = 0;
+        //   $y = ($height - $width) / 2;
+        //   $smallestSide = $width;
+        // }
+
+        // // copying the part into thumbnail
+        // $thumb = imagecreatetruecolor((int) $thumbW, (int) $thumbH);
+        // imagecopyresampled($thumb, $myImage, 0, 0, $x, $y, (int) $thumbW, (int) $thumbH, $smallestSide, $smallestSide);
+
+        // imagedestroy( $myImage );
+        // imagejpeg( $thumb, $fileName ); // adjust format as needed
+        // imagedestroy( $thumb );
         return $fileName;
     }
     function resize_image($url, $imgsize, $height = '') {
@@ -2223,7 +2253,7 @@ public function get_video_id($param, $videotype = '')
         return $file_a;
     }
 
-    public function watermarktextAndLogo($file_path='',$position,$textPosition,$btnplayer='',$imagetext='')
+    public function watermarktextAndLogo($file_path='',$position,$textPosition,$btnplayer='',$imagetext='',$setdate='')
     {
         $this->load->library('ChipVNl');
         \ChipVN\Loader::registerAutoLoad();
@@ -2236,18 +2266,16 @@ public function get_video_id($param, $videotype = '')
             \ChipVN\Image::watermark($file_path, $setTextImage, 'lt'); 
         }
         
-        $bg= FCPATH . 'uploads/image/watermark/bg_black.png';
-        \ChipVN\Image::watermark($file_path, $bg, $position);
-        // $bg= FCPATH . 'uploads/image/watermark/bg_a.png';
-        $imagetobewatermark= imagecreatefromstring( file_get_contents( $file_path ) );
+        
 
         $day = date('d');
         $m = date('m');
         $y = date('Y');
         $timestamp = time();
+        $date = '';
         if($day>=1 && $day<16) {
             $date = '16'.'/'.$m .'/'.(date('Y', $timestamp)+543);
-        } else if($day>15 && $day<=31) {
+        } else if($day>16 && $day<=31) {
             $date = '1/'.date('m',strtotime('first day of +1 month')) .'/'.(date('Y', $timestamp)+543);
         }
 
@@ -2272,26 +2300,32 @@ public function get_video_id($param, $videotype = '')
         if($c == 'yb') {
             $backColor = array(0,0,0);
         }
+        if(!empty($date) && !empty($setdate)) {
+            $bg= FCPATH . 'uploads/image/watermark/bg_black.png';
+            \ChipVN\Image::watermark($file_path, $bg, $position);
+            // $bg= FCPATH . 'uploads/image/watermark/bg_a.png';
+            $imagetobewatermark= imagecreatefromstring( file_get_contents( $file_path ) );
 
-        $watermarktext="แนวทาง " .$date;
-        $font= FCPATH . 'uploads/image/watermark/font/thai_c.ttf';
-        $fontsize="70";
-        $bbox = imagettfbbox($fontsize, 0, $font, $watermarktext);
-        if($c == 'y' || $c == 'r') {
-            $x = $bbox[0] + (imagesx($imagetobewatermark) / 2) - ($bbox[4] / 2) + 10;
-            $y = $bbox[1] + (imagesy($imagetobewatermark) - $textPosition) - ($bbox[5] / 2) - 5;
-            $white = imagecolorallocate($imagetobewatermark, $backColor[0], $backColor[1], $backColor[2]);
+            $watermarktext="แนวทาง " .$date;
+            $font= FCPATH . 'uploads/image/watermark/font/thai_c.ttf';
+            $fontsize="70";
+            $bbox = imagettfbbox($fontsize, 0, $font, $watermarktext);
+            if($c == 'y' || $c == 'r') {
+                $x = $bbox[0] + (imagesx($imagetobewatermark) / 2) - ($bbox[4] / 2) + 10;
+                $y = $bbox[1] + (imagesy($imagetobewatermark) - $textPosition) - ($bbox[5] / 2) - 5;
+                $white = imagecolorallocate($imagetobewatermark, $backColor[0], $backColor[1], $backColor[2]);
+                imagettftext($imagetobewatermark, $fontsize, 0, $x, $y, $white, $font, $watermarktext);
+                imagejpeg( $imagetobewatermark, $file_path);
+                imagedestroy($imagetobewatermark);
+            }
+            $imagetobewatermark= imagecreatefromstring( file_get_contents( $file_path ) );
+            $x = $bbox[0] + (imagesx($imagetobewatermark) / 2) - ($bbox[4] / 2) + 10 - 3;
+            $y = $bbox[1] + (imagesy($imagetobewatermark) - $textPosition) - ($bbox[5] / 2) - 5 - 2;
+            $white = imagecolorallocate($imagetobewatermark, $cArr[0], $cArr[1], $cArr[2]);
             imagettftext($imagetobewatermark, $fontsize, 0, $x, $y, $white, $font, $watermarktext);
             imagejpeg( $imagetobewatermark, $file_path);
             imagedestroy($imagetobewatermark);
         }
-        $imagetobewatermark= imagecreatefromstring( file_get_contents( $file_path ) );
-        $x = $bbox[0] + (imagesx($imagetobewatermark) / 2) - ($bbox[4] / 2) + 10 - 3;
-        $y = $bbox[1] + (imagesy($imagetobewatermark) - $textPosition) - ($bbox[5] / 2) - 5 - 2;
-        $white = imagecolorallocate($imagetobewatermark, $cArr[0], $cArr[1], $cArr[2]);
-        imagettftext($imagetobewatermark, $fontsize, 0, $x, $y, $white, $font, $watermarktext);
-        imagejpeg( $imagetobewatermark, $file_path);
-        imagedestroy($imagetobewatermark);
         return $file_path;
     }
     /* returns the shortened url */
